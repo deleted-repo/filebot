@@ -79,18 +79,6 @@
 							<uap:FileType>.rmvb</uap:FileType>
 							<uap:FileType>.rmp4</uap:FileType>
 							<uap:FileType>.tivo</uap:FileType>
-							<uap:FileType>.srt</uap:FileType>
-							<uap:FileType>.sub</uap:FileType>
-							<uap:FileType>.ssa</uap:FileType>
-							<uap:FileType>.ass</uap:FileType>
-							<uap:FileType>.smi</uap:FileType>
-							<uap:FileType>.sami</uap:FileType>
-							<uap:FileType>.mp3</uap:FileType>
-							<uap:FileType>.m4a</uap:FileType>
-							<uap:FileType>.aac</uap:FileType>
-							<uap:FileType>.flac</uap:FileType>
-							<uap:FileType>.wma</uap:FileType>
-							<uap:FileType>.ogm</uap:FileType>
 						</uap:SupportedFileTypes>
 						<uap2:SupportedVerbs>
 							<uap3:Verb MultiSelectModel="Player" Id="FileBotRename" Extended="true" Parameters="--mode Rename &quot;%1&quot;">Rename with @{application.name}</uap3:Verb>
