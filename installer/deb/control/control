@@ -7,5 +7,5 @@ Description: @{package.synopsis}
 Homepage: @{package.homepage}
 Section: utils
 Priority: extra
-Suggests: openjdk-8-jre, openjfx, mediainfo, libchromaprint-tools
+Suggests: @{deb.application.depends}
 Enhances: nautilus-actions
