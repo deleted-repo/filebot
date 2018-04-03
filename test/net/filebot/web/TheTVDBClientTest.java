@@ -1,5 +1,6 @@
 package net.filebot.web;
 
+import static net.filebot.WebServices.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -9,8 +10,6 @@ import org.junit.Test;
 
 public class TheTVDBClientTest {
 
-	static TheTVDBClient db = new TheTVDBClient("BA864DEE427E384A");
-
 	SearchResult buffy = new SearchResult(70327, "Buffy the Vampire Slayer");
 	SearchResult wonderfalls = new SearchResult(78845, "Wonderfalls");
 	SearchResult firefly = new SearchResult(78874, "Firefly");
@@ -18,7 +17,7 @@ public class TheTVDBClientTest {
 	@Test
 	public void search() throws Exception {
 		// test default language and query escaping (blanks)
-		List<SearchResult> results = db.search("babylon 5", Locale.ENGLISH);
+		List<SearchResult> results = TheTVDB.search("babylon 5", Locale.ENGLISH);
 
 		assertEquals(2, results.size());
 
@@ -30,7 +29,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void searchGerman() throws Exception {
-		List<SearchResult> results = db.search("Buffy", Locale.GERMAN);
+		List<SearchResult> results = TheTVDB.search("Buffy", Locale.GERMAN);
 
 		SearchResult first = results.get(0);
 		assertEquals("Buffy", first.getName());
@@ -39,7 +38,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getEpisodeListAll() throws Exception {
-		List<Episode> list = db.getEpisodeList(buffy, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = TheTVDB.getEpisodeList(buffy, SortOrder.Airdate, Locale.ENGLISH);
 
 		assertEquals(145, list.size());
 
@@ -66,7 +65,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getEpisodeListSingleSeason() throws Exception {
-		List<Episode> list = db.getEpisodeList(wonderfalls, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = TheTVDB.getEpisodeList(wonderfalls, SortOrder.Airdate, Locale.ENGLISH);
 
 		Episode first = list.get(0);
 
@@ -82,7 +81,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getEpisodeListMissingInformation() throws Exception {
-		List<Episode> list = db.getEpisodeList(wonderfalls, SortOrder.Airdate, Locale.JAPANESE);
+		List<Episode> list = TheTVDB.getEpisodeList(wonderfalls, SortOrder.Airdate, Locale.JAPANESE);
 
 		Episode first = list.get(0);
 
@@ -92,13 +91,13 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getEpisodeListIllegalSeries() throws Exception {
-		List<Episode> list = db.getEpisodeList(new SearchResult(313193, "*** DOES NOT EXIST ***"), SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = TheTVDB.getEpisodeList(new SearchResult(313193, "*** DOES NOT EXIST ***"), SortOrder.Airdate, Locale.ENGLISH);
 		assertTrue(list.isEmpty());
 	}
 
 	@Test
 	public void getEpisodeListNumberingDVD() throws Exception {
-		List<Episode> list = db.getEpisodeList(firefly, SortOrder.DVD, Locale.ENGLISH);
+		List<Episode> list = TheTVDB.getEpisodeList(firefly, SortOrder.DVD, Locale.ENGLISH);
 
 		Episode first = list.get(0);
 		assertEquals("Firefly", first.getSeriesName());
@@ -112,7 +111,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getEpisodeListNumberingAbsoluteAirdate() throws Exception {
-		List<Episode> list = db.getEpisodeList(firefly, SortOrder.AbsoluteAirdate, Locale.ENGLISH);
+		List<Episode> list = TheTVDB.getEpisodeList(firefly, SortOrder.AbsoluteAirdate, Locale.ENGLISH);
 
 		Episode first = list.get(0);
 		assertEquals("Firefly", first.getSeriesName());
@@ -125,26 +124,26 @@ public class TheTVDBClientTest {
 	}
 
 	public void getEpisodeListLink() {
-		assertEquals("http://www.thetvdb.com/?tab=seasonall&id=78874", db.getEpisodeListLink(firefly).toString());
+		assertEquals("http://www.thetvdb.com/?tab=seasonall&id=78874", TheTVDB.getEpisodeListLink(firefly).toString());
 	}
 
 	@Test
 	public void lookupByID() throws Exception {
-		SearchResult series = db.lookupByID(78874, Locale.ENGLISH);
+		SearchResult series = TheTVDB.lookupByID(78874, Locale.ENGLISH);
 		assertEquals("Firefly", series.getName());
 		assertEquals(78874, series.getId());
 	}
 
 	@Test
 	public void lookupByIMDbID() throws Exception {
-		SearchResult series = db.lookupByIMDbID(303461, Locale.ENGLISH);
+		SearchResult series = TheTVDB.lookupByIMDbID(303461, Locale.ENGLISH);
 		assertEquals("Firefly", series.getName());
 		assertEquals(78874, series.getId());
 	}
 
 	@Test
 	public void getSeriesInfo() throws Exception {
-		TheTVDBSeriesInfo it = db.getSeriesInfo(80348, Locale.ENGLISH);
+		TheTVDBSeriesInfo it = TheTVDB.getSeriesInfo(80348, Locale.ENGLISH);
 
 		assertEquals(80348, it.getId(), 0);
 		assertEquals("Action", it.getGenres().get(0));
@@ -162,7 +161,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getArtwork() throws Exception {
-		Artwork i = db.getArtwork(buffy.getId(), "fanart", Locale.ENGLISH).get(0);
+		Artwork i = TheTVDB.getArtwork(buffy.getId(), "fanart", Locale.ENGLISH).get(0);
 
 		assertEquals("[fanart, graphical, 1280x720]", i.getTags().toString());
 		assertEquals("http://thetvdb.com/banners/fanart/original/70327-31.jpg", i.getUrl().toString());
@@ -173,13 +172,13 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getLanguages() throws Exception {
-		List<String> languages = db.getLanguages();
+		List<String> languages = TheTVDB.getLanguages();
 		assertEquals("[zh, en, sv, no, da, fi, nl, de, it, es, fr, pl, hu, el, tr, ru, he, ja, pt, cs, sl, hr, ko]", languages.toString());
 	}
 
 	@Test
 	public void getActors() throws Exception {
-		Person p = db.getActors(firefly.getId(), Locale.ENGLISH).get(0);
+		Person p = TheTVDB.getActors(firefly.getId(), Locale.ENGLISH).get(0);
 		assertEquals("Alan Tudyk", p.getName());
 		assertEquals("Hoban 'Wash' Washburne", p.getCharacter());
 		assertEquals("Actor", p.getJob());
@@ -190,7 +189,7 @@ public class TheTVDBClientTest {
 
 	@Test
 	public void getEpisodeInfo() throws Exception {
-		EpisodeInfo i = db.getEpisodeInfo(296337, Locale.ENGLISH);
+		EpisodeInfo i = TheTVDB.getEpisodeInfo(296337, Locale.ENGLISH);
 
 		assertEquals("78845", i.getSeriesId().toString());
 		assertEquals("296337", i.getId().toString());

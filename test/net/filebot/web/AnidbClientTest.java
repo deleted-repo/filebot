@@ -1,5 +1,6 @@
 package net.filebot.web;
 
+import static net.filebot.WebServices.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -8,8 +9,6 @@ import java.util.Locale;
 import org.junit.Test;
 
 public class AnidbClientTest {
-
-	static AnidbClient anidb = new AnidbClient("filebot", 6);
 
 	/**
 	 * 74 episodes
@@ -28,13 +27,13 @@ public class AnidbClientTest {
 
 	@Test
 	public void getAnimeTitles() throws Exception {
-		SearchResult[] animeTitles = anidb.getAnimeTitles();
+		SearchResult[] animeTitles = AniDB.getAnimeTitles();
 		assertTrue(animeTitles.length > 8000);
 	}
 
 	@Test
 	public void search() throws Exception {
-		List<SearchResult> results = anidb.search("one piece", Locale.ENGLISH);
+		List<SearchResult> results = AniDB.search("one piece", Locale.ENGLISH);
 
 		SearchResult result = results.get(0);
 		assertEquals("One Piece", result.getName());
@@ -43,7 +42,7 @@ public class AnidbClientTest {
 
 	@Test
 	public void searchNoMatch() throws Exception {
-		List<SearchResult> results = anidb.search("i will not find anything for this query string", Locale.ENGLISH);
+		List<SearchResult> results = AniDB.search("i will not find anything for this query string", Locale.ENGLISH);
 
 		assertTrue(results.isEmpty());
 	}
@@ -51,16 +50,16 @@ public class AnidbClientTest {
 	@Test
 	public void searchTitleAlias() throws Exception {
 		// Seikai no Senki (main title), Banner of the Stars (official English title)
-		assertEquals("Seikai no Senki", anidb.search("banner of the stars", Locale.ENGLISH).get(0).getName());
-		assertEquals("Seikai no Senki", anidb.search("seikai no senki", Locale.ENGLISH).get(0).getName());
+		assertEquals("Seikai no Senki", AniDB.search("banner of the stars", Locale.ENGLISH).get(0).getName());
+		assertEquals("Seikai no Senki", AniDB.search("seikai no senki", Locale.ENGLISH).get(0).getName());
 
 		// no matching title
-		assertEquals("Naruto", anidb.search("naruto", Locale.ENGLISH).get(0).getName());
+		assertEquals("Naruto", AniDB.search("naruto", Locale.ENGLISH).get(0).getName());
 	}
 
 	@Test
 	public void getEpisodeListAll() throws Exception {
-		List<Episode> list = anidb.getEpisodeList(monsterSearchResult, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = AniDB.getEpisodeList(monsterSearchResult, SortOrder.Airdate, Locale.ENGLISH);
 
 		assertEquals(77, list.size());
 
@@ -78,7 +77,7 @@ public class AnidbClientTest {
 
 	@Test
 	public void getEpisodeListAllShortLink() throws Exception {
-		List<Episode> list = anidb.getEpisodeList(twelvekingdomsSearchResult, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = AniDB.getEpisodeList(twelvekingdomsSearchResult, SortOrder.Airdate, Locale.ENGLISH);
 
 		assertEquals(47, list.size());
 
@@ -95,12 +94,12 @@ public class AnidbClientTest {
 
 	@Test
 	public void getEpisodeListEncoding() throws Exception {
-		assertEquals("Raven Princess - An der schönen blauen Donau", anidb.getEpisodeList(princessTutuSearchResult, SortOrder.Airdate, Locale.ENGLISH).get(6).getTitle());
+		assertEquals("Raven Princess - An der schönen blauen Donau", AniDB.getEpisodeList(princessTutuSearchResult, SortOrder.Airdate, Locale.ENGLISH).get(6).getTitle());
 	}
 
 	@Test
 	public void getEpisodeListI18N() throws Exception {
-		List<Episode> list = anidb.getEpisodeList(monsterSearchResult, SortOrder.Airdate, Locale.JAPANESE);
+		List<Episode> list = AniDB.getEpisodeList(monsterSearchResult, SortOrder.Airdate, Locale.JAPANESE);
 
 		Episode last = list.get(73);
 		assertEquals("MONSTER", last.getSeriesName());
@@ -114,12 +113,12 @@ public class AnidbClientTest {
 
 	@Test
 	public void getEpisodeListTrimRecap() throws Exception {
-		assertEquals("Sea God of the East, Azure Sea of the West - Transition Chapter", anidb.getEpisodeList(twelvekingdomsSearchResult, SortOrder.Airdate, Locale.ENGLISH).get(44).getTitle());
+		assertEquals("Sea God of the East, Azure Sea of the West - Transition Chapter", AniDB.getEpisodeList(twelvekingdomsSearchResult, SortOrder.Airdate, Locale.ENGLISH).get(44).getTitle());
 	}
 
 	@Test
 	public void getEpisodeListLink() throws Exception {
-		assertEquals("http://anidb.net/a1539", anidb.getEpisodeListLink(monsterSearchResult).toURL().toString());
+		assertEquals("http://anidb.net/a1539", AniDB.getEpisodeListLink(monsterSearchResult).toURL().toString());
 	}
 
 }

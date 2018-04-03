@@ -21,7 +21,7 @@ import net.filebot.web.OpenSubtitlesXmlRpc.TryUploadResponse;
 
 public class OpenSubtitlesXmlRpcTest {
 
-	private static OpenSubtitlesXmlRpc xmlrpc = new OpenSubtitlesXmlRpc(String.format("%s %s", getApplicationName(), getApplicationVersion()));
+	private static OpenSubtitlesXmlRpc xmlrpc = new OpenSubtitlesXmlRpc(String.format("%s %s", getApiKey("opensubtitles"), getApplicationVersion()));
 
 	@BeforeClass
 	public static void login() throws Exception {

@@ -1,5 +1,6 @@
 package net.filebot.web;
 
+import static net.filebot.WebServices.*;
 import static net.filebot.web.EpisodeUtilities.*;
 import static org.junit.Assert.*;
 
@@ -17,7 +18,7 @@ public class TVMazeClientTest {
 
 	@Test
 	public void search() throws Exception {
-		List<SearchResult> results = client.search("Buffy", Locale.ENGLISH);
+		List<SearchResult> results = TVmaze.search("Buffy", Locale.ENGLISH);
 
 		SearchResult result = results.get(0);
 
@@ -25,11 +26,9 @@ public class TVMazeClientTest {
 		assertEquals(buffySearchResult.getId(), result.getId());
 	}
 
-	private TVMazeClient client = new TVMazeClient();
-
 	@Test
 	public void getEpisodeList() throws Exception {
-		List<Episode> list = filterBySeason(client.getEpisodeList(buffySearchResult, SortOrder.Airdate, Locale.ENGLISH), 7);
+		List<Episode> list = filterBySeason(TVmaze.getEpisodeList(buffySearchResult, SortOrder.Airdate, Locale.ENGLISH), 7);
 
 		assertEquals(22, list.size());
 
@@ -47,7 +46,7 @@ public class TVMazeClientTest {
 
 	@Test
 	public void getEpisodeListAll() throws Exception {
-		List<Episode> list = client.getEpisodeList(buffySearchResult, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = TVmaze.getEpisodeList(buffySearchResult, SortOrder.Airdate, Locale.ENGLISH);
 
 		assertEquals(143, list.size());
 
@@ -64,7 +63,7 @@ public class TVMazeClientTest {
 
 	@Test
 	public void getEpisodeListLinkAll() throws Exception {
-		assertEquals("http://www.tvmaze.com/shows/427", client.getEpisodeListLink(buffySearchResult).toString());
+		assertEquals("http://www.tvmaze.com/shows/427", TVmaze.getEpisodeListLink(buffySearchResult).toString());
 	}
 
 }

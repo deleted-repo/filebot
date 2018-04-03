@@ -1,5 +1,6 @@
 package net.filebot.web;
 
+import static net.filebot.WebServices.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -8,11 +9,9 @@ import org.junit.Test;
 
 public class OMDbClientTest {
 
-	private final OMDbClient client = new OMDbClient("49d311ec");
-
 	@Test
 	public void searchMovie1() throws Exception {
-		List<Movie> results = client.searchMovie("Avatar", null);
+		List<Movie> results = OMDb.searchMovie("Avatar", null);
 		Movie movie = results.get(0);
 
 		assertEquals("Avatar", movie.getName());
@@ -22,7 +21,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void searchMovie2() throws Exception {
-		List<Movie> results = client.searchMovie("The Terminator", null);
+		List<Movie> results = OMDb.searchMovie("The Terminator", null);
 		Movie movie = results.get(0);
 
 		assertEquals("The Terminator", movie.getName());
@@ -32,7 +31,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void searchMovie3() throws Exception {
-		List<Movie> results = client.searchMovie("Amélie", null);
+		List<Movie> results = OMDb.searchMovie("Amélie", null);
 		Movie movie = results.get(0);
 
 		assertEquals("Amélie", movie.getName());
@@ -42,7 +41,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void searchMovie4() throws Exception {
-		List<Movie> results = client.searchMovie("Heat", null);
+		List<Movie> results = OMDb.searchMovie("Heat", null);
 		Movie movie = results.get(0);
 
 		assertEquals("Heat", movie.getName());
@@ -52,7 +51,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void searchMovie6() throws Exception {
-		List<Movie> results = client.searchMovie("Drive 2011", null);
+		List<Movie> results = OMDb.searchMovie("Drive 2011", null);
 		Movie movie = results.get(0);
 
 		assertEquals("Drive", movie.getName());
@@ -62,7 +61,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void getMovieDescriptor1() throws Exception {
-		Movie movie = client.getMovieDescriptor(new Movie(499549), null);
+		Movie movie = OMDb.getMovieDescriptor(new Movie(499549), null);
 
 		assertEquals("Avatar", movie.getName());
 		assertEquals(2009, movie.getYear());
@@ -71,7 +70,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void getMovieDescriptor2() throws Exception {
-		Movie movie = client.getMovieDescriptor(new Movie(211915), null);
+		Movie movie = OMDb.getMovieDescriptor(new Movie(211915), null);
 
 		assertEquals("Amélie", movie.getName());
 		assertEquals(2001, movie.getYear());
@@ -80,7 +79,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void getMovieDescriptor3() throws Exception {
-		Movie movie = client.getMovieDescriptor(new Movie(75610), null);
+		Movie movie = OMDb.getMovieDescriptor(new Movie(75610), null);
 
 		assertEquals("21 Up", movie.getName());
 		assertEquals(1977, movie.getYear());
@@ -89,7 +88,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void getMovieDescriptor4() throws Exception {
-		Movie movie = client.getMovieDescriptor(new Movie(369702), null);
+		Movie movie = OMDb.getMovieDescriptor(new Movie(369702), null);
 
 		assertEquals("The Sea Inside", movie.getName());
 		assertEquals(2004, movie.getYear());
@@ -98,7 +97,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void getMovieDescriptor5() throws Exception {
-		Movie movie = client.getMovieDescriptor(new Movie(1020960), null);
+		Movie movie = OMDb.getMovieDescriptor(new Movie(1020960), null);
 
 		assertEquals("God, the Universe and Everything Else", movie.getName());
 		assertEquals(1988, movie.getYear());
@@ -107,7 +106,7 @@ public class OMDbClientTest {
 
 	@Test
 	public void getImdbApiMovieInfoReleasedNA() throws Exception {
-		MovieInfo movie = client.getMovieInfo(new Movie(1287357));
+		MovieInfo movie = OMDb.getMovieInfo(new Movie(1287357));
 		assertEquals("Sommersonntag", movie.getName());
 		assertEquals(2008, movie.getReleased().getYear());
 		assertEquals("2008-06-07", movie.getReleased().toString());

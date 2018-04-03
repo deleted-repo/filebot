@@ -1,5 +1,6 @@
 package net.filebot.web;
 
+import static net.filebot.WebServices.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -9,8 +10,6 @@ import org.junit.Test;
 
 public class TMDbTVClientTest {
 
-	static TMDbTVClient db = new TMDbTVClient(TMDbClientTest.db);
-
 	static SearchResult buffy = new SearchResult(95, "Buffy the Vampire Slayer");
 	static SearchResult wonderfalls = new SearchResult(1982, "Wonderfalls");
 	static SearchResult firefly = new SearchResult(1437, "Firefly");
@@ -18,7 +17,7 @@ public class TMDbTVClientTest {
 	@Test
 	public void search() throws Exception {
 		// test default language and query escaping (blanks)
-		List<SearchResult> results = db.search("babylon 5", Locale.ENGLISH);
+		List<SearchResult> results = TheMovieDB_TV.search("babylon 5", Locale.ENGLISH);
 
 		assertEquals(1, results.size());
 
@@ -28,7 +27,7 @@ public class TMDbTVClientTest {
 
 	@Test
 	public void getEpisodeListAll() throws Exception {
-		List<Episode> list = db.getEpisodeList(buffy, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = TheMovieDB_TV.getEpisodeList(buffy, SortOrder.Airdate, Locale.ENGLISH);
 
 		assertTrue(list.size() >= 144);
 
@@ -55,7 +54,7 @@ public class TMDbTVClientTest {
 
 	@Test
 	public void getEpisodeListSingleSeason() throws Exception {
-		List<Episode> list = db.getEpisodeList(wonderfalls, SortOrder.Airdate, Locale.ENGLISH);
+		List<Episode> list = TheMovieDB_TV.getEpisodeList(wonderfalls, SortOrder.Airdate, Locale.ENGLISH);
 
 		Episode first = list.get(0);
 		assertEquals("Wonderfalls", first.getSeriesName());
