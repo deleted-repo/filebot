@@ -5,7 +5,9 @@ import static net.filebot.Settings.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.LinkOption;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 
@@ -25,7 +27,14 @@ public enum ApplicationFolder {
 	ApplicationFolder(String path) {
 		try {
 			// use canonical file path
-			this.path = Paths.get(path).toRealPath(LinkOption.NOFOLLOW_LINKS).toFile();
+			Path f = Paths.get(path);
+
+			// create folders if necessary
+			if (!Files.exists(f, LinkOption.NOFOLLOW_LINKS)) {
+				Files.createDirectories(f);
+			}
+
+			this.path = f.toRealPath(LinkOption.NOFOLLOW_LINKS).toFile();
 		} catch (IOException e) {
 			debug.log(Level.WARNING, e, e::toString);
 
