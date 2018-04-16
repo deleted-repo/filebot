@@ -14,7 +14,7 @@ import java.util.logging.Level;
 public enum ApplicationFolder {
 
 	// real user home (the user.home will point to the application-specific container in sandbox environments)
-	UserHome(isMacSandbox() ? System.getProperty("UserHome") : System.getProperty("user.home")),
+	UserHome(System.getProperty(isMacSandbox() ? "UserHome" : "user.home")),
 
 	AppData(System.getProperty("application.dir", UserHome.resolve(".filebot").getPath())),
 

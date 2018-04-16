@@ -223,26 +223,33 @@ public class ReleaseInfo {
 			// Windows / Linux / Mac system roots
 			volumes.addAll(roots);
 
-			// Linux / Mac
-			if (File.separator.equals("/")) {
-				// Linux and Mac system root folders
-				for (File root : roots) {
-					volumes.addAll(getChildren(root, FOLDERS));
-				}
-
+			if (isMacSandbox()) {
+				// Mac
 				for (File mediaRoot : getMediaRoots()) {
-					volumes.addAll(getChildren(mediaRoot, FOLDERS));
 					volumes.add(mediaRoot);
 				}
-			}
 
-			// Mac
-			if (isMacSandbox()) {
 				// e.g. ignore default Movie folder (user.home and real user home are different in the sandbox environment)
-				for (File userFolder : getChildren(new File(System.getProperty("user.home")), FOLDERS)) {
+				File sandbox = new File(System.getProperty("user.home"));
+
+				for (File userFolder : getChildren(sandbox, FOLDERS)) {
 					volumes.add(new File(home, userFolder.getName()));
 				}
 			} else {
+				// Linux / Mac
+				if (!isWindowsApp()) {
+					// Linux and Mac system root folders
+					for (File root : roots) {
+						volumes.addAll(getChildren(root, FOLDERS));
+					}
+
+					for (File mediaRoot : getMediaRoots()) {
+						volumes.addAll(getChildren(mediaRoot, FOLDERS));
+						volumes.add(mediaRoot);
+					}
+				}
+
+				// Windows / Linux
 				volumes.addAll(getChildren(home, FOLDERS));
 			}
 
