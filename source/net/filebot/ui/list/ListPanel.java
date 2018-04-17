@@ -3,6 +3,7 @@ package net.filebot.ui.list;
 import static java.awt.Font.*;
 import static java.util.stream.Collectors.*;
 import static javax.swing.BorderFactory.*;
+import static net.filebot.Settings.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.BorderLayout;
@@ -77,23 +78,26 @@ public class ListPanel extends JComponent {
 		list.setExportHandler(exportHandler);
 		list.getTransferHandler().setClipboardHandler(exportHandler);
 
-		// context menu
-		JPopupMenu popup = new JPopupMenu("List");
-		JMenu menu = new JMenu("Send to");
-		for (PanelBuilder panel : PanelBuilder.textHandlerSequence()) {
-			menu.add(newAction(panel.getName(), panel.getIcon(), evt -> {
-				String text = list.getExportHandler().export();
-				SwingEventBus.getInstance().post(panel);
-				invokeLater(200, () -> SwingEventBus.getInstance().post(new StringSelection(text)));
+		// XXX The user interface of your app is not consistent with the macOS Human Interface Guidelines. Specifically: We found that menu items are not visible, except by right-clicking (see screenshot). See the "WYSIWYG (What You See Is What You Get)," "Give Users
+		// Alternate Ways to Accomplish Tasks," and "Designing Contextual Menus" sections of the Human Interface Guidelines.
+		if (!isMacSandbox()) {
+			JPopupMenu popup = new JPopupMenu("List");
+			JMenu menu = new JMenu("Send to");
+			for (PanelBuilder panel : PanelBuilder.textHandlerSequence()) {
+				menu.add(newAction(panel.getName(), panel.getIcon(), evt -> {
+					String text = list.getExportHandler().export();
+					SwingEventBus.getInstance().post(panel);
+					invokeLater(200, () -> SwingEventBus.getInstance().post(new StringSelection(text)));
+				}));
+			}
+			popup.add(menu);
+			popup.addSeparator();
+			popup.add(newAction("Copy", ResourceManager.getIcon("rename.action.copy"), evt -> {
+				list.getTransferHandler().getClipboardHandler().exportToClipboard(this, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
 			}));
+			popup.add(new SaveAction(list.getExportHandler()));
+			list.getListComponent().setComponentPopupMenu(popup);
 		}
-		popup.add(menu);
-		popup.addSeparator();
-		popup.add(newAction("Copy", ResourceManager.getIcon("rename.action.copy"), evt -> {
-			list.getTransferHandler().getClipboardHandler().exportToClipboard(this, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
-		}));
-		popup.add(new SaveAction(list.getExportHandler()));
-		list.getListComponent().setComponentPopupMenu(popup);
 
 		// cell renderer
 		list.getListComponent().setCellRenderer(new DefaultFancyListCellRenderer() {

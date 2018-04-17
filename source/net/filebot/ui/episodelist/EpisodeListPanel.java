@@ -1,5 +1,6 @@
 package net.filebot.ui.episodelist;
 
+import static net.filebot.Settings.*;
 import static net.filebot.ui.episodelist.SeasonSpinnerModel.*;
 import static net.filebot.util.ui.SwingUI.*;
 import static net.filebot.web.EpisodeUtilities.*;
@@ -244,28 +245,31 @@ public class EpisodeListPanel extends AbstractSearchPanel<EpisodeListProvider, E
 			listScrollPane.setBorder(null);
 			setBorder(null);
 
-			// popup menu
-			JPopupMenu popup = new JPopupMenu("Episodes");
+			// XXX The user interface of your app is not consistent with the macOS Human Interface Guidelines. Specifically: We found that menu items are not visible, except by right-clicking (see screenshot). See the "WYSIWYG (What You See Is What You Get)," "Give Users
+			// Alternate Ways to Accomplish Tasks," and "Designing Contextual Menus" sections of the Human Interface Guidelines.
+			if (!isMacSandbox()) {
+				JPopupMenu popup = new JPopupMenu("Episodes");
 
-			JMenu menu = new JMenu("Send to");
-			for (PanelBuilder panel : PanelBuilder.episodeHandlerSequence()) {
-				menu.add(newAction(panel.getName(), panel.getIcon(), evt -> {
-					// switch to Rename panel
-					SwingEventBus.getInstance().post(panel);
+				JMenu menu = new JMenu("Send to");
+				for (PanelBuilder panel : PanelBuilder.episodeHandlerSequence()) {
+					menu.add(newAction(panel.getName(), panel.getIcon(), evt -> {
+						// switch to Rename panel
+						SwingEventBus.getInstance().post(panel);
 
-					// load episode data
-					invokeLater(200, () -> SwingEventBus.getInstance().post(exportHandler.export(this, false)));
+						// load episode data
+						invokeLater(200, () -> SwingEventBus.getInstance().post(exportHandler.export(this, false)));
+					}));
+				}
+
+				popup.add(menu);
+				popup.addSeparator();
+
+				popup.add(newAction("Copy", ResourceManager.getIcon("rename.action.copy"), evt -> {
+					getTransferHandler().getClipboardHandler().exportToClipboard(this, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
 				}));
+				popup.add(new SaveAction(getExportHandler()));
+				getListComponent().setComponentPopupMenu(popup);
 			}
-
-			popup.add(menu);
-			popup.addSeparator();
-
-			popup.add(newAction("Copy", ResourceManager.getIcon("rename.action.copy"), evt -> {
-				getTransferHandler().getClipboardHandler().exportToClipboard(this, Toolkit.getDefaultToolkit().getSystemClipboard(), TransferHandler.COPY);
-			}));
-			popup.add(new SaveAction(getExportHandler()));
-			getListComponent().setComponentPopupMenu(popup);
 		}
 
 	}
