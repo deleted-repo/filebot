@@ -105,7 +105,7 @@ public class DropToUnlock extends JList<File> {
 				File root = MediaDetection.getStructureRoot(file);
 
 				// if structure root doesn't work just grab first existing parent folder
-				if (root == null || root.getParentFile() == null || root.getName().isEmpty()) {
+				if (root == null || root.getName().isEmpty() || root.getParentFile() == null || root.getParentFile().getName().isEmpty()) {
 					for (File it : listPathTail(file, Integer.MAX_VALUE, true)) {
 						if (it.isDirectory()) {
 							return it;
