@@ -226,7 +226,7 @@ public class ReleaseInfo {
 			if (isMacSandbox()) {
 				// Mac
 				for (File mediaRoot : getMediaRoots()) {
-					// volumes.addAll(getChildren(mediaRoot, FOLDERS));
+					volumes.addAll(getChildren(mediaRoot, FOLDERS));
 					volumes.add(mediaRoot);
 				}
 
