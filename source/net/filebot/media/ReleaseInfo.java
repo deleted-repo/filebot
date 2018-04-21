@@ -226,6 +226,7 @@ public class ReleaseInfo {
 			if (isMacSandbox()) {
 				// Mac
 				for (File mediaRoot : getMediaRoots()) {
+					volumes.addAll(getChildren(mediaRoot, FOLDERS));
 					volumes.add(mediaRoot);
 				}
 
@@ -421,7 +422,7 @@ public class ReleaseInfo {
 
 	public List<File> getMediaRoots() {
 		String roots = getProperty("folder.media.roots");
-		return COMMA.splitAsStream(roots).map(File::new).collect(toList());
+		return COMMA.splitAsStream(roots).map(File::new).filter(File::exists).collect(toList());
 	}
 
 	public String[] getSubtitleCategoryTags() {
