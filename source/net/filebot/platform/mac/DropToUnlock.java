@@ -98,11 +98,23 @@ public class DropToUnlock extends JList<File> {
 		}
 	}
 
+	// NOTE: The app sandbox seems to allow read access to /Volumes by default
+	private static final File VOLUMES_FOLDER = new File("/Volumes");
+
 	public static List<File> getParentFolders(Collection<File> files) {
 		return files.stream().map(f -> f.isDirectory() ? f : f.getParentFile()).sorted().distinct().filter(f -> !f.exists() || isLockedFolder(f)).map(f -> {
 			try {
 				File file = f.getCanonicalFile();
 				File root = MediaDetection.getStructureRoot(file);
+
+				if (VOLUMES_FOLDER.equals(root)) {
+					List<File> path = listPath(file);
+
+					// i.e. [0] / [1] Volumes / [2] HDD
+					if (path.size() >= 3) {
+						return listPath(file).get(2);
+					}
+				}
 
 				// if structure root doesn't work just grab first existing parent folder
 				if (root == null || root.getName().isEmpty() || root.getParentFile() == null || root.getParentFile().getName().isEmpty()) {
@@ -114,6 +126,7 @@ public class DropToUnlock extends JList<File> {
 				}
 				return root;
 			} catch (Exception e) {
+				debug.log(Level.WARNING, e, e::toString);
 				return null;
 			}
 		}).filter(f -> f != null && !f.getName().isEmpty() && isLockedFolder(f)).sorted().distinct().collect(Collectors.toList());
