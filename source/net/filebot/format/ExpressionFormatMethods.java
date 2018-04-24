@@ -15,7 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.Normalizer;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
@@ -517,6 +520,10 @@ public class ExpressionFormatMethods {
 			return creationDate;
 		}
 		return attr.lastModifiedTime().toMillis();
+	}
+
+	public static LocalDateTime toDate(Long self) {
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(self), ZoneOffset.systemDefault());
 	}
 
 	public static File toFile(String self) {
