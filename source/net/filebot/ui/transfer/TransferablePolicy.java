@@ -55,8 +55,8 @@ public abstract class TransferablePolicy {
 			return TransferAction.fromDnDConstant(support.getDropAction());
 		}
 
-		// use PUT by default (e.g. clipboard transfers)
-		return TransferAction.PUT;
+		// use ADD by default (e.g. clipboard transfers)
+		return TransferAction.ADD;
 	}
 
 	public static enum TransferAction {
