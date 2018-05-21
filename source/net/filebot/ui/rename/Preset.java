@@ -4,6 +4,7 @@ import static java.util.Collections.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 import static net.filebot.WebServices.*;
+import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
@@ -60,7 +61,7 @@ public class Preset {
 	}
 
 	public ExpressionFileFilter getIncludeFilter() {
-		return getInputFolder() == null ? null : getValue(includes, expression -> new ExpressionFileFilter(expression));
+		return getInputFolder() == null ? null : getValue(includes, expression -> new ExpressionFileFilter(expression, xattr::getMetaInfo));
 	}
 
 	public ExpressionFileFormat getFormat() {

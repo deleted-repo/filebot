@@ -4,6 +4,7 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static net.filebot.Logging.*;
 import static net.filebot.hash.VerificationUtilities.*;
+import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.subtitle.SubtitleUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -66,7 +67,7 @@ public class ArgumentBean {
 	@Option(name = "--conflict", usage = "Conflict resolution", metaVar = "[skip, override, auto, index, fail]")
 	public String conflict = "skip";
 
-	@Option(name = "--filter", usage = "Filter expression", metaVar = "expression")
+	@Option(name = "--filter", usage = "Match filter expression", metaVar = "expression")
 	public String filter = null;
 
 	@Option(name = "--format", usage = "Format expression", metaVar = "expression")
@@ -144,6 +145,9 @@ public class ArgumentBean {
 	@Option(name = "-exec", usage = "Execute command", metaVar = "command", handler = RestOfArgumentsHandler.class)
 	public List<String> exec = new ArrayList<String>();
 
+	@Option(name = "--file-filter", usage = "Input file filter expression", metaVar = "expression")
+	public String inputFileFilter = null;
+
 	@Argument
 	public List<String> arguments = new ArrayList<String>();
 
@@ -171,7 +175,7 @@ public class ArgumentBean {
 		return clearPrefs;
 	}
 
-	public List<File> getFiles(boolean resolveFolders) {
+	public List<File> getFiles(boolean resolveFolders) throws Exception {
 		if (arguments == null || arguments.isEmpty()) {
 			return emptyList();
 		}
@@ -204,6 +208,11 @@ public class ArgumentBean {
 			} else {
 				files.add(file);
 			}
+		}
+
+		// input file filter (e.g. useful on Windows where find -exec is not an option)
+		if (inputFileFilter != null) {
+			return filter(files, new ExpressionFileFilter(inputFileFilter, f -> f));
 		}
 
 		return files;
@@ -244,7 +253,7 @@ public class ArgumentBean {
 	}
 
 	public FileFilter getFileFilter() throws Exception {
-		return filter == null ? FILES : new ExpressionFileFilter(filter);
+		return filter == null ? FILES : new ExpressionFileFilter(filter, xattr::getMetaInfo);
 	}
 
 	public Datasource getDatasource() {

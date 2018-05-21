@@ -155,7 +155,7 @@ public class Main {
 		}
 	}
 
-	private static void onStart(ArgumentBean args) {
+	private static void onStart(ArgumentBean args) throws Exception {
 		// publish file arguments
 		List<File> files = args.getFiles(false);
 		if (files.size() > 0) {
