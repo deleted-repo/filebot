@@ -8,11 +8,14 @@ import static net.filebot.Settings.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.FileUtilities.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -131,36 +134,61 @@ public final class WebServices {
 		}
 
 		// local TheMovieDB search index
-		private Map<Integer, Resource<LocalSearch<Movie>>> localIndexPerYear = synchronizedMap(new HashMap<>());
+		private final Map<Integer, LocalSearch<Movie>> localIndexPerYear = synchronizedMap(new HashMap<>());
 
-		private Resource<LocalSearch<Movie>> getLocalIndex(int year) {
-			return Resource.lazy(() -> {
-				if (year > 0) {
+		private LocalSearch<Movie> getLocalIndexByYear(int year) {
+			return localIndexPerYear.computeIfAbsent(year, y -> {
+				try {
 					// limit search index to a given year (so we don't have to check all movies of all time all the time)
 					Movie[] movies = stream(releaseInfo.getMovieList()).filter(m -> year == m.getYear()).toArray(Movie[]::new);
 
 					// search by primary movie name and all known alias names
 					return new LocalSearch<>(movies, Movie::getEffectiveNamesWithoutYear);
+				} catch (Exception e) {
+					throw new RuntimeException(e);
 				}
+			});
+		}
 
-				// check all movies of all time if release year is not known (but only compare to primary title for performance reasons)
-				return new LocalSearch<>(releaseInfo.getMovieList(), m -> singleton(m.getName()));
+		private LocalSearch<Movie> getLocalIndex() throws Exception {
+			return localIndexPerYear.computeIfAbsent(0, y -> {
+				try {
+					// check all movies of all time if release year is not known (but only compare to primary title for performance reasons)
+					return new LocalSearch<>(releaseInfo.getMovieList(), m -> singleton(m.getName()));
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
 			});
 		}
 
 		@Override
 		public List<Movie> searchMovie(String movieName, int movieYear, Locale locale, boolean extendedInfo) throws Exception {
 			// run local search and API search in parallel
-			Future<List<Movie>> apiSearch = requestThreadPool.submit(() -> TMDbClientWithLocalSearch.super.searchMovie(movieName, movieYear, locale, extendedInfo));
+			List<Callable<List<Movie>>> searches = new ArrayList<>();
 
-			// the year might be off by 1 so we also check movies from the previous year and the next year
-			Future<List<Movie>> localSearch1 = requestThreadPool.submit(() -> localIndexPerYear.computeIfAbsent(movieYear, this::getLocalIndex).get().search(movieName));
-			Future<List<Movie>> localSearch2 = requestThreadPool.submit(() -> localIndexPerYear.computeIfAbsent(movieYear - 1, this::getLocalIndex).get().search(movieName));
-			Future<List<Movie>> localSearch3 = requestThreadPool.submit(() -> localIndexPerYear.computeIfAbsent(movieYear + 1, this::getLocalIndex).get().search(movieName));
+			// online API search first
+			searches.add(() -> TMDbClientWithLocalSearch.super.searchMovie(movieName, movieYear, locale, extendedInfo));
+
+			if (movieYear > 0) {
+				// the year might be off by 1 so we also check movies from the previous year and the next year
+				searches.add(() -> getLocalIndexByYear(movieYear).search(movieName));
+				searches.add(() -> getLocalIndexByYear(movieYear - 1).search(movieName));
+				searches.add(() -> getLocalIndexByYear(movieYear + 1).search(movieName));
+			} else {
+				// search all movies of all years if year is unknown
+				searches.add(() -> getLocalIndex().search(movieName));
+			}
 
 			// combine alias names into a single search results, and keep API search name as primary name
-			return Stream.of(apiSearch.get(), localSearch1.get(), localSearch2.get(), localSearch3.get()).flatMap(List::stream).distinct().collect(toList());
+			LinkedHashSet<Movie> movies = new LinkedHashSet<>();
+
+			for (Future<List<Movie>> searchResult : requestThreadPool.invokeAll(searches)) {
+				movies.addAll(searchResult.get());
+			}
+
+			return new ArrayList<>(movies);
 		}
+
 	}
 
 	public static class TheTVDBClientWithLocalSearch extends TheTVDBClient {
