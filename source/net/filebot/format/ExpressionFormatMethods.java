@@ -47,6 +47,7 @@ import net.filebot.similarity.Normalization;
 import net.filebot.util.FileUtilities;
 import net.filebot.web.Episode;
 import net.filebot.web.EpisodeInfo;
+import net.filebot.web.Movie;
 import net.filebot.web.Person;
 import net.filebot.web.SeriesInfo;
 import net.filebot.web.SimpleDate;
@@ -589,6 +590,13 @@ public class ExpressionFormatMethods {
 	public static List<String> getActors(SeriesInfo self) throws Exception {
 		if (TheTVDB.getIdentifier().equals(self.getDatabase())) {
 			return TheTVDB.getActors(self.getId(), Locale.ENGLISH).stream().map(Person::getName).collect(toList());
+		}
+		return null;
+	}
+
+	public static Map<String, List<String>> getAlternativeTitles(Movie self) throws Exception {
+		if (self.getTmdbId() > 0) {
+			return TheMovieDB.getAlternativeTitles(self.getTmdbId());
 		}
 		return null;
 	}
