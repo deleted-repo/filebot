@@ -1,5 +1,8 @@
 package net.filebot.platform.mac;
 
+// TODO: disable 0-termination when reading / writing xattr String values (older versions will not be forwards-compatible with this change)
+// import static net.filebot.platform.mac.xattr.XAttrUtil.*;
+
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
