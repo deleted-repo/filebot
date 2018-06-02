@@ -54,6 +54,7 @@ import net.filebot.hash.HashType;
 import net.filebot.media.MetaAttributes;
 import net.filebot.media.PlexNamingStandard;
 import net.filebot.media.VideoFormat;
+import net.filebot.mediainfo.FFProbe;
 import net.filebot.mediainfo.ImageMetadata;
 import net.filebot.mediainfo.MediaInfo;
 import net.filebot.mediainfo.MediaInfo.StreamKind;
@@ -1077,6 +1078,11 @@ public class MediaBindingBean {
 	@Define("json")
 	public String getInfoObjectDump() {
 		return MetaAttributes.toJson(infoObject);
+	}
+
+	@Define("ffprobe")
+	public Object getFFProbeDump() throws Exception {
+		return new FFProbe().streams(getInferredMediaFile());
 	}
 
 	public File getInferredMediaFile() {
