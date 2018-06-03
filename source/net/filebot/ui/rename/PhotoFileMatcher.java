@@ -13,7 +13,7 @@ import java.util.Locale;
 import javax.swing.Icon;
 
 import net.filebot.ResourceManager;
-import net.filebot.mediainfo.ImageMetadata;
+import net.filebot.media.ImageMetadata;
 import net.filebot.similarity.Match;
 import net.filebot.web.Datasource;
 import net.filebot.web.SortOrder;

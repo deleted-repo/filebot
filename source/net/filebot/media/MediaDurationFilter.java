@@ -1,10 +1,11 @@
-package net.filebot.mediainfo;
+package net.filebot.media;
 
 import static net.filebot.Logging.*;
 
 import java.io.File;
 import java.io.FileFilter;
 
+import net.filebot.mediainfo.MediaInfo;
 import net.filebot.mediainfo.MediaInfo.StreamKind;
 
 public class MediaDurationFilter implements FileFilter {

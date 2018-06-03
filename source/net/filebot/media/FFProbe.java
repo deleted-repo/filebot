@@ -1,4 +1,4 @@
-package net.filebot.mediainfo;
+package net.filebot.media;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
@@ -14,7 +14,7 @@ import com.cedarsoftware.util.io.JsonReader;
 public class FFProbe {
 
 	public String getFFProbeCommand() {
-		return System.getProperty("net.filebot.mediainfo.ffprobe", "ffprobe");
+		return System.getProperty("net.filebot.media.ffprobe", "ffprobe");
 	}
 
 	public List<Map<String, Object>> streams(File file) throws IOException, InterruptedException {

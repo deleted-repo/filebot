@@ -1,4 +1,4 @@
-package net.filebot.mediainfo;
+package net.filebot.media;
 
 import static java.util.Arrays.*;
 import static net.filebot.Logging.*;

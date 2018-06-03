@@ -21,6 +21,8 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
+import net.filebot.media.ImageMetadata;
+
 public class MediaInfo implements Closeable {
 
 	private Pointer handle;
