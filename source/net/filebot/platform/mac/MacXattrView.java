@@ -16,7 +16,7 @@ public class MacXattrView {
 
 	public MacXattrView(Path path) {
 		// MacOS filesystem may require NFD unicode decomposition
-		this.path = Normalizer.normalize(path.toFile().getAbsolutePath(), Form.NFD);
+		this.path = Normalizer.normalize(path.toAbsolutePath().toString(), Form.NFD);
 	}
 
 	public List<String> list() {
