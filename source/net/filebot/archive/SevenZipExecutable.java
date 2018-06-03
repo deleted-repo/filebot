@@ -32,7 +32,7 @@ public class SevenZipExecutable implements ArchiveExtractor {
 
 	protected String get7zCommand() {
 		// use 7z executable path as specified by the cmdline or default to "7z" and let the shell figure it out
-		return System.getProperty("net.filebot.Archive.7z", "7z");
+		return System.getProperty("net.filebot.archive.7z", "7z");
 	}
 
 	protected CharSequence execute(String... command) throws IOException {
