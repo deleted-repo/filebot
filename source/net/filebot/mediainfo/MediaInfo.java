@@ -5,11 +5,11 @@ import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.util.RegularExpressions.*;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.ref.Cleaner;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -22,8 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 
 import net.filebot.media.ImageMetadata;
+import net.filebot.media.MediaCharacteristics;
 
-public class MediaInfo implements Closeable {
+public class MediaInfo implements MediaCharacteristics {
 
 	private Pointer handle;
 	private Cleaner.Cleanable cleanable;
@@ -136,6 +137,46 @@ public class MediaInfo implements Closeable {
 
 	public synchronized int parameterCount(StreamKind streamKind, int streamNumber) {
 		return MediaInfoLibrary.INSTANCE.Count_Get(handle, streamKind.ordinal(), streamNumber);
+	}
+
+	@Override
+	public String getVideoCodec() {
+		return get(StreamKind.Video, 0, "CodecID");
+	}
+
+	@Override
+	public String getAudioCodec() {
+		return get(StreamKind.Audio, 0, "CodecID");
+	}
+
+	@Override
+	public String getAudioLanguage() {
+		return get(StreamKind.General, 0, "AudioLanguageList");
+	}
+
+	@Override
+	public String getSubtitleCodec() {
+		return get(StreamKind.General, 0, "TextCodecList");
+	}
+
+	@Override
+	public Duration getDuration() {
+		return Duration.ofMillis(Long.parseLong(get(StreamKind.General, 0, "Duration")));
+	}
+
+	@Override
+	public Integer getWidth() {
+		return Integer.parseInt(get(StreamKind.Video, 0, "Width"));
+	}
+
+	@Override
+	public Integer getHeight() {
+		return Integer.parseInt(get(StreamKind.Video, 0, "Height"));
+	}
+
+	@Override
+	public Float getFrameRate() {
+		return Float.parseFloat(get(StreamKind.Video, 0, "FrameRate"));
 	}
 
 	public Map<StreamKind, List<Map<String, String>>> snapshot() {

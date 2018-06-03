@@ -2,9 +2,11 @@ package net.filebot.media;
 
 import java.time.Duration;
 
-public interface MediaCharacteristics {
+public interface MediaCharacteristics extends AutoCloseable {
 
 	String getVideoCodec();
+
+	String getAudioCodec();
 
 	String getAudioLanguage();
 
@@ -12,6 +14,10 @@ public interface MediaCharacteristics {
 
 	Duration getDuration();
 
-	float getFrameRate();
+	Integer getWidth();
+
+	Integer getHeight();
+
+	Float getFrameRate();
 
 }

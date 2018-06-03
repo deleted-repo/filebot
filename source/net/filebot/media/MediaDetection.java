@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.text.CollationKey;
-import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +49,6 @@ import net.filebot.Resource;
 import net.filebot.WebServices;
 import net.filebot.archive.Archive;
 import net.filebot.mediainfo.MediaInfo;
-import net.filebot.mediainfo.MediaInfo.StreamKind;
 import net.filebot.similarity.DateMatcher;
 import net.filebot.similarity.EpisodeMetrics;
 import net.filebot.similarity.MetricAvg;
@@ -1117,12 +1115,12 @@ public class MediaDetection {
 
 			filesByExtension.stream().collect(groupingBy(f -> {
 				if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
-					try (MediaInfo mi = new MediaInfo().open(f)) {
-						Object d = Duration.ofMillis(Long.parseLong(mi.get(StreamKind.General, 0, "Duration"))).toMinutes() < 10 ? ChronoUnit.MINUTES : ChronoUnit.HOURS;
-						String v = mi.get(StreamKind.Video, 0, "CodecID");
-						String a = mi.get(StreamKind.Audio, 0, "CodecID");
-						String w = mi.get(StreamKind.Video, 0, "Width");
-						String h = mi.get(StreamKind.Video, 0, "Height");
+					try (MediaCharacteristics mi = new MediaInfo().open(f)) {
+						ChronoUnit d = mi.getDuration().toMinutes() < 10 ? ChronoUnit.MINUTES : ChronoUnit.HOURS;
+						String v = mi.getVideoCodec();
+						String a = mi.getAudioCodec();
+						Integer w = mi.getWidth();
+						Integer h = mi.getHeight();
 						return asList(d, v, a, w, h);
 					} catch (Exception e) {
 						debug.warning(format("Failed to read media characteristics: %s", e.getMessage()));

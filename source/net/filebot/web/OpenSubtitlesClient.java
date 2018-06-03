@@ -28,9 +28,9 @@ import net.filebot.Cache;
 import net.filebot.Cache.TypedCache;
 import net.filebot.CacheType;
 import net.filebot.ResourceManager;
+import net.filebot.media.MediaCharacteristics;
 import net.filebot.media.MediaDetection;
 import net.filebot.mediainfo.MediaInfo;
-import net.filebot.mediainfo.MediaInfo.StreamKind;
 import net.filebot.util.ExceptionUtilities;
 import net.filebot.util.Timer;
 import net.filebot.web.OpenSubtitlesXmlRpc.BaseInfo;
@@ -312,9 +312,9 @@ public class OpenSubtitlesClient implements SubtitleProvider, VideoHashSubtitleS
 			sub.setSubContent(readFile(subtitleFile));
 		}
 
-		try (MediaInfo mi = new MediaInfo().open(videoFile)) {
-			sub.setMovieFPS(mi.get(StreamKind.Video, 0, "FrameRate"));
-			sub.setMovieTimeMS(mi.get(StreamKind.General, 0, "Duration"));
+		try (MediaCharacteristics mi = new MediaInfo().open(videoFile)) {
+			sub.setMovieFPS(String.valueOf(mi.getFrameRate()));
+			sub.setMovieTimeMS(String.valueOf(mi.getDuration().toMillis()));
 		} catch (Throwable e) {
 			debug.log(Level.SEVERE, "Failed to read media info", e);
 		}

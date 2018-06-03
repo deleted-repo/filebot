@@ -15,8 +15,8 @@ import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.filebot.media.MediaCharacteristics;
 import net.filebot.mediainfo.MediaInfo;
-import net.filebot.mediainfo.MediaInfo.StreamKind;
 import net.filebot.similarity.CrossPropertyMetric;
 import net.filebot.similarity.EpisodeMetrics;
 import net.filebot.similarity.MetricAvg;
@@ -185,10 +185,8 @@ public enum SubtitleMetrics implements SimilarityMetric {
 
 		private Map<String, Object> getVideoProperties(File file) {
 			return mediaInfoCache.computeIfAbsent(file, key -> {
-				try (MediaInfo mi = new MediaInfo().open(file)) {
-					float fps = Float.parseFloat(mi.get(StreamKind.Video, 0, "FrameRate"));
-					long millis = Long.parseLong(mi.get(StreamKind.Video, 0, "Duration"));
-					return getProperties(fps, millis);
+				try (MediaCharacteristics mi = new MediaInfo().open(file)) {
+					return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
 				} catch (Exception e) {
 					debug.warning("Failed to read video properties: " + e.getMessage());
 				}

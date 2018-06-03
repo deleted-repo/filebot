@@ -17,7 +17,6 @@ import static net.filebot.util.StringUtilities.*;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -36,7 +35,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import net.filebot.mediainfo.MediaInfo;
-import net.filebot.mediainfo.MediaInfo.StreamKind;
 import net.filebot.similarity.NameSimilarityMetric;
 import net.filebot.util.FastFile;
 import net.filebot.web.Episode;
@@ -118,9 +116,8 @@ public class AutoDetection {
 
 		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
 			// check for Japanese audio or characteristic subtitles
-			try (MediaInfo mi = new MediaInfo().open(f)) {
-				long minutes = Duration.ofMillis(Long.parseLong(mi.get(StreamKind.General, 0, "Duration"))).toMinutes();
-				return minutes < 60 || mi.get(StreamKind.General, 0, "AudioLanguageList").contains("Japanese") && mi.get(StreamKind.General, 0, "TextCodecList").contains("ASS");
+			try (MediaCharacteristics mi = new MediaInfo().open(f)) {
+				return mi.getDuration().toMinutes() < 60 || mi.getAudioLanguage().contains("Japanese") && mi.getSubtitleCodec().contains("ASS");
 			} catch (Exception e) {
 				debug.warning("Failed to read audio language: " + e.getMessage());
 			}
