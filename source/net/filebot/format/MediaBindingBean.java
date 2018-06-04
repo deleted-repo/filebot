@@ -1082,7 +1082,7 @@ public class MediaBindingBean {
 
 	@Define("ffprobe")
 	public Object getFFProbeDump() throws Exception {
-		return new FFProbe().streams(getInferredMediaFile());
+		return new FFProbe().open(getInferredMediaFile());
 	}
 
 	public File getInferredMediaFile() {
