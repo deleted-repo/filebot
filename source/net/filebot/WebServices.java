@@ -9,13 +9,13 @@ import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -134,7 +134,7 @@ public final class WebServices {
 		}
 
 		// local TheMovieDB search index
-		private final Map<Integer, LocalSearch<Movie>> localIndexPerYear = synchronizedMap(new HashMap<>());
+		private final Map<Integer, LocalSearch<Movie>> localIndexPerYear = new ConcurrentHashMap<>(64);
 
 		private LocalSearch<Movie> getLocalIndexByYear(int year) {
 			return localIndexPerYear.computeIfAbsent(year, y -> {
