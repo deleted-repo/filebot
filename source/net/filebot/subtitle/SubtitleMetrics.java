@@ -16,7 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.filebot.media.MediaCharacteristics;
-import net.filebot.mediainfo.MediaInfo;
+import net.filebot.media.MediaCharacteristicsParser;
 import net.filebot.similarity.CrossPropertyMetric;
 import net.filebot.similarity.EpisodeMetrics;
 import net.filebot.similarity.MetricAvg;
@@ -184,8 +184,8 @@ public enum SubtitleMetrics implements SimilarityMetric {
 		private final Map<File, Map<String, Object>> mediaInfoCache = synchronizedMap(new WeakHashMap<File, Map<String, Object>>(64));
 
 		private Map<String, Object> getVideoProperties(File file) {
-			return mediaInfoCache.computeIfAbsent(file, key -> {
-				try (MediaCharacteristics mi = new MediaInfo().open(file)) {
+			return mediaInfoCache.computeIfAbsent(file, f -> {
+				try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
 					return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
 				} catch (Exception e) {
 					debug.warning("Failed to read video properties: " + e.getMessage());

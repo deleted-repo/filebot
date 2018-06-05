@@ -48,7 +48,6 @@ import net.filebot.Language;
 import net.filebot.Resource;
 import net.filebot.WebServices;
 import net.filebot.archive.Archive;
-import net.filebot.mediainfo.MediaInfo;
 import net.filebot.similarity.DateMatcher;
 import net.filebot.similarity.EpisodeMetrics;
 import net.filebot.similarity.MetricAvg;
@@ -1115,7 +1114,7 @@ public class MediaDetection {
 
 			filesByExtension.stream().collect(groupingBy(f -> {
 				if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
-					try (MediaCharacteristics mi = new MediaInfo().open(f)) {
+					try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
 						ChronoUnit d = mi.getDuration().toMinutes() < 10 ? ChronoUnit.MINUTES : ChronoUnit.HOURS;
 						String v = mi.getVideoCodec();
 						String a = mi.getAudioCodec();

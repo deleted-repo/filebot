@@ -5,8 +5,6 @@ import static net.filebot.Logging.*;
 import java.io.File;
 import java.io.FileFilter;
 
-import net.filebot.mediainfo.MediaInfo;
-
 public class MediaDurationFilter implements FileFilter {
 
 	private final long min;
@@ -24,7 +22,7 @@ public class MediaDurationFilter implements FileFilter {
 	}
 
 	public long getDuration(File f) {
-		try (MediaCharacteristics mi = new MediaInfo().open(f)) {
+		try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
 			return mi.getDuration().toMillis();
 		} catch (Exception e) {
 			debug.warning(format("Failed to read video duration: %s", e.getMessage()));

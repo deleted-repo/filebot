@@ -34,7 +34,6 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import net.filebot.mediainfo.MediaInfo;
 import net.filebot.similarity.NameSimilarityMetric;
 import net.filebot.util.FastFile;
 import net.filebot.web.Episode;
@@ -84,6 +83,9 @@ public class AutoDetection {
 	private static final Pattern SERIES_EPISODE_PATTERN = Pattern.compile("^tv[sp][ _.-]", CASE_INSENSITIVE);
 	private static final Pattern ANIME_EPISODE_PATTERN = Pattern.compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
 
+	private static final Pattern JAPANESE_AUDIO_LANGUAGE_PATTERN = Pattern.compile("jpn|Japanese", CASE_INSENSITIVE);
+	private static final Pattern JAPANESE_SUBTITLE_CODEC_PATTERN = Pattern.compile("ASS|SSA", CASE_INSENSITIVE);
+
 	public boolean isMusic(File f) {
 		return AUDIO_FILES.accept(f) && !VIDEO_FILES.accept(f);
 	}
@@ -116,8 +118,8 @@ public class AutoDetection {
 
 		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
 			// check for Japanese audio or characteristic subtitles
-			try (MediaCharacteristics mi = new MediaInfo().open(f)) {
-				return mi.getDuration().toMinutes() < 60 || mi.getAudioLanguage().contains("Japanese") && mi.getSubtitleCodec().contains("ASS");
+			try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+				return mi.getDuration().toMinutes() < 60 || find(mi.getAudioLanguage(), JAPANESE_AUDIO_LANGUAGE_PATTERN) && find(mi.getSubtitleCodec(), JAPANESE_SUBTITLE_CODEC_PATTERN);
 			} catch (Exception e) {
 				debug.warning("Failed to read audio language: " + e.getMessage());
 			}

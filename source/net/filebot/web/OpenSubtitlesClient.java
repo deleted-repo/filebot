@@ -29,8 +29,8 @@ import net.filebot.Cache.TypedCache;
 import net.filebot.CacheType;
 import net.filebot.ResourceManager;
 import net.filebot.media.MediaCharacteristics;
+import net.filebot.media.MediaCharacteristicsParser;
 import net.filebot.media.MediaDetection;
-import net.filebot.mediainfo.MediaInfo;
 import net.filebot.util.ExceptionUtilities;
 import net.filebot.util.Timer;
 import net.filebot.web.OpenSubtitlesXmlRpc.BaseInfo;
@@ -312,7 +312,7 @@ public class OpenSubtitlesClient implements SubtitleProvider, VideoHashSubtitleS
 			sub.setSubContent(readFile(subtitleFile));
 		}
 
-		try (MediaCharacteristics mi = new MediaInfo().open(videoFile)) {
+		try (MediaCharacteristics mi = MediaCharacteristicsParser.open(videoFile)) {
 			sub.setMovieFPS(String.valueOf(mi.getFrameRate()));
 			sub.setMovieTimeMS(String.valueOf(mi.getDuration().toMillis()));
 		} catch (Throwable e) {
