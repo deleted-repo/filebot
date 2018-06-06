@@ -243,7 +243,7 @@ public class ExpressionFormatMethods {
 	 * e.g. "Deep Space 9" -> "DS9"
 	 */
 	public static String acronym(String self) {
-		return compile("\\s|\\B\\p{Alnum}+", UNICODE_CHARACTER_CLASS).matcher(space(sortName(self), " ")).replaceAll("");
+		return compile("\\s|\\B\\p{Alnum}+", UNICODE_CHARACTER_CLASS).matcher(space(self, " ")).replaceAll("");
 	}
 
 	public static String truncate(String self, int limit) {
