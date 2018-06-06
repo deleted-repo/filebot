@@ -36,7 +36,7 @@
 		<dependency rev="1.10.3" org="org.apache.ant" name="ant-javamail" />
 		<dependency rev="1.10.3" org="org.apache.ant" name="ant-jsch" />
 		<dependency rev="2.4.0" org="org.apache.ivy" name="ivy" />
-		<dependency rev="1.6.1" org="javax.mail" name="javax.mail-api" />
+		<dependency rev="1.6.1" org="com.sun.mail" name="javax.mail" />
 		<dependency rev="1.1.1" org="javax.activation" name="activation" />
 
 		<!-- FileBot Ant Build -->
