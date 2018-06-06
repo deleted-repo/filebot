@@ -324,7 +324,7 @@
 			<zipfileset src="${dir.dist}/lib/jsch.jar">
 				<include name="com/jcraft/jsch/**" />
 			</zipfileset>
-			<zipfileset src="${dir.dist}/lib/javax.mail-api.jar">
+			<zipfileset src="${dir.dist}/lib/javax.mail.jar">
 				<include name="javax/mail/**" />
 				<include name="com/sun/mail/**" />
 				<include name="META-INF/*mail*" />
