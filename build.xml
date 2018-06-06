@@ -752,7 +752,6 @@
 				<include name="commons-vfs2.jar" />
 				<include name="jaxb-api.jar" />
 				<include name="jaxb-impl.jar" />
-				<include name="activation.jar" />
 				<include name="junrar.jar" />
 				<include name="jna.jar" />
 				<include name="jna-platform.jar" />
@@ -764,7 +763,17 @@
 				<include name="commons-logging.jar" />
 				<include name="slf4j-api.jar" />
 				<include name="slf4j-jdk14.jar" />
-				<include name="groovy-all.jar" />
+				<include name="groovy.jar" />
+				<include name="groovy-ant.jar" />
+				<include name="groovy-bsf.jar" />
+				<include name="groovy-datetime.jar" />
+				<include name="groovy-dateutil.jar" />
+				<include name="groovy-json.jar" />
+				<include name="groovy-jsr223.jar" />
+				<include name="groovy-nio.jar" />
+				<include name="groovy-sql.jar" />
+				<include name="groovy-swing.jar" />
+				<include name="groovy-xml.jar" />
 				<include name="ivy.jar" />
 				<include name="jsoup.jar" />
 				<include name="ant.jar" />

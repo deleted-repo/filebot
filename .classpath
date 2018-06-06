@@ -23,7 +23,6 @@
 	<classpathentry kind="lib" path="lib/ivy/jar/slf4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/commons-io.jar" sourcepath="lib/ivy/source/commons-io.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/jsoup.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/groovy-all.jar" sourcepath="lib/ivy/source/groovy-all.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/slf4j-jdk14.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/hamcrest-core.jar"/>
 	<classpathentry kind="lib" path="lib/jars/ObjCBridge.jar"/>
@@ -43,6 +42,14 @@
 	<classpathentry kind="lib" path="lib/ivy/jar/glazedlists_java16.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/activation.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-ant.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-bsf.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-json.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-jsr223.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-nio.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-sql.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-swing.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-xml.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
