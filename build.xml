@@ -324,7 +324,7 @@
 			<zipfileset src="${dir.dist}/lib/jsch.jar">
 				<include name="com/jcraft/jsch/**" />
 			</zipfileset>
-			<zipfileset src="${dir.dist}/lib/mail.jar">
+			<zipfileset src="${dir.dist}/lib/javax.mail-api.jar">
 				<include name="javax/mail/**" />
 				<include name="com/sun/mail/**" />
 				<include name="META-INF/*mail*" />
@@ -783,7 +783,7 @@
 				<include name="ant-javamail.jar" />
 				<include name="commons-net.jar" />
 				<include name="jsch.jar" />
-				<include name="mail.jar" />
+				<include name="javax.mail-api.jar" />
 			</fileset>
 			<fileset dir="${dir.lib}/ivy/bundle">
 				<include name="args4j.jar" />
