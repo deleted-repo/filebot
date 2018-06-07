@@ -215,14 +215,16 @@ tvdb_updates.values().each{ update ->
 		try {
 			retry(2, 60000) {
 				def seriesNames = []
-				def xml = new XmlSlurper().parse("https://thetvdb.com/api/BA864DEE427E384A/series/${update.id}/en.xml")
-				def imdbid = any{ xml.Series.IMDB_ID.text().match(/tt\d+/) }{ '' }
 
-				seriesNames += xml.Series.SeriesName.text()
+				def seriesInfo = TheTVDB.getSeriesInfo(update.id, Locale.ENGLISH)
+				def imdbid = seriesInfo.imdbId ?: ''
 
-				def rating = any{ xml.Series.Rating.text().toFloat() }{ 0 }
-				def votes = any{ xml.Series.RatingCount.text().toFloat() }{ 0 }
-				def year = any{ xml.Series.FirstAired.text().match(/\d{4}/) as Integer }{ 0 }
+				seriesNames += seriesInfo.name
+				seriesNames += seriesInfo.aliasNames
+
+				def rating = seriesInfo.rating ?: 0
+				def votes = seriesInfo.ratingCount ?: 0
+				def year = seriesInfo.startDate?.year ?: 0
 
 				// only retrieve additional data for reasonably popular shows
 				if (imdbid && votes >= 3 && rating >= 4) {
@@ -231,29 +233,19 @@ tvdb_updates.values().each{ update ->
 					}
 
 					// scrape extra alias titles from webpage (not supported yet by API)
-					def html = Cache.getCache('thetvdb_series_page', CacheType.Persistent).text(update.id) { 
-						return new URL("https://thetvdb.com/?tab=series&id=${it}")
-					}.expire(Cache.ONE_MONTH).get()
+					def jsoup = org.jsoup.Jsoup.connect("https://thetvdb.com/?tab=series&id=${update.id}").get()
+					def intlseries = jsoup.select('#translations div.change_translation_text')
+						*.attr('data-title')
+						*.trim()
 
-					def jsoup = org.jsoup.Jsoup.parse(html)
-					def akaseries = jsoup.select('#akaseries table tr table tr')
-												.findAll{ it.select('td').any{ it.text() ==~ /en/ } }
-												.findResults{ it.select('td').first().text() }
-												.findAll{ it?.length() > 0 }
-					def intlseries = jsoup.select('#seriesform input')
-												.findAll{ it.attr('name') =~ /SeriesName/ }
-												.sort{ it.attr('name').match(/\d+/) as int }
-												.collect{ it.attr('value') }
-												.findAll{ it?.length() > 0 }
-
-					log.fine "Scraped data $akaseries and $intlseries for series $seriesNames"
-					seriesNames += akaseries
+					log.fine "Scraped data $intlseries for series $seriesNames"
 					seriesNames += intlseries
 				}
 
 				def data = [update.time, update.id, imdbid, rating, votes, year] + seriesNames.findAll{ it != null && it.length() > 0 }
-				tvdb.put(update.id, data)
 				log.info "Update $update => $data"
+
+				tvdb.put(update.id, data)
 			}
 		}
 		catch(Throwable e) {
