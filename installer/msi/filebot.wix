@@ -1,34 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 
-<!-- Pass in Processor Architecture via Ant Build Properties -->
-<?define Platform = "@{arch}" ?>
-
 <!-- Windows Installer product code and upgrade code -->
 <?define UpgradeCode = "86809B6B-E2E3-43EC-9351-D4D66CAF7864" ?>
-
-<!-- Set a specific product code based on the processor architecture build variable -->
-<?if $(var.Platform)=x64 ?>
-	<?define ProgramFiles = "ProgramFiles64Folder" ?>
-	<?define Win64 = "yes" ?>
-<?else ?>
-	<?define ProgramFiles = "ProgramFilesFolder" ?>
-	<?define Win64 = "no" ?>
-<?endif ?>
 
 
 <Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>
 	<Product Id='*' Name='@{application.name}' Manufacturer='@{package.developer}' Version='@{application.version}' UpgradeCode='$(var.UpgradeCode)' Language='1033' Codepage='1252'>
 
-		<Package Description="FileBot Installer" Manufacturer='@{package.developer}' InstallerVersion='300' Compressed='yes' Platform="$(var.Platform)" />
+		<Package Description="FileBot Installer" Manufacturer='@{package.developer}' InstallerVersion='300' Compressed='yes' Platform="x64" />
 
 		<MajorUpgrade AllowDowngrades="yes" IgnoreRemoveFailure="yes" />
 
 		<Directory Id='TARGETDIR' Name='SourceDir'>
-			<Directory Id='$(var.ProgramFiles)' Name='Program Files'>
+			<Directory Id='ProgramFiles64Folder' Name='Program Files'>
 				<Directory Id='INSTALLDIR' Name='@{application.name}'>
 
-					<Component Id='ApplicationStub' Guid='A7B21026-DA54-4AF8-9227-188565AB9C4E' Win64="$(var.Win64)">
+					<Component Id='ApplicationStub' Guid='A7B21026-DA54-4AF8-9227-188565AB9C4E' Win64="yes">
 						<File Id='filebot.launcher.exe' Name='filebot.launcher.exe' Source='filebot.launcher.exe' KeyPath='yes'>
 							<Shortcut Id="shortcut.menu.filebot" Directory="ProgramMenuDir" Name="@{application.name}" Description="@{package.synopsis}" WorkingDirectory='INSTALLDIR' Icon="icon.ico" Advertise="no">
 								<ShortcutProperty Key="System.AppUserModel.ID" Value="@{application.name}" />
@@ -54,6 +42,12 @@
 						<File Id='filebot.l4j.ini' Name='filebot.l4j.ini' Source='filebot.l4j.ini' />
 
 						<Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]" Action="set" Part="last" Permanent="no" System="yes" />
+
+						<ProgId Id="ActivateLicense" Description="FileBot License File" Advertise="no" >
+							<Extension Id="psm" ContentType="application/filebot-license" Advertise="no" >
+								<Verb Id="Open" Command="Activate License" TargetFile="filebot.exe" Argument='--import-license "%1"' />
+							</Extension>
+						</ProgId>
 
 						<Shortcut Id="shortcut.uninstall" Directory="ProgramMenuDir" Name="Uninstall FileBot" Description="Uninstall FileBot" Icon="icon.ico" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Advertise="no" />
 					</Component>
