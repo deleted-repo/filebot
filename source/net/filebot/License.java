@@ -2,7 +2,6 @@ package net.filebot;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
-import static net.filebot.CachedResource.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
@@ -93,7 +92,7 @@ public class License implements Serializable {
 
 	private void verifyLicense() throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
-		Object json = new CachedResource<Long, Object>(id, i -> new URL("https://license.filebot.net/verify/" + id), (url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null), getText(UTF_8), getJson(String.class::cast), Cache.ONE_MONTH, cache).get();
+		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null)).expire(Cache.ONE_MONTH).get();
 
 		if (getInteger(json, "status") != 200) {
 			throw new PGPException(getString(json, "message"));
