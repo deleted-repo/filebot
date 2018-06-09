@@ -785,6 +785,8 @@
 				<include name="jsch.jar" />
 				<include name="javax.mail.jar" />
 				<include name="activation.jar" />
+				<include name="bcprov-jdk15on.jar" />
+				<include name="bcpg-jdk15on.jar" />
 			</fileset>
 			<fileset dir="${dir.lib}/ivy/bundle">
 				<include name="args4j.jar" />
