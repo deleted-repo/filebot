@@ -114,10 +114,6 @@ public final class Settings {
 		return false;
 	}
 
-	public static String getApplicationUserModelID() {
-		return System.getProperty("net.filebot.AppUserModelID", getApplicationName());
-	}
-
 	public static FileChooser getPreferredFileChooser() {
 		return FileChooser.valueOf(System.getProperty("net.filebot.UserFiles.fileChooser", "Swing"));
 	}
@@ -139,7 +135,7 @@ public final class Settings {
 		if (isMacApp())
 			return "Mac App Store";
 		if (isWindowsApp())
-			return "Windows Store";
+			return "Microsoft Store";
 		if (isUbuntuApp())
 			return "Ubuntu Software Center";
 

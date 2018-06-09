@@ -3,6 +3,8 @@ package net.filebot;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
+import static net.filebot.Settings.*;
+import static net.filebot.platform.windows.WinAppUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
@@ -27,12 +29,34 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 
 import net.filebot.util.ByteBufferOutputStream;
+import net.filebot.util.SystemProperty;
 import net.filebot.web.WebRequest;
 
 public class License implements Serializable {
 
-	public static final File LICENSE_FILE = ApplicationFolder.AppData.resolve("license.txt");
-	public static final Resource<License> INSTANCE = Resource.lazy(() -> new License(readFile(LICENSE_FILE)));
+	public static final SystemProperty<File> LICENSE_FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
+
+	public static final Resource<License> INSTANCE = Resource.lazy(() -> {
+		return new License(readFile(LICENSE_FILE.get()));
+	});
+
+	public static final void check() throws Exception {
+		if (isAppStore()) {
+			if (isWindowsApp() && "PointPlanck.FileBot".equals(getAppUserModelID())) {
+				return;
+			} else if (isMacSandbox() && !File.listRoots()[0].canRead()) {
+				return;
+			}
+			throw new Exception("BAD LICENSE: " + getAppStoreName() + " sandbox not found");
+		}
+
+		// check license file
+		License license = INSTANCE.get();
+
+		if (!license.isValid()) {
+			throw new Exception("BAD LICENSE: " + license);
+		}
+	};
 
 	private byte[] bytes;
 
