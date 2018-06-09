@@ -82,7 +82,7 @@ public final class Settings {
 	}
 
 	public static boolean isAppStore() {
-		return isApplicationDeployment("mas", "appx");
+		return isApplicationDeployment("appx", "mas");
 	}
 
 	public static boolean isWindowsApp() {
@@ -99,6 +99,10 @@ public final class Settings {
 
 	public static boolean isMacSandbox() {
 		return isApplicationDeployment("mas");
+	}
+
+	public static boolean isUWP() {
+		return isApplicationDeployment("appx");
 	}
 
 	public static boolean isAutoUpdateEnabled() {

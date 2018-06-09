@@ -3,13 +3,9 @@ package net.filebot;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
-import static net.filebot.Settings.*;
-import static net.filebot.platform.windows.WinAppUtilities.*;
-import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
 import java.time.Instant;
@@ -29,34 +25,9 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 
 import net.filebot.util.ByteBufferOutputStream;
-import net.filebot.util.SystemProperty;
 import net.filebot.web.WebRequest;
 
 public class License implements Serializable {
-
-	public static final SystemProperty<File> LICENSE_FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
-
-	public static final Resource<License> INSTANCE = Resource.lazy(() -> {
-		return new License(readFile(LICENSE_FILE.get()));
-	});
-
-	public static final void check() throws Exception {
-		if (isAppStore()) {
-			if (isWindowsApp() && "PointPlanck.FileBot".equals(getAppUserModelID())) {
-				return;
-			} else if (isMacSandbox() && !File.listRoots()[0].canRead()) {
-				return;
-			}
-			throw new Exception("BAD LICENSE: " + getAppStoreName() + " sandbox not found");
-		}
-
-		// check license file
-		License license = INSTANCE.get();
-
-		if (!license.isValid()) {
-			throw new Exception("BAD LICENSE: " + license);
-		}
-	};
 
 	private byte[] bytes;
 
@@ -76,8 +47,8 @@ public class License implements Serializable {
 		verifyLicense();
 	}
 
-	public boolean isValid() {
-		return expires < System.currentTimeMillis();
+	public boolean expired() {
+		return expires > System.currentTimeMillis();
 	}
 
 	public Map<String, String> getProperties() throws Exception {
@@ -111,7 +82,7 @@ public class License implements Serializable {
 		signature.update(clearSignMessage.getBytes(UTF_8));
 
 		if (!signature.verify()) {
-			throw new PGPException("BAD LICENSE: Signature does not match");
+			throw new PGPException("Signature does not match");
 		}
 
 		return clearSignMessage;
