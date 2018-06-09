@@ -28,6 +28,8 @@
 		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
 		<dependency rev="3.0.0" org="com.googlecode.lanterna" name="lanterna" />
 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
+		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
+
 
 		<!-- FileBot Scripting -->
 		<dependency rev="1.10.3" org="org.apache.ant" name="ant" />

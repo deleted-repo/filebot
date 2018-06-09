@@ -52,5 +52,7 @@
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-xml.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/javax.mail-api.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/bcpg-jdk15on.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/bcprov-jdk15on.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
