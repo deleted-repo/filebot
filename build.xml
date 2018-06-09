@@ -73,6 +73,29 @@
 	</macrodef>
 
 
+	<!-- deploy release artifacts -->
+	<macrodef name="get-java">
+		<attribute name="arch" />
+		<attribute name="src" />
+		<attribute name="dest" />
+		<sequential>
+			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+				<env key="PROCESSOR_ARCHITECTURE" value="@{arch}" />
+				<arg line="get-java" />
+			</exec>
+			<untar src="${dir.cache}/@{src}" dest="@{dest}" compression="gzip">
+				<patternset>
+					<exclude name="**/dtplugin/**" />
+					<exclude name="**/plugin2/**" />
+					<exclude name="**/jfxwebkit.dll" />
+				</patternset>
+				<cutdirsmapper dirs="1" />
+			</untar>
+		</sequential>
+	</macrodef>
+
+
+
 	<target name="resolve" description="Retrieve dependencies with Apache Ivy">
 		<delete dir="${dir.lib}/ivy" />
 		<ivy:retrieve pattern="${dir.lib}/ivy/[type]/[artifact].[ext]" />
@@ -644,11 +667,10 @@
 	</target>
 
 
-	<target name="msi" description="Build Windows Installer packages" depends="">
+	<target name="msi" description="Build Windows Installer packages" depends="revision">
 		<antcall target="msi-arch">
 			<param name="arch" value="x64" />
 			<param name="arch.env" value="AMD64" />
-			<param name="arch.jre" value="x64" />
 		</antcall>
 	</target>
 
@@ -656,18 +678,8 @@
 	<target name="msi-arch">
 		<property name="dir.staging" location="${dir.dist}/msi/${arch}" />
 
-		<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
-			<env key="PROCESSOR_ARCHITECTURE" value="${arch.env}" />
-			<arg line="get-java" />
-		</exec>
-		<untar src="${dir.cache}/jre-${jre.version}_windows-${arch.jre}_bin.tar.gz" dest="${dir.staging}/jre" compression="gzip">
-			<patternset>
-				<exclude name="**/dtplugin/**" />
-				<exclude name="**/plugin2/**" />
-				<exclude name="**/jfxwebkit.dll" />
-			</patternset>
-			<cutdirsmapper dirs="1" />
-		</untar>
+		<!-- 1. prepare application files for heat harvest -->
+		<get-java arch="${arch.env}" src="jre-${jre.version}_windows-${arch}_bin.tar.gz" dest="${dir.staging}/jre" />
 
 		<copy todir="${dir.staging}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
@@ -684,7 +696,7 @@
 		</exec>
 
 
-
+		<!-- 2. prepare installer files and application stub for candle light -->
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/msi" includes="*.exe, *.rtf, *.bmp" />
 		</copy>
@@ -694,7 +706,6 @@
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/msi" includes="*.wix, *.ini" />
 		</copy-replace>
-
 
 		<exec executable="candle" dir="${dir.staging}" failonerror="true">
 			<arg line="filebot.wix -out filebot.wixobj" />
