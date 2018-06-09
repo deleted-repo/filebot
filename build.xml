@@ -644,12 +644,11 @@
 	</target>
 
 
-	<target name="msi" description="Build Windows Installer packages" depends="revision">
+	<target name="msi" description="Build Windows Installer packages" depends="">
 		<antcall target="msi-arch">
 			<param name="arch" value="x64" />
-		</antcall>
-		<antcall target="msi-arch">
-			<param name="arch" value="x86" />
+			<param name="arch.env" value="AMD64" />
+			<param name="arch.jre" value="x64" />
 		</antcall>
 	</target>
 
@@ -657,24 +656,51 @@
 	<target name="msi-arch">
 		<property name="dir.staging" location="${dir.dist}/msi/${arch}" />
 
+		<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+			<env key="PROCESSOR_ARCHITECTURE" value="${arch.env}" />
+			<arg line="get-java" />
+		</exec>
+		<untar src="${dir.cache}/jre-${jre.version}_windows-${arch.jre}_bin.tar.gz" dest="${dir.staging}/jre" compression="gzip">
+			<patternset>
+				<exclude name="**/dtplugin/**" />
+				<exclude name="**/plugin2/**" />
+				<exclude name="**/jfxwebkit.dll" />
+			</patternset>
+			<cutdirsmapper dirs="1" />
+		</untar>
+
+		<copy todir="${dir.staging}/jar">
+			<fileset dir="${dir.dist}/lib" includes="*.jar" />
+		</copy>
+		<copy todir="${dir.staging}/lib">
+			<fileset dir="${dir.lib}/native/win32-${arch}" />
+		</copy>
+
+		<exec executable="heat" dir="${dir.staging}" failonerror="true">
+			<arg line="dir . -v -srd -gg -dr ApplicationBase -cg ApplicationBase -template fragment -sreg -sfrag -scom -out base.wxs" />
+		</exec>
+		<exec executable="candle" dir="${dir.staging}" failonerror="true">
+			<arg line="base.wxs -out base.wixobj" />
+		</exec>
+
+
+
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/msi" includes="*.exe, *.rtf, *.bmp" />
-		</copy>
-		<copy todir="${dir.staging}">
-			<fileset dir="${dir.lib}/native/win32-${arch}" />
 		</copy>
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/icons" includes="*.ico" />
 		</copy>
 		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/msi" includes="*.wix, *.ini, *.properties" />
+			<fileset dir="${dir.installer}/msi" includes="*.wix, *.ini" />
 		</copy-replace>
 
+
 		<exec executable="candle" dir="${dir.staging}" failonerror="true">
-			<arg line="filebot.wix -out msi.wixobj" />
+			<arg line="filebot.wix -out filebot.wixobj" />
 		</exec>
 		<exec executable="light" dir="${dir.staging}" failonerror="true">
-			<arg line="msi.wixobj -sval -ext WixUIExtension -out ${dir.dist}/${release}_${arch}.msi" />
+			<arg line="filebot.wixobj base.wixobj -sval -ext WixUIExtension -out ${dir.dist}/${release}_${arch}.msi" />
 		</exec>
 	</target>
 
