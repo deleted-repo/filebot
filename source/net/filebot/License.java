@@ -36,16 +36,16 @@ public class License implements Serializable {
 
 	private byte[] bytes;
 
-	private int id;
+	private long id;
 	private long expires;
 
 	public License(byte[] bytes) throws Exception {
 		this.bytes = bytes;
 
-		// verify and get clear sign content
+		// verify and get clear signed content
 		Map<String, String> properties = getProperties();
 
-		this.id = Integer.parseInt(properties.get("Order"));
+		this.id = Long.parseLong(properties.get("Order"));
 		this.expires = LocalDate.parse(properties.get("Valid-Until"), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay(ZoneOffset.UTC).plusDays(1).minusSeconds(1).toInstant().toEpochMilli();
 
 		// verify license online
