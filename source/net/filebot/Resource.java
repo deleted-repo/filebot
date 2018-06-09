@@ -7,7 +7,7 @@ public interface Resource<R> {
 
 	R get() throws Exception;
 
-	default Resource<R> memoize() {
+	default MemoizedResource<R> memoize() {
 		return new MemoizedResource<R>(this);
 	}
 
@@ -15,7 +15,7 @@ public interface Resource<R> {
 		return new TransformedResource<R, T>(this, function);
 	}
 
-	static <T> Resource<T> lazy(Resource<T> resource) {
+	static <T> MemoizedResource<T> lazy(Resource<T> resource) {
 		return resource.memoize();
 	}
 
@@ -36,6 +36,10 @@ class MemoizedResource<R> implements Resource<R> {
 			value = resource.get();
 		}
 		return value;
+	}
+
+	public synchronized void clear() {
+		value = null;
 	}
 }
 

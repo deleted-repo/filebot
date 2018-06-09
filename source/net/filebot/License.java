@@ -34,21 +34,23 @@ public class License implements Serializable {
 	private long id;
 	private long expires;
 
-	public License(byte[] bytes) throws Exception {
+	private Exception error;
+
+	public License(byte[] bytes) {
 		this.bytes = bytes;
 
-		// verify and get clear signed content
-		Map<String, String> properties = getProperties();
+		try {
+			// verify and get clear signed content
+			Map<String, String> properties = getProperties();
 
-		this.id = Long.parseLong(properties.get("Order"));
-		this.expires = LocalDate.parse(properties.get("Valid-Until"), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay(ZoneOffset.UTC).plusDays(1).minusSeconds(1).toInstant().toEpochMilli();
+			this.id = Long.parseLong(properties.get("Order"));
+			this.expires = LocalDate.parse(properties.get("Valid-Until"), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay(ZoneOffset.UTC).plusDays(1).minusSeconds(1).toInstant().toEpochMilli();
 
-		// verify license online
-		verifyLicense();
-	}
-
-	public boolean expired() {
-		return expires > System.currentTimeMillis();
+			// verify license online
+			verifyLicense();
+		} catch (Exception e) {
+			error = e;
+		}
 	}
 
 	public Map<String, String> getProperties() throws Exception {
@@ -94,6 +96,16 @@ public class License implements Serializable {
 
 		if (!message.equals("OK")) {
 			throw new PGPException(message);
+		}
+	}
+
+	public void check() throws Exception {
+		if (error != null) {
+			throw error;
+		}
+
+		if (expires > System.currentTimeMillis()) {
+			throw new IllegalStateException("Expired: " + toString());
 		}
 	}
 

@@ -8,7 +8,7 @@ import java.io.File;
 
 import net.filebot.util.SystemProperty;
 
-public enum LicenseType {
+public enum LicenseModel {
 
 	MicrosoftStore {
 
@@ -33,16 +33,12 @@ public enum LicenseType {
 	PGPSignedMessage {
 
 		public final SystemProperty<File> LICENSE_FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
-		public final Resource<License> LICENSE = Resource.lazy(() -> new License(readFile(LICENSE_FILE.get())));
+		public final MemoizedResource<License> LICENSE = Resource.lazy(() -> new License(readFile(LICENSE_FILE.get())));
 
 		@Override
 		public void check() throws LicenseError {
 			try {
-				License license = LICENSE.get();
-
-				if (license.expired()) {
-					throw new LicenseError("Expired: " + license);
-				}
+				LICENSE.get().check();
 			} catch (Exception e) {
 				throw new LicenseError(e.getMessage());
 			}
@@ -51,7 +47,7 @@ public enum LicenseType {
 
 	public abstract void check() throws LicenseError;
 
-	public static LicenseType get() {
+	public static LicenseModel get() {
 		if (isUWP())
 			return MicrosoftStore;
 		if (isMacSandbox())
