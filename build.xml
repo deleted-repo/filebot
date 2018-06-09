@@ -73,21 +73,17 @@
 	</macrodef>
 
 
-	<!-- deploy release artifacts -->
-	<macrodef name="get-java">
-		<attribute name="arch" />
-		<attribute name="src" />
+	<!-- fetch and unpack JRE bundle -->
+	<macrodef name="get-windows-jre">
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
-				<env key="PROCESSOR_ARCHITECTURE" value="@{arch}" />
 				<arg line="get-java" />
 			</exec>
-			<untar src="${dir.cache}/@{src}" dest="@{dest}" compression="gzip">
+			<untar src="${dir.cache}/jre-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 				<patternset>
 					<exclude name="**/dtplugin/**" />
 					<exclude name="**/plugin2/**" />
-					<exclude name="**/jfxwebkit.dll" />
 				</patternset>
 				<cutdirsmapper dirs="1" />
 			</untar>
@@ -634,19 +630,7 @@
 		</copy-replace>
 
 		<!-- fetch latest JRE -->
-		<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
-			<env key="PROCESSOR_ARCHITECTURE" value="${arch.env}" />
-			<arg line="get-java" />
-		</exec>
-		<untar src="${dir.cache}/jre-${jre.version}_windows-${arch.jre}_bin.tar.gz" dest="${dir.staging}/jre" compression="gzip">
-			<patternset>
-				<exclude name="**/dtplugin/**" />
-				<exclude name="**/plugin2/**" />
-				<exclude name="**/jfxwebkit.dll" />
-			</patternset>
-			<cutdirsmapper dirs="1" />
-		</untar>
-
+		<get-windows-jre dest="${dir.staging}/jre" />
 
 		<!-- Workaround for VS2013 / CoInitialize hack (see http://mail.openjdk.java.net/pipermail/swing-dev/2018-February/008323.html) -->
 		<delete verbose="yes">
@@ -679,7 +663,7 @@
 		<property name="dir.staging" location="${dir.dist}/msi/${arch}" />
 
 		<!-- 1. prepare application files for heat harvest -->
-		<get-java arch="${arch.env}" src="jre-${jre.version}_windows-${arch}_bin.tar.gz" dest="${dir.staging}/jre" />
+		<get-windows-jre dest="${dir.staging}/jre" />
 
 		<copy todir="${dir.staging}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
