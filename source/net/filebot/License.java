@@ -95,7 +95,7 @@ public class License implements Serializable {
 
 	private void verifyLicense() throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
-		String message = new CachedResource<Integer, String>(id, i -> new URL("https://license.filebot.net/verify/" + id), (url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null), getText(UTF_8), String.class::cast, Cache.ONE_MONTH, cache).get().trim();
+		String message = new CachedResource<Long, String>(id, i -> new URL("https://license.filebot.net/verify/" + id), (url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null), getText(UTF_8), String.class::cast, Cache.ONE_MONTH, cache).get().trim();
 
 		if (!message.equals("OK")) {
 			throw new PGPException(message);
