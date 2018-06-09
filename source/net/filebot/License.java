@@ -3,6 +3,7 @@ package net.filebot;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
+import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
@@ -84,7 +85,7 @@ public class License implements Serializable {
 		signature.update(clearSignMessage.getBytes(UTF_8));
 
 		if (!signature.verify()) {
-			throw new PGPException("Signature does not match");
+			throw new PGPException("Bad Signature");
 		}
 
 		return clearSignMessage;
@@ -92,10 +93,10 @@ public class License implements Serializable {
 
 	private void verifyLicense() throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
-		String message = new CachedResource<Long, String>(id, i -> new URL("https://license.filebot.net/verify/" + id), (url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null), getText(UTF_8), String.class::cast, Cache.ONE_MONTH, cache).get().trim();
+		Object json = new CachedResource<Long, Object>(id, i -> new URL("https://license.filebot.net/verify/" + id), (url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null), getText(UTF_8), getJson(String.class::cast), Cache.ONE_MONTH, cache).get();
 
-		if (!message.equals("OK")) {
-			throw new PGPException(message);
+		if (getInteger(json, "status") != 200) {
+			throw new PGPException(getString(json, "message"));
 		}
 	}
 
@@ -104,14 +105,14 @@ public class License implements Serializable {
 			throw error;
 		}
 
-		if (expires > System.currentTimeMillis()) {
+		if (expires < System.currentTimeMillis()) {
 			throw new IllegalStateException("Expired: " + toString());
 		}
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s (Valid-Until: %s)", id, Instant.ofEpochMilli(expires).atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
+		return String.format("License %s (Valid-Until: %s)", id, Instant.ofEpochMilli(expires).atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 
 }
