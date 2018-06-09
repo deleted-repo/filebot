@@ -84,6 +84,7 @@
 				<patternset>
 					<exclude name="**/dtplugin/**" />
 					<exclude name="**/plugin2/**" />
+					<exclude name="**/jfxwebkit.dll" />
 				</patternset>
 				<cutdirsmapper dirs="1" />
 			</untar>
