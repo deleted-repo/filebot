@@ -73,6 +73,8 @@ class RenameAction extends AbstractAction {
 				return;
 			}
 
+			LICENSE.check();
+
 			List<Match<Object, File>> matches = new ArrayList<Match<Object, File>>(model.matches());
 			StandardRenameAction action = (StandardRenameAction) getValue(RENAME_ACTION);
 
