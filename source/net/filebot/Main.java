@@ -113,22 +113,19 @@ public class Main {
 
 			// CLI mode => run command-line interface and then exit
 			if (args.runCLI()) {
-				int status = new ArgumentProcessor().run(args);
-				System.exit(status);
-			}
-
-			// CLI behaviour for console interactive usage
-			if (isHeadless() || System.console() != null) {
-				// print license to console if we have an interactive console
+				// just import and print license when running with --license option
 				if (configureLicense(args)) {
 					System.exit(0);
 				}
 
-				// exit with man page if we can't launch the GUI
-				if (isHeadless()) {
-					log.info(String.format("%s / %s (headless)%n%n%s", getApplicationIdentifier(), getJavaRuntimeIdentifier(), args.usage()));
-					System.exit(1);
-				}
+				int status = new ArgumentProcessor().run(args);
+				System.exit(status);
+			}
+
+			// just print help page if we can't run any command and also can't start the GUI
+			if (isHeadless()) {
+				log.info(String.format("%s / %s (headless)%n%n%s", getApplicationIdentifier(), getJavaRuntimeIdentifier(), args.usage()));
+				System.exit(1);
 			}
 
 			// GUI mode => start user interface
