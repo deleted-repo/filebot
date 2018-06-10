@@ -33,8 +33,8 @@ import net.filebot.web.WebRequest;
 public class License implements Serializable {
 
 	private String product;
-	private long id;
-	private long expires;
+	private String id;
+	private Instant expires;
 
 	private Exception error;
 
@@ -44,8 +44,8 @@ public class License implements Serializable {
 			Map<String, String> properties = getProperties(bytes);
 
 			this.product = properties.get("Product");
-			this.id = Long.parseLong(properties.get("Order"));
-			this.expires = LocalDate.parse(properties.get("Valid-Until"), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay(ZoneOffset.UTC).plusDays(1).minusSeconds(1).toInstant().toEpochMilli();
+			this.id = properties.get("Order");
+			this.expires = LocalDate.parse(properties.get("Valid-Until"), DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay(ZoneOffset.UTC).plusDays(1).minusSeconds(1).toInstant();
 
 			// verify license online
 			verifyLicense(bytes);
@@ -105,14 +105,14 @@ public class License implements Serializable {
 			throw error;
 		}
 
-		if (expires < System.currentTimeMillis()) {
+		if (Instant.now().isAfter(expires)) {
 			throw new IllegalStateException("Expired: " + toString());
 		}
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%s License %s (Valid-Until: %s)", product, id, Instant.ofEpochMilli(expires).atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
+		return String.format("%s License %s (Valid-Until: %s)", product, id, expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 
 	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
