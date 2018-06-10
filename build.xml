@@ -618,10 +618,12 @@
 		<property name="dir.staging" location="${dir.dist}/appx/${arch}" />
 
 		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/appx" includes="*.exe, *.properties, *.ico, **/*.png" />
-			<fileset dir="${dir.lib}/native/win32-${arch}" />
+			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
 		</copy>
 		<copy todir="${dir.staging}/lib">
+			<fileset dir="${dir.lib}/native/win32-${arch}" />
+		</copy>
+		<copy todir="${dir.staging}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
 
@@ -683,7 +685,7 @@
 
 		<!-- 3. compile MSI package (use -b to add additional resource folders) -->
 		<exec executable="light" dir="${dir.staging}" failonerror="true">
-			<arg line="filebot.wixobj base.wixobj -b base -b '${dir.installer}/msi' -b '${dir.installer}/icons' -sval -ext WixUIExtension -out ${dir.dist}/${release}_x64.msi" />
+			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi -b ${dir.installer}/icons -sval -ext WixUIExtension -out ${dir.dist}/${release}_x64.msi" />
 		</exec>
 	</target>
 
