@@ -351,8 +351,8 @@ public class ArgumentBean {
 		}).orElseThrow(error("Illegal mode", mode));
 	}
 
-	public Optional<File> getLicenseFile() {
-		return optional(license).map(File::new);
+	public File getLicenseFile() {
+		return license == null ? null : new File(license);
 	}
 
 	private final String[] args;

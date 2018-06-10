@@ -21,17 +21,17 @@ public class ArgumentProcessor {
 			// interactive mode enables basic selection and confirmation dialogs in the CLI
 			CmdlineInterface cli = args.isInteractive() ? new CmdlineOperationsTextUI() : new CmdlineOperations();
 
+			// execute simple command
 			if (args.script == null) {
-				// execute command
 				return runCommand(cli, args);
-			} else {
-				// execute user script
-				runScript(cli, args);
-
-				// script finished successfully
-				log.finest("Done ヾ(＠⌒ー⌒＠)ノ");
-				return 0;
 			}
+
+			// execute user script
+			runScript(cli, args);
+
+			// script finished successfully
+			log.finest("Done ヾ(＠⌒ー⌒＠)ノ");
+			return 0;
 		} catch (Throwable e) {
 			if (findCause(e, CmdlineException.class) != null) {
 				log.log(Level.WARNING, findCause(e, CmdlineException.class).getMessage());

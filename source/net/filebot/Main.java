@@ -117,9 +117,18 @@ public class Main {
 				System.exit(status);
 			}
 
-			if (isHeadless()) {
-				log.info(String.format("%s / %s (headless)%n%n%s", getApplicationIdentifier(), getJavaRuntimeIdentifier(), args.usage()));
-				System.exit(1);
+			// CLI behaviour for console interactive usage
+			if (isHeadless() || System.console() != null) {
+				// print license to console if we have an interactive console
+				if (configureLicense(args)) {
+					System.exit(0);
+				}
+
+				// exit with man page if we can't launch the GUI
+				if (isHeadless()) {
+					log.info(String.format("%s / %s (headless)%n%n%s", getApplicationIdentifier(), getJavaRuntimeIdentifier(), args.usage()));
+					System.exit(1);
+				}
 			}
 
 			// GUI mode => start user interface
@@ -155,6 +164,23 @@ public class Main {
 		}
 	}
 
+	private static boolean configureLicense(ArgumentBean args) {
+		File file = args.getLicenseFile();
+
+		if (file == null || LICENSE != LicenseModel.PGPSignedMessage) {
+			return false;
+		}
+
+		try {
+			License license = License.configure(file);
+			log.info(license + " has been activated.");
+		} catch (Throwable e) {
+			log.severe("License Error: " + e.getMessage());
+		}
+
+		return true;
+	}
+
 	private static void onStart(ArgumentBean args) throws Exception {
 		// publish file arguments
 		List<File> files = args.getFiles(false);
@@ -162,17 +188,8 @@ public class Main {
 			SwingEventBus.getInstance().post(new FileTransferable(files));
 		}
 
-		// import license if started with license file
-		if (LicenseModel.PGPSignedMessage == LICENSE) {
-			args.getLicenseFile().ifPresent(f -> {
-				try {
-					License license = License.configure(f);
-					log.info(license + " has been activated.");
-				} catch (Throwable e) {
-					log.severe("License Error: " + e.getMessage());
-				}
-			});
-		}
+		// import license if launched with license file
+		configureLicense(args);
 
 		// JavaFX is used for ProgressMonitor and GettingStartedDialog
 		try {
