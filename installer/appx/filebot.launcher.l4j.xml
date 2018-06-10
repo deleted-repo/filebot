@@ -13,7 +13,7 @@
   <stayAlive>true</stayAlive>
   <restartOnCrash>false</restartOnCrash>
   <manifest></manifest>
-  <icon>..\icons\shortcut.ico</icon>
+  <icon>icon.ico</icon>
   <classPath>
     <mainClass>net.filebot.Main</mainClass>
     <cp>%EXEDIR%\lib\*.jar</cp>

@@ -100,7 +100,7 @@
 		<WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
 		<WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
 
-		<Icon Id="icon.ico" SourceFile="shortcut.ico" />
+		<Icon Id="icon.ico" SourceFile="icon.ico" />
 		<Property Id="ARPPRODUCTICON" Value="icon.ico" />
 		<Property Id="REBOOT" Value="ReallySuppress" />
 		<Property Id="LicenseAccepted" Value="1" />
