@@ -30,8 +30,10 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
 
 import net.filebot.HistorySpooler;
+import net.filebot.LicenseError;
 import net.filebot.NativeRenameAction;
 import net.filebot.ResourceManager;
 import net.filebot.StandardRenameAction;
@@ -73,8 +75,6 @@ class RenameAction extends AbstractAction {
 				return;
 			}
 
-			LICENSE.check();
-
 			List<Match<Object, File>> matches = new ArrayList<Match<Object, File>>(model.matches());
 			StandardRenameAction action = (StandardRenameAction) getValue(RENAME_ACTION);
 
@@ -82,6 +82,8 @@ class RenameAction extends AbstractAction {
 			Map<File, File> renameLog = new LinkedHashMap<File, File>();
 
 			try {
+				LICENSE.check();
+
 				if (useNativeShell() && NativeRenameAction.isSupported(action)) {
 					// call on EDT
 					NativeRenameWorker worker = new NativeRenameWorker(renameMap, renameLog, NativeRenameAction.valueOf(action.name()));
@@ -92,6 +94,9 @@ class RenameAction extends AbstractAction {
 					String message = String.format("%s %d %s. This may take a while.", action.getDisplayVerb(), renameMap.size(), renameMap.size() == 1 ? "file" : "files");
 					ProgressMonitor.runTask(action.getDisplayName(), message, worker).get();
 				}
+			} catch (LicenseError e) {
+				JOptionPane.showMessageDialog(window, e.getMessage(), "License Error", JOptionPane.WARNING_MESSAGE);
+				return;
 			} catch (CancellationException e) {
 				debug.finest(e::toString);
 			} catch (Throwable e) {

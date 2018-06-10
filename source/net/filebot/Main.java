@@ -188,6 +188,14 @@ public class Main {
 		// import license if launched with license file
 		configureLicense(args);
 
+		if (LICENSE == LicenseModel.PGPSignedMessage) {
+			try {
+				LICENSE.check();
+			} catch (Throwable e) {
+				debug.finest(e::toString);
+			}
+		}
+
 		// JavaFX is used for ProgressMonitor and GettingStartedDialog
 		try {
 			initJavaFX();

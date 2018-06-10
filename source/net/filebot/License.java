@@ -2,14 +2,16 @@ package net.filebot;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
-import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -38,8 +40,15 @@ public class License implements Serializable {
 
 	private Exception error;
 
-	public License(byte[] bytes) {
+	public License(File file) {
 		try {
+			// read and verify license file
+			if (!file.exists()) {
+				throw new FileNotFoundException("License not found");
+			}
+
+			byte[] bytes = Files.readAllBytes(file.toPath());
+
 			// verify and get clear signed content
 			Map<String, String> properties = getProperties(bytes);
 
@@ -112,21 +121,19 @@ public class License implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("%s License %s (Valid-Until: %s)", product, id, expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
+		return String.format("%s License %s (Valid-Until: %s)", product, id, expires == null ? null : expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 
 	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
-	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> new License(readFile(FILE.get())));
+	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> new License(FILE.get()));
 
 	public static License configure(File file) throws Exception {
-		byte[] bytes = readFile(file);
-
 		// check if license file is valid and not expired
-		License license = new License(bytes);
+		License license = new License(file);
 		license.check();
 
 		// write to default license file path
-		writeFile(bytes, FILE.get());
+		Files.copy(file.toPath(), FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
 
 		// clear memoized instance and reload on next access
 		INSTANCE.clear();

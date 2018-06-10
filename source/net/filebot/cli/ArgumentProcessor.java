@@ -2,6 +2,7 @@ package net.filebot.cli;
 
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
+import static net.filebot.Settings.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -13,6 +14,8 @@ import java.util.stream.Stream;
 
 import javax.script.Bindings;
 import javax.script.SimpleBindings;
+
+import net.filebot.LicenseError;
 
 public class ArgumentProcessor {
 
@@ -32,6 +35,10 @@ public class ArgumentProcessor {
 			// script finished successfully
 			log.finest("Done ヾ(＠⌒ー⌒＠)ノ");
 			return 0;
+		} catch (LicenseError e) {
+			log.severe("License Error: " + e.getMessage());
+			log.info(format("%n%s %s requires a valid license:%n%n=> %s%n%nPlease run `filebot --license *.psm` to install your FileBot license.%n", getApplicationName(), getApplicationVersion(), getPurchaseURL()));
+			return 1;
 		} catch (Throwable e) {
 			if (findCause(e, CmdlineException.class) != null) {
 				log.log(Level.WARNING, findCause(e, CmdlineException.class).getMessage());
