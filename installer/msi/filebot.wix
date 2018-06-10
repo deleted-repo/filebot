@@ -34,7 +34,7 @@
 						</File>
 
 						<File Id='filebot.exe' Name='filebot.exe' Source='filebot.exe'>
-							<Shortcut Id="shortcut.menu.filebot.cmd" Directory="ProgramMenuDir" Name="FileBot (console)" Description="Launch FileBot with debug logging" WorkingDirectory='INSTALLDIR' />
+							<Shortcut Id="shortcut.menu.filebot.cmd" Directory="ProgramMenuDir" Name="FileBot (console)" Description="Launch FileBot with Debug Console" WorkingDirectory='INSTALLDIR' />
 						</File>
 
 						<File Id='filebot.launcher.l4j.ini' Name='filebot.launcher.l4j.ini' Source='filebot.launcher.l4j.ini' />
@@ -45,7 +45,7 @@
 
 						<ProgId Id="ActivateLicense" Description="FileBot License File" Advertise="no" >
 							<Extension Id="psm" ContentType="application/filebot-license" Advertise="no" >
-								<Verb Id="Open" Command="Activate License" TargetFile="filebot.exe" Argument='--import-license "%1"' />
+								<Verb Id="Open" Command="Activate License" TargetFile="filebot.launcher.exe" Argument='--license "%1"' />
 							</Extension>
 						</ProgId>
 
