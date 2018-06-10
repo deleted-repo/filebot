@@ -25,7 +25,7 @@ import net.filebot.util.PreferencesMap.StringAdapter;
 
 public final class Settings {
 
-	public static final LicenseModel LICENSE = LicenseModel.get();
+	public static final LicenseModel LICENSE = getLicenseModel();
 
 	public static String getApplicationName() {
 		return getApplicationProperty("application.name");
@@ -135,6 +135,15 @@ public final class Settings {
 		}
 
 		return Runtime.getRuntime().availableProcessors();
+	}
+
+	public static LicenseModel getLicenseModel() {
+		if (isUWP())
+			return LicenseModel.MicrosoftStore;
+		if (isMacSandbox())
+			return LicenseModel.MacAppStore;
+
+		return LicenseModel.PGPSignedMessage;
 	}
 
 	public static String getAppStoreName() {

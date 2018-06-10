@@ -139,6 +139,9 @@ public class ArgumentBean {
 	@Option(name = "-help", usage = "Print this help message")
 	public boolean help = false;
 
+	@Option(name = "--license", usage = "Import license file", metaVar = "file")
+	public String license = null;
+
 	@Option(name = "--def", usage = "Define script variables", handler = BindingsHandler.class)
 	public Map<String, String> defines = new LinkedHashMap<String, String>();
 
@@ -346,6 +349,10 @@ public class ArgumentBean {
 
 			return panel;
 		}).orElseThrow(error("Illegal mode", mode));
+	}
+
+	public Optional<File> getLicenseFile() {
+		return optional(license).map(File::new);
 	}
 
 	private final String[] args;

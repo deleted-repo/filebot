@@ -225,6 +225,10 @@ public final class FileUtilities {
 		return destination;
 	}
 
+	public static File writeFile(byte[] data, File destination) throws IOException {
+		return Files.write(destination.toPath(), data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE).toFile();
+	}
+
 	public static Reader createTextReader(InputStream in, boolean guess, Charset declaredEncoding) throws IOException {
 		byte head[] = new byte[BOM.SIZE];
 		in.mark(head.length);

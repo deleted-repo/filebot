@@ -162,11 +162,23 @@ public class Main {
 			SwingEventBus.getInstance().post(new FileTransferable(files));
 		}
 
+		// import license if started with license file
+		if (LicenseModel.PGPSignedMessage == LICENSE) {
+			args.getLicenseFile().ifPresent(f -> {
+				try {
+					License license = License.configure(f);
+					log.info(license + " has been activated.");
+				} catch (Throwable e) {
+					log.severe("License Error: " + e.getMessage());
+				}
+			});
+		}
+
 		// JavaFX is used for ProgressMonitor and GettingStartedDialog
 		try {
 			initJavaFX();
 		} catch (Throwable e) {
-			log.log(Level.SEVERE, "Failed to initialize JavaFX. Please install JavaFX.", e);
+			log.log(Level.SEVERE, "Failed to initialize JavaFX", e);
 		}
 
 		// check if application help should be shown
