@@ -25,6 +25,8 @@ import net.filebot.util.PreferencesMap.StringAdapter;
 
 public final class Settings {
 
+	public static final LicenseModel LICENSE = LicenseModel.get();
+
 	public static String getApplicationName() {
 		return getApplicationProperty("application.name");
 	}
@@ -157,8 +159,8 @@ public final class Settings {
 		return null;
 	}
 
-	public static String getDonateURL() {
-		return getApplicationProperty("donate.url") + "?src=" + getApplicationDeployment();
+	public static String getPurchaseURL() {
+		return getApplicationProperty("link.app.purchase") + "?src=" + getApplicationDeployment();
 	}
 
 	public static String getEmbeddedHelpURL() {
