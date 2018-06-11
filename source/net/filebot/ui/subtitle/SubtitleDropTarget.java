@@ -196,11 +196,6 @@ abstract class SubtitleDropTarget extends JButton {
 				return false;
 			}
 
-			if (getSubtitleService().isAnonymous() && !isAppStore()) {
-				log.info(String.format("%s: Please enter your login details.", getSubtitleService().getName()));
-				return false;
-			}
-
 			List<File> files = listFiles(selection, VIDEO_FILES, HUMAN_NAME_ORDER);
 
 			if (files.size() > 0) {

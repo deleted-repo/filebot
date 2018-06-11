@@ -32,7 +32,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 
 import com.google.common.eventbus.Subscribe;
@@ -148,15 +147,6 @@ public class SubtitlePanel extends AbstractSearchPanel<SubtitleProvider, Subtitl
 	@Override
 	protected SubtitleRequestProcessor createRequestProcessor() {
 		SubtitleProvider provider = searchTextField.getSelectButton().getSelectedValue();
-
-		if (provider instanceof OpenSubtitlesClient && ((OpenSubtitlesClient) provider).isAnonymous() && !isAppStore()) {
-			log.info(String.format("%s: Please enter your login details first.", ((OpenSubtitlesClient) provider).getName()));
-
-			// automatically open login dialog
-			SwingUtilities.invokeLater(() -> setUserAction.actionPerformed(new ActionEvent(searchTextField, 0, "login")));
-
-			return null;
-		}
 
 		// parse query
 		String query = searchTextField.getText();
