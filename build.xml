@@ -73,7 +73,7 @@
 	</macrodef>
 
 
-	<!-- fetch and unpack JRE bundle -->
+	<!-- fetch and unpack JRE bundle (64-bit Windows) -->
 	<macrodef name="get-windows-jre">
 		<attribute name="dest" />
 		<sequential>
@@ -84,12 +84,37 @@
 				<patternset>
 					<exclude name="**/dtplugin/**" />
 					<exclude name="**/plugin2/**" />
+
+					<!-- reduce MSI size by ~20 MB -->
 					<exclude name="**/jfxwebkit.dll" />
 				</patternset>
 				<cutdirsmapper dirs="1" />
 			</untar>
 		</sequential>
 	</macrodef>
+
+
+	<!-- fetch and unpack JRE bundle (64-bit Mac) -->
+	<macrodef name="get-macos-jre">
+		<attribute name="dest" />
+		<sequential>
+			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
+
+			<!-- MAS validation does not like certain files included in the JRE -->
+			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+				<patternset>
+					<exclude name="**/deploy/**" />
+					<exclude name="**/nibs/**" />
+					<exclude name="**/shortcuts/**" />
+
+					<!-- libjfxwebkit.dylib has many dependencies to deprecated librararies that cause issues with MAS review -->
+					<exclude name="**/libjfxwebkit.dylib" />
+				</patternset>
+				<cutdirsmapper dirs="1" />
+			</untar>
+		</sequential>
+	</macrodef>
+
 
 
 
@@ -367,7 +392,7 @@
 		<antcall target="appbundle-maspkg">
 			<param name="application.name" value="FileBot" />
 			<param name="application.executable" value="filebot.launcher" />
-			<param name="application.identifier" value="${package.identifier}" />
+			<param name="application.identifier" value="${package.identifier}.Rename" />
 			<param name="application.icon" value="${dir.installer}/appbundle/filebot.icns" />
 			<param name="application.cert.appbundle" value="3rd Party Mac Developer Application: ${package.company}" />
 			<param name="application.cert.installer" value="3rd Party Mac Developer Installer: ${package.company}" />
@@ -529,6 +554,92 @@
 		<!-- store as release build-->
 		<copy todir="${dir.release}" file="${path.pkg}" verbose="yes" />
 	</target>
+
+
+	<target name="app" depends="revision">
+		<property name="dir.staging" location="${dir.dist}/app" />
+
+		<copy-replace todir="${dir.staging}/bin">
+			<fileset dir="${dir.installer}/app" includes="*.sh" />
+		</copy-replace>
+
+		<!-- fetch latest JRE -->
+		<get-macos-jre dest="${dir.staging}" />
+
+
+		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="filebot.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/app/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
+			<arch name="x86_64" />
+			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
+				<include name="**/*" />
+			</runtime>
+
+			<classpath dir="${dir.dist}/lib" />
+			<librarypath dir="${dir.staging}/bin" />
+			<librarypath dir="${dir.lib}/native/mac-x86_64" />
+
+			<bundledocument role="viewer" handlerRank="none" contentTypes="public.movie" name="Video file" />
+			<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
+			<bundledocument role="viewer" handlerRank="none" contentTypes="public.folder" name="Media folder" />
+
+			<option value="-Dapple.laf.useScreenMenuBar=true" />
+			<option value="-Dapple.awt.application.name=${application.name}" />
+
+			<option value="-Dunixfs=false" />
+			<option value="-DuseExtendedFileAttributes=true" />
+			<option value="-DuseCreationDate=false" />
+			<option value="-Djava.net.useSystemProxies=true" />
+			<option value="-Djna.nosys=true" />
+			<option value="-Djna.nounpack=true" />
+
+			<option value="-Dnet.filebot.UserFiles.fileChooser=COCOA" />
+
+			<option value="-Dapplication.deployment=app" />
+			<option value="-Dapplication.help=ask" />
+
+			<option value="-Djna.boot.library.name=jnidispatch" />
+			<option value="-Djna.boot.library.path=$APP_ROOT/Contents/MacOS" />
+
+			<option value="-Djna.library.path=$APP_ROOT/Contents/MacOS" />
+			<option value="-Djava.library.path=$APP_ROOT/Contents/MacOS" />
+			<option value="-Dnet.filebot.AcoustID.fpcalc=$APP_ROOT/Contents/MacOS/fpcalc" />
+
+
+			<option value="--illegal-access=permit" />
+			<option value="--add-opens=java.base/java.lang=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.lang.invoke=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.util=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.util.function=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.util.regex=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.net=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.io=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.nio.file=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.nio.channels=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.nio.charset=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.time=ALL-UNNAMED" />
+			<option value="--add-opens=java.base/java.time.chrono=ALL-UNNAMED" />
+			<option value="--add-opens=java.logging/java.util.logging=ALL-UNNAMED" />
+			<option value="--add-opens=java.desktop/java.awt=ALL-UNNAMED" />
+		</bundleapp>
+
+
+		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="none" longfile="posix" encoding="utf-8">
+			<tarfileset dir="${dir.staging}">
+				<include name="*.app/**" />
+				<exclude name="**/filebot" />
+				<exclude name="**/bin/*" />
+				<exclude name="**/lib/jspawnhelper" />
+			</tarfileset>
+
+			<tarfileset dir="${dir.staging}" filemode="755">
+				<include name="*.app/**/MacOS/filebot.*" />
+				<include name="*.app/**/MacOS/fpcalc" />
+				<include name="*.app/**/lib/jspawnhelper" />
+				<include name="*.app/**/bin/*" />
+			</tarfileset>
+		</tar>
+	</target>
+
 
 
 	<target name="snap" depends="revision">
