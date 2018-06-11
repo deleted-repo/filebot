@@ -567,7 +567,7 @@
 		<get-macos-jre dest="${dir.staging}" />
 
 
-		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="filebot.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/app/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
+		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="filebot.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 			<arch name="x86_64" />
 			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
 				<include name="**/*" />

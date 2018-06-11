@@ -114,9 +114,11 @@ public class Main {
 			// CLI mode => run command-line interface and then exit
 			if (args.runCLI()) {
 				// just import and print license when running with --license option
-				if (LICENSE.isFile() && args.getLicenseFile() != null) {
-					configureLicense(args);
-					System.exit(0);
+				if (LICENSE.isFile()) {
+					args.getLicenseFile().ifPresent(f -> {
+						configureLicense(f);
+						System.exit(0);
+					});
 				}
 
 				int status = new ArgumentProcessor().run(args);
@@ -162,9 +164,9 @@ public class Main {
 		}
 	}
 
-	private static void configureLicense(ArgumentBean args) {
+	private static void configureLicense(File f) {
 		try {
-			License license = License.configure(args.getLicenseFile());
+			License license = License.configure(f);
 			log.info(license + " has been activated.");
 		} catch (Throwable e) {
 			log.severe("License Error: " + e.getMessage());
@@ -180,9 +182,7 @@ public class Main {
 
 		if (LICENSE.isFile()) {
 			// import license if launched with license file
-			if (args.getLicenseFile() != null) {
-				configureLicense(args);
-			}
+			args.getLicenseFile().ifPresent(f -> configureLicense(f));
 
 			// make sure license is validated and cached
 			try {
@@ -252,7 +252,13 @@ public class Main {
 		// configure main window
 		if (isMacApp()) {
 			// Mac specific configuration
-			MacAppUtilities.initializeApplication(FileBotMenuBar.createHelp(), files -> SwingEventBus.getInstance().post(new FileTransferable(files)));
+			MacAppUtilities.initializeApplication(FileBotMenuBar.createHelp(), files -> {
+				if (LICENSE.isFile() && files.size() == 1 && files.get(0).getName().endsWith(".psm")) {
+					configureLicense(files.get(0));
+				} else {
+					SwingEventBus.getInstance().post(new FileTransferable(files));
+				}
+			});
 		} else if (isUbuntuApp()) {
 			// Ubuntu/Debian specific configuration
 			frame.setIconImages(ResourceManager.getApplicationIconImages());
