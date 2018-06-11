@@ -43,8 +43,8 @@
 
 						<Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]" Action="set" Part="last" Permanent="no" System="yes" />
 
-						<ProgId Id="ActivateLicense" Description="FileBot License File" Advertise="no" >
-							<Extension Id="psm" ContentType="application/filebot-license" Advertise="no" >
+						<ProgId Id="ActivateLicense" Description="@{license.description}" Advertise="no">
+							<Extension Id="@{license.extension}" ContentType="@{license.mimetype}" Advertise="no">
 								<Verb Id="Open" Command="Activate License" TargetFile="filebot.launcher.exe" Argument='--license "%1"' />
 							</Extension>
 						</ProgId>

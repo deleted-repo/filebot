@@ -581,6 +581,9 @@
 			<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
 			<bundledocument role="viewer" handlerRank="none" contentTypes="public.folder" name="Media folder" />
 
+			<bundledocument extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" name="${license.description}" role="viewer" handlerRank="owner" contentTypes="net.filebot.license" />
+			<typedeclaration extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" description="${license.description}" conformsTo="public.plain-text" identifier="net.filebot.license" mimeTypes="${license.mimetype}" />
+
 			<option value="-Dapple.laf.useScreenMenuBar=true" />
 			<option value="-Dapple.awt.application.name=${application.name}" />
 
@@ -626,11 +629,11 @@
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="none" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
 				<include name="*.app/**" />
-				<exclude name="**/filebot" />
-				<exclude name="**/bin/*" />
-				<exclude name="**/lib/jspawnhelper" />
+				<exclude name="*.app/**/MacOS/filebot.*" />
+				<exclude name="*.app/**/MacOS/fpcalc" />
+				<exclude name="*.app/**/lib/jspawnhelper" />
+				<exclude name="*.app/**/bin/*" />
 			</tarfileset>
-
 			<tarfileset dir="${dir.staging}" filemode="755">
 				<include name="*.app/**/MacOS/filebot.*" />
 				<include name="*.app/**/MacOS/fpcalc" />
