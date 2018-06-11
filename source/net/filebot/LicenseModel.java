@@ -8,6 +8,8 @@ public enum LicenseModel {
 
 	MicrosoftStore {
 
+		private final Resource<Boolean> CHECK = Resource.lazy(() -> !getAppUserModelID().equals("PointPlanck.FileBot"));
+
 		@Override
 		public boolean isAppStore() {
 			return true;
@@ -15,14 +17,20 @@ public enum LicenseModel {
 
 		@Override
 		public void check() throws LicenseError {
-			if (!getAppUserModelID().equals("PointPlanck.FileBot")) {
-				throw new LicenseError("Microsoft Store: Desktop Bridge not found");
+			try {
+				if (CHECK.get()) {
+					throw new LicenseError("Microsoft Store: Desktop Bridge not found");
+				}
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
 			}
 		}
 	},
 
 	MacAppStore {
 
+		private final Resource<Boolean> CHECK = Resource.lazy(() -> !File.listRoots()[0].canRead());
+
 		@Override
 		public boolean isAppStore() {
 			return true;
@@ -30,8 +38,12 @@ public enum LicenseModel {
 
 		@Override
 		public void check() throws LicenseError {
-			if (File.listRoots()[0].canRead()) {
-				throw new LicenseError("Mac App Store: App Sandbox not found");
+			try {
+				if (CHECK.get()) {
+					throw new LicenseError("Microsoft Store: Desktop Bridge not found");
+				}
+			} catch (Exception e) {
+				throw new IllegalStateException(e);
 			}
 		}
 	},
