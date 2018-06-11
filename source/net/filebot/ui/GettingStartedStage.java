@@ -28,9 +28,13 @@ import net.filebot.ResourceManager;
 
 public class GettingStartedStage {
 
-	public static void start() {
+	public static void start(boolean show) {
 		invokeJavaFX(() -> {
-			ask(); // libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies
+			if (show) {
+				create().show();
+			} else {
+				ask(); // libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies
+			}
 		});
 	}
 
@@ -51,7 +55,7 @@ public class GettingStartedStage {
 		}
 	}
 
-	protected static GettingStartedStage create() {
+	private static GettingStartedStage create() {
 		Stage stage = new Stage();
 		stage.setResizable(true);
 

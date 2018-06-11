@@ -323,7 +323,7 @@ public class Main {
 			started.flush();
 
 			// open Getting Started
-			SwingUtilities.invokeLater(GettingStartedStage::start);
+			SwingUtilities.invokeLater(() -> GettingStartedStage.start("show".equals(System.getProperty("application.help"))));
 		}
 	}
 
