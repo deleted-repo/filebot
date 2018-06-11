@@ -11,11 +11,6 @@ public enum LicenseModel {
 		private final Resource<Boolean> CHECK = Resource.lazy(() -> !getAppUserModelID().equals("PointPlanck.FileBot"));
 
 		@Override
-		public boolean isAppStore() {
-			return true;
-		}
-
-		@Override
 		public void check() throws LicenseError {
 			try {
 				if (CHECK.get()) {
@@ -32,11 +27,6 @@ public enum LicenseModel {
 		private final Resource<Boolean> CHECK = Resource.lazy(() -> !File.listRoots()[0].canRead());
 
 		@Override
-		public boolean isAppStore() {
-			return true;
-		}
-
-		@Override
 		public void check() throws LicenseError {
 			try {
 				if (CHECK.get()) {
@@ -51,11 +41,6 @@ public enum LicenseModel {
 	PGPSignedMessage {
 
 		@Override
-		public boolean isAppStore() {
-			return false;
-		}
-
-		@Override
 		public void check() throws LicenseError {
 			try {
 				License.INSTANCE.get().check();
@@ -65,7 +50,9 @@ public enum LicenseModel {
 		}
 	};
 
-	public abstract boolean isAppStore();
+	public boolean isFile() {
+		return this == PGPSignedMessage;
+	}
 
 	public abstract void check() throws LicenseError;
 

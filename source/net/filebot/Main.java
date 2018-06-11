@@ -114,7 +114,7 @@ public class Main {
 			// CLI mode => run command-line interface and then exit
 			if (args.runCLI()) {
 				// just import and print license when running with --license option
-				if (args.getLicenseFile() != null && !LICENSE.isAppStore()) {
+				if (LICENSE.isFile() && args.getLicenseFile() != null) {
 					configureLicense(args);
 					System.exit(0);
 				}
@@ -178,10 +178,13 @@ public class Main {
 			SwingEventBus.getInstance().post(new FileTransferable(files));
 		}
 
-		// import license if launched with license file
-		if (args.getLicenseFile() != null && !LICENSE.isAppStore()) {
-			configureLicense(args);
+		if (LICENSE.isFile()) {
+			// import license if launched with license file
+			if (args.getLicenseFile() != null) {
+				configureLicense(args);
+			}
 
+			// make sure license is validated and cached
 			try {
 				LICENSE.check();
 			} catch (Throwable e) {
