@@ -30,12 +30,7 @@ public class GettingStartedStage {
 
 	public static void start() {
 		invokeJavaFX(() -> {
-			// libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies
-			if (isAppStore()) {
-				ask();
-			} else {
-				create().show();
-			}
+			ask(); // libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies
 		});
 	}
 
@@ -56,7 +51,7 @@ public class GettingStartedStage {
 		}
 	}
 
-	private static GettingStartedStage create() {
+	protected static GettingStartedStage create() {
 		Stage stage = new Stage();
 		stage.setResizable(true);
 
@@ -120,15 +115,15 @@ public class GettingStartedStage {
 		/*
 		 * Java 9 makes internal classes inaccessible, so setting the page background is no longer supported: package com.sun.webkit is declared in module javafx.web, which does not export it
 		 */
-//		try {
-//			// use reflection to retrieve the WebEngine's private 'page' field
-//			Field f = engine.getClass().getDeclaredField("page");
-//			f.setAccessible(true);
-//			com.sun.webkit.WebPage page = (com.sun.webkit.WebPage) f.get(engine);
-//			page.setBackgroundColor(color);
-//		} catch (Exception e) {
-//			debug.log(Level.WARNING, "Failed to set background", e);
-//		}
+		// try {
+		// // use reflection to retrieve the WebEngine's private 'page' field
+		// Field f = engine.getClass().getDeclaredField("page");
+		// f.setAccessible(true);
+		// com.sun.webkit.WebPage page = (com.sun.webkit.WebPage) f.get(engine);
+		// page.setBackgroundColor(color);
+		// } catch (Exception e) {
+		// debug.log(Level.WARNING, "Failed to set background", e);
+		// }
 	}
 
 	protected WebEngine onPopup(WebView webview) {
