@@ -185,7 +185,7 @@ public class Main {
 			try {
 				LICENSE.check();
 			} catch (Throwable e) {
-				log.severe("License Error: " + e.getMessage());
+				log.warning(e::getMessage);
 			}
 		}
 
