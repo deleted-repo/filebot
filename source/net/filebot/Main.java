@@ -114,7 +114,8 @@ public class Main {
 			// CLI mode => run command-line interface and then exit
 			if (args.runCLI()) {
 				// just import and print license when running with --license option
-				if (configureLicense(args)) {
+				if (args.getLicenseFile() != null && !LICENSE.isAppStore()) {
+					configureLicense(args);
 					System.exit(0);
 				}
 
@@ -161,21 +162,13 @@ public class Main {
 		}
 	}
 
-	private static boolean configureLicense(ArgumentBean args) {
-		File file = args.getLicenseFile();
-
-		if (file == null || LICENSE != LicenseModel.PGPSignedMessage) {
-			return false;
-		}
-
+	private static void configureLicense(ArgumentBean args) {
 		try {
-			License license = License.configure(file);
+			License license = License.configure(args.getLicenseFile());
 			log.info(license + " has been activated.");
 		} catch (Throwable e) {
 			log.severe("License Error: " + e.getMessage());
 		}
-
-		return true;
 	}
 
 	private static void onStart(ArgumentBean args) throws Exception {
@@ -186,13 +179,13 @@ public class Main {
 		}
 
 		// import license if launched with license file
-		configureLicense(args);
+		if (args.getLicenseFile() != null && !LICENSE.isAppStore()) {
+			configureLicense(args);
 
-		if (LICENSE == LicenseModel.PGPSignedMessage) {
 			try {
 				LICENSE.check();
 			} catch (Throwable e) {
-				debug.finest(e::toString);
+				log.severe("License Error: " + e.getMessage());
 			}
 		}
 

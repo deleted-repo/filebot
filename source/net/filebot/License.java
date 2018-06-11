@@ -124,7 +124,7 @@ public class License implements Serializable {
 		return String.format("%s License %s (Valid-Until: %s)", product, id, expires == null ? null : expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 
-	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
+	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve(".license"));
 	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> new License(FILE.get()));
 
 	public static License configure(File file) throws Exception {

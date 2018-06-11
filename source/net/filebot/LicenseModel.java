@@ -9,9 +9,14 @@ public enum LicenseModel {
 	MicrosoftStore {
 
 		@Override
+		public boolean isAppStore() {
+			return true;
+		}
+
+		@Override
 		public void check() throws LicenseError {
 			if (!getAppUserModelID().equals("PointPlanck.FileBot")) {
-				throw new LicenseError("Invalid container state");
+				throw new LicenseError("Microsoft Store: Desktop Bridge not found");
 			}
 		}
 	},
@@ -19,14 +24,24 @@ public enum LicenseModel {
 	MacAppStore {
 
 		@Override
+		public boolean isAppStore() {
+			return true;
+		}
+
+		@Override
 		public void check() throws LicenseError {
 			if (File.listRoots()[0].canRead()) {
-				throw new LicenseError("Invalid container state");
+				throw new LicenseError("Mac App Store: App Sandbox not found");
 			}
 		}
 	},
 
 	PGPSignedMessage {
+
+		@Override
+		public boolean isAppStore() {
+			return false;
+		}
 
 		@Override
 		public void check() throws LicenseError {
@@ -37,6 +52,8 @@ public enum LicenseModel {
 			}
 		}
 	};
+
+	public abstract boolean isAppStore();
 
 	public abstract void check() throws LicenseError;
 
