@@ -124,21 +124,24 @@ public class License implements Serializable {
 		return String.format("%s License %s (Valid-Until: %s)", product, id, expires == null ? null : expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 
-	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve(".license"));
+	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
 	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> new License(FILE.get()));
 
 	public static License configure(File file) throws Exception {
-		// check if license file is valid and not expired
-		License license = new License(file);
-		license.check();
+		// lock memoized resource while validating and setting a new license
+		synchronized (INSTANCE) {
+			// check if license file is valid and not expired
+			License license = new License(file);
+			license.check();
 
-		// write to default license file path
-		Files.copy(file.toPath(), FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
+			// write to default license file path
+			Files.copy(file.toPath(), FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-		// clear memoized instance and reload on next access
-		INSTANCE.clear();
+			// clear memoized instance and reload on next access
+			INSTANCE.clear();
 
-		return license;
+			return license;
+		}
 	}
 
 }

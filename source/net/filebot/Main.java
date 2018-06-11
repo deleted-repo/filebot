@@ -188,7 +188,7 @@ public class Main {
 			try {
 				LICENSE.check();
 			} catch (Throwable e) {
-				log.warning(e::getMessage);
+				debug.finest(e::toString);
 			}
 		}
 
