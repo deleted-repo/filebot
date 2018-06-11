@@ -1,14 +1,11 @@
 package net.filebot.platform.mac;
 
-// TODO: disable 0-termination when reading / writing xattr String values (older versions will not be forwards-compatible with this change)
-// import static net.filebot.platform.mac.xattr.XAttrUtil.*;
+import static net.filebot.platform.mac.xattr.XAttrUtil.*;
 
 import java.nio.file.Path;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.List;
-
-import static com.sun.jna.platform.mac.XAttrUtil.*;
 
 public class MacXattrView {
 
