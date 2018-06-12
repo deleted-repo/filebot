@@ -692,12 +692,10 @@
 
 		<jdeb destfile="${dir.dist}/${package.name}_${application.version}_${deb.arch}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
-
-			<!-- jdeb does not support tarfileset fullpath attribute (see https://github.com/tcurdt/jdeb/issues/245) -->
-			<tarfileset prefix="/usr/share/filebot/jar" file="${path.fatjar}" />
-
+			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
 			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="fpcalc" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="*.so" />
+
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
 			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" includes="**/*.desktop" />
 		</jdeb>
@@ -710,6 +708,8 @@
 			<param name="arch.env" value="AMD64" />
 			<param name="arch.jre" value="x64" />
 		</antcall>
+
+		<!-- 32-bit Windows is not supported by Oracle JDK so there are no JRE builds -->
 		<!--
 		<antcall target="appx-arch">
 			<param name="arch" value="x86" />
