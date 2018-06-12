@@ -193,7 +193,7 @@
 
 
 	<target name="jar" depends="build">
-		<jar destfile="${dir.dist}/lib/filebot.jar" compress="no">
+		<jar destfile="${dir.dist}/lib/filebot.jar">
 			<fileset dir="${dir.build}" />
 			<manifest>
 				<attribute name="Build-Date" value="${tstamp.date}" />
@@ -204,7 +204,7 @@
 
 
 	<target name="fatjar" depends="jar" description="Build executable jar">
-		<jar destfile="${path.fatjar}" filesetmanifest="merge" duplicate="fail" compress="no">
+		<jar destfile="${path.fatjar}" filesetmanifest="merge" duplicate="fail">
 			<!-- include main jar -->
 			<zipfileset src="${dir.dist}/lib/filebot.jar" />
 
