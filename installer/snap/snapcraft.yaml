@@ -3,7 +3,7 @@ version: @{application.version}
 summary: @{package.synopsis}
 description: @{package.description}
 
-confinement: strict
+confinement: classic
 grade: stable
 
 architectures: [amd64]
@@ -15,12 +15,7 @@ apps:
 
 parts:
   filebot:
+    after: [desktop-gtk2]
     plugin: dump
     source: filebot
-  java:
-    plugin: nil
-    stage-packages: [openjdk-8-jre, openjfx, jayatana]
-    after: [desktop-gtk2]
-  native:
-    plugin: nil
-    stage-packages: [libmediainfo0v5, libchromaprint-tools, curl]
+    stage-packages: [libc6, libmediainfo0v5, libchromaprint-tools, curl]

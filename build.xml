@@ -115,7 +115,18 @@
 		</sequential>
 	</macrodef>
 
+	<!-- fetch and unpack JRE bundle (64-bit Linux) -->
+	<macrodef name="get-linux-jre">
+		<attribute name="dest" />
+		<sequential>
+			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
 
+			<!-- MAS validation does not like certain files included in the JRE -->
+			<untar src="${dir.cache}/jre-${jre.version}_linux-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+				<cutdirsmapper dirs="1" />
+			</untar>
+		</sequential>
+	</macrodef>
 
 
 	<target name="resolve" description="Retrieve dependencies with Apache Ivy">
@@ -635,25 +646,28 @@
 		</tar>
 	</target>
 
-
-
 	<target name="snap" depends="revision">
-		<copy todir="${dir.dist}/snap/filebot/usr/lib/filebot/java">
+		<property name="dir.staging" location="${dir.dist}/snap" />
+
+		<get-linux-jre dest="${dir.staging}/filebot/usr/lib/jre" />
+
+		<!-- copy files and resolve ant variables -->
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/snap" />
+		</copy-replace>
+		<chmod perm="+x" file="${dir.staging}/filebot/filebot.sh" />
+
+
+		<copy todir="${dir.staging}/filebot/usr/lib/filebot/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
 
 		<!-- include native binaries that are not available via apt -->
-		<copy todir="${dir.dist}/snap/filebot/usr/lib/filebot/amd64">
+		<copy todir="${dir.dist}/filebot/usr/lib/filebot/amd64">
 			<fileset dir="${dir.lib}/native/linux-amd64" includes="libjnidispatch.so, lib7-Zip-JBinding.so" />
 		</copy>
 
-		<!-- copy files and resolve ant variables -->
-		<copy-replace todir="${dir.dist}/snap">
-			<fileset dir="${dir.installer}/snap" />
-		</copy-replace>
-		<chmod perm="+x" file="${dir.dist}/snap/filebot/filebot.sh" />
-
-		<exec executable="snapcraft" dir="${dir.dist}/snap" failonerror="yes">
+		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
 			<arg line="snap" />
 		</exec>
 	</target>
