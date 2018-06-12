@@ -13,15 +13,11 @@ while [ -h "$PRG" ] ; do
 done
 
 # get canonical path
-WORKING_DIR=`pwd`
 PRG_DIR=`dirname "$PRG"`
 APP_ROOT=`cd "$PRG_DIR" && pwd`
 
 # add package lib folder to library path
 PACKAGE_LIBRARY_PATH="$APP_ROOT/lib/$(uname -m)"
-
-# restore original working dir
-cd "$WORKING_DIR"
 
 # make sure required environment variables are set
 if [ -z "$USER" ]; then
@@ -41,4 +37,4 @@ EXTRACTOR="ApacheVFS"                   # use Apache Commons VFS2 with junrar pl
 APP_DATA="$APP_ROOT/data"
 
 # start filebot
-java @{java.application.options} -Dapplication.deployment=portable -Djava.awt.headless=true -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF-8" -Dnet.filebot.Archive.extractor="$EXTRACTOR" -Djna.library.path="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH" -Djava.library.path="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH" -Dnet.filebot.AcoustID.fpcalc="fpcalc" -Dapplication.dir="$APP_DATA" -Duser.home="$APP_DATA" -Djava.io.tmpdir="$APP_DATA/tmp" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="$APP_DATA/prefs.properties" $JAVA_OPTS -classpath "$APP_ROOT/*" @{main.class} "$@"
+java @{java.application.options} -Dapplication.deployment=portable -Djava.awt.headless=true -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF-8" -Dnet.filebot.Archive.extractor="$EXTRACTOR" -Djna.boot.library.path="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH" -Djna.library.path="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH" -Djava.library.path="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH" -Dnet.filebot.AcoustID.fpcalc="fpcalc" -Dapplication.dir="$APP_DATA" -Duser.home="$APP_DATA" -Djava.io.tmpdir="$APP_DATA/tmp" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="$APP_DATA/prefs.properties" $JAVA_OPTS -classpath "$APP_ROOT/jar/*" @{main.class} "$@"

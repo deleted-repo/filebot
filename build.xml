@@ -797,9 +797,15 @@
 
 
 	<target name="portable" description="Build portable package" depends="revision">
+		<property name="dir.staging" location="${dir.dist}/portable" />
+
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/portable" includes="*.sh" />
+		</copy-replace>
+
 		<tar destfile="${dir.dist}/${release}-portable.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
-			<tarfileset file="${path.fatjar}" fullpath="FileBot.jar" />
-			<tarfileset dir="${dir.installer}/portable" includes="*.sh" filemode="755" />
+			<tarfileset dir="${dir.staging}" includes="*.sh" filemode="755" />
+			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
 
 			<!-- include native libraries for all supported platforms -->
 			<tarfileset prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
