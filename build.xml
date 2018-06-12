@@ -378,14 +378,6 @@
 	</target>
 
 
-	<target name="cask" description="Build Mac application bundle">
-		<tar destfile="${dir.dist}/${release}-darwin.tar.xz" compression="xz" longfile="posix" encoding="utf-8">
-			<tarfileset file="${path.fatjar}" fullpath="FileBot.jar" />
-			<tarfileset dir="${dir.installer}/cask" includes="*.sh" filemode="755" />
-			<tarfileset prefix="lib" dir="${dir.lib}/native/mac-x86_64" includes="fpcalc" filemode="755" />
-			<tarfileset prefix="lib" dir="${dir.lib}/native/mac-x86_64" includes="*.dylib" />
-		</tar>
-	</target>
 
 
 	<target name="appbundle-maspkg-core">

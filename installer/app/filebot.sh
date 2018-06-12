@@ -16,5 +16,8 @@ done
 BIN=`dirname "$PRG"`
 APP_ROOT=`cd "$BIN/.." && pwd`
 
+JAVA_HOME="$APP_ROOT/PlugIns/jre-@{java.version}.jre/Contents/Home"
+LIBRARY_PATH="$APP_ROOT/MacOS"
+
 # launch filebot
-"$APP_ROOT"/PlugIns/*.jre/Contents/Home/bin/java @{java.application.options} -Dapplication.deployment=app -Djava.awt.headless=true -Dapple.awt.UIElement=true -Djna.boot.library.path="$APP_ROOT/MacOS" -Djna.library.path="$APP_ROOT/MacOS" -Djava.library.path="$APP_ROOT/MacOS" -Dnet.filebot.AcoustID.fpcalc="$APP_ROOT/MacOS/fpcalc" $JAVA_OPTS -classpath "$APP_ROOT/Java/*" net.filebot.Main "$@"
+"$JAVA_HOME/bin/java" @{java.application.options} -Dapplication.deployment=app -Djava.awt.headless=true -Dapple.awt.UIElement=true -Djna.boot.library.path="$LIBRARY_PATH" -Djna.library.path="$LIBRARY_PATH" -Djava.library.path="$LIBRARY_PATH" -Dnet.filebot.AcoustID.fpcalc="$LIBRARY_PATH/fpcalc" $JAVA_OPTS -classpath "$APP_ROOT/Java/*" net.filebot.Main "$@"
