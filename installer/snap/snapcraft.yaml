@@ -10,7 +10,7 @@ architectures: [amd64]
 
 apps:
   filebot:
-    command: bin/desktop-launch $SNAP/bin/filebot.sh
+    command: bin/filebot.sh
     plugs: [unity7, opengl, x11, home, removable-media, network, network-bind, pulseaudio, gsettings]
 
 parts:
@@ -20,6 +20,3 @@ parts:
     stage-packages:
       - libmediainfo0v5
       - libchromaprint-tools
-      - curl
-    after: 
-      - desktop-glib-only

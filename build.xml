@@ -667,8 +667,7 @@
 		<!-- include native binaries that are not available via apt -->
 		<copy todir="${dir.root}/usr/lib/filebot/lib">
 			<fileset dir="${dir.lib}/native/linux-amd64">
-				<include name="libjnidispatch.so" />
-				<include name="lib7-Zip-JBinding.so" />
+				<include name="*.so" />
 			</fileset>
 		</copy>
 

@@ -1,4 +1,5 @@
 #!/bin/sh
+export LANG="en_US.UTF-8"
 
 export JAVA_HOME="$SNAP/usr/lib/jre"
 export PATH="$JAVA_HOME/jre/bin:$PATH"
