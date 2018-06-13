@@ -10,7 +10,7 @@ architectures: [amd64]
 
 apps:
   filebot:
-    command: desktop-launch $SNAP/bin/filebot.sh
+    command: $SNAP/bin/desktop-launch $SNAP/bin/filebot.sh
     plugs: [unity7, opengl, x11, home, removable-media, network, network-bind, pulseaudio, gsettings]
 
 parts:
