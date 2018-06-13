@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Import @{license.description}
+Name=@{application.name}
 Comment=Import @{license.description}
 MimeType=application/x-@{license.extension};@{license.mimetype}
 Exec=filebot --license %F
