@@ -6,7 +6,6 @@ MimeType=@{deb.application.mimetype}
 Exec=filebot %F
 Icon=filebot
 Categories=@{deb.application.categories}
-Actions=Rename;Subtitles;Checksum;
 StartupNotify=true
 StartupWMClass=@{deb.application.class}
 X-Ubuntu-Gettext-Domain=@{package.name}

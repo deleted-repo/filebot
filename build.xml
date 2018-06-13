@@ -716,7 +716,7 @@
 			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="*.so" />
 
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
-			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" includes="**/*.desktop" />
+			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" />
 		</jdeb>
 	</target>
 
