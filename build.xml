@@ -648,23 +648,28 @@
 
 	<target name="snap" depends="revision">
 		<property name="dir.staging" location="${dir.dist}/snap" />
+		<property name="dir.root" location="${dir.staging}/root" />
 
-		<get-linux-jre dest="${dir.staging}/filebot/usr/lib/jre" />
+		<get-linux-jre dest="${dir.root}/usr/lib/jre" />
 
 		<!-- copy files and resolve ant variables -->
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/snap" />
 		</copy-replace>
-		<chmod perm="+x" file="${dir.staging}/filebot/filebot.sh" />
+		<chmod perm="+x" verbose="yes">
+			<fileset dir="${dir.root}/bin" />
+		</chmod>
 
-
-		<copy todir="${dir.staging}/filebot/usr/lib/filebot/jar">
+		<copy todir="${dir.root}/usr/lib/filebot/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
 
 		<!-- include native binaries that are not available via apt -->
-		<copy todir="${dir.dist}/filebot/usr/lib/filebot/amd64">
-			<fileset dir="${dir.lib}/native/linux-amd64" includes="libjnidispatch.so, lib7-Zip-JBinding.so" />
+		<copy todir="${dir.root}/usr/lib/filebot/lib">
+			<fileset dir="${dir.lib}/native/linux-amd64">
+				<include name="libjnidispatch.so" />
+				<include name="lib7-Zip-JBinding.so" />
+			</fileset>
 		</copy>
 
 		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
