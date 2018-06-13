@@ -22,4 +22,4 @@ parts:
       - libchromaprint-tools
       - curl
     after: 
-      - desktop-gtk2
+      - desktop-glib-only
