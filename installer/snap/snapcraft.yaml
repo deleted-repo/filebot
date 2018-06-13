@@ -21,5 +21,7 @@ parts:
       - libmediainfo0v5
       - libchromaprint-tools
       - curl
+      - libxrender1
+      - libfontconfig1
     after: 
       - desktop-gtk2
