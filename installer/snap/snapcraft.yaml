@@ -21,7 +21,7 @@ parts:
       - libmediainfo0v5
       - libchromaprint-tools
       - curl
-      - libxrender1
-      - libfontconfig1
+      - openjdk-11-jre
+      - openjfx
     after: 
       - desktop-gtk2
