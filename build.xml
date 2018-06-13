@@ -657,7 +657,7 @@
 			<fileset dir="${dir.installer}/snap" />
 		</copy-replace>
 		<chmod perm="+x" verbose="yes">
-			<fileset dir="${dir.root}/**/bin/**" />
+			<fileset dir="${dir.root}" includes="**/bin/**" />
 		</chmod>
 
 		<copy todir="${dir.root}/usr/lib/filebot/jar">
