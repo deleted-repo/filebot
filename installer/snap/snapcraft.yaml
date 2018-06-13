@@ -15,7 +15,11 @@ apps:
 
 parts:
   filebot:
-    after: [desktop-gtk2]
     plugin: dump
     source: filebot
-    stage-packages: [libc6, libmediainfo0v5, libchromaprint-tools, curl]
+    stage-packages:
+      - libmediainfo0v5
+      - libchromaprint-tools
+      - curl
+    after: 
+      - desktop-gtk2

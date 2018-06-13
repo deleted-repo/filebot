@@ -668,7 +668,7 @@
 		</copy>
 
 		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
-			<arg line="snap" />
+			<arg line="cleanbuild" />
 		</exec>
 	</target>
 
