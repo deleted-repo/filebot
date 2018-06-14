@@ -11,6 +11,7 @@ import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
+import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -30,18 +31,22 @@ import java.util.logging.Level;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import net.filebot.HistorySpooler;
 import net.filebot.LicenseError;
+import net.filebot.MediaTypes;
 import net.filebot.NativeRenameAction;
 import net.filebot.ResourceManager;
 import net.filebot.StandardRenameAction;
 import net.filebot.UserFiles;
 import net.filebot.platform.mac.MacAppUtilities;
 import net.filebot.similarity.Match;
+import net.filebot.util.ui.ActionPopup;
 import net.filebot.util.ui.ProgressMonitor;
 import net.filebot.util.ui.ProgressMonitor.ProgressWorker;
+import net.filebot.util.ui.SwingEventBus;
 
 class RenameAction extends AbstractAction {
 
@@ -95,7 +100,8 @@ class RenameAction extends AbstractAction {
 					ProgressMonitor.runTask(action.getDisplayName(), message, worker).get();
 				}
 			} catch (LicenseError e) {
-				JOptionPane.showMessageDialog(window, e.getMessage(), "License Error", JOptionPane.WARNING_MESSAGE);
+				JComponent source = (JComponent) evt.getSource();
+				createLicensePopup(e.getMessage(), evt).show(source, -3, source.getHeight() + 4);
 				return;
 			} catch (CancellationException e) {
 				debug.finest(e::toString);
@@ -224,6 +230,32 @@ class RenameAction extends AbstractAction {
 
 		// return empty list if validation was cancelled
 		return emptyMap();
+	}
+
+	private ActionPopup createLicensePopup(String message, ActionEvent parent) {
+		ActionPopup actionPopup = new ActionPopup("License Required", ResourceManager.getIcon("file.lock"));
+
+		actionPopup.add(newAction("Select License", ResourceManager.getIcon("license.import"), e -> {
+			withWaitCursor(parent.getSource(), () -> {
+				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", parent);
+				if (files.size() > 0) {
+					configureLicense(files.get(0));
+					SwingEventBus.getInstance().post(LICENSE);
+				}
+			});
+		}));
+
+		actionPopup.add(newAction("Purchase License", ResourceManager.getIcon("license.purchase"), e -> {
+			openURI(getPurchaseURL());
+		}));
+
+		actionPopup.addSeparator();
+
+		JLabel label = new JLabel(message, ResourceManager.getIcon("status.error"), JLabel.CENTER);
+		label.setFont(label.getFont().deriveFont(9f).deriveFont(Font.BOLD));
+		actionPopup.addDescription(label);
+
+		return actionPopup;
 	}
 
 	protected static class StandardRenameWorker implements ProgressWorker<Map<File, File>> {

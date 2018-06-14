@@ -165,15 +165,6 @@ public class Main {
 		}
 	}
 
-	private static void configureLicense(File f) {
-		try {
-			License license = License.configure(f);
-			log.info(license + " has been activated.");
-		} catch (Throwable e) {
-			log.severe("License Error: " + e.getMessage());
-		}
-	}
-
 	private static void onStart(ArgumentBean args) throws Exception {
 		// publish file arguments
 		List<File> files = args.getFiles(false);

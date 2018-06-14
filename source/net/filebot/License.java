@@ -11,9 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -115,7 +115,7 @@ public class License implements Serializable {
 		}
 
 		if (Instant.now().isAfter(expires)) {
-			throw new IllegalStateException("EXPIRED: " + toString());
+			throw new IllegalStateException("EXPIRED since " + expires.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.RFC_1123_DATE_TIME));
 		}
 
 		return this;
@@ -128,21 +128,5 @@ public class License implements Serializable {
 
 	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
 	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> new License(FILE.get()));
-
-	public static License configure(File file) throws Exception {
-		// lock memoized resource while validating and setting a new license
-		synchronized (INSTANCE) {
-			// check if license file is valid and not expired
-			License license = new License(file).check();
-
-			// write to default license file path
-			Files.copy(file.toPath(), FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-			// clear memoized instance and reload on next access
-			INSTANCE.clear();
-
-			return license;
-		}
-	}
 
 }

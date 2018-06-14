@@ -9,6 +9,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -144,6 +146,28 @@ public final class Settings {
 			return LicenseModel.MacAppStore;
 
 		return LicenseModel.PGPSignedMessage;
+	}
+
+	public static void configureLicense(File file) {
+		try {
+			// lock memoized resource while validating and setting a new license
+			synchronized (License.INSTANCE) {
+				// check if license file is valid and not expired
+				License license = new License(file).check();
+
+				// confirmed valid license
+				log.info(license + " has been activated.");
+
+				// write to default license file path
+				Files.copy(file.toPath(), License.FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+				// clear memoized instance and reload on next access
+				License.INSTANCE.clear();
+			}
+		} catch (Throwable e) {
+			log.severe("License Error: " + e.getMessage());
+		}
+
 	}
 
 	public static String getAppStoreName() {

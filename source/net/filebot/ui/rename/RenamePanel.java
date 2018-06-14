@@ -240,7 +240,7 @@ public class RenamePanel extends JComponent {
 
 		// settings popup and button
 		ActionPopup settingsPopup = createSettingsPopup();
-		final Action settingsPopupAction = new ShowPopupAction("Settings", ResourceManager.getIcon("action.settings"));
+		Action settingsPopupAction = new ShowPopupAction("Settings", ResourceManager.getIcon("action.settings"));
 		JButton settingsButton = createImageButton(settingsPopupAction);
 		settingsButton.setComponentPopupMenu(settingsPopup);
 		renameButton.setComponentPopupMenu(settingsPopup);

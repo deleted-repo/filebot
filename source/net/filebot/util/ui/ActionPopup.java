@@ -46,7 +46,7 @@ public class ActionPopup extends JPopupMenu {
 	}
 
 	public void addDescription(JComponent component) {
-		actionPanel.add(component, "gapx 4px, wrap 3px");
+		actionPanel.add(component, "gapx 4px 4px, growx, wrap 3px");
 	}
 
 	public void addAction(JComponent component) {
