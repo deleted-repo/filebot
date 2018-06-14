@@ -87,6 +87,7 @@ class RenameAction extends AbstractAction {
 			Map<File, File> renameLog = new LinkedHashMap<File, File>();
 
 			try {
+				// require valid license for rename mode
 				LICENSE.check();
 
 				if (useNativeShell() && NativeRenameAction.isSupported(action)) {
@@ -100,9 +101,12 @@ class RenameAction extends AbstractAction {
 					ProgressMonitor.runTask(action.getDisplayName(), message, worker).get();
 				}
 			} catch (LicenseError e) {
-				JComponent source = (JComponent) evt.getSource();
-				createLicensePopup(e.getMessage(), evt).show(source, -3, source.getHeight() + 4);
-				return;
+				if (LICENSE.isFile()) {
+					JComponent source = (JComponent) evt.getSource();
+					createLicensePopup(e.getMessage(), evt).show(source, -3, source.getHeight() + 4);
+				} else {
+					log.severe(e::getMessage);
+				}
 			} catch (CancellationException e) {
 				debug.finest(e::toString);
 			} catch (Throwable e) {
@@ -232,12 +236,12 @@ class RenameAction extends AbstractAction {
 		return emptyMap();
 	}
 
-	private ActionPopup createLicensePopup(String message, ActionEvent parent) {
+	private ActionPopup createLicensePopup(String message, ActionEvent evt) {
 		ActionPopup actionPopup = new ActionPopup("License Required", ResourceManager.getIcon("file.lock"));
 
 		actionPopup.add(newAction("Select License", ResourceManager.getIcon("license.import"), e -> {
-			withWaitCursor(parent.getSource(), () -> {
-				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", parent);
+			withWaitCursor(evt.getSource(), () -> {
+				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", evt);
 				if (files.size() > 0) {
 					configureLicense(files.get(0));
 					SwingEventBus.getInstance().post(LICENSE);
