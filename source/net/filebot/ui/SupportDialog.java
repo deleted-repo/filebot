@@ -21,45 +21,6 @@ import net.filebot.util.PreferencesMap.PreferencesEntry;
 
 public enum SupportDialog {
 
-	Purchase {
-
-		@Override
-		String getMessage(int renameCount) {
-			return String.format("<html><p style='font-size:16pt; font-weight:bold'>Thank you for using FileBot!</p><br><p>It has taken thousands of hours to develop this application. If it works well for you,<br>please purchase a license. It'll help make FileBot even better!<p><p style='font-size:14pt; font-weight:bold'>You've renamed %,d files.</p><br><html>", renameCount > 0 ? renameCount : 0);
-		}
-
-		@Override
-		String[] getActions(boolean first) {
-			return new String[] { "Purchase! :)", "Nope! Maybe another time." };
-		}
-
-		@Override
-		Icon getIcon() {
-			return ResourceManager.getIcon("window.icon.large");
-		}
-
-		@Override
-		String getTitle() {
-			return "Purchase FileBot";
-		}
-
-		@Override
-		public boolean feelingLucky(int sessionRenameCount, int totalRenameCount, int currentRevision, int lastSupportRevision, int supportRevisionCount) {
-			try {
-				LICENSE.check();
-				return false;
-			} catch (Throwable e) {
-				return true;
-			}
-		}
-
-		@Override
-		String getURI() {
-			return getPurchaseURL();
-		}
-
-	},
-
 	AppStoreReview {
 
 		@Override
@@ -151,7 +112,7 @@ public enum SupportDialog {
 
 	abstract String getURI();
 
-	public static void maybeShow() {
+	public void maybeShow() {
 		try {
 			PreferencesEntry<String> persistentSupportRevision = Settings.forPackage(SupportDialog.class).entry("support.revision");
 			List<Integer> supportRevision = matchIntegers(persistentSupportRevision.getValue());
@@ -163,16 +124,14 @@ public enum SupportDialog {
 			int totalRenameCount = HistorySpooler.getInstance().getPersistentHistoryTotalSize();
 
 			// show donation / review reminders to power users
-			SupportDialog dialog = isAppStore() ? AppStoreReview : Purchase;
-
-			if (dialog.feelingLucky(sessionRenameCount, totalRenameCount, currentRevision, lastSupportRevision, supportRevision.size())) {
-				if (dialog.show(totalRenameCount, supportRevision.isEmpty())) {
+			if (feelingLucky(sessionRenameCount, totalRenameCount, currentRevision, lastSupportRevision, supportRevision.size())) {
+				if (show(totalRenameCount, supportRevision.isEmpty())) {
 					supportRevision = Stream.concat(supportRevision.stream(), Stream.of(currentRevision)).sorted().distinct().collect(toList());
 					persistentSupportRevision.setValue(supportRevision.toString());
 				}
 			}
 		} catch (Exception e) {
-			log.log(Level.WARNING, e, e::toString);
+			debug.log(Level.WARNING, e, e::toString);
 		}
 	}
 

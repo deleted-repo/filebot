@@ -238,7 +238,10 @@ public class Main {
 
 			// make sure any long running operations are done now and not later on the shutdown hook thread
 			HistorySpooler.getInstance().commit();
-			SupportDialog.maybeShow();
+
+			if (isAppStore()) {
+				SupportDialog.AppStoreReview.maybeShow();
+			}
 
 			// restore preferences on start if empty (TODO: remove after a few releases)
 			Settings.store(ApplicationFolder.AppData.resolve("preferences.backup.xml"));
