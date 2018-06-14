@@ -58,7 +58,7 @@ public final class WebServices {
 
 	// episode sources
 	public static final TVMazeClient TVmaze = new TVMazeClient();
-	public static final AnidbClient AniDB = new AnidbClientWithLocalSearch(getApiKey("anidb"), 6);
+	public static final AnidbClient AniDB = new AnidbClientWithLocalSearch(getApiKey("anidb"), 7);
 
 	// extended TheTVDB module with local search
 	public static final TheTVDBClientWithLocalSearch TheTVDB = new TheTVDBClientWithLocalSearch(getApiKey("thetvdb"));
