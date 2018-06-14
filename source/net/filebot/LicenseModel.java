@@ -11,14 +11,16 @@ public enum LicenseModel {
 		private final Resource<Boolean> CHECK = Resource.lazy(() -> !getAppUserModelID().equals("PointPlanck.FileBot"));
 
 		@Override
-		public void check() throws LicenseError {
+		public Object check() throws LicenseError {
 			try {
 				if (CHECK.get()) {
-					throw new LicenseError("Microsoft Store: Desktop Bridge not found");
+					throw new LicenseError("Desktop Bridge not found");
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
+
+			return "Microsoft Store License";
 		}
 	},
 
@@ -27,23 +29,25 @@ public enum LicenseModel {
 		private final Resource<Boolean> CHECK = Resource.lazy(() -> !File.listRoots()[0].canRead());
 
 		@Override
-		public void check() throws LicenseError {
+		public Object check() throws LicenseError {
 			try {
 				if (CHECK.get()) {
-					throw new LicenseError("Microsoft Store: Desktop Bridge not found");
+					throw new LicenseError("Mac App Sandbox not found");
 				}
 			} catch (Exception e) {
 				throw new IllegalStateException(e);
 			}
+
+			return "Mac App Store License";
 		}
 	},
 
 	PGPSignedMessage {
 
 		@Override
-		public void check() throws LicenseError {
+		public License check() throws LicenseError {
 			try {
-				License.INSTANCE.get().check();
+				return License.INSTANCE.get().check();
 			} catch (Exception e) {
 				throw new LicenseError(e.getMessage());
 			}
@@ -54,6 +58,6 @@ public enum LicenseModel {
 		return this == PGPSignedMessage;
 	}
 
-	public abstract void check() throws LicenseError;
+	public abstract Object check() throws LicenseError;
 
 }

@@ -44,7 +44,7 @@ public class License implements Serializable {
 		try {
 			// read and verify license file
 			if (!file.exists()) {
-				throw new FileNotFoundException("License not found");
+				throw new FileNotFoundException("UNREGISTERED");
 			}
 
 			byte[] bytes = Files.readAllBytes(file.toPath());
@@ -109,14 +109,16 @@ public class License implements Serializable {
 		}
 	}
 
-	public void check() throws Exception {
+	public License check() throws Exception {
 		if (error != null) {
 			throw error;
 		}
 
 		if (Instant.now().isAfter(expires)) {
-			throw new IllegalStateException("Expired: " + toString());
+			throw new IllegalStateException("EXPIRED: " + toString());
 		}
+
+		return this;
 	}
 
 	@Override
@@ -131,8 +133,7 @@ public class License implements Serializable {
 		// lock memoized resource while validating and setting a new license
 		synchronized (INSTANCE) {
 			// check if license file is valid and not expired
-			License license = new License(file);
-			license.check();
+			License license = new License(file).check();
 
 			// write to default license file path
 			Files.copy(file.toPath(), FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
