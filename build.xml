@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project name="filebot" default="fatjar" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="filebot" default="jar" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant">
 
 	<!-- define source dirs -->
 	<property name="dir.source" location="${basedir}/source" />
@@ -891,7 +891,7 @@
 	</target>
 
 
-	<target name="deploy-jar" depends="fatjar" description="Build and deploy the latest jar">
+	<target name="deploy-jar" description="Build and deploy the latest jar">
 		<xz src="${path.fatjar}" destfile="${dir.release}/FileBot.jar.xz" />
 		<gpg-sign>
 			<fileset dir="${dir.release}" includes="*.jar.xz" />
