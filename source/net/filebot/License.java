@@ -13,7 +13,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -61,6 +60,10 @@ public class License implements Serializable {
 		} catch (Exception e) {
 			error = e;
 		}
+	}
+
+	private String getExpirationDate() {
+		return expires == null ? null : expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE);
 	}
 
 	private Map<String, String> getProperties(byte[] bytes) throws Exception {
@@ -115,7 +118,7 @@ public class License implements Serializable {
 		}
 
 		if (Instant.now().isAfter(expires)) {
-			throw new IllegalStateException("EXPIRED since " + expires.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.RFC_1123_DATE_TIME));
+			throw new IllegalStateException("EXPIRED since " + getExpirationDate());
 		}
 
 		return this;
@@ -123,7 +126,7 @@ public class License implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("%s License %s (Valid-Until: %s)", product, id, expires == null ? null : expires.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ISO_LOCAL_DATE));
+		return String.format("%s License %s (Valid-Until: %s)", product, id, getExpirationDate());
 	}
 
 	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
