@@ -3,6 +3,7 @@ package net.filebot;
 import static java.awt.GraphicsEnvironment.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
+import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.XPathUtilities.*;
@@ -185,11 +186,7 @@ public class Main {
 			args.getLicenseFile().ifPresent(f -> configureLicense(f));
 
 			// make sure license is validated and cached
-			try {
-				LICENSE.check();
-			} catch (Throwable e) {
-				debug.finest(e::toString);
-			}
+			SwingEventBus.getInstance().post(LICENSE);
 		}
 
 		// JavaFX is used for ProgressMonitor and GettingStartedDialog
@@ -253,8 +250,9 @@ public class Main {
 		if (isMacApp()) {
 			// Mac specific configuration
 			MacAppUtilities.initializeApplication(FileBotMenuBar.createHelp(), files -> {
-				if (LICENSE.isFile() && files.size() == 1 && files.get(0).getName().endsWith(".psm")) {
+				if (LICENSE.isFile() && files.size() == 1 && containsOnly(files, LICENSE_FILES)) {
 					configureLicense(files.get(0));
+					SwingEventBus.getInstance().post(LICENSE);
 				} else {
 					SwingEventBus.getInstance().post(new FileTransferable(files));
 				}

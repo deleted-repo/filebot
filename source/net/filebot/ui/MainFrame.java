@@ -37,6 +37,7 @@ import javax.swing.Timer;
 import com.google.common.eventbus.Subscribe;
 
 import net.filebot.CacheManager;
+import net.filebot.LicenseModel;
 import net.filebot.Settings;
 import net.filebot.cli.GroovyPad;
 import net.filebot.util.PreferencesMap.PreferencesEntry;
@@ -53,7 +54,7 @@ public class MainFrame extends JFrame {
 	private HeaderPanel headerPanel;
 
 	public MainFrame(PanelBuilder[] panels) {
-		super(isAutoUpdateEnabled() ? getApplicationName() : String.format("%s %s", getApplicationName(), getApplicationVersion()));
+		super(getWindowTitle());
 
 		selectionList = new PanelSelectionList(panels);
 		headerPanel = new HeaderPanel();
@@ -130,6 +131,16 @@ public class MainFrame extends JFrame {
 		installAction(this.getRootPane(), getKeyStroke(VK_F1, 0), newAction("Help", evt -> openURI(getEmbeddedHelpURL())));
 
 		SwingEventBus.getInstance().register(this);
+	}
+
+	@Subscribe
+	public void updateLicense(LicenseModel licence) {
+		try {
+			licence.check();
+			setTitle(getWindowTitle());
+		} catch (Throwable e) {
+			setTitle(String.format("%s (%s)", getWindowTitle(), e.getMessage()));
+		}
 	}
 
 	@Subscribe

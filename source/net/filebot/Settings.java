@@ -177,6 +177,10 @@ public final class Settings {
 		return getApplicationProperty("link.app.help") + '#' + getApplicationDeployment();
 	}
 
+	public static String getWindowTitle() {
+		return isAutoUpdateEnabled() ? getApplicationName() : String.format("%s %s", getApplicationName(), getApplicationVersion());
+	}
+
 	public static String getApplicationIdentifier() {
 		return String.format("%s %s (r%d)", getApplicationName(), getApplicationVersion(), getApplicationRevisionNumber());
 	}

@@ -71,4 +71,6 @@ public class MediaTypes {
 	public static final ExtensionFileFilter LIST_FILES = getTypeFilter("application/list");
 	public static final ExtensionFileFilter TORRENT_FILES = getTypeFilter("application/torrent");
 
+	public static final ExtensionFileFilter LICENSE_FILES = getTypeFilter("application/filebot-license");
+
 }
