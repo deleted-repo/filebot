@@ -25,7 +25,7 @@ public enum SupportDialog {
 
 		@Override
 		String getMessage(int renameCount) {
-			return String.format("<html><p style='font-size:16pt; font-weight:bold'>Thank you for using FileBot!</p><br><p>It has taken thousands of hours to develop this application. If it works well for you,<br>please purchase a license. It'll help make FileBot even better!<p><p style='font-size:14pt; font-weight:bold'>You've renamed %,d files.</p><br><html>", renameCount);
+			return String.format("<html><p style='font-size:16pt; font-weight:bold'>Thank you for using FileBot!</p><br><p>It has taken thousands of hours to develop this application. If it works well for you,<br>please purchase a license. It'll help make FileBot even better!<p><p style='font-size:14pt; font-weight:bold'>You've renamed %,d files.</p><br><html>", renameCount > 0 ? renameCount : 0);
 		}
 
 		@Override
@@ -49,8 +49,7 @@ public enum SupportDialog {
 				LICENSE.check();
 				return false;
 			} catch (Throwable e) {
-				log.log(Level.WARNING, e::toString);
-				return false;
+				return true;
 			}
 		}
 
