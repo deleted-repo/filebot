@@ -474,6 +474,11 @@
 			<fileset dir="${dir.installer}/pkg" />
 		</copy-replace>
 
+		<!-- fix permissions -->
+		<chmod perm="+x" verbose="yes">
+			<fileset dir="${dir.staging}/scripts" />
+		</chmod>
+
 		<exec executable="pkgbuild" dir="${dir.staging}" failonerror="yes">
 			<arg line="${package.name}.pkg --component ${dir.dist}/app/${application.name}.app --scripts scripts" />
 		</exec>
