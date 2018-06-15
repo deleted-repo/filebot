@@ -478,7 +478,7 @@
 			<arg line="@{package.name}.pkg --component ${application.name}.app --scripts installer/pkg/scripts" />
 		</exec>
 		<exec executable="productbuild" dir="${dir.staging}" failonerror="yes">
-			<arg line="--distribution dist/distribution.xml --package-path . ${dir.dist}/${release}.pkg" />
+			<arg line="${dir.dist}/${release}.pkg --distribution dist/distribution.xml --package-path . --sign 'Developer ID Installer: ${package.company}'" />
 		</exec>
 	</target>
 
