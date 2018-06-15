@@ -6,7 +6,7 @@
 		</bundle-version>
 	</pkg-ref>
 	<product id="@{package.identifier}" version="@{application.version}" />
-	<title>@{application.name}</title>
+	<title>@{application.name} @{application.version}</title>
 	<options customize="never" require-scripts="false" hostArchitectures="x86_64" />
 	<volume-check>
 		<allowed-os-versions>
