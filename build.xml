@@ -377,7 +377,6 @@
 		<!-- fetch latest JRE -->
 		<get-macos-jre dest="${dir.staging}" />
 
-
 		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="filebot.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 			<arch name="x86_64" />
 			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
@@ -436,6 +435,15 @@
 			<option value="--add-opens=java.desktop/java.awt=ALL-UNNAMED" />
 		</bundleapp>
 
+		<!-- fix permissions -->
+		<chmod perm="+x" verbose="yes">
+			<fileset dir="${dir.staging}" filemode="755">
+				<include name="*.app/**/MacOS/filebot.*" />
+				<include name="*.app/**/MacOS/fpcalc" />
+				<include name="*.app/**/lib/jspawnhelper" />
+				<include name="*.app/**/bin/*" />
+			</fileset>
+		</chmod>
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
@@ -453,6 +461,23 @@
 			</tarfileset>
 		</tar>
 	</target>
+
+
+	<target name="pkg" depends="revision" description="Build Mac pkg package">
+		<property name="dir.staging" location="${dir.dist}/pkg" />
+
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/pkg" />
+		</copy-replace>
+
+		<exec executable="pkgbuild" dir="${dir.staging}" failonerror="yes">
+			<arg line="@{package.name}.pkg --component ${application.name}.app --scripts installer/pkg/scripts" />
+		</exec>
+		<exec executable="productbuild" dir="${dir.staging}" failonerror="yes">
+			<arg line="--distribution dist/distribution.xml --package-path . ${dir.dist}/${release}.pkg" />
+		</exec>
+	</target>
+
 
 	<target name="snap" depends="revision">
 		<property name="dir.staging" location="${dir.dist}/snap" />
