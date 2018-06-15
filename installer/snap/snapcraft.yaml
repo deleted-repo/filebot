@@ -3,25 +3,16 @@ version: @{application.version}
 summary: @{package.synopsis}
 description: @{package.description}
 
-confinement: strict
+confinement: classic
 grade: stable
 
 architectures: [amd64]
 
 apps:
   filebot:
-    command: bin/desktop-launch $SNAP/bin/filebot.sh
-    plugs: [unity7, opengl, x11, home, removable-media, network, network-bind, pulseaudio, gsettings]
+    command: bin/filebot.sh
 
 parts:
   filebot:
     plugin: dump
     source: root
-    stage-packages:
-      - libmediainfo0v5
-      - libchromaprint-tools
-      - curl
-      - openjdk-8-jre
-      - openjfx
-    after: 
-      - desktop-gtk2

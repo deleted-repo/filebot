@@ -99,9 +99,8 @@
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
-
-			<!-- MAS validation does not like certain files included in the JRE -->
 			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+				<!-- MAS validation does not like certain files included in the JRE -->
 				<patternset>
 					<exclude name="**/deploy/**" />
 					<exclude name="**/nibs/**" />
@@ -120,8 +119,6 @@
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
-
-			<!-- MAS validation does not like certain files included in the JRE -->
 			<untar src="${dir.cache}/jre-${jre.version}_linux-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 				<cutdirsmapper dirs="1" />
 			</untar>
@@ -488,30 +485,24 @@
 		<property name="dir.staging" location="${dir.dist}/snap" />
 		<property name="dir.root" location="${dir.staging}/root" />
 
-		<get-linux-jre dest="${dir.root}/usr/lib/jre" />
+		<get-linux-jre dest="${dir.root}/jre" />
 
 		<!-- copy files and resolve ant variables -->
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/snap" />
 		</copy-replace>
-		<chmod perm="+x" verbose="yes">
-			<fileset dir="${dir.root}" includes="**/bin/**" />
-		</chmod>
 
-		<copy todir="${dir.root}/usr/lib/filebot/jar">
+		<copy todir="${dir.root}/filebot/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
-
-		<!-- include native binaries that are not available via apt -->
-		<copy todir="${dir.root}/usr/lib/filebot/lib">
-			<fileset dir="${dir.lib}/native/linux-amd64">
-				<include name="*.so" />
-			</fileset>
+		<copy todir="${dir.root}/filebot/lib">
+			<fileset dir="${dir.lib}/native/linux-amd64" />
 		</copy>
+		<chmod perm="+x" verbose="yes">
+			<fileset dir="${dir.root}" includes="**/bin/**" />
+			<fileset dir="${dir.root}" includes="**/fpcalc" />
+		</chmod>
 
-		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
-			<arg line="cleanbuild" />
-		</exec>
 	</target>
 
 
