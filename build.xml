@@ -377,7 +377,7 @@
 		<!-- fetch latest JRE -->
 		<get-macos-jre dest="${dir.staging}" />
 
-		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="filebot.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
+		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 			<arch name="x86_64" />
 			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
 				<include name="**/*" />
@@ -446,7 +446,7 @@
 		</chmod>
 
 		<exec executable="codesign" dir="${dir.staging}" failonerror="yes">
-			<arg line="*.app --verbose --deep --force --sign 'Developer ID Application: ${package.company}'" />
+			<arg line="${application.name}.app --verbose --deep --force --sign 'Developer ID Application: ${package.company}'" />
 		</exec>
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
