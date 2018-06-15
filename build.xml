@@ -437,7 +437,7 @@
 
 		<!-- fix permissions -->
 		<chmod perm="+x" verbose="yes">
-			<fileset dir="${dir.staging}" filemode="755">
+			<fileset dir="${dir.staging}">
 				<include name="*.app/**/MacOS/filebot.*" />
 				<include name="*.app/**/MacOS/fpcalc" />
 				<include name="*.app/**/lib/jspawnhelper" />
