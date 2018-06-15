@@ -445,10 +445,6 @@
 			</fileset>
 		</chmod>
 
-		<exec executable="codesign" dir="${dir.staging}" failonerror="yes">
-			<arg line="${application.name}.app --verbose --deep --force --sign 'Developer ID Application: ${package.company}'" />
-		</exec>
-
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
 				<include name="*.app/**" />
