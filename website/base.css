@@ -512,7 +512,7 @@ div.screencast:hover .play {
 	position: absolute;
 }
 
-#purchase .price > * {
+#purchase .price > span {
 	position: relative;
 	left: 10em;
 	top: 1.3em;
@@ -527,6 +527,14 @@ div.screencast:hover .play {
 
 	color: white;
 	background-color:#F14E4E;
+}
+
+#purchase .price > span:after {
+	content: " (excl. tax)";
+	font-size: xx-small;
+	position: relative;
+	bottom: 0.12em;
+	left: 0.1em;
 }
 
 /**
