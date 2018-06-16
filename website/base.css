@@ -492,22 +492,6 @@ div.screencast:hover .play {
 	content: "* ";
 }
 
-#purchase li > small.price {
-	position: relative;
-	left: -0em;
-	top: 2.5em;
-
-	padding: 0.5em 0.5em;
-	border: 0.1em solid rgba(255,255,255,0);
-	border-radius: 0.4em;
-	
-	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
-	text-align:center;
-
-	color: white;
-	background-color:#F14E4E;
-}
-
 #purchase .price {
 	position: absolute;
 }
@@ -530,12 +514,13 @@ div.screencast:hover .play {
 }
 
 #purchase .price > span:after {
-	content: " (excl. tax)";
+	content: " (incl. tax)";
 	font-size: xx-small;
 	position: relative;
 	bottom: 0.12em;
 	left: 0.1em;
 }
+
 
 /**
 
