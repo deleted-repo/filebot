@@ -193,7 +193,7 @@ public final class Settings {
 	}
 
 	public static String getPurchaseURL() {
-		return getApplicationProperty("link.app.purchase");
+		return getApplicationProperty("link.app.purchase") + '#' + getApplicationDeployment();
 	}
 
 	public static String getEmbeddedHelpURL() {

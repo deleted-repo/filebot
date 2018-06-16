@@ -252,9 +252,9 @@ div.screencast:hover .play {
 	margin-top: 20px;
 }
 
-.section.features, .section.download, .section.contact {
+.section.features, .section.download, .section.purchase, .section.contact {
 	clear: both;
-	margin-top: 40px;
+	margin-top: 45px;
 }
 
 .section .icon {
@@ -450,24 +450,83 @@ div.screencast:hover .play {
 	border-radius: 4px;
 }
 
-#download li.macosx, #download li.windows {
+#download li.macosx, #download li.windows, #purchase li.year {
 	list-style: none;
 	margin: 0.5em 1em 1em 1em;
-	padding: 0.5em 1em 0.5em 2.4em;
+	padding: 1.5em 1em 1.5em 3.6em;
 	border-radius: 4px 4px 4px 4px;
-	background-color: #fcfbfa;
 	display: inline-block;
+	background-color: #fcfbfa;
 	box-shadow: 0px 0px 5px #2574ce;
+	background-repeat: no-repeat;
+	background-position: 0.8em center;
+	background-size: 32px 32px;
 }
 
 #download li.macosx {
-	background: url('images/apple.logo.svg') no-repeat 0.5em 0.27em;
-	background-size: 24px 24px;
+	background-image: url('images/apple.logo.svg');
 }
 
 #download li.windows {
-	background: url('images/microsoft.logo.svg') no-repeat 0.5em 0.3em;
-	background-size: 24px 24px;
+	background-image: url('images/microsoft.logo.svg');
+}
+
+#purchase li.year {
+	background-image: url('images/purchase.license.png');
+}
+
+#purchase li.note {
+	list-style: none;
+	background: url('images/accept.png') left center no-repeat;
+	padding: 0.1em 1.7em;
+	margin-left: 1.5em;
+}
+
+#download li.macappstore.note {
+	list-style: none;
+	text-align: right;
+	margin: 0em 0.5em 1.2em 0.5em;
+}
+
+#download li.macappstore.note span:before {
+	content: "* ";
+}
+
+#purchase li > small.price {
+	position: relative;
+	left: -0em;
+	top: 2.5em;
+
+	padding: 0.5em 0.5em;
+	border: 0.1em solid rgba(255,255,255,0);
+	border-radius: 0.4em;
+	
+	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+	text-align:center;
+
+	color: white;
+	background-color:#F14E4E;
+}
+
+#purchase .price {
+	position: absolute;
+}
+
+#purchase .price > * {
+	position: relative;
+	left: 10em;
+	top: 1.3em;
+
+	padding: 0.3em;
+	border: 0.1em solid rgba(255,255,255,0);
+	border-radius: 0.4em;
+	
+	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+	text-align: center;
+	font-size: smaller;
+
+	color: white;
+	background-color:#F14E4E;
 }
 
 /**

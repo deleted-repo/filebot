@@ -23,9 +23,15 @@
 		<link rel="stylesheet" href="base.css" type="text/css" />
 		<link rel="icon" href="favicon.png" />
 
-		<!-- Fonts -->
 		<link href='https://fonts.googleapis.com/css?family=Dawning+of+a+New+Day' rel='stylesheet' type='text/css' />
 		<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+
+		<script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+		<script type="text/javascript">
+			Paddle.Setup({
+				vendor: 32405
+			});
+		</script>
 	</head>
 	<body>
 		<div class="page">
@@ -234,16 +240,26 @@
 					<ul class="list">
 						<li class="windows">Available on the <a href="https://get.filebot.net/windows/2" target="windows_store">Windows Store</a></li>
 						<li class="macosx">Available on the <a href="https://get.filebot.net/mac/2" target="itunes_store">Mac App Store</a></li>
-						<li class="macappstore" style="display:none">FileBot Subtitles for Mac: <a target="_blank" href="https://www.filebot.net/mac/subtitles.html">FileBot Subtitles</a></li>
-						<li class="macappstore" style="display:none">FileBot command-line tools for Mac are available <a target="_blank" href="https://www.filebot.net/mac/brew.html">via brew cask</a></li>
-						<li class="winappstore" style="display:none">Legacy packages for Windows 7 and Windows Server are available <a target="_blank" href="https://www.filebot.net/forums/viewtopic.php?f=10&amp;t=5729">upon request</a></li>
-						<!-- <li>macOS app bundle: <a target="_blank" href="@{link.patreon}">FileBot_@{application.version}.app</a></li> -->
-						<!-- <li>Portable: <a target="_blank" href="@{link.patreon}">FileBot-@{application.version}-portable.tar.xz</a> <small class="comment">for Linux, FreeBSD and Solaris</small></li> -->
-						<!-- <li>Debian packages: <a target="_blank" href="@{link.patreon}">filebot_@{application.version}_amd64.deb</a></li> -->
-						<li>Ubuntu package is available <a target="_blank" href="@{link.patreon}">on the Ubuntu Store</a></li>
-						<!-- <li>Arch Linux package is available <a target="_blank" href="@{link.patreon}">via AUR</a></li> -->
-						<li>Synology NAS package is available <a target="_blank" href="@{link.patreon}">via Package Center</a></li>
-						<li>Docker images are available <a target="_blank" href="@{link.patreon}">on Docker Hub</a></li>
+						<li class="macappstore note"><span>The <a href="https://get.filebot.net/mac/" target="itunes_store">Mac App Store</a> version does not support <a href="https://www.filebot.net/forums/viewtopic.php?f=12&amp;t=5983" target="itunes_store">certain features</a>.</span></li>
+						<li>Windows installer: <a href="javascript:;" class="paddle_download" data-download-url="https://get.filebot.net/filebot/FileBot_@{application.version}/FileBot_@{application.version}_x64.msi" data-download-prompt="false" data-vendor-name="@{package.company}">FileBot_@{application.version}_x64.msi</a></li>
+						<li>macOS installer: <a href="javascript:;" class="paddle_download" data-download-url="https://get.filebot.net/filebot/FileBot_@{application.version}/FileBot_@{application.version}.pkg" data-download-prompt="false" data-vendor-name="@{package.company}">FileBot_@{application.version}.pkg</a></li>
+						<li>Debian package: <a href="javascript:;" class="paddle_download" data-download-url="https://get.filebot.net/filebot/FileBot_@{application.version}/FileBot_@{application.version}_amd64.deb" data-download-prompt="false" data-vendor-name="@{package.company}">FileBot_@{application.version}_amd64.deb</a></li>
+						<li>Portable tarball: <a href="javascript:;" class="paddle_download" data-download-url="https://get.filebot.net/filebot/FileBot_@{application.version}/FileBot_@{application.version}_portable.tar.xz" data-download-prompt="false" data-vendor-name="@{package.company}">FileBot_@{application.version}.tar.xz</a> <small class="comment">for Linux, BSD and Solaris</small></li>
+						<li>macOS package is available <a href="javascript:;" class="paddle_download" data-download-url="https://www.filebot.net/mac/brew.html" data-download-prompt="false" data-vendor-name="@{package.company}">via brew cask</a></li>
+						<li>Ubuntu package is available <a href="javascript:;" class="paddle_download" data-download-url="https://www.filebot.net/linux/snap.html" data-download-prompt="false" data-vendor-name="@{package.company}">on the Ubuntu Store</a></li>
+						<li>Synology NAS package is available <a href="javascript:;" class="paddle_download" data-download-url="https://www.filebot.net/linux/syno.html" data-download-prompt="false" data-vendor-name="@{package.company}">via Package Center</a></li>
+						<li>Docker images are available <a href="javascript:;" class="paddle_download" data-download-url="https://www.filebot.net/linux/docker.html" data-download-prompt="false" data-vendor-name="@{package.company}">on Docker Hub</a></li>
+					</ul>
+				</div>
+
+				<div class="section purchase" id="purchase">
+					<img class="icon" src="images/coin.png" alt="download" width="48" height="48" />
+					<span class="quote">We work to better ourselves</span>
+					<h2>Buy License</h2>
+					<ul class="list">
+						<li class="year">Purchase a <a href="@{link.app.purchase}#web">1 year universal license</a><div class="price"><span class="paddle-gross" data-product="532439">US$5.00</span></div></li>
+						<li class="note">A valid license is required to unlock FileBot.</li>
+						<li class="note"><a href="https://get.filebot.net/windows/" target="windows_store">Windows Store</a> and <a href="https://get.filebot.net/mac/" target="itunes_store">Mac App Store</a> purchases do not require a separate license.</li>
 					</ul>
 				</div>
 
