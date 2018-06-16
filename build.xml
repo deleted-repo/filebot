@@ -215,7 +215,7 @@
 		<antcall target="appbundle-maspkg">
 			<param name="application.name" value="FileBot" />
 			<param name="application.executable" value="filebot.launcher" />
-			<param name="application.identifier" value="${package.identifier}.Rename" />
+			<param name="application.identifier" value="${package.identifier}" />
 			<param name="application.icon" value="${dir.installer}/appbundle/filebot.icns" />
 			<param name="application.cert.appbundle" value="3rd Party Mac Developer Application: ${package.company}" />
 			<param name="application.cert.installer" value="3rd Party Mac Developer Installer: ${package.company}" />
@@ -537,7 +537,7 @@
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
 
-		<jdeb destfile="${dir.dist}/${package.name}_${application.version}_${deb.arch}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
+		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_${deb.arch}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
 			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="fpcalc" filemode="755" />
