@@ -66,16 +66,12 @@ function getData() {
 		}
 	}
 
-	data.forEach(function(it) {
-		it.video = it[youtube ? 'link' : 'video']
-	})
-
 	if (!youtube) {
 		data.forEach(function(it) {
-			it['iframe'] = it.video
-			delete it.video
+			it.link = it.video
 		})
 	}
+
 	return data
 }
 
