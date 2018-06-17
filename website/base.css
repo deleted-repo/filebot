@@ -478,14 +478,16 @@ div.screencast:hover .play {
 #purchase li.note {
 	list-style: none;
 	background: url('images/accept.png') left center no-repeat;
+
 	padding: 0.1em 1.7em;
 	margin-left: 1.5em;
 }
 
 #download li.macappstore.note {
 	list-style: none;
+	font-size: 8pt;
 	text-align: right;
-	margin: 0em 0.5em 1.2em 0.5em;
+	margin: -0.5em 60px 2em 0.5em;
 }
 
 #download li.macappstore.note span:before {
