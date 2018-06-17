@@ -84,9 +84,6 @@
 				<patternset>
 					<exclude name="**/dtplugin/**" />
 					<exclude name="**/plugin2/**" />
-
-					<!-- reduce MSI size by ~20 MB -->
-					<exclude name="**/jfxwebkit.dll" />
 				</patternset>
 				<cutdirsmapper dirs="1" />
 			</untar>

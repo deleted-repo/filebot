@@ -88,16 +88,20 @@ public class GettingStartedStage {
 				stage.setTitle(webview.getEngine().getTitle());
 				stage.toFront();
 				webview.requestFocus();
+
+				Timeline timeline = new Timeline(new KeyFrame(Duration.millis(750), new KeyValue(stage.opacityProperty(), 1.0, Interpolator.EASE_IN)));
+				timeline.setOnFinished((evt) -> {
+					stage.setOpacity(1.0);
+					stage.requestFocus();
+				});
+				timeline.play();
 			} else if (n == Worker.State.FAILED) {
 				stage.close();
 			}
 		});
 
-		stage.setTitle("Loading …");
+		stage.setTitle("Loading ...");
 		stage.setScene(new Scene(webview, webview.getPrefWidth(), webview.getPrefHeight(), Color.BLACK));
-
-		// force black background while page is loading
-		setBackground(webview.getEngine(), 0xFF000000);
 
 		// make sure that we can read the user locale in JS
 		webview.getEngine().executeScript(String.format("navigator.locale = '%s'", Locale.getDefault()));
@@ -106,28 +110,6 @@ public class GettingStartedStage {
 	public void show() {
 		stage.setOpacity(0.0);
 		stage.show();
-
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(500), new KeyValue(stage.opacityProperty(), 1.0, Interpolator.EASE_IN)));
-		timeline.setOnFinished((evt) -> {
-			stage.setOpacity(1.0);
-			stage.requestFocus();
-		});
-		timeline.play();
-	}
-
-	protected void setBackground(WebEngine engine, int color) {
-		/*
-		 * Java 9 makes internal classes inaccessible, so setting the page background is no longer supported: package com.sun.webkit is declared in module javafx.web, which does not export it
-		 */
-		// try {
-		// // use reflection to retrieve the WebEngine's private 'page' field
-		// Field f = engine.getClass().getDeclaredField("page");
-		// f.setAccessible(true);
-		// com.sun.webkit.WebPage page = (com.sun.webkit.WebPage) f.get(engine);
-		// page.setBackgroundColor(color);
-		// } catch (Exception e) {
-		// debug.log(Level.WARNING, "Failed to set background", e);
-		// }
 	}
 
 	protected WebEngine onPopup(WebView webview) {
