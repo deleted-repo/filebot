@@ -419,6 +419,14 @@ public class MediaBindingBean {
 		return Integer.parseInt(bitdepth);
 	}
 
+	@Define("hdr")
+	public String getHighDynamicRange() {
+		if (getVideoBitDepth() >= 10 && getMediaInfo(StreamKind.Video, 0, "colour_primaries").matches("BT.2020")) {
+			return "HDR";
+		}
+		return null;
+	}
+
 	@Define("ws")
 	public String getWidescreen() {
 		List<Integer> dim = getDimension();
