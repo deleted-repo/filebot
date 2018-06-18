@@ -36,9 +36,11 @@ public class ArgumentProcessor {
 			log.finest("Done ヾ(＠⌒ー⌒＠)ノ");
 			return 0;
 		} catch (LicenseError e) {
-			log.severe("License Error: " + e.getMessage());
-			log.info(format("%n%s %s requires a valid license:%n%n=> %s%n%nPlease run `filebot --license *.psm` to install your FileBot license.%n", getApplicationName(), getApplicationVersion(), getPurchaseURL()));
-			return 1;
+			log.severe(format("License Error: %s", e.getMessage()));
+			if (LICENSE.isFile()) {
+				log.info(format("%n%s %s requires a valid license:%n%n=> %s%n%nPlease run `filebot --license *.psm` to install your FileBot license.%n", getApplicationName(), getApplicationVersion(), getPurchaseURL()));
+			}
+			return 2;
 		} catch (Throwable e) {
 			if (findCause(e, CmdlineException.class) != null) {
 				log.log(Level.WARNING, findCause(e, CmdlineException.class).getMessage());
