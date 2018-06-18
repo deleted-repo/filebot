@@ -66,9 +66,17 @@ function getData() {
 		}
 	}
 
+	// prefer video file link over youtube link
 	if (!youtube) {
 		data.forEach(function(it) {
 			it.link = it.video
+		})
+	}
+
+	// prefer embedded iframe over new window
+	if (!embed) {
+		data.forEach(function(it) {
+			it['iframe'] = it.link
 		})
 	}
 
