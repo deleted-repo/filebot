@@ -49,11 +49,11 @@ public class ArgumentProcessor {
 			} else {
 				log.log(Level.SEVERE, e.getMessage(), e);
 			}
-		}
 
-		// script failed with exception -> exit with non-zero exit code (and use positive code to avoid issues with launch4j launcher)
-		log.finest("Failure (°_°)");
-		return 1;
+			// script failed with exception -> exit with non-zero exit code (and use positive code to avoid issues with launch4j launcher)
+			log.finest("Failure (°_°)");
+			return 1;
+		}
 	}
 
 	public int runCommand(CmdlineInterface cli, ArgumentBean args) throws Exception {
