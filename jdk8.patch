@@ -1,0 +1,420 @@
+diff --git a/.classpath b/.classpath
+index 940479cc..0be259e9 100644
+--- a/.classpath
++++ b/.classpath
+@@ -2,12 +2,7 @@
+ <classpath>
+ 	<classpathentry kind="src" path="source"/>
+ 	<classpathentry kind="src" path="test"/>
+-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+-		<attributes>
+-			<attribute name="module" value="true"/>
+-			<attribute name="limit-modules" value="java.se,javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,jdk.accessibility,jdk.attach,jdk.compiler,jdk.httpserver,jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi,jdk.management,jdk.packager,jdk.plugin.dom,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,oracle.desktop,oracle.net,jdk.dynalink,jdk.incubator.httpclient,jdk.jfr,jdk.jshell,jdk.jsobject,jdk.management.cmm,jdk.management.jfr,jdk.management.resource,jdk.net,jdk.packager.services,jdk.scripting.nashorn,jdk.xml.dom,java.activation,jdk.xml.bind"/>
+-		</attributes>
+-	</classpathentry>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+ 	<classpathentry kind="lib" path="lib/ivy/bundle/args4j.jar"/>
+ 	<classpathentry kind="lib" path="lib/jars/jacksum.jar"/>
+ 	<classpathentry kind="lib" path="lib/jars/simmetrics.jar"/>
+diff --git a/app.properties b/app.properties
+index b5e12ad8..8fddb115 100644
+--- a/app.properties
++++ b/app.properties
+@@ -35,11 +35,12 @@ link.patreon: https://www.patreon.com/filebot
+ 
+ # Build
+ main.class: net.filebot.Main
+-jre.version: 10.0.1
++jre.major: 8
++jre.build: 171
+ 
+ # Minimum System Version
+-jvm.version: 10
+-mac.version: 10.10
++jvm.version: 1.8
++mac.version: 10.8
+ 
+ # Package Information
+ package.name: filebot
+@@ -67,7 +68,7 @@ mac.application.category: public.app-category.utilities
+ deb.application.categories: AudioVideo;Video;Utility;FileTools;
+ deb.application.mimetype: inode/directory;video/*;audio/*;text/*;application/*;
+ deb.application.class: net-filebot-Main
+-deb.application.depends: openjdk-10-jre, openjfx, mediainfo, libchromaprint-tools
++deb.application.depends: openjdk-8-jre, openjfx, mediainfo, libchromaprint-tools
+ 
+ # Package Options
+ tar.compression: xz
+@@ -77,7 +78,7 @@ msi.compression: high
+ deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
+ 
+ # Default Java Options
+-java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true --illegal-access=permit --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.function=ALL-UNNAMED --add-opens=java.base/java.util.regex=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio.file=ALL-UNNAMED --add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.time.chrono=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.logging/java.util.logging=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED
++java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true
+ 
+ # Links
+ link.help.manpage: https://www.filebot.net/cli.html
+diff --git a/build.xml b/build.xml
+index ff05a67d..0f0a78b9 100644
+--- a/build.xml
++++ b/build.xml
+@@ -78,9 +78,10 @@
+ 		<attribute name="dest" />
+ 		<sequential>
+ 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
++				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
+ 				<arg line="get-java" />
+ 			</exec>
+-			<untar src="${dir.cache}/jre-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
++			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
+ 				<patternset>
+ 					<exclude name="**/dtplugin/**" />
+ 					<exclude name="**/plugin2/**" />
+@@ -96,7 +97,7 @@
+ 		<attribute name="dest" />
+ 		<sequential>
+ 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
+-			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
++			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-macosx-x64.tar.gz" dest="@{dest}" compression="gzip">
+ 				<!-- MAS validation does not like certain files included in the JRE -->
+ 				<patternset>
+ 					<exclude name="**/deploy/**" />
+@@ -106,7 +107,6 @@
+ 					<!-- libjfxwebkit.dylib has many dependencies to deprecated librararies that cause issues with MAS review -->
+ 					<exclude name="**/libjfxwebkit.dylib" />
+ 				</patternset>
+-				<cutdirsmapper dirs="1" />
+ 			</untar>
+ 		</sequential>
+ 	</macrodef>
+@@ -254,7 +254,7 @@
+ 			<librarypath dir="${dir.lib}/native/mac-x86_64" />
+ 
+ 			<arch name="x86_64" />
+-			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
++			<runtime dir="${dir.staging}/jre1.${jre.major}.0_${jre.build}.jre/Contents/Home">
+ 				<include name="**/*" />
+ 			</runtime>
+ 
+@@ -308,7 +308,7 @@
+ 		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${application.identifier}.jre" encoding="UTF-8" summary="true" />
+ 
+ 		<!-- fix broken symlink -->
+-		<copy file="${dir.staging}/jre-${java.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
++		<copy file="${dir.staging}/jre1.${jre.major}.0_${jre.build}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
+ 
+ 		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
+ 		<chmod perm="+x">
+@@ -373,7 +373,7 @@
+ 
+ 		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
+ 			<arch name="x86_64" />
+-			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
++			<runtime dir="${dir.staging}/jre1.${jre.major}.0_${jre.build}.jre/Contents/Home">
+ 				<include name="**/*" />
+ 			</runtime>
+ 
+@@ -769,7 +769,7 @@
+ 		</copy>
+ 
+ 		<!-- compile -->
+-		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
++		<javac srcdir="${dir.source}" destdir="${dir.build}" target="${jvm.version}" source="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
+ 			<classpath>
+ 				<fileset dir="${dir.dist}/lib" />
+ 			</classpath>
+diff --git a/ivy.xml b/ivy.xml
+index 6a2b5b6b..2aa7271f 100644
+--- a/ivy.xml
++++ b/ivy.xml
+@@ -25,7 +25,7 @@
+ 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
+ 		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
+ 		<dependency rev="0.6.7" org="one.util" name="streamex" />
+-		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
++		<dependency rev="8.40.14" org="org.controlsfx" name="controlsfx" />
+ 		<dependency rev="3.0.0" org="com.googlecode.lanterna" name="lanterna" />
+ 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
+ 		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
+diff --git a/source/net/filebot/ResourceManager.java b/source/net/filebot/ResourceManager.java
+index d8ec436d..4b13a630 100644
+--- a/source/net/filebot/ResourceManager.java
++++ b/source/net/filebot/ResourceManager.java
+@@ -4,7 +4,6 @@ import static java.util.Collections.*;
+ import static java.util.stream.Collectors.*;
+ 
+ import java.awt.Image;
+-import java.awt.image.BaseMultiResolutionImage;
+ import java.net.URL;
+ import java.util.HashMap;
+ import java.util.List;
+@@ -47,11 +46,7 @@ public final class ResourceManager {
+ 
+ 	private static Image getMultiResolutionImage(URL[] resource) {
+ 		try {
+-			Image[] image = new Image[resource.length];
+-			for (int i = 0; i < image.length; i++) {
+-				image[i] = ImageIO.read(resource[i]);
+-			}
+-			return new BaseMultiResolutionImage(image);
++			return ImageIO.read(resource[0]);
+ 		} catch (Exception e) {
+ 			throw new RuntimeException(e);
+ 		}
+diff --git a/source/net/filebot/UserFiles.java b/source/net/filebot/UserFiles.java
+index 660c7cef..d551a310 100644
+--- a/source/net/filebot/UserFiles.java
++++ b/source/net/filebot/UserFiles.java
+@@ -2,7 +2,6 @@ package net.filebot;
+ 
+ import static java.util.Arrays.*;
+ import static java.util.Collections.*;
+-import static java.util.stream.Collectors.*;
+ import static net.filebot.Logging.*;
+ import static net.filebot.Settings.*;
+ import static net.filebot.similarity.Normalization.*;
+@@ -16,7 +15,6 @@ import java.awt.event.ActionEvent;
+ import java.io.File;
+ import java.io.IOException;
+ import java.util.Collection;
+-import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.concurrent.Callable;
+ import java.util.concurrent.FutureTask;
+@@ -24,6 +22,8 @@ import java.util.logging.Level;
+ 
+ import javax.swing.JFileChooser;
+ 
++import com.sun.jna.platform.FileUtils;
++
+ import net.filebot.platform.mac.MacAppUtilities;
+ import net.filebot.util.FileUtilities;
+ import net.filebot.util.FileUtilities.ExtensionFileFilter;
+@@ -32,12 +32,10 @@ public class UserFiles {
+ 
+ 	public static void trash(File file) throws IOException {
+ 		// use system trash if possible
+-		if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
++		if (FileUtils.getInstance().hasTrash()) {
+ 			try {
+-				if (Desktop.getDesktop().moveToTrash(file)) {
+-					return;
+-				}
+-				debug.log(Level.WARNING, message("Failed to move file to trash", file));
++				FileUtils.getInstance().moveToTrash(new File[] { file });
++				return;
+ 			} catch (Exception e) {
+ 				debug.log(Level.WARNING, e::toString);
+ 			}
+@@ -50,18 +48,6 @@ public class UserFiles {
+ 	}
+ 
+ 	public static void revealFiles(Collection<File> files) {
+-		// try to reveal file in folder
+-		if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE_FILE_DIR)) {
+-			files.stream().collect(groupingBy(File::getParentFile, LinkedHashMap::new, toList())).forEach((parent, children) -> {
+-				try {
+-					Desktop.getDesktop().browseFileDirectory(children.get(children.size() - 1));
+-				} catch (Exception e) {
+-					debug.log(Level.WARNING, e::toString);
+-				}
+-			});
+-			return;
+-		}
+-
+ 		// if we can't reveal the file in folder, just reveal the parent folder
+ 		files.stream().map(it -> it.getParentFile()).distinct().forEach(it -> {
+ 			try {
+diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
+index e4caaad7..4e6f7289 100644
+--- a/source/net/filebot/mediainfo/MediaInfo.java
++++ b/source/net/filebot/mediainfo/MediaInfo.java
+@@ -8,7 +8,6 @@ import static net.filebot.util.RegularExpressions.*;
+ import java.io.File;
+ import java.io.IOException;
+ import java.io.RandomAccessFile;
+-import java.lang.ref.Cleaner;
+ import java.time.Duration;
+ import java.util.ArrayList;
+ import java.util.EnumMap;
+@@ -27,12 +26,10 @@ import net.filebot.media.MediaCharacteristics;
+ public class MediaInfo implements MediaCharacteristics {
+ 
+ 	private Pointer handle;
+-	private Cleaner.Cleanable cleanable;
+ 
+ 	public MediaInfo() {
+ 		try {
+ 			handle = MediaInfoLibrary.INSTANCE.New();
+-			cleanable = cleaner.register(this, new Finalizer(handle));
+ 		} catch (LinkageError e) {
+ 			throw new MediaInfoException(e);
+ 		}
+@@ -228,7 +225,22 @@ public class MediaInfo implements MediaCharacteristics {
+ 
+ 	@Override
+ 	public synchronized void close() {
+-		cleanable.clean();
++		MediaInfoLibrary.INSTANCE.Close(handle);
++	}
++
++	public synchronized void dispose() {
++		if (handle == null) {
++			return;
++		}
++
++		// delete handle
++		MediaInfoLibrary.INSTANCE.Delete(handle);
++		handle = null;
++	}
++
++	@Override
++	protected void finalize() {
++		dispose();
+ 	}
+ 
+ 	public enum StreamKind {
+@@ -313,24 +325,4 @@ public class MediaInfo implements MediaCharacteristics {
+ 		}
+ 	}
+ 
+-	/**
+-	 * Use {@link Cleaner} instead of Object.finalize()
+-	 */
+-	private static final Cleaner cleaner = Cleaner.create();
+-
+-	private static class Finalizer implements Runnable {
+-
+-		private Pointer handle;
+-
+-		public Finalizer(Pointer handle) {
+-			this.handle = handle;
+-		}
+-
+-		@Override
+-		public void run() {
+-			MediaInfoLibrary.INSTANCE.Close(handle);
+-			MediaInfoLibrary.INSTANCE.Delete(handle);
+-		}
+-	}
+-
+ }
+diff --git a/source/net/filebot/platform/mac/DropToUnlock.java b/source/net/filebot/platform/mac/DropToUnlock.java
+index 6b482847..1d21eca0 100644
+--- a/source/net/filebot/platform/mac/DropToUnlock.java
++++ b/source/net/filebot/platform/mac/DropToUnlock.java
+@@ -12,7 +12,6 @@ import java.awt.BasicStroke;
+ import java.awt.Color;
+ import java.awt.Component;
+ import java.awt.Cursor;
+-import java.awt.Desktop;
+ import java.awt.Dialog.ModalExclusionType;
+ import java.awt.Dimension;
+ import java.awt.Font;
+@@ -163,7 +162,6 @@ public class DropToUnlock extends JList<File> {
+ 					if (model.stream().allMatch(f -> !isLockedFolder(f))) {
+ 						dialogCancelled.set(false);
+ 						invokeLater(750, () -> dialog.setVisible(false)); // auto-close unlock dialog once all folders have been unlocked
+-						invokeLater(1000, () -> Desktop.getDesktop().requestForeground(true)); // bring application to foreground now that folders have been unlocked
+ 					} else {
+ 						model.stream().filter(f -> isLockedFolder(f)).findFirst().ifPresent(f -> {
+ 							invokeLater(250, () -> {
+diff --git a/source/net/filebot/platform/mac/MacAppUtilities.java b/source/net/filebot/platform/mac/MacAppUtilities.java
+index 5fb4de64..7f7e1901 100644
+--- a/source/net/filebot/platform/mac/MacAppUtilities.java
++++ b/source/net/filebot/platform/mac/MacAppUtilities.java
+@@ -2,12 +2,10 @@ package net.filebot.platform.mac;
+ 
+ import static ca.weblite.objc.util.CocoaUtils.*;
+ 
+-import java.awt.Desktop;
+ import java.awt.EventQueue;
+ import java.awt.SecondaryLoop;
+ import java.awt.Toolkit;
+ import java.awt.Window;
+-import java.awt.desktop.QuitStrategy;
+ import java.io.File;
+ import java.util.ArrayList;
+ import java.util.Collection;
+@@ -95,20 +93,6 @@ public class MacAppUtilities {
+ 	public static void initializeApplication(JMenuBar appMenuBar, Consumer<List<File>> openFileHandler) {
+ 		// improved UI defaults
+ 		UIManager.put("TitledBorder.border", UIManager.getBorder("InsetBorder.aquaVariant"));
+-
+-		// make sure Application Quit Events get forwarded to normal Window Listeners
+-		Desktop.getDesktop().setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
+-
+-		// set global menu bar
+-		Desktop.getDesktop().setDefaultMenuBar(appMenuBar);
+-
+-		// set open file handler
+-		Desktop.getDesktop().setOpenFileHandler(evt -> {
+-			List<File> files = evt.getFiles();
+-			if (files.size() > 0) {
+-				openFileHandler.accept(files);
+-			}
+-		});
+ 	}
+ 
+ 	public static boolean isLockedFolder(File folder) {
+diff --git a/source/net/filebot/platform/mac/xattr/XAttrUtil.java b/source/net/filebot/platform/mac/xattr/XAttrUtil.java
+index 53eb62d9..ad02288e 100644
+--- a/source/net/filebot/platform/mac/xattr/XAttrUtil.java
++++ b/source/net/filebot/platform/mac/xattr/XAttrUtil.java
+@@ -63,7 +63,7 @@ public class XAttrUtil {
+ 
+ 	protected static String decodeString(ByteBuffer bb) {
+ 		// handle null-terminated String values gracefully
+-		return UTF_8.decode(bb).codePoints().takeWhile(c -> c != 0).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
++		return UTF_8.decode(bb).codePoints().filter(c -> c != 0).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+ 	}
+ 
+ 	protected static List<String> decodeStringSequence(ByteBuffer bb) {
+diff --git a/source/net/filebot/ui/MainFrame.java b/source/net/filebot/ui/MainFrame.java
+index 9d1f086f..a271cc32 100644
+--- a/source/net/filebot/ui/MainFrame.java
++++ b/source/net/filebot/ui/MainFrame.java
+@@ -12,7 +12,6 @@ import static net.filebot.Settings.*;
+ import static net.filebot.util.ui.SwingUI.*;
+ 
+ import java.awt.Color;
+-import java.awt.Desktop;
+ import java.awt.Dialog.ModalExclusionType;
+ import java.awt.Dimension;
+ import java.awt.FlowLayout;
+@@ -220,11 +219,7 @@ public class MainFrame extends JFrame {
+ 					selectEnabled = true;
+ 
+ 					// bring window to front when drag-and-drop operation is in progress
+-					if (Desktop.getDesktop().isSupported(Desktop.Action.APP_REQUEST_FOREGROUND)) {
+-						Desktop.getDesktop().requestForeground(true);
+-					} else {
+-						SwingUtilities.getWindowAncestor(((DropTarget) dtde.getSource()).getComponent()).toFront();
+-					}
++					SwingUtilities.getWindowAncestor(((DropTarget) dtde.getSource()).getComponent()).toFront();
+ 				});
+ 			}
+ 
+diff --git a/source/net/filebot/ui/rename/CharacterHighlightPainter.java b/source/net/filebot/ui/rename/CharacterHighlightPainter.java
+index ffae21d8..414e9c0d 100644
+--- a/source/net/filebot/ui/rename/CharacterHighlightPainter.java
++++ b/source/net/filebot/ui/rename/CharacterHighlightPainter.java
+@@ -15,7 +15,6 @@ import javax.swing.plaf.TextUI;
+ import javax.swing.text.BadLocationException;
+ import javax.swing.text.Highlighter;
+ import javax.swing.text.JTextComponent;
+-import javax.swing.text.Position.Bias;
+ 
+ import net.filebot.util.ui.GradientStyle;
+ 
+@@ -36,8 +35,8 @@ class CharacterHighlightPainter implements Highlighter.HighlightPainter {
+ 		try {
+ 			// determine locations
+ 			TextUI mapper = c.getUI();
+-			Rectangle2D p1 = mapper.modelToView2D(c, offset1, Bias.Backward);
+-			Rectangle2D p2 = mapper.modelToView2D(c, offset2, Bias.Backward);
++			Rectangle2D p1 = mapper.modelToView(c, offset1);
++			Rectangle2D p2 = mapper.modelToView(c, offset2);
+ 
+ 			Rectangle2D r = p1.createUnion(p2);
+ 			double w = r.getWidth() + 1;
