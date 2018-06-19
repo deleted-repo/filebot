@@ -9,9 +9,6 @@ redirect 302 /mac/purchase.html https://itunes.apple.com/us/app/filebot/id905384
 # redirect donate page
 redirect 302 /donate.html https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=rednoah%40filebot%2enet&lc=US&item_name=FileBot%20Support&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donate_SM%2egif%3aNonHosted
 
-# TODO: build purchase / checkout page
-redirect 302 /purchase.html https://www.filebot.net/#purchase
-
 # redirect to support pages
 redirect 302 /amc.html https://www.filebot.net/forums/viewtopic.php?f=4&t=215
 redirect 302 /manual.html https://www.filebot.net/forums/viewtopic.php?f=3&t=7

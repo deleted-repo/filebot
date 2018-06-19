@@ -16,7 +16,8 @@ a:hover {
 	border-bottom: none;
 }
 
-a img {
+img, video {
+	vertical-align: middle;
 	border: none;
 }
 
@@ -179,7 +180,6 @@ h1 .description {
 .screenshot {
 	float: right;
 	background-color: #E6E6E6;
-	border: thin solid lightgray;
 	box-shadow: 0px 2px 5px #a2a2a2;
 }
 
@@ -494,34 +494,66 @@ div.screencast:hover .play {
 	content: "* ";
 }
 
-#purchase .price {
-	position: absolute;
+#purchase {
+	margin-bottom: 55px;
 }
 
-#purchase .price > span {
+#purchase > ul > li.purchase {
 	position: relative;
-	left: 10em;
-	top: 1.3em;
+}
+
+#purchase > ul > li.purchase div.tag {
+	position: absolute;
+	right: 2em;
+	bottom: -1em;
 
 	padding: 0.3em;
 	border: 0.1em solid rgba(255,255,255,0);
 	border-radius: 0.4em;
-	
+
 	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
 	text-align: center;
-	font-size: smaller;
+	font-size: 13px;
 
 	color: white;
 	background-color:#F14E4E;
 }
 
-#purchase .price > span:after {
+#purchase div.tag > span:after {
 	content: " (incl. tax)";
 	font-size: xx-small;
 	position: relative;
 	bottom: 0.12em;
 	left: 0.1em;
 }
+
+#purchase > a.paddle_button {
+	position: relative;
+	display: block;
+	margin: 30px 260px 50px 80px;
+	padding: 15px;
+	font-size: larger;
+	vertical-align: middle;
+	text-align: center;
+}
+
+#purchase > a.paddle_button div.tag {
+	position: absolute;
+	right: 5em;
+	bottom: -1.6em;
+
+	padding: 4px;
+	border: 0.1em solid rgba(255,255,255,0);
+	border-radius: 0.4em;
+
+	text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+	text-align: center;
+	font-size: 13px;
+
+	color: white;
+	background-color:#F14E4E;
+}
+
 
 
 /**

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Buy FileBot License</title>
+		<link rel="stylesheet" href="base.css">
+		<link rel="icon" href="favicon.png" sizes="16x16 32x32" type="image/png">
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js" integrity="sha384-nvAa0+6Qg9clwYCGGPpDQLVpLNn0fRaROjHqs13t4Ggj3Ez50XnGQqc/r8MhnRDZ" crossorigin="anonymous"></script>
+
+		<script src="https://cdn.paddle.com/paddle/paddle.js"></script>
+		<script type="text/javascript">
+			Paddle.Setup({
+				vendor: 32405
+			});
+		</script>
+	</head>
+	<body>
+		<div class="page">
+			<div class="navigation">
+				<div>
+				<ul>
+					<li><a href="https://www.filebot.net/forums/">Forums</a></li>
+					<li><a href="https://www.filebot.net/forums/viewtopic.php?f=3&amp;t=7">FAQ</a></li>
+					<li><a href="https://www.filebot.net/#download">Download</a></li>
+				</ul>
+				</div>
+			</div>
+
+			<div class="header">
+				<a href="https://www.filebot.net/"><img class="logo" alt="logo" src="images/filebot.logo.svg" width="64" height="64" /></a>
+				<h1>
+					FileBot
+					<span class="description">Purchase a universal license</span>
+				</h1>
+			</div>
+
+			<div class="content">
+				<div class="screenshot" style="background-color: white; padding: 0px 0px 0px 0px">
+					<img alt="screenshot" src="screenshots/license.png" width="149" height="116">
+				</div>
+				<div class="section about">
+					<h2>Buy</h2>
+					<p>
+					FileBot may be downloaded and evaluated for free, however a license must be purchased for continued use. Licenses are per-user, rather than per-machine, so you can enjoy FileBot on as many computers and operating systems as you wish with your license.
+					</p>
+				</div>
+
+
+				<div id="purchase" class="section purchase">
+					<a id="year" href="#!" class="paddle_button" data-allow-quantity="false" data-referrer="web" data-product="532439">
+						Buy FileBot License (1 year)
+						<div class="tag"><span class="paddle-gross" data-product="532439">US$6.00</span></div>
+					</a>
+
+					<ul class="list">
+						<li class="note">A valid license is required to unlock FileBot.</li>
+						<li class="note">A single license is valid on all platforms and can be used on multiple machines.</li>
+						<li class="note"><a href="https://get.filebot.net/windows/" target="windows_store">Windows Store</a> and <a href="https://get.filebot.net/mac/" target="itunes_store">Mac App Store</a> purchases do not require a separate license.</li>
+					</ul>
+				</div>
+
+
+
+				<script type="text/javascript">
+					$(window).on('load', function() {
+						var deployment = location.hash.substring(1)
+
+						if (deployment) {
+							Paddle.Checkout.open({
+								product: 532439,
+								allowQuantity: false,
+								referring_domain: deployment
+							});
+						}
+					});
+				</script>
+
+
+
+				<p class="suggestion" style="margin-top: 250px">
+				Need some help getting started? Join the <a href="https://www.filebot.net/forums/viewforum.php?f=8">forums</a> and ask.
+				</p>
+
+
+				<div class="footer">
+					<p><a href="https://www.filebot.net/">FileBot Media Renamer</a> | Copyright @{tstamp.year} @{package.company}</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
