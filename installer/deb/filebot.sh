@@ -9,4 +9,4 @@ fi
 # select application data folder
 APP_DATA="$HOME/.filebot"
 
-java @{java.application.options} -Dapplication.deployment=deb -Djdk.gtk.version=2 -Dsun.java2d.xrender=true -Dapplication.help=show -DuseGVFS=true -Dnet.filebot.gio.GVFS="$XDG_RUNTIME_DIR/gvfs" -Dapplication.dir="$APP_DATA" -Djava.io.tmpdir="$APP_DATA/tmp" -Djna.boot.library.path="$APP_ROOT/lib" -Djna.library.path="$APP_ROOT/lib" -Djava.library.path="$APP_ROOT/lib" -Dnet.filebot.AcoustID.fpcalc="$APP_ROOT/lib/fpcalc" $JAVA_OPTS -classpath "$APP_ROOT/jar/*" @{main.class} "$@"
+java @{java.application.options} -Dapplication.deployment=deb -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dnet.filebot.UserFiles.fileChooser=JavaFX -Djdk.gtk.version=2 -Dsun.java2d.xrender=true -Dapplication.help=show -DuseGVFS=true -Dnet.filebot.gio.GVFS="$XDG_RUNTIME_DIR/gvfs" -Dapplication.dir="$APP_DATA" -Djava.io.tmpdir="$APP_DATA/tmp" -Djna.boot.library.path="$APP_ROOT/lib" -Djna.library.path="$APP_ROOT/lib" -Djava.library.path="$APP_ROOT/lib" -Dnet.filebot.AcoustID.fpcalc="$APP_ROOT/lib/fpcalc" $JAVA_OPTS -classpath "$APP_ROOT/jar/*" @{main.class} "$@"
