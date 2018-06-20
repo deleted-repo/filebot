@@ -16,5 +16,5 @@ parts:
   filebot:
     plugin: dump
     source: root
-	stage-packages: [openjdk-8-jre, openjfx, jayatana, libmediainfo0v5, libchromaprint-tools]
-  after: [desktop-gtk2]
+    stage-packages: [openjdk-8-jre, openjfx, jayatana, libmediainfo0v5, libchromaprint-tools]
+    after: [desktop-gtk2]
