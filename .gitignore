@@ -5,7 +5,10 @@
 /cache/*
 /lib/ivy/*
 
-.DS_Store
+*.txt
+*.psm
 
 makefile
 profile.properties
+
+.DS_Store
