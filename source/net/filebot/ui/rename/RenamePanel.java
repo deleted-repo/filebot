@@ -38,7 +38,6 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -440,7 +439,7 @@ public class RenamePanel extends JComponent {
 	private ActionPopup createFetchPopup() {
 		ActionPopup actionPopup = new ActionPopup("Fetch & Match Data", ResourceManager.getIcon("action.fetch"));
 
-		actionPopup.addDescription(new JLabel("Episode Mode:"));
+		actionPopup.addDescription("Episode Mode:");
 
 		// create actions for match popup episode list completion
 		for (EpisodeListProvider db : WebServices.getEpisodeListProviders()) {
@@ -448,7 +447,7 @@ public class RenamePanel extends JComponent {
 		}
 
 		actionPopup.addSeparator();
-		actionPopup.addDescription(new JLabel("Movie Mode:"));
+		actionPopup.addDescription("Movie Mode:");
 
 		// create action for movie name completion
 		for (MovieIdentificationService it : WebServices.getMovieIdentificationServices()) {
@@ -456,17 +455,17 @@ public class RenamePanel extends JComponent {
 		}
 
 		actionPopup.addSeparator();
-		actionPopup.addDescription(new JLabel("Music Mode:"));
+		actionPopup.addDescription("Music Mode:");
 		for (MusicIdentificationService it : WebServices.getMusicIdentificationServices()) {
 			actionPopup.add(new AutoCompleteAction(it.getName(), it.getIcon(), () -> new MusicMatcher(it)));
 		}
 
 		actionPopup.addSeparator();
-		actionPopup.addDescription(new JLabel("Smart Mode:"));
+		actionPopup.addDescription("Smart Mode:");
 		actionPopup.add(new AutoCompleteAction("Autodetect", ResourceManager.getIcon("action.auto"), AutoDetectMatcher::new));
 
 		actionPopup.addSeparator();
-		actionPopup.addDescription(new JLabel("Options:"));
+		actionPopup.addDescription("Options:");
 
 		actionPopup.add(newAction("Edit Format", ResourceManager.getIcon("action.format"), evt -> showFormatEditor(null)));
 
@@ -539,13 +538,13 @@ public class RenamePanel extends JComponent {
 	private ActionPopup createSettingsPopup() {
 		ActionPopup actionPopup = new ActionPopup("Rename Options", ResourceManager.getIcon("action.settings"));
 
-		actionPopup.addDescription(new JLabel("Extension:"));
+		actionPopup.addDescription("Extension:");
 		actionPopup.add(new SetRenameMode(false, "Preserve", ResourceManager.getIcon("action.extension.preserve")));
 		actionPopup.add(new SetRenameMode(true, "Override", ResourceManager.getIcon("action.extension.override")));
 
 		actionPopup.addSeparator();
 
-		actionPopup.addDescription(new JLabel("Action:"));
+		actionPopup.addDescription("Action:");
 		for (StandardRenameAction action : Preset.getSupportedActions()) {
 			actionPopup.add(new SetRenameAction(action));
 		}

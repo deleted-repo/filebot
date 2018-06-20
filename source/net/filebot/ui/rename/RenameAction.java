@@ -11,7 +11,6 @@ import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -32,7 +31,6 @@ import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 
 import net.filebot.HistorySpooler;
 import net.filebot.LicenseError;
@@ -253,11 +251,7 @@ class RenameAction extends AbstractAction {
 			openURI(getPurchaseURL());
 		}));
 
-		actionPopup.addSeparator();
-
-		JLabel label = new JLabel(message, ResourceManager.getIcon("status.error"), JLabel.CENTER);
-		label.setFont(label.getFont().deriveFont(9f).deriveFont(Font.BOLD));
-		actionPopup.addDescription(label);
+		actionPopup.setStatus(message);
 
 		return actionPopup;
 	}

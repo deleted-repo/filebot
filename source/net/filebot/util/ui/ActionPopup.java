@@ -1,12 +1,10 @@
 package net.filebot.util.ui;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -24,7 +22,11 @@ public class ActionPopup extends JPopupMenu {
 	protected final JPanel actionPanel = new JPanel(new MigLayout("nogrid, insets 0, fill"));
 
 	public ActionPopup(String label, Icon icon) {
+		// fix text color (especially on Linux with dark GTK theme)
+		setForeground(new JMenuItem().getForeground());
+
 		headerLabel.setText(label);
+		headerLabel.setForeground(getForeground());
 		headerLabel.setIcon(icon);
 		headerLabel.setIconTextGap(5);
 
@@ -45,12 +47,14 @@ public class ActionPopup extends JPopupMenu {
 		setLightWeightPopupEnabled(false);
 	}
 
-	public void addDescription(JComponent component) {
-		actionPanel.add(component, "gapx 4px 4px, growx, wrap 3px");
+	protected JLabel createLabel(String text) {
+		JLabel label = new JLabel(text);
+		label.setForeground(getForeground());
+		return label;
 	}
 
-	public void addAction(JComponent component) {
-		actionPanel.add(component, "gapx 12px 12px, growx, wrap");
+	public void addDescription(String text) {
+		actionPanel.add(createLabel(text), "gapx 4px 4px, growx, wrap 3px");
 	}
 
 	@Override
@@ -72,17 +76,8 @@ public class ActionPopup extends JPopupMenu {
 		// close popup when action is triggered
 		link.addActionListener(closeListener);
 
-		addAction(link);
+		actionPanel.add(link, "gapx 12px 12px, growx, wrap");
 		return null;
-	}
-
-	public void clear() {
-		actionPanel.removeAll();
-	}
-
-	@Override
-	public void setLabel(String label) {
-		headerLabel.setText(label);
 	}
 
 	@Override
@@ -94,16 +89,6 @@ public class ActionPopup extends JPopupMenu {
 		statusLabel.setText(string);
 	}
 
-	public String getStatus() {
-		return statusLabel.getText();
-	}
-
-	private final ActionListener closeListener = new ActionListener() {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			setVisible(false);
-		}
-	};
+	private final ActionListener closeListener = evt -> setVisible(false);
 
 }
