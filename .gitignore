@@ -1,8 +1,11 @@
-bin/
-build/
-build-data/
-dist/
-cache/
-lib/ivy/
+/bin/*
+/build/*
+/build-data/*
+/dist/*
+/cache/*
+/lib/ivy/*
 
 .DS_Store
+
+makefile
+profile.properties
