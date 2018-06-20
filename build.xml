@@ -531,11 +531,16 @@
 	<target name="deb-arch">
 		<property name="dir.staging" location="${dir.dist}/deb/${arch}" />
 
+		<get-linux-jre dest="${dir.staging}/jre" />
+
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
 
 		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_${deb.arch}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
+			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" includes="**/bin/**" filemode="755" />
+			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" excludes="**/bin/**"  />
+
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
 			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="fpcalc" filemode="755" />
