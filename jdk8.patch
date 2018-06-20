@@ -55,7 +55,7 @@ index b5e12ad8..8fddb115 100644
  # Links
  link.help.manpage: https://www.filebot.net/cli.html
 diff --git a/build.xml b/build.xml
-index ff05a67d..0f0a78b9 100644
+index ff05a67d..958f4979 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -78,9 +78,10 @@
@@ -114,6 +114,19 @@ index ff05a67d..0f0a78b9 100644
  				<include name="**/*" />
  			</runtime>
  
+@@ -548,9 +548,9 @@
+ 
+ 	<target name="appx" description="Build Windows 10 package" depends="revision">
+ 		<antcall target="appx-arch">
+-			<param name="arch" value="x64" />
+-			<param name="arch.env" value="AMD64" />
+-			<param name="arch.jre" value="x64" />
++			<param name="arch" value="x86" />
++			<param name="arch.env" value="x86" />
++			<param name="arch.jre" value="i586" />
+ 		</antcall>
+ 
+ 		<!-- 32-bit Windows is not supported by Oracle JDK so there are no JRE builds -->
 @@ -769,7 +769,7 @@
  		</copy>
  
