@@ -5,15 +5,4 @@ dist/
 cache/
 lib/ivy/
 
-*.properties
-*.txt
-
-*.sh
-*.cmd
-*.groovy
-
-*.cer
-*.pfx
-*.pvk
-
 .DS_Store
