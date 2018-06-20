@@ -79,7 +79,13 @@ public final class SwingUI {
 
 	public static void openURI(String uri) {
 		try {
-			Desktop.getDesktop().browse(URI.create(uri));
+			if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+				Desktop.getDesktop().browse(URI.create(uri));
+			} else {
+				// JDK BUG: Desktop.browse() doesn't work in snap environment but xdg-open works just fine
+				ProcessBuilder p = new ProcessBuilder("xdg-open", uri);
+				p.inheritIO().start();
+			}
 		} catch (Exception e) {
 			debug.log(Level.SEVERE, "Failed to open URI: " + uri, e);
 		}
