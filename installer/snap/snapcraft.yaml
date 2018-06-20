@@ -16,22 +16,12 @@ apps:
 parts:
   filebot:
     plugin: dump
-    source: root
-  java:
-    plugin: nil
+    source: base
     stage-packages:
-      - openjdk-8-jdk
-      - openjfx
-      - jayatana
-      - ca-certificates-java
-      - ca-certificates
       - gtk2-engines-murrine
       - hicolor-icon-theme
-    after:
-      - desktop-gtk2
-  mediainfo:
-    plugin: nil
-    stage-packages:
       - libmediainfo0v5
       - libchromaprint-tools
       - curl
+    after:
+      - desktop-gtk2
