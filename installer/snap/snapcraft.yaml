@@ -23,7 +23,10 @@ parts:
       - libx11-6
       - libxi6
       - libxtst6
+      - libgnome-2-0
+      - libgnomevfs2-0
       - gtk2-engines-murrine
+      - libcanberra-gtk-module
       - hicolor-icon-theme
       - libmediainfo0v5
       - libchromaprint-tools
