@@ -505,31 +505,7 @@
 
 
 	<target name="deb" description="Build Debian Linux package" depends="revision">
-		<antcall target="deb-arch">
-			<param name="arch" value="amd64" />
-			<param name="deb.arch" value="amd64" />
-		</antcall>
-
-		<!-- arch i686 not allowed by deb specification, must be i386 for 32-bit x86 systems -->
-		<!--
-		<antcall target="deb-arch">
-			<param name="arch" value="i686" />
-			<param name="deb.arch" value="i386" />
-		</antcall>
-		-->
-
-		<!-- arch armv7l not allowed by deb specification, must be armhf for 32-bit armv7l systems -->
-		<!--
-		<antcall target="deb-arch">
-			<param name="arch" value="armv7l" />
-			<param name="deb.arch" value="armhf" />
-		</antcall>
-		-->
-	</target>
-
-
-	<target name="deb-arch">
-		<property name="dir.staging" location="${dir.dist}/deb/${arch}" />
+		<property name="dir.staging" location="${dir.dist}/deb" />
 
 		<get-linux-jre dest="${dir.staging}/jre" />
 
@@ -537,14 +513,14 @@
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
 
-		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_${deb.arch}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
+		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_amd64.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" includes="**/bin/**" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" excludes="**/bin/**"  />
 
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
-			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="fpcalc" filemode="755" />
-			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-${arch}" includes="*.so" />
+			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-amd64" includes="fpcalc" filemode="755" />
+			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
 
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
 			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" />

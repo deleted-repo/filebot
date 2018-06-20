@@ -1,6 +1,6 @@
 Package: @{package.name}
 Version: @{application.version}
-Architecture: @{deb.arch}
+Architecture: amd64
 Maintainer: @{package.developer} <@{package.maintainer}>
 Description: @{package.synopsis}
  @{package.description}
