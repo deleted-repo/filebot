@@ -18,6 +18,11 @@ parts:
     plugin: dump
     source: base
     stage-packages:
+      - libxrender1
+      - libxext6
+      - libx11-6
+      - libxi6
+      - libxtst6
       - gtk2-engines-murrine
       - hicolor-icon-theme
       - libmediainfo0v5
