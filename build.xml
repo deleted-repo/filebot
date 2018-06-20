@@ -500,6 +500,9 @@
 			<fileset dir="${dir.root}" includes="**/fpcalc" />
 		</chmod>
 
+		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
+			<arg line="cleanbuild" />
+		</exec>
 	</target>
 
 
