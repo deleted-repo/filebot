@@ -482,8 +482,6 @@
 		<property name="dir.staging" location="${dir.dist}/snap" />
 		<property name="dir.root" location="${dir.staging}/root" />
 
-		<get-linux-jre dest="${dir.root}/jre" />
-
 		<!-- copy files and resolve ant variables -->
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/snap" />
