@@ -18,7 +18,6 @@
 	<!-- define output paths -->
 	<property name="dir.cache" location="${basedir}/cache" />
 	<property name="dir.release" location="${basedir}/release/${release}" />
-	<property name="path.fatjar" location="${dir.dist}/${release}.jar" />
 
 
 	<!-- timestamp variables -->
@@ -47,13 +46,11 @@
 
 	<!-- sign with gpg macro -->
 	<macrodef name="gpg-sign">
-		<attribute name="detach" default="no" />
 		<element name="filesets" implicit="yes" />
 		<sequential>
 			<apply executable="gpg" verbose="yes">
-				<arg line="--verbose --batch --yes --local-user ${package.maintainer} --compress-level 0" />
-				<arg line="--armor --detach-sign" if:true="@{detach}" />
-				<arg line="--sign" unless:true="@{detach}" />
+				<arg line="--verbose --batch --yes --local-user ${package.maintainer}" />
+				<arg line="--armor --detach-sign" />
 				<srcfile />
 				<filesets />
 			</apply>
@@ -801,45 +798,32 @@
 
 
 	<target name="stage-release">
-		<!-- ensure clean release dir -->
-		<delete dir="${dir.release}" />
 		<mkdir dir="${dir.release}" />
 
 		<!-- prepare release packages -->
-		<copy todir="${dir.release}" verbose="yes">
+		<copy todir="${dir.release}" verbose="yes" overwrite="yes">
 			<fileset dir="${dir.dist}">
-				<include name="*.tar.xz" />
 				<include name="*.msi" />
+				<include name="*.pkg" />
 				<include name="*.deb" />
+				<include name="*.tar.xz" />
 				<include name="*.spk" />
+				<include name="*.appx" />
+				<include name="*.snap" />
 			</fileset>
 		</copy>
 
-		<!-- require gpg signatures for all installer packages -->
+		<!-- add *.asc files -->
 		<gpg-sign>
-			<fileset dir="${dir.release}">
-				<exclude name="*.spk" />
-			</fileset>
+			<fileset dir="${dir.release}" />
 		</gpg-sign>
 
-
-		<checksum algorithm="SHA-256" pattern="{0}	{1}" todir="${dir.cache}/${release}/sha">
+		<!-- add *.sha256 files -->
+		<checksum algorithm="SHA-256" pattern="{0}" fileext=".sha256">
 			<fileset dir="${dir.release}">
-				<include name="*.gpg" />
-				<include name="*.spk" />
+				<exclude name="*.asc" />
 			</fileset>
 		</checksum>
-		<concat destfile="${dir.release}/README.md" overwrite="true" eol="unix" outputencoding="utf-8">
-			<fileset file="${dir.installer}/ant/digest.head.md" />
-			<fileset dir="${dir.cache}/${release}/sha" />
-			<fileset file="${dir.installer}/ant/digest.tail.md" />
-		</concat>
-
-
-		<!-- include source tarball -->
-		<tar destfile="${dir.release}/${package.name}-${application.version}-src.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
-			<tarfileset dir="${dir.source}" />
-		</tar>
 	</target>
 
 
