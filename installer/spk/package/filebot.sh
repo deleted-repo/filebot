@@ -15,11 +15,11 @@ done
 # get canonical path
 WORKING_DIR=`pwd`
 PRG_DIR=`dirname "$PRG"`
-APP_ROOT=`cd "$PRG_DIR" && pwd`
+FILEBOT_HOME=`cd "$PRG_DIR" && pwd`
 
 
 # add package lib folder to library path
-PACKAGE_LIBRARY_PATH="$APP_ROOT/lib/$(uname -m)"
+PACKAGE_LIBRARY_PATH="$FILEBOT_HOME/lib/$(uname -m)"
 
 # add 3rd party packages to $LD_LIBRARY_PATH by default
 SYNO_LIBRARY_PATH="/usr/local/mediainfo/lib:/usr/local/chromaprint/lib"
@@ -54,9 +54,12 @@ EXTRACTOR="ApacheVFS"                   # use Apache Commons VFS2 with junrar pl
 MEDIA_PARSER="libmediainfo"             # use libmediainfo
 # MEDIA_PARSER="ffprobe"                # use ffprobe
 
+# choose ffprobe executable
+FFPROBE="/volume1/@appstore/MediaServer/bin/ffprobe"
 
 # select application data folder
-APP_DATA="$APP_ROOT/data/$USER"
+APP_DATA="$FILEBOT_HOME/data/$USER"
+LIBRARY_PATH="$SYNO_LIBRARY_PATH:$PACKAGE_LIBRARY_PATH"
 
 # start filebot
-java @{java.application.options} -Dapplication.deployment=spk -Djava.awt.headless=true -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF-8" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="/volume1/@appstore/MediaServer/bin/ffprobe" -Dnet.filebot.Archive.extractor="$EXTRACTOR" -Djna.library.path="$SYNO_LIBRARY_PATH:$PACKAGE_LIBRARY_PATH" -Djava.library.path="$SYNO_LIBRARY_PATH:$PACKAGE_LIBRARY_PATH" -Duser.home="$APP_DATA" -Dapplication.dir="$APP_DATA" -Djava.io.tmpdir="$APP_DATA/tmp" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="$APP_DATA/prefs.properties" $JAVA_OPTS -classpath "$APP_ROOT/*" @{main.class} "$@"
+java -Dapplication.deployment=spk -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.Archive.extractor="$EXTRACTOR" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="$APP_DATA/prefs.properties" @{java.application.options} @{linux.application.options} @{linux.headless.application.options} $JAVA_OPTS $FILEBOT_OPTS -classpath "$FILEBOT_HOME/*" @{main.class} "$@"

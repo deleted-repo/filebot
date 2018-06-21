@@ -497,7 +497,6 @@
 		</copy>
 		<chmod perm="+x" verbose="yes">
 			<fileset dir="${dir.base}" includes="**/bin/**" />
-			<fileset dir="${dir.base}" includes="**/fpcalc" />
 		</chmod>
 
 		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
@@ -517,7 +516,7 @@
 
 		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_amd64.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" includes="**/bin/**" filemode="755" />
-			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" excludes="**/bin/**"  />
+			<tarfileset prefix="/usr/share/filebot/jre" dir="${dir.staging}/jre" excludes="**/bin/**" />
 
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />

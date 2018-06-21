@@ -1,5 +1,6 @@
 #!/bin/sh
-APP_ROOT="/usr/share/filebot"
+FILEBOT_HOME="/usr/share/filebot"
+JAVA_HOME="$FILEBOT_HOME/jre"
 
 if [ -z "$HOME" ]; then
 	echo '$HOME must be set'
@@ -8,5 +9,6 @@ fi
 
 # select application data folder
 APP_DATA="$HOME/.filebot"
+LIBRARY_PATH="$FILEBOT_HOME/lib"
 
-"$APP_ROOT/jre/bin/java" @{java.application.options} -Dapplication.deployment=deb -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dnet.filebot.UserFiles.fileChooser=JavaFX -Djdk.gtk.version=2 -Dsun.java2d.xrender=true -Dapplication.help=show -DuseGVFS=true -Dnet.filebot.gio.GVFS="$XDG_RUNTIME_DIR/gvfs" -Dapplication.dir="$APP_DATA" -Djava.io.tmpdir="$APP_DATA/tmp" -Djna.boot.library.path="$APP_ROOT/lib" -Djna.library.path="$APP_ROOT/lib" -Djava.library.path="$APP_ROOT/lib" -Dnet.filebot.AcoustID.fpcalc="$APP_ROOT/lib/fpcalc" $JAVA_OPTS -classpath "$APP_ROOT/jar/*" @{main.class} "$@"
+"$JAVA_HOME/bin/java" -Dapplication.deployment=deb -Dnet.filebot.AcoustID.fpcalc="$LIBRARY_PATH/fpcalc" @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -classpath "$FILEBOT_HOME/jar/*" @{main.class} "$@"

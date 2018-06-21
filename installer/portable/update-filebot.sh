@@ -14,12 +14,12 @@ done
 
 # make it fully qualified
 PRG_DIR=`dirname "$PRG"`
-APP_ROOT=`cd "$PRG_DIR" && pwd`
+FILEBOT_HOME=`cd "$PRG_DIR" && pwd`
 
 
 # update core application files
 PACKAGE_NAME="CHANGES.tar.xz.gpg"
-PACKAGE_FILE="$APP_ROOT/$PACKAGE_NAME"
+PACKAGE_FILE="$FILEBOT_HOME/$PACKAGE_NAME"
 PACKAGE_URL="https://get.filebot.net/filebot/latest/$PACKAGE_NAME"
 
 echo "Update $PACKAGE_FILE"
@@ -32,10 +32,10 @@ fi
 
 
 # initialize gpg
-GPG_HOME="$APP_ROOT/data/.gpg"
+GPG_HOME="$FILEBOT_HOME/data/.gpg"
 
 if [ ! -d "$GPG_HOME" ]; then
-	mkdir -p "$GPG_HOME" && chmod 700 "$GPG_HOME" && gpg --homedir "$GPG_HOME" --import "$APP_ROOT/maintainer.pub"
+	mkdir -p "$GPG_HOME" && chmod 700 "$GPG_HOME" && gpg --homedir "$GPG_HOME" --import "$FILEBOT_HOME/maintainer.pub"
 fi
 
 # verify signature and extract jar
