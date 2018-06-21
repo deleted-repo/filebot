@@ -9,7 +9,7 @@
 
 	<Identity
 		Name="@{microsoft.application.name}"
-		ProcessorArchitecture="@{arch}"
+		ProcessorArchitecture="x64"
 		Publisher="@{microsoft.application.publisher}"
 		Version="@{application.version}.0"
 	/>
