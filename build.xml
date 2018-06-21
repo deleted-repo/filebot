@@ -73,6 +73,30 @@
 	</macrodef>
 
 
+	<patternset id="pattern.jre">
+		<include name="**/bin/java" />
+		<include name="**/bin/java.exe" />
+
+		<include name="**/conf/**" />
+		<include name="**/legal/**" />
+		<include name="**/lib/**" />
+		<include name="**/README.html" />
+		<include name="**/release" />
+
+		<!-- exclude Windows browser plugin -->
+		<exclude name="**/dtplugin/**" />
+		<exclude name="**/plugin2/**" />
+
+		<!-- exclude Mac browser plugin -->
+		<exclude name="**/deploy/**" />
+		<exclude name="**/nibs/**" />
+		<exclude name="**/shortcuts/**" />
+
+		<!-- libjfxwebkit.dylib has many dependencies to deprecated librararies that cause issues with MAS review -->
+		<exclude name="**/libjfxwebkit.dylib" />
+	</patternset>
+
+
 	<!-- fetch and unpack JRE bundle (64-bit Windows) -->
 	<macrodef name="get-windows-jre">
 		<attribute name="dest" />
@@ -81,10 +105,7 @@
 				<arg line="get-java" />
 			</exec>
 			<untar src="${dir.cache}/jre-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
-				<patternset>
-					<exclude name="**/dtplugin/**" />
-					<exclude name="**/plugin2/**" />
-				</patternset>
+				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
 		</sequential>
@@ -97,15 +118,7 @@
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
 			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
-				<!-- MAS validation does not like certain files included in the JRE -->
-				<patternset>
-					<exclude name="**/deploy/**" />
-					<exclude name="**/nibs/**" />
-					<exclude name="**/shortcuts/**" />
-
-					<!-- libjfxwebkit.dylib has many dependencies to deprecated librararies that cause issues with MAS review -->
-					<exclude name="**/libjfxwebkit.dylib" />
-				</patternset>
+				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
 		</sequential>
@@ -117,6 +130,7 @@
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
 			<untar src="${dir.cache}/jre-${jre.version}_linux-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
 		</sequential>
