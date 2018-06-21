@@ -74,23 +74,14 @@
 
 
 	<patternset id="pattern.jre">
-		<include name="**/bin/java" />
-		<include name="**/bin/java.exe" />
-
-		<include name="**/conf/**" />
-		<include name="**/legal/**" />
-		<include name="**/lib/**" />
-		<include name="**/README.html" />
-		<include name="**/release" />
-
 		<!-- exclude Windows browser plugin -->
-		<exclude name="**/lib/dtplugin/**" />
-		<exclude name="**/lib/plugin2/**" />
+		<exclude name="**/dtplugin/**" />
+		<exclude name="**/plugin2/**" />
 
 		<!-- exclude Mac browser plugin -->
-		<exclude name="**/lib/deploy/**" />
-		<exclude name="**/lib/nibs/**" />
-		<exclude name="**/lib/shortcuts/**" />
+		<exclude name="**/deploy/**" />
+		<exclude name="**/nibs/**" />
+		<exclude name="**/shortcuts/**" />
 
 		<!-- libjfxwebkit.dylib has many dependencies to deprecated librararies that cause issues with MAS review -->
 		<exclude name="**/libjfxwebkit.dylib" />
