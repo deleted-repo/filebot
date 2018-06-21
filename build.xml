@@ -544,31 +544,13 @@
 
 
 	<target name="appx" description="Build Windows 10 package" depends="revision">
-		<antcall target="appx-arch">
-			<param name="arch" value="x64" />
-			<param name="arch.env" value="AMD64" />
-			<param name="arch.jre" value="x64" />
-		</antcall>
-
-		<!-- 32-bit Windows is not supported by Oracle JDK so there are no JRE builds -->
-		<!--
-		<antcall target="appx-arch">
-			<param name="arch" value="x86" />
-			<param name="arch.env" value="x86" />
-			<param name="arch.jre" value="i586" />
-		</antcall>
-		-->
-	</target>
-
-
-	<target name="appx-arch">
-		<property name="dir.staging" location="${dir.dist}/appx/${arch}" />
+		<property name="dir.staging" location="${dir.dist}/appx" />
 
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
 		</copy>
 		<copy todir="${dir.staging}/lib">
-			<fileset dir="${dir.lib}/native/win32-${arch}" />
+			<fileset dir="${dir.lib}/native/win32-x64" />
 		</copy>
 		<copy todir="${dir.staging}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
@@ -596,7 +578,7 @@
 			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
 		</exec>
 		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
-			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_${arch}.appx" />
+			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_x64.appx" />
 		</exec>
 	</target>
 
