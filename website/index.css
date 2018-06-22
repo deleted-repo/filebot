@@ -1,0 +1,54 @@
+body {
+	font-family: arial, dejavu sans, freesans;
+	font-size: 16px;
+	background-color: #e6e6e6;
+	margin-top: 0;
+}
+
+a, acronym {
+	color: #5c7684;
+	text-decoration: none;
+	border: none;
+}
+
+a:hover {
+	text-decoration: underline;
+	border-bottom: none;
+}
+
+hr {
+	border-style: dashed; 
+	border-width: thin 0 0 0; 
+	border-color: lightgray;
+}
+
+body > table {
+	background: white;
+	border-radius: 7px;
+	box-shadow: 0 2px 5px #a2a2a2;
+	margin: 20px;
+	padding: 20px 40px;
+	min-width: 600px;
+}
+
+body > table th {
+	font-variant-caps: all-petite-caps;
+}
+
+body > table td {
+	padding: 4px 2px;
+}
+
+body > h1 {
+	font-size: 24px;
+	font-weight: bold;
+	letter-spacing: 0.03em;
+
+	padding: 20px 80px;
+	margin: 20px 40px;
+
+	background: url(https://www.filebot.net/images/filebot.logo.svg);
+	background-repeat: no-repeat;
+	background-size: 64px 64px;
+	background-position: left center;
+}
