@@ -62,7 +62,7 @@
 	<macrodef name="release-deploy">
 		<attribute name="dir" />
 		<attribute name="todir" />
-		<element name="includes" implicit="yes" />
+		<element name="includes" implicit="yes" optional="yes" />
 		<sequential>
 			<scp todir="@{todir}" trust="yes" verbose="true" sftp="true" keyfile="${deploy.keyfile}">
 				<fileset dir="@{dir}">
