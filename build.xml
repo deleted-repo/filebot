@@ -772,17 +772,6 @@
 	</target>
 
 
-	<target name="website-docs" depends="revision">
-		<javadoc destdir="${dir.dist}/website/docs" linksource="yes" access="public" classpathref="lib.classpath" encoding="UTF-8" charset="UTF-8" windowtitle="${application.name}" noindex="yes" nohelp="yes" notree="yes" nodeprecated="yes" nonavbar="yes">
-			<fileset dir="${dir.source}" includesfile="${dir.website}/docs/includes.fileset" />
-			<doctitle>${application.name} ${application.version}</doctitle>
-			<bottom>${application.name} ${application.version} (r${revision}) built on ${tstamp.date}</bottom>
-			<link href="http://docs.oracle.com/javase/${jre.version}/docs/api/" />
-			<link href="http://docs.groovy-lang.org/latest/html/api/" />
-		</javadoc>
-	</target>
-
-
 	<target name="revision" depends="init">
 		<exec executable="git" outputproperty="revision" failonerror="true">
 			<arg line="rev-list --count master" />
@@ -871,7 +860,7 @@
 	</target>
 
 
-	<target name="deploy-website" description="Upload website resources" depends="revision">
+	<target name="deploy-website" depends="revision" description="Upload website resources">
 		<!-- copy image resources -->
 		<copy todir="${dir.dist}/website/resources" preservelastmodified="yes" verbose="yes" flatten="true">
 			<fileset dir="${dir.source}/net/filebot/resources">
@@ -882,9 +871,6 @@
 		<!-- copy static website resources -->
 		<copy todir="${dir.dist}/website" preservelastmodified="yes" verbose="yes">
 			<fileset dir="${dir.website}">
-				<include name=".htaccess" />
-				<include name="*.html" />
-				<include name="*.php" />
 				<include name="*.json" />
 				<include name="*.xml" />
 				<include name="*.css" />
@@ -910,6 +896,17 @@
 
 		<!-- upload -->
 		<release-deploy dir="${dir.dist}/website" todir="${deploy.website}" />
+	</target>
+
+
+	<target name="website-docs" depends="revision" description="Generate API documentation">
+		<javadoc destdir="${dir.dist}/website/docs" linksource="yes" access="public" classpathref="lib.classpath" encoding="UTF-8" charset="UTF-8" windowtitle="${application.name}" noindex="yes" nohelp="yes" notree="yes" nodeprecated="yes" nonavbar="yes">
+			<fileset dir="${dir.source}" includesfile="${dir.website}/docs/includes.fileset" />
+			<doctitle>${application.name} ${application.version}</doctitle>
+			<bottom>${application.name} ${application.version} (r${revision}) built on ${tstamp.date}</bottom>
+			<link href="http://docs.oracle.com/javase/${jre.version}/docs/api/" />
+			<link href="http://docs.groovy-lang.org/latest/html/api/" />
+		</javadoc>
 	</target>
 
 
