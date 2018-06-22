@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>@{package.name}</id>
+		<title>@{application.name}</title>
+		<version>@{application.version}</version>
+		<authors>@{package.developer}</authors>
+		<owners>@{package.maintainer}</owners>
+		<summary>@{package.synopsis}</summary>
+		<description>@{package.description}</description>
+		<tags>@{package.tags}</tags>
+		<iconUrl>@{link.image.logo}</iconUrl>
+		<projectUrl>@{package.homepage}</projectUrl>
+		<docsUrl>@{link.intro}</docsUrl>
+		<mailingListUrl>@{link.forums}</mailingListUrl>
+		<bugTrackerUrl>@{link.bugs}</bugTrackerUrl>
+		<copyright>@{tstamp.year} @{package.developer}</copyright>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+	</metadata>
+	<files>
+		<file src="tools\**" target="tools" />
+	</files>
+</package>

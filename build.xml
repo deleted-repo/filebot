@@ -860,6 +860,29 @@
 	</target>
 
 
+	<target name="deploy-chocolatey" description="Update Chocolatey Package Source">
+		<checksum property="x64.msi.sha256" file="${dir.release}/${release}_x64.msi" algorithm="SHA-256" />
+
+		<!-- replace variables for new release -->
+		<copy-replace todir="${dir.dist}/chocolatey">
+			<fileset dir="${dir.installer}/chocolatey">
+				<include name="**/*.ps1" />
+				<include name="**/*.nuspec" />
+			</fileset>
+		</copy-replace>
+
+		<!-- chocolatey pack and push -->
+		<exec executable="chocolatey" dir="${dir.dist}/chocolatey" failonerror="yes">
+			<arg line="pack" />
+		</exec>
+		<exec executable="chocolatey" dir="${dir.dist}/chocolatey" failonerror="yes">
+			<arg line="push ${package.name}.${version}.nupkg" />
+		</exec>
+	</target>
+
+
+
+
 	<target name="deploy-website" depends="revision" description="Upload website resources">
 		<!-- copy image resources -->
 		<copy todir="${dir.dist}/website/resources" preservelastmodified="yes" verbose="yes" flatten="true">
