@@ -45,7 +45,7 @@
 
 
 	<!-- sign with gpg macro -->
-	<macrodef name="gpg-sign">
+	<macrodef name="release-sign">
 		<element name="filesets" implicit="yes" />
 		<sequential>
 			<apply executable="gpg" verbose="yes">
@@ -60,14 +60,21 @@
 
 	<!-- deploy release artifacts -->
 	<macrodef name="release-deploy">
+		<attribute name="dir" />
 		<attribute name="todir" />
-		<element name="filesets" implicit="yes" />
+		<element name="includes" implicit="yes" />
 		<sequential>
 			<scp todir="@{todir}" trust="yes" verbose="true" sftp="true" keyfile="${deploy.keyfile}">
-				<filesets />
+				<fileset dir="@{dir}">
+					<includes />
+					<modified>
+						<param name="cache.cachefile" value="${dir.cache}/scp.cache" />
+					</modified>
+				</fileset>
 			</scp>
 		</sequential>
 	</macrodef>
+
 
 
 	<patternset id="pattern.jre">
@@ -196,6 +203,94 @@
 				</compositemapper>
 			</chainedmapper>
 		</unzip>
+	</target>
+
+
+	<target name="build" depends="revision">
+		<!-- copy dependencies -->
+		<copy todir="${dir.dist}/lib" flatten="yes" verbose="yes">
+			<fileset dir="${dir.lib}/ivy/jar">
+				<include name="ehcache.jar" />
+				<include name="miglayout-core.jar" />
+				<include name="miglayout-swing.jar" />
+				<include name="glazedlists_java16.jar" />
+				<include name="controlsfx.jar" />
+				<include name="rsyntaxtextarea.jar" />
+				<include name="lanterna.jar" />
+				<include name="xz.jar" />
+				<include name="sevenzipjbinding.jar" />
+				<include name="commons-io.jar" />
+				<include name="commons-vfs2.jar" />
+				<include name="jaxb-api.jar" />
+				<include name="jaxb-impl.jar" />
+				<include name="junrar.jar" />
+				<include name="jna.jar" />
+				<include name="jna-platform.jar" />
+				<include name="streamex.jar" />
+				<include name="icu4j.jar" />
+				<include name="language-detector.jar" />
+				<include name="metadata-extractor.jar" />
+				<include name="xmpcore.jar" />
+				<include name="commons-logging.jar" />
+				<include name="slf4j-api.jar" />
+				<include name="slf4j-jdk14.jar" />
+				<include name="groovy.jar" />
+				<include name="groovy-ant.jar" />
+				<include name="groovy-bsf.jar" />
+				<include name="groovy-datetime.jar" />
+				<include name="groovy-dateutil.jar" />
+				<include name="groovy-json.jar" />
+				<include name="groovy-jsr223.jar" />
+				<include name="groovy-nio.jar" />
+				<include name="groovy-sql.jar" />
+				<include name="groovy-swing.jar" />
+				<include name="groovy-xml.jar" />
+				<include name="ivy.jar" />
+				<include name="jsoup.jar" />
+				<include name="ant.jar" />
+				<include name="ant-launcher.jar" />
+				<include name="ant-commons-net.jar" />
+				<include name="ant-jsch.jar" />
+				<include name="ant-javamail.jar" />
+				<include name="commons-net.jar" />
+				<include name="jsch.jar" />
+				<include name="javax.mail.jar" />
+				<include name="activation.jar" />
+				<include name="bcprov-jdk15on.jar" />
+				<include name="bcpg-jdk15on.jar" />
+			</fileset>
+			<fileset dir="${dir.lib}/ivy/bundle">
+				<include name="args4j.jar" />
+				<include name="json-io.jar" />
+				<include name="guava.jar" />
+			</fileset>
+			<fileset dir="${dir.lib}/jars">
+				<include name="xmlrpc.jar" />
+				<include name="ObjCBridge.jar" />
+				<include name="simmetrics.jar" />
+				<include name="jacksum.jar" />
+			</fileset>
+		</copy>
+
+		<!-- compile -->
+		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
+			<classpath>
+				<fileset dir="${dir.dist}/lib" />
+			</classpath>
+		</javac>
+
+		<!-- copy property files -->
+		<copy-replace todir="${dir.build}">
+			<fileset dir="${dir.source}" includes="**/*.properties" />
+		</copy-replace>
+
+		<!-- copy resources -->
+		<copy todir="${dir.build}">
+			<fileset dir="${dir.source}">
+				<exclude name="**/*.java" />
+				<exclude name="**/*.properties" />
+			</fileset>
+		</copy>
 	</target>
 
 
@@ -363,7 +458,7 @@
 	</target>
 
 
-	<target name="app" depends="revision" description="Build Mac app package">
+	<target name="app" depends="revision" description="Build Mac app bundle">
 		<property name="dir.staging" location="${dir.dist}/app" />
 
 		<copy-replace todir="${dir.staging}/bin">
@@ -459,7 +554,7 @@
 	</target>
 
 
-	<target name="pkg" depends="revision" description="Build Mac pkg package">
+	<target name="pkg" depends="revision" description="Build Mac installer package">
 		<property name="dir.staging" location="${dir.dist}/pkg" />
 
 		<copy-replace todir="${dir.staging}">
@@ -480,7 +575,7 @@
 	</target>
 
 
-	<target name="snap" depends="revision">
+	<target name="snap" depends="revision" description="Build Ubuntu snap package">
 		<property name="dir.staging" location="${dir.dist}/snap" />
 		<property name="dir.base" location="${dir.staging}/base" />
 
@@ -507,7 +602,7 @@
 	</target>
 
 
-	<target name="deb" description="Build Debian Linux package" depends="revision">
+	<target name="deb" depends="revision" description="Build Debian package">
 		<property name="dir.staging" location="${dir.dist}/deb" />
 
 		<get-linux-jre dest="${dir.staging}/jre" />
@@ -531,7 +626,7 @@
 	</target>
 
 
-	<target name="appx" description="Build Windows 10 package" depends="revision">
+	<target name="appx" depends="revision" description="Build Windows 10 package">
 		<property name="dir.staging" location="${dir.dist}/appx" />
 
 		<copy todir="${dir.staging}">
@@ -571,7 +666,7 @@
 	</target>
 
 
-	<target name="msi" description="Build Windows Installer package" depends="revision">
+	<target name="msi" depends="revision" description="Build Windows Installer package">
 		<property name="dir.staging" location="${dir.dist}/msi/x64" />
 
 		<!-- 1. prepare application files for heat harvest -->
@@ -607,7 +702,7 @@
 	</target>
 
 
-	<target name="portable" description="Build portable package" depends="revision">
+	<target name="portable" depends="revision" description="Build portable package">
 		<property name="dir.staging" location="${dir.dist}/portable" />
 
 		<copy-replace todir="${dir.staging}">
@@ -630,7 +725,7 @@
 	</target>
 
 
-	<target name="spk" description="Build Synology NAS package" depends="revision">
+	<target name="spk" depends="revision" description="Build Synology NAS package">
 		<spk destdir="${dir.dist}" name="${package.name}" version="${application.version}" arch="noarch" compression="${tar.compression}">
 			<info name="displayname" value="${application.name}" />
 			<info name="description" value="${package.description}" />
@@ -666,94 +761,8 @@
 
 			<codesign secring="${dir.installer}/gpg/secring.gpg" keyid="${gpg.key}" password="${gpg.pwd}" />
 		</spk>
-	</target>
 
-
-	<target name="build" depends="revision">
-		<!-- copy dependencies -->
-		<copy todir="${dir.dist}/lib" flatten="yes" verbose="yes">
-			<fileset dir="${dir.lib}/ivy/jar">
-				<include name="ehcache.jar" />
-				<include name="miglayout-core.jar" />
-				<include name="miglayout-swing.jar" />
-				<include name="glazedlists_java16.jar" />
-				<include name="controlsfx.jar" />
-				<include name="rsyntaxtextarea.jar" />
-				<include name="lanterna.jar" />
-				<include name="xz.jar" />
-				<include name="sevenzipjbinding.jar" />
-				<include name="commons-io.jar" />
-				<include name="commons-vfs2.jar" />
-				<include name="jaxb-api.jar" />
-				<include name="jaxb-impl.jar" />
-				<include name="junrar.jar" />
-				<include name="jna.jar" />
-				<include name="jna-platform.jar" />
-				<include name="streamex.jar" />
-				<include name="icu4j.jar" />
-				<include name="language-detector.jar" />
-				<include name="metadata-extractor.jar" />
-				<include name="xmpcore.jar" />
-				<include name="commons-logging.jar" />
-				<include name="slf4j-api.jar" />
-				<include name="slf4j-jdk14.jar" />
-				<include name="groovy.jar" />
-				<include name="groovy-ant.jar" />
-				<include name="groovy-bsf.jar" />
-				<include name="groovy-datetime.jar" />
-				<include name="groovy-dateutil.jar" />
-				<include name="groovy-json.jar" />
-				<include name="groovy-jsr223.jar" />
-				<include name="groovy-nio.jar" />
-				<include name="groovy-sql.jar" />
-				<include name="groovy-swing.jar" />
-				<include name="groovy-xml.jar" />
-				<include name="ivy.jar" />
-				<include name="jsoup.jar" />
-				<include name="ant.jar" />
-				<include name="ant-launcher.jar" />
-				<include name="ant-commons-net.jar" />
-				<include name="ant-jsch.jar" />
-				<include name="ant-javamail.jar" />
-				<include name="commons-net.jar" />
-				<include name="jsch.jar" />
-				<include name="javax.mail.jar" />
-				<include name="activation.jar" />
-				<include name="bcprov-jdk15on.jar" />
-				<include name="bcpg-jdk15on.jar" />
-			</fileset>
-			<fileset dir="${dir.lib}/ivy/bundle">
-				<include name="args4j.jar" />
-				<include name="json-io.jar" />
-				<include name="guava.jar" />
-			</fileset>
-			<fileset dir="${dir.lib}/jars">
-				<include name="xmlrpc.jar" />
-				<include name="ObjCBridge.jar" />
-				<include name="simmetrics.jar" />
-				<include name="jacksum.jar" />
-			</fileset>
-		</copy>
-
-		<!-- compile -->
-		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
-			<classpath>
-				<fileset dir="${dir.dist}/lib" />
-			</classpath>
-		</javac>
-
-		<!-- copy property files -->
-		<copy-replace todir="${dir.build}">
-			<fileset dir="${dir.source}" includes="**/*.properties" />
-		</copy-replace>
-
-		<!-- copy resources -->
-		<copy todir="${dir.build}">
-			<fileset dir="${dir.source}">
-				<exclude name="**/*.java" />
-				<exclude name="**/*.properties" />
-			</fileset>
-		</copy>
+		<move file="${dir.dist}/${package.name}-${application.version}-noarch.spk" tofile="${dir.dist}/${release}_noarch.spk" />
 	</target>
 
 
@@ -797,7 +806,7 @@
 	</target>
 
 
-	<target name="stage-release">
+	<target name="deploy-release" description="Upload release files">
 		<mkdir dir="${dir.release}" />
 
 		<!-- prepare release packages -->
@@ -814,48 +823,28 @@
 		</copy>
 
 		<!-- add *.asc files -->
-		<gpg-sign>
-			<fileset dir="${dir.release}" />
-		</gpg-sign>
+		<release-sign>
+			<fileset dir="${dir.release}">
+				<exclude name="*.asc" />
+				<exclude name="*.sha256" />
+			</fileset>
+		</release-sign>
 
 		<!-- add *.sha256 files -->
 		<checksum algorithm="SHA-256" pattern="{0}" fileext=".sha256">
 			<fileset dir="${dir.release}">
 				<exclude name="*.asc" />
+				<exclude name="*.sha256" />
 			</fileset>
 		</checksum>
+
+		<!-- upload release files -->
+		<release-deploy dir="${dir.release}/.." todir="${deploy.release}/${package.name}" />
 	</target>
 
 
-	<target name="deploy-release" depends="stage-release" description="Upload release files to SourceForge.net FRS">
-		<property name="mirror" location="${dir.cache}/${release}/FRS" />
-
-		<copy todir="${mirror}/${package.name}/${release}" verbose="yes">
-			<fileset dir="${dir.release}">
-				<include name="*.gpg" />
-				<include name="*.spk" />
-				<include name="*-src.tar.xz" />
-				<include name="*.md" />
-			</fileset>
-		</copy>
-
-		<release-deploy todir="${deploy.release.mirror}">
-			<fileset dir="${mirror}" includes="**/*.md" />
-			<fileset dir="${mirror}" includes="**/*-src.tar.xz" />
-			<fileset dir="${mirror}" includes="**/*.spk" />
-			<fileset dir="${mirror}" includes="**/*.gpg" />
-		</release-deploy>
-	</target>
-
-
-	<target name="deploy-jar" description="Build and deploy the latest jar">
-		<xz src="${path.fatjar}" destfile="${dir.release}/FileBot.jar.xz" />
-		<gpg-sign>
-			<fileset dir="${dir.release}" includes="*.jar.xz" />
-		</gpg-sign>
-		<release-deploy todir="${deploy.release}/${package.name}/latest">
-			<fileset dir="${dir.release}" includes="*.jar.xz.gpg" />
-		</release-deploy>
+	<target name="deploy-update" description="Upload incremental update archive">
+		<!-- TODO -->
 	</target>
 
 
@@ -865,8 +854,8 @@
 		<!-- merge all filebot related packages into a single package source file -->
 		<package-source file="${dir.dist}/syno/index.json">
 			<keyring file="${dir.installer}/gpg/FileBot.pub" />
-			<spk file="${dir.release}/${package.name}-${application.version}-noarch.spk">
-				<info name="link" value="https://downloads.sourceforge.net/project/filebot/filebot/${release}/${package.name}-${application.version}-noarch.spk" />
+			<spk file="${dir.release}/${release}_noarch.spk">
+				<info name="link" value="https://get.filebot.net/${package.name}/${release}/${release}_noarch.spk" />
 				<thumbnail url="https://www.filebot.net/syno/filebot-thumbnail.png" />
 				<snapshot url="https://www.filebot.net/syno/filebot-snapshot.png" />
 			</spk>
@@ -876,8 +865,8 @@
 		</package-source>
 
 		<!-- upload -->
-		<release-deploy todir="${deploy.release}">
-			<fileset dir="${dir.dist}" includes="syno/**" />
+		<release-deploy dir="${dir.dist}" todir="${deploy.release}">
+			<include name="syno/**" />
 		</release-deploy>
 	</target>
 
@@ -913,19 +902,14 @@
 		<!-- copy files and resolve ant variables -->
 		<copy-replace todir="${dir.dist}/website">
 			<fileset dir="${dir.website}">
+				<include name=".htaccess" />
 				<include name="*.html" />
 				<include name="*.php" />
 			</fileset>
 		</copy-replace>
 
 		<!-- upload -->
-		<release-deploy todir="${deploy.website}">
-			<fileset dir="${dir.dist}/website">
-				<modified>
-					<param name="cache.cachefile" value="${dir.cache}/scp.cache" />
-				</modified>
-			</fileset>
-		</release-deploy>
+		<release-deploy dir="${dir.dist}/website" todir="${deploy.website}" />
 	</target>
 
 
