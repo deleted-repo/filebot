@@ -147,7 +147,9 @@
 				<librarypath dir="${dir.lib}/native/mac-x86_64" />
 
 				<!-- include command-line tools -->
-				<librarypath dir="@{dir}/bin" />
+				<librarypath dir="@{dir}">
+					<include name="*.sh" />
+				</librarypath>
 
 				<bundledocument role="viewer" handlerRank="none" contentTypes="public.movie" name="Video file" />
 				<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
@@ -461,8 +463,8 @@
 	<target name="app" depends="revision" description="Build Mac app bundle">
 		<property name="dir.staging" location="${dir.dist}/app" />
 
-		<copy-replace todir="${dir.staging}/bin">
-			<fileset dir="${dir.installer}/app" includes="*.sh" />
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/app" />
 		</copy-replace>
 
 		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="no" license="yes" />
