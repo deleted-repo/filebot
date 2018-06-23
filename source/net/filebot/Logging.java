@@ -33,7 +33,7 @@ public final class Logging {
 
 	private static final SystemProperty<Level> debugLevel = SystemProperty.of("net.filebot.logging.debug", Level::parse, Level.WARNING);
 	private static final SystemProperty<Pattern> anonymizePattern = SystemProperty.of("net.filebot.logging.anonymize", Pattern::compile);
-	private static final SystemProperty<Boolean> color = SystemProperty.of("net.filebot.logging.color", Boolean::parseBoolean, Color.isSupported());
+	private static final SystemProperty<Boolean> color = SystemProperty.of("net.filebot.logging.color", Boolean::parseBoolean, EscapeCode.isSupported());
 
 	public static final Logger log = createConsoleLogger("net.filebot.console", Level.ALL);
 	public static final Logger debug = createConsoleLogger("net.filebot.debug", debugLevel.get());
@@ -141,9 +141,9 @@ public final class Logging {
 			StringWriter buffer = new StringWriter();
 
 			// BEGIN COLOR
-			Color color = getColor(record.getLevel().intValue());
+			EscapeCode color = getColor(record.getLevel().intValue());
 			if (color != null) {
-				buffer.append(color.head);
+				buffer.append(color.begin);
 			}
 
 			// MESSAGE
@@ -167,24 +167,24 @@ public final class Logging {
 
 			// END COLOR
 			if (color != null) {
-				buffer.append(color.tail);
+				buffer.append(color.end);
 			}
 
 			return buffer.append(System.lineSeparator()).toString();
 		}
 
-		public Color getColor(int level) {
+		public EscapeCode getColor(int level) {
 			if (colorize) {
 				if (level < Level.FINE.intValue())
-					return Color.LIME_GREEN;
+					return EscapeCode.LIME_GREEN;
 				if (level < Level.INFO.intValue())
-					return Color.ROYAL_BLUE;
+					return EscapeCode.ROYAL_BLUE;
 				if (level < Level.WARNING.intValue())
 					return null;
 				if (level < Level.SEVERE.intValue())
-					return Color.ORANGE_RED;
+					return EscapeCode.ORANGE_RED;
 
-				return Color.CHERRY_RED; // SEVERE
+				return EscapeCode.CHERRY_RED; // SEVERE
 			}
 
 			return null; // NO COLOR
@@ -219,34 +219,47 @@ public final class Logging {
 
 	}
 
-	public static class Color {
+	public static class EscapeCode {
 
-		public static final Color CHERRY_RED = new Color(0xC4);
-		public static final Color ORANGE_RED = new Color(0xCA);
-		public static final Color ROYAL_BLUE = new Color(0x28);
-		public static final Color LIME_GREEN = new Color(0x27);
+		// see https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+		public static final EscapeCode CHERRY_RED = newColorStyle(0xC4);
+		public static final EscapeCode ORANGE_RED = newColorStyle(0xCA);
+		public static final EscapeCode ROYAL_BLUE = newColorStyle(0x28);
+		public static final EscapeCode LIME_GREEN = newColorStyle(0x27);
 
-		public final String head;
-		public final String tail;
+		public static final EscapeCode BOLD = newFontStyle(1);
+		public static final EscapeCode ITALIC = newFontStyle(2);
+		public static final EscapeCode UNDERLINE = newFontStyle(4);
+		public static final EscapeCode STRIKEOUT = newFontStyle(9);
 
-		public Color(int color) {
-			this("38;5;" + color); // see https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+		public static EscapeCode newColorStyle(int color) {
+			return new EscapeCode("38;5;" + color);
 		}
 
-		public Color(String code) {
-			this.head = "\u001b[" + code + "m";
-			this.tail = "\u001b[0m";
+		public static EscapeCode newFontStyle(int style) {
+			return new EscapeCode("" + style);
 		}
 
-		public String colorize(String message) {
-			return head + message + tail;
+		public final String begin;
+		public final String end;
+
+		public EscapeCode(String code) {
+			this("\u001b[" + code + "m", "\u001b[0m");
+		}
+
+		public EscapeCode(String begin, String end) {
+			this.begin = begin;
+			this.end = end;
+		}
+
+		public String apply(String text) {
+			return begin + text + end;
 		}
 
 		public static boolean isSupported() {
 			// enable ANSI colors on a standard terminal (if running with interactive console)
 			return System.console() != null && "xterm-256color".equals(System.getenv("TERM"));
 		}
-
 	}
 
 }
