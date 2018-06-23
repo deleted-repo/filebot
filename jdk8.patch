@@ -17,7 +17,7 @@ index 940479cc..0be259e9 100644
  	<classpathentry kind="lib" path="lib/jars/jacksum.jar"/>
  	<classpathentry kind="lib" path="lib/jars/simmetrics.jar"/>
 diff --git a/app.properties b/app.properties
-index 60e523f9..551d825d 100644
+index f257b3dd..f366e237 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,11 +35,12 @@ link.patreon: https://www.patreon.com/filebot
@@ -55,10 +55,10 @@ index 60e523f9..551d825d 100644
  # Default Linux Java Options
  linux.application.options: -Djna.boot.library.path="$LIBRARY_PATH" -Djna.library.path="$LIBRARY_PATH" -Djava.library.path="$LIBRARY_PATH" -Dapplication.dir="$APP_DATA" -Dapplication.cache="$APP_DATA/cache" -Djava.io.tmpdir="$APP_DATA/tmp" -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF-8"
 diff --git a/build.xml b/build.xml
-index c7e93011..34f2576b 100644
+index 3b95376e..d0111997 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -102,9 +102,10 @@
+@@ -97,9 +97,10 @@
  		<attribute name="dest" />
  		<sequential>
  			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
@@ -70,10 +70,10 @@ index c7e93011..34f2576b 100644
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
  			</untar>
-@@ -117,9 +118,8 @@
- 		<attribute name="dest" />
- 		<sequential>
- 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" />
+@@ -114,9 +115,8 @@
+ 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
+ 				<arg line="get jre x86_64 Darwin" />
+ 			</exec>
 -			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-macosx-x64.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
@@ -81,7 +81,7 @@ index c7e93011..34f2576b 100644
  			</untar>
  		</sequential>
  	</macrodef>
-@@ -268,7 +268,7 @@
+@@ -355,7 +355,7 @@
  			<librarypath dir="${dir.lib}/native/mac-x86_64" />
  
  			<arch name="x86_64" />
@@ -90,7 +90,7 @@ index c7e93011..34f2576b 100644
  				<include name="**/*" />
  			</runtime>
  
-@@ -322,7 +322,7 @@
+@@ -409,7 +409,7 @@
  		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${application.identifier}.jre" encoding="UTF-8" summary="true" />
  
  		<!-- fix broken symlink -->
@@ -99,7 +99,7 @@ index c7e93011..34f2576b 100644
  
  		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
  		<chmod perm="+x">
-@@ -387,7 +387,7 @@
+@@ -474,7 +474,7 @@
  
  		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
  			<arch name="x86_64" />
@@ -108,7 +108,7 @@ index c7e93011..34f2576b 100644
  				<include name="**/*" />
  			</runtime>
  
-@@ -550,7 +550,7 @@
+@@ -637,7 +637,7 @@
  			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
  		</copy>
  		<copy todir="${dir.staging}/lib">
@@ -117,7 +117,7 @@ index c7e93011..34f2576b 100644
  		</copy>
  		<copy todir="${dir.staging}/jar">
  			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -578,7 +578,7 @@
+@@ -665,7 +665,7 @@
  			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
  		</exec>
  		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
@@ -126,15 +126,6 @@ index c7e93011..34f2576b 100644
  		</exec>
  	</target>
  
-@@ -748,7 +748,7 @@
- 		</copy>
- 
- 		<!-- compile -->
--		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
-+		<javac srcdir="${dir.source}" destdir="${dir.build}" target="${jvm.version}" source="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
- 			<classpath>
- 				<fileset dir="${dir.dist}/lib" />
- 			</classpath>
 diff --git a/installer/appx/AppxManifest.xml b/installer/appx/AppxManifest.xml
 index 8a8817e9..6af7097d 100644
 --- a/installer/appx/AppxManifest.xml
