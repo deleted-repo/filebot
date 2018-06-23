@@ -55,10 +55,10 @@ index f257b3dd..f366e237 100644
  # Default Linux Java Options
  linux.application.options: -Djna.boot.library.path="$LIBRARY_PATH" -Djna.library.path="$LIBRARY_PATH" -Djava.library.path="$LIBRARY_PATH" -Dapplication.dir="$APP_DATA" -Dapplication.cache="$APP_DATA/cache" -Djava.io.tmpdir="$APP_DATA/tmp" -Dfile.encoding="UTF-8" -Dsun.jnu.encoding="UTF-8"
 diff --git a/build.xml b/build.xml
-index 3b95376e..7fa4642c 100644
+index a7b0fa5a..0d5880d8 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -97,9 +97,10 @@
+@@ -93,9 +93,10 @@
  		<attribute name="dest" />
  		<sequential>
  			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
@@ -70,18 +70,7 @@ index 3b95376e..7fa4642c 100644
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
  			</untar>
-@@ -114,9 +115,8 @@
- 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
- 				<arg line="get jre x86_64 Darwin" />
- 			</exec>
--			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
-+			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-macosx-x64.tar.gz" dest="@{dest}" compression="gzip">
- 				<patternset refid="pattern.jre" />
--				<cutdirsmapper dirs="1" />
- 			</untar>
- 		</sequential>
- 	</macrodef>
-@@ -277,7 +277,7 @@
+@@ -266,7 +267,7 @@
  		</copy>
  
  		<!-- compile -->
@@ -90,34 +79,7 @@ index 3b95376e..7fa4642c 100644
  			<classpath>
  				<fileset dir="${dir.dist}/lib" />
  			</classpath>
-@@ -355,7 +355,7 @@
- 			<librarypath dir="${dir.lib}/native/mac-x86_64" />
- 
- 			<arch name="x86_64" />
--			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
-+			<runtime dir="${dir.staging}/jre1.${jre.major}.0_${jre.build}.jre/Contents/Home">
- 				<include name="**/*" />
- 			</runtime>
- 
-@@ -409,7 +409,7 @@
- 		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${application.identifier}.jre" encoding="UTF-8" summary="true" />
- 
- 		<!-- fix broken symlink -->
--		<copy file="${dir.staging}/jre-${java.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
-+		<copy file="${dir.staging}/jre1.${jre.major}.0_${jre.build}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
- 
- 		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
- 		<chmod perm="+x">
-@@ -474,7 +474,7 @@
- 
- 		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
- 			<arch name="x86_64" />
--			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
-+			<runtime dir="${dir.staging}/jre1.${jre.major}.0_${jre.build}.jre/Contents/Home">
- 				<include name="**/*" />
- 			</runtime>
- 
-@@ -637,7 +637,7 @@
+@@ -305,7 +306,7 @@
  			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
  		</copy>
  		<copy todir="${dir.staging}/lib">
@@ -126,7 +88,7 @@ index 3b95376e..7fa4642c 100644
  		</copy>
  		<copy todir="${dir.staging}/jar">
  			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -665,7 +665,7 @@
+@@ -333,7 +334,7 @@
  			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
  		</exec>
  		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
