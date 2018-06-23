@@ -195,80 +195,6 @@
 	</macrodef>
 
 
-	<target name="resolve" description="Retrieve dependencies with Apache Ivy">
-		<delete dir="${dir.lib}/ivy" />
-		<ivy:retrieve pattern="${dir.lib}/ivy/[type]/[artifact].[ext]" />
-
-		<antcall target="resolve-import-native">
-			<param name="arch" value="mac-x86_64" />
-			<param name="arch.jna" value="darwin" />
-			<param name="arch.7zj" value="Mac-x86_64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="win32-x64" />
-			<param name="arch.jna" value="win32-x86-64" />
-			<param name="arch.7zj" value="Windows-amd64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="win32-x86" />
-			<param name="arch.jna" value="win32-x86/" />
-			<param name="arch.7zj" value="Windows-x86" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-amd64" />
-			<param name="arch.jna" value="linux-x86-64" />
-			<param name="arch.7zj" value="Linux-amd64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-i686" />
-			<param name="arch.jna" value="linux-x86" />
-			<param name="arch.7zj" value="Linux-i386" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-armv7l" />
-			<param name="arch.jna" value="linux-arm" />
-			<param name="arch.7zj" value="linux-arm" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-armv8" />
-			<param name="arch.jna" value="linux-aarch64" />
-			<param name="arch.7zj" value="linux-aarch64" />
-		</antcall>
-	</target>
-
-
-	<target name="resolve-import-native">
-		<unzip src="${dir.lib}/ivy/jar/jna.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
-			<patternset>
-				<include name="**/${arch.jna}/*.dll" />
-				<include name="**/${arch.jna}/*.so" />
-				<include name="**/${arch.jna}/*.jnilib" />
-			</patternset>
-			<chainedmapper>
-				<flattenmapper />
-				<compositemapper>
-					<globmapper from="*.jnilib" to="*.dylib" />
-					<identitymapper />
-				</compositemapper>
-			</chainedmapper>
-		</unzip>
-		<unzip src="${dir.lib}/ivy/jar/sevenzipjbinding-all-platforms.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
-			<patternset>
-				<include name="**/${arch.7zj}/*.dll" />
-				<include name="**/${arch.7zj}/*.so" />
-				<include name="**/${arch.7zj}/*.dylib" />
-			</patternset>
-			<chainedmapper>
-				<flattenmapper />
-				<compositemapper>
-					<globmapper from="lib*.dll" to="*.dll" />
-					<identitymapper />
-				</compositemapper>
-			</chainedmapper>
-		</unzip>
-	</target>
-
-
 	<target name="build" depends="revision">
 		<!-- copy dependencies -->
 		<copy todir="${dir.dist}/lib" flatten="yes" verbose="yes">
@@ -365,6 +291,82 @@
 				<attribute name="Build-Revision" value="${revision}" />
 			</manifest>
 		</jar>
+	</target>
+
+
+	<target name="appx" depends="revision" description="Build Windows 10 package">
+		<property name="dir.staging" location="${dir.dist}/appx" />
+
+		<copy todir="${dir.staging}">
+			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
+		</copy>
+		<copy todir="${dir.staging}/lib">
+			<fileset dir="${dir.lib}/native/win32-x64" />
+		</copy>
+		<copy todir="${dir.staging}/jar">
+			<fileset dir="${dir.dist}/lib" includes="*.jar" />
+		</copy>
+
+		<!-- copy files and resolve ant variables -->
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/appx" includes="*.xml, *.ini" excludes="*.l4j.xml" />
+		</copy-replace>
+
+		<!-- fetch latest JRE -->
+		<get-windows-jre dest="${dir.staging}/jre" />
+
+		<!-- Workaround for VS2013 / CoInitialize hack (see http://mail.openjdk.java.net/pipermail/swing-dev/2018-February/008323.html) -->
+		<delete verbose="yes">
+			<fileset dir="${dir.staging}/jre" includes="**/*120*.dll" />
+		</delete>
+
+
+		<!-- package APPX -->
+		<exec executable="makepri" dir="${dir.staging}" failonerror="yes">
+			<arg line="createconfig /o /pv 10.0.0 /cf priconfig.xml /dq en-US" />
+		</exec>
+		<exec executable="makepri" dir="${dir.staging}" failonerror="yes">
+			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
+		</exec>
+		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
+			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_x64.appx" />
+		</exec>
+	</target>
+
+
+	<target name="msi" depends="revision" description="Build Windows Installer package">
+		<property name="dir.staging" location="${dir.dist}/msi/x64" />
+
+		<!-- 1. prepare application files for heat harvest -->
+		<get-windows-jre dest="${dir.staging}/base/jre" />
+
+		<copy todir="${dir.staging}/base/jar">
+			<fileset dir="${dir.dist}/lib" includes="*.jar" />
+		</copy>
+		<copy todir="${dir.staging}/base/lib">
+			<fileset dir="${dir.lib}/native/win32-x64" />
+		</copy>
+
+		<exec executable="heat" dir="${dir.staging}" failonerror="true">
+			<arg line="dir base -v -srd -gg -dr ApplicationBase -cg ApplicationBase -template fragment -sreg -sfrag -scom -out base.wxs" />
+		</exec>
+		<exec executable="candle" dir="${dir.staging}" failonerror="true">
+			<arg line="base.wxs -out base.wixobj" />
+		</exec>
+
+
+		<!-- 2. prepare installer files and application stub for candle light -->
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/msi" includes="*.wix, *.ini" />
+		</copy-replace>
+		<exec executable="candle" dir="${dir.staging}" failonerror="true">
+			<arg line="filebot.wix -out filebot.wixobj" />
+		</exec>
+
+		<!-- 3. compile MSI package (use -b to add additional resource folders) -->
+		<exec executable="light" dir="${dir.staging}" failonerror="true">
+			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi -sval -ext WixUIExtension -out ${dir.dist}/${release}_x64.msi" />
+		</exec>
 	</target>
 
 
@@ -571,33 +573,6 @@
 	</target>
 
 
-	<target name="snap" depends="revision" description="Build Ubuntu snap package">
-		<property name="dir.staging" location="${dir.dist}/snap" />
-		<property name="dir.base" location="${dir.staging}/base" />
-
-		<get-linux-jre dest="${dir.base}/jre" />
-
-		<!-- copy files and resolve ant variables -->
-		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/snap" />
-		</copy-replace>
-
-		<copy todir="${dir.base}/filebot/jar">
-			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-		</copy>
-		<copy todir="${dir.base}/filebot/lib">
-			<fileset dir="${dir.lib}/native/linux-amd64" />
-		</copy>
-		<chmod perm="+x" verbose="yes">
-			<fileset dir="${dir.base}" includes="**/bin/**" />
-		</chmod>
-
-		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
-			<arg line="cleanbuild" />
-		</exec>
-	</target>
-
-
 	<target name="deb" depends="revision" description="Build Debian package">
 		<property name="dir.staging" location="${dir.dist}/deb" />
 
@@ -622,78 +597,29 @@
 	</target>
 
 
-	<target name="appx" depends="revision" description="Build Windows 10 package">
-		<property name="dir.staging" location="${dir.dist}/appx" />
+	<target name="snap" depends="revision" description="Build Ubuntu snap package">
+		<property name="dir.staging" location="${dir.dist}/snap" />
+		<property name="dir.base" location="${dir.staging}/base" />
 
-		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
-		</copy>
-		<copy todir="${dir.staging}/lib">
-			<fileset dir="${dir.lib}/native/win32-x64" />
-		</copy>
-		<copy todir="${dir.staging}/jar">
-			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-		</copy>
+		<get-linux-jre dest="${dir.base}/jre" />
 
 		<!-- copy files and resolve ant variables -->
 		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/appx" includes="*.xml, *.ini" excludes="*.l4j.xml" />
+			<fileset dir="${dir.installer}/snap" />
 		</copy-replace>
 
-		<!-- fetch latest JRE -->
-		<get-windows-jre dest="${dir.staging}/jre" />
-
-		<!-- Workaround for VS2013 / CoInitialize hack (see http://mail.openjdk.java.net/pipermail/swing-dev/2018-February/008323.html) -->
-		<delete verbose="yes">
-			<fileset dir="${dir.staging}/jre" includes="**/*120*.dll" />
-		</delete>
-
-
-		<!-- package APPX -->
-		<exec executable="makepri" dir="${dir.staging}" failonerror="yes">
-			<arg line="createconfig /o /pv 10.0.0 /cf priconfig.xml /dq en-US" />
-		</exec>
-		<exec executable="makepri" dir="${dir.staging}" failonerror="yes">
-			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
-		</exec>
-		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
-			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_x64.appx" />
-		</exec>
-	</target>
-
-
-	<target name="msi" depends="revision" description="Build Windows Installer package">
-		<property name="dir.staging" location="${dir.dist}/msi/x64" />
-
-		<!-- 1. prepare application files for heat harvest -->
-		<get-windows-jre dest="${dir.staging}/base/jre" />
-
-		<copy todir="${dir.staging}/base/jar">
+		<copy todir="${dir.base}/filebot/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
-		<copy todir="${dir.staging}/base/lib">
-			<fileset dir="${dir.lib}/native/win32-x64" />
+		<copy todir="${dir.base}/filebot/lib">
+			<fileset dir="${dir.lib}/native/linux-amd64" />
 		</copy>
+		<chmod perm="+x" verbose="yes">
+			<fileset dir="${dir.base}" includes="**/bin/**" />
+		</chmod>
 
-		<exec executable="heat" dir="${dir.staging}" failonerror="true">
-			<arg line="dir base -v -srd -gg -dr ApplicationBase -cg ApplicationBase -template fragment -sreg -sfrag -scom -out base.wxs" />
-		</exec>
-		<exec executable="candle" dir="${dir.staging}" failonerror="true">
-			<arg line="base.wxs -out base.wixobj" />
-		</exec>
-
-
-		<!-- 2. prepare installer files and application stub for candle light -->
-		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/msi" includes="*.wix, *.ini" />
-		</copy-replace>
-		<exec executable="candle" dir="${dir.staging}" failonerror="true">
-			<arg line="filebot.wix -out filebot.wixobj" />
-		</exec>
-
-		<!-- 3. compile MSI package (use -b to add additional resource folders) -->
-		<exec executable="light" dir="${dir.staging}" failonerror="true">
-			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi -sval -ext WixUIExtension -out ${dir.dist}/${release}_x64.msi" />
+		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
+			<arg line="cleanbuild" />
 		</exec>
 	</target>
 
@@ -876,8 +802,6 @@
 	</target>
 
 
-
-
 	<target name="deploy-website" depends="revision" description="Upload website resources">
 		<!-- copy image resources -->
 		<copy todir="${dir.dist}/website/resources" preservelastmodified="yes" verbose="yes" flatten="true">
@@ -925,6 +849,80 @@
 			<link href="http://docs.oracle.com/javase/${jre.version}/docs/api/" />
 			<link href="http://docs.groovy-lang.org/latest/html/api/" />
 		</javadoc>
+	</target>
+
+
+	<target name="resolve" description="Retrieve dependencies with Apache Ivy">
+		<delete dir="${dir.lib}/ivy" />
+		<ivy:retrieve pattern="${dir.lib}/ivy/[type]/[artifact].[ext]" />
+
+		<antcall target="resolve-import-native">
+			<param name="arch" value="mac-x86_64" />
+			<param name="arch.jna" value="darwin" />
+			<param name="arch.7zj" value="Mac-x86_64" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="win32-x64" />
+			<param name="arch.jna" value="win32-x86-64" />
+			<param name="arch.7zj" value="Windows-amd64" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="win32-x86" />
+			<param name="arch.jna" value="win32-x86/" />
+			<param name="arch.7zj" value="Windows-x86" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="linux-amd64" />
+			<param name="arch.jna" value="linux-x86-64" />
+			<param name="arch.7zj" value="Linux-amd64" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="linux-i686" />
+			<param name="arch.jna" value="linux-x86" />
+			<param name="arch.7zj" value="Linux-i386" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="linux-armv7l" />
+			<param name="arch.jna" value="linux-arm" />
+			<param name="arch.7zj" value="linux-arm" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="linux-armv8" />
+			<param name="arch.jna" value="linux-aarch64" />
+			<param name="arch.7zj" value="linux-aarch64" />
+		</antcall>
+	</target>
+
+
+	<target name="resolve-import-native">
+		<unzip src="${dir.lib}/ivy/jar/jna.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
+			<patternset>
+				<include name="**/${arch.jna}/*.dll" />
+				<include name="**/${arch.jna}/*.so" />
+				<include name="**/${arch.jna}/*.jnilib" />
+			</patternset>
+			<chainedmapper>
+				<flattenmapper />
+				<compositemapper>
+					<globmapper from="*.jnilib" to="*.dylib" />
+					<identitymapper />
+				</compositemapper>
+			</chainedmapper>
+		</unzip>
+		<unzip src="${dir.lib}/ivy/jar/sevenzipjbinding-all-platforms.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
+			<patternset>
+				<include name="**/${arch.7zj}/*.dll" />
+				<include name="**/${arch.7zj}/*.so" />
+				<include name="**/${arch.7zj}/*.dylib" />
+			</patternset>
+			<chainedmapper>
+				<flattenmapper />
+				<compositemapper>
+					<globmapper from="lib*.dll" to="*.dll" />
+					<identitymapper />
+				</compositemapper>
+			</chainedmapper>
+		</unzip>
 	</target>
 
 
