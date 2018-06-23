@@ -141,7 +141,10 @@
 			<get-macos-jre dest="@{dir}" if:true="@{runtime}" />
 			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
-				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" if:true="@{runtime}" />
+
+				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" if:true="@{runtime}">
+					<include name="**/*" />
+				</runtime>
 
 				<classpath dir="${dir.dist}/lib" />
 				<librarypath dir="${dir.lib}/native/mac-x86_64" />
