@@ -133,15 +133,21 @@
 
 	<macrodef name="create-app-bundle" description="Create macOS app bundle folder structure">
 		<attribute name="dir" />
-		<element name="options" implicit="yes" />
+		<attribute name="deployment" />
+		<attribute name="runtime" />
+		<attribute name="license" />
+		<element name="options" implicit="yes" optional="yes" />
 		<sequential>
-			<get-macos-jre dest="@{dir}" />
+			<get-macos-jre dest="@{dir}" if:true="@{runtime}" />
 			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
-				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" />
+				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" if:true="@{runtime}" />
 
 				<classpath dir="${dir.dist}/lib" />
 				<librarypath dir="${dir.lib}/native/mac-x86_64" />
+
+				<!-- include command-line tools -->
+				<librarypath dir="@{dir}/bin" />
 
 				<bundledocument role="viewer" handlerRank="none" contentTypes="public.movie" name="Video file" />
 				<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
@@ -165,6 +171,12 @@
 
 				<option value="-Dapple.laf.useScreenMenuBar=true" />
 				<option value="-Dapple.awt.application.name=${application.name}" />
+
+				<option value="-Dapplication.deployment=@{deployment}" />
+
+				<!-- associate with *.psm files -->
+				<bundledocument extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" name="${license.description}" role="viewer" handlerRank="owner" contentTypes="net.filebot.license" if:true="@{license}" />
+				<typedeclaration extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" description="${license.description}" conformsTo="public.plain-text" identifier="net.filebot.license" mimeTypes="${license.mimetype}" if:true="@{license}" />
 
 				<!-- include custom macro options -->
 				<options />
@@ -516,16 +528,7 @@
 			<fileset dir="${dir.installer}/app" includes="*.sh" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}">
-			<option value="-Dapplication.deployment=app" />
-
-			<!-- include command-line tools -->
-			<librarypath dir="${dir.staging}/bin" />
-
-			<!-- associate with *.psm files -->
-			<bundledocument extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" name="${license.description}" role="viewer" handlerRank="owner" contentTypes="net.filebot.license" />
-			<typedeclaration extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" description="${license.description}" conformsTo="public.plain-text" identifier="net.filebot.license" mimeTypes="${license.mimetype}" />
-		</create-app-bundle>
+		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="no" license="yes" />
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
@@ -552,16 +555,7 @@
 			<fileset dir="${dir.installer}/pkg" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}">
-			<option value="-Dapplication.deployment=pkg" />
-
-			<!-- include command-line tools -->
-			<librarypath dir="${dir.staging}/bin" />
-
-			<!-- associate with *.psm files -->
-			<bundledocument extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" name="${license.description}" role="viewer" handlerRank="owner" contentTypes="net.filebot.license" />
-			<typedeclaration extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" description="${license.description}" conformsTo="public.plain-text" identifier="net.filebot.license" mimeTypes="${license.mimetype}" />
-		</create-app-bundle>
+		<create-app-bundle dir="${dir.staging}" deployment="pkg" runtime="yes" license="yes" />
 
 		<!-- fix permissions -->
 		<chmod perm="+x" verbose="yes">
