@@ -755,7 +755,7 @@
 
 			<scripts dir="${dir.installer}/spk/scripts" filemode="755" />
 			<package dir="${dir.installer}/spk/package" includes="*.sh" filemode="755" />
-			<package file="${path.fatjar}" fullpath="FileBot.jar" />
+			<package prefix="jar" dir="${dir.dist}/lib" includes="*.jar" />
 
 			<!-- include native libraries for all supported platforms -->
 			<package prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
