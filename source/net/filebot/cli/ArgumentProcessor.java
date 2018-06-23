@@ -1,5 +1,6 @@
 package net.filebot.cli;
 
+import static java.nio.charset.StandardCharsets.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
@@ -15,11 +16,13 @@ import java.util.stream.Stream;
 import javax.script.Bindings;
 import javax.script.SimpleBindings;
 
+import org.apache.commons.io.IOUtils;
+
 import net.filebot.LicenseError;
 
 public class ArgumentProcessor {
 
-	public int run(ArgumentBean args) {
+	public int run(ArgumentBean args) throws Exception {
 		try {
 			// interactive mode enables basic selection and confirmation dialogs in the CLI
 			CmdlineInterface cli = args.isInteractive() ? new CmdlineOperationsTextUI() : new CmdlineOperations();
@@ -38,6 +41,7 @@ public class ArgumentProcessor {
 		} catch (LicenseError e) {
 			log.severe("License Error: " + e.getMessage());
 			if (LICENSE.isFile()) {
+				log.info(format(IOUtils.toString(getClass().getResource("Stegosaurus.format"), UTF_8), getPurchaseURL()));
 				log.severe("FileBot requires a valid license. Please run `filebot --license *.psm` to install your FileBot license.");
 			}
 			return 2;
