@@ -153,13 +153,11 @@
 				<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
 				<bundledocument role="viewer" handlerRank="none" contentTypes="public.folder" name="Media folder" />
 
-				<option value="-Dnet.filebot.UserFiles.fileChooser=COCOA" />
-				<option value="-Dapplication.help=ask" />
-
 				<option value="-Dunixfs=false" />
 				<option value="-DuseExtendedFileAttributes=true" />
 				<option value="-DuseCreationDate=false" />
 				<option value="-Djava.net.useSystemProxies=true" />
+
 				<option value="-Djna.nosys=true" />
 				<option value="-Djna.nounpack=true" />
 
@@ -169,9 +167,13 @@
 				<option value="-Djava.library.path=$APP_ROOT/Contents/MacOS" />
 				<option value="-Dnet.filebot.AcoustID.fpcalc=$APP_ROOT/Contents/MacOS/fpcalc" />
 
-				<option value="-Dapple.laf.useScreenMenuBar=true" />
+				<option value="-Dnet.filebot.UserFiles.fileChooser=COCOA" />
 				<option value="-Dapple.awt.application.name=${application.name}" />
+				<option value="-Dapple.laf.useScreenMenuBar=true" />
+				<option value="-Dfile.encoding=UTF-8" />
 
+				<!-- libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies -->
+				<option value="-Dapplication.help=ask" />
 				<option value="-Dapplication.deployment=@{deployment}" />
 
 				<!-- associate with *.psm files -->
@@ -370,91 +372,24 @@
 	</target>
 
 
-	<target name="appbundle-maspkg-core">
-		<antcall target="appbundle-maspkg">
-			<param name="application.name" value="FileBot" />
-			<param name="application.executable" value="filebot.launcher" />
-			<param name="application.identifier" value="${package.identifier}" />
-			<param name="application.icon" value="${dir.installer}/appbundle/filebot.icns" />
-			<param name="application.cert.appbundle" value="3rd Party Mac Developer Application: ${package.company}" />
-			<param name="application.cert.installer" value="3rd Party Mac Developer Installer: ${package.company}" />
-
-			<!-- MAS does not allow subtitle apps -->
-			<param name="application.mode" value="Rename|Episodes|SFV|Filter|List" />
-
-			<!-- libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies -->
-			<param name="application.help" value="ask" />
-		</antcall>
-	</target>
-
-
-	<target name="appbundle-maspkg-subtitles">
-		<antcall target="appbundle-maspkg">
-			<param name="application.name" value="FileBot Subtitles" />
-			<param name="application.executable" value="filebot.subtitles.launcher" />
-			<param name="application.identifier" value="${package.identifier}.Subtitles" />
-			<param name="application.icon" value="${dir.installer}/appbundle/subtitles.icns" />
-			<param name="application.cert.appbundle" value="Developer ID Application: ${package.company}" />
-			<param name="application.cert.installer" value="Developer ID Installer: ${package.company}" />
-			<param name="application.mode" value="Subtitles" />
-			<param name="application.help" value="skip" />
-		</antcall>
-	</target>
-
-
-	<target name="appbundle-maspkg" depends="revision">
+	<target name="mas" depends="revision">
 		<property name="dir.staging" location="${dir.dist}/mas" />
 
 		<property name="path.app" location="${dir.staging}/${application.name}.app" />
 		<property name="path.pkg" location="${dir.staging}/${application.name}_${application.version}_r${revision}.pkg" />
 
-		<!-- fetch latest JRE -->
-		<get-macos-jre dest="${dir.staging}" />
+		<create-app-bundle dir="${dir.staging}" deployment="mas" runtime="yes" license="no">
+			<option value="-Dapplication.update=skip" />
 
-		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="${application.executable}" name="${application.name}" displayname="${application.name}" version="${revision}" shortversion="${application.version}" identifier="${application.identifier}" mainclassname="${main.class}" icon="${application.icon}" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true" debug="true">
-			<classpath dir="${dir.dist}/lib" />
-			<librarypath dir="${dir.lib}/native/mac-x86_64" />
-
-			<arch name="x86_64" />
-			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
-				<include name="**/*" />
-			</runtime>
-
+			<!-- MAS does not allow subtitle apps -->
 			<argument value="--mode" />
-			<argument value="${application.mode}" />
+			<argument value="Rename|Episodes|SFV|Filter|List" />
 
 			<!-- WORKING_DIR is sandbox data folder -->
 			<option value="-Dapplication.dir=Library/Application Support/User Data" />
 			<option value="-Dapplication.cache=Library/Caches/ehcache.disk.store" />
 			<option value="-Djava.io.tmpdir=Library/Caches/java.io.tmpdir" />
-
-			<option value="-Dnet.filebot.UserFiles.fileChooser=COCOA" />
-			<option value="-Dapplication.name=${application.name}" />
-			<option value="-Dapplication.help=${application.help}" />
-			<option value="-Dapplication.deployment=mas" />
-			<option value="-Dapplication.update=skip" />
-			<option value="-DuseExtendedFileAttributes=true" />
-			<option value="-DuseCreationDate=false" />
-
-			<option value="-Djava.net.useSystemProxies=true" />
-			<option value="-Dfile.encoding=UTF-8" />
-
-			<option value="-Djna.nosys=true" />
-			<option value="-Djna.nounpack=true" />
-			<option value="-Djna.boot.library.name=jnidispatch" />
-			<option value="-Djna.boot.library.path=$APP_ROOT/Contents/MacOS" />
-
-			<option value="-Djna.library.path=$APP_ROOT/Contents/MacOS" />
-			<option value="-Djava.library.path=$APP_ROOT/Contents/MacOS" />
-			<option value="-Dnet.filebot.AcoustID.fpcalc=$APP_ROOT/Contents/MacOS/fpcalc" />
-
-			<option value="-Dapple.laf.useScreenMenuBar=true" />
-			<option value="-Dapple.awt.application.name=${application.name}" />
-
-			<bundledocument role="viewer" handlerRank="none" contentTypes="public.movie" name="Video file" />
-			<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
-			<bundledocument role="viewer" handlerRank="none" contentTypes="public.folder" name="Media folder" />
-		</bundleapp>
+		</create-app-bundle>
 
 		<!-- remove unused language resources -->
 		<delete verbose="yes" includeEmptyDirs="yes">
@@ -482,7 +417,7 @@
 		</chmod>
 
 		<!-- JRE sign all jars, dylibs and executables -->
-		<property name="sign" value="--verbose --force --sign '${application.cert.appbundle}'" />
+		<property name="sign" value="--verbose --force --sign '3rd Party Mac Developer Application: ${package.company}'" />
 		<property name="entitlements" value="--entitlements '${dir.installer}/appbundle/FileBot.entitlements'" />
 		<property name="entitlements.inherit" value="--entitlements '${dir.installer}/appbundle/inherit.entitlements'" />
 
@@ -515,7 +450,7 @@
 
 		<!-- build package -->
 		<exec executable="productbuild" failonerror="yes">
-			<arg line="--component '${path.app}' /Applications '${path.pkg}' --sign '${application.cert.installer}'" />
+			<arg line="--component '${path.app}' /Applications '${path.pkg}' --sign '3rd Party Mac Developer Installer: ${package.company}'" />
 		</exec>
 
 		<!-- store as release build-->
