@@ -20,10 +20,5 @@ FILEBOT_HOME=`cd "$BIN/.." && pwd`
 APP_DATA="$HOME/.filebot"
 LIBRARY_PATH="$FILEBOT_HOME/MacOS"
 
-
-#!/bin/sh
-APP_EXE=`readlink /usr/local/bin/filebot`
-APP_ROOT=`dirname "$APP_EXE"`
-
 # start filebot
 /usr/libexec/java_home --failfast --version "@{jvm.version}+" --exec java -Dapplication.deployment=app -Dapple.awt.UIElement=true -Dnet.filebot.AcoustID.fpcalc="$LIBRARY_PATH/fpcalc" @{java.application.options} @{linux.application.options} $JAVA_OPTS $FILEBOT_OPTS -classpath "$FILEBOT_HOME/Java/*" @{main.class} "$@"
