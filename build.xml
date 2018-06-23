@@ -27,8 +27,7 @@
 	</tstamp>
 
 
-	<!-- copy and replace ant variables macro -->
-	<macrodef name="copy-replace">
+	<macrodef name="copy-replace" description="Copy text files and replace ant variables">
 		<attribute name="todir" />
 		<element name="filesets" implicit="yes" />
 		<sequential>
@@ -44,8 +43,7 @@
 	</macrodef>
 
 
-	<!-- sign with gpg macro -->
-	<macrodef name="release-sign">
+	<macrodef name="release-sign" description="Sign files with GnuPG">
 		<element name="filesets" implicit="yes" />
 		<sequential>
 			<apply executable="gpg" verbose="yes" failonerror="yes">
@@ -58,8 +56,7 @@
 	</macrodef>
 
 
-	<!-- deploy release artifacts -->
-	<macrodef name="release-deploy">
+	<macrodef name="release-deploy" description="Upload files">
 		<attribute name="dir" />
 		<attribute name="todir" />
 		<element name="includes" implicit="yes" optional="yes" />
@@ -92,8 +89,7 @@
 	</patternset>
 
 
-	<!-- fetch and unpack JRE bundle (64-bit Windows) -->
-	<macrodef name="get-windows-jre">
+	<macrodef name="get-windows-jre" description="Fetch and unpack JRE bundle (64-bit Windows)">
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
@@ -107,8 +103,7 @@
 	</macrodef>
 
 
-	<!-- fetch and unpack JRE bundle (64-bit Mac) -->
-	<macrodef name="get-macos-jre">
+	<macrodef name="get-macos-jre" description="Fetch and unpack JRE bundle (64-bit Mac)">
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
@@ -121,8 +116,8 @@
 		</sequential>
 	</macrodef>
 
-	<!-- fetch and unpack JRE bundle (64-bit Linux) -->
-	<macrodef name="get-linux-jre">
+
+	<macrodef name="get-linux-jre" description="Fetch and unpack JRE bundle (64-bit Linux)">
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
@@ -132,6 +127,58 @@
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="create-app-bundle" description="Create macOS app bundle folder structure">
+		<attribute name="dir" />
+		<element name="options" implicit="yes" />
+		<sequential>
+			<get-macos-jre dest="@{dir}" />
+			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
+				<arch name="x86_64" />
+				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" />
+
+				<classpath dir="${dir.dist}/lib" />
+				<librarypath dir="${dir.lib}/native/mac-x86_64" />
+
+				<bundledocument role="viewer" handlerRank="none" contentTypes="public.movie" name="Video file" />
+				<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
+				<bundledocument role="viewer" handlerRank="none" contentTypes="public.folder" name="Media folder" />
+
+				<option value="-Dnet.filebot.UserFiles.fileChooser=COCOA" />
+				<option value="-Dapplication.help=ask" />
+
+				<option value="-Dunixfs=false" />
+				<option value="-DuseExtendedFileAttributes=true" />
+				<option value="-DuseCreationDate=false" />
+				<option value="-Djava.net.useSystemProxies=true" />
+				<option value="-Djna.nosys=true" />
+				<option value="-Djna.nounpack=true" />
+
+				<option value="-Djna.boot.library.name=jnidispatch" />
+				<option value="-Djna.boot.library.path=$APP_ROOT/Contents/MacOS" />
+				<option value="-Djna.library.path=$APP_ROOT/Contents/MacOS" />
+				<option value="-Djava.library.path=$APP_ROOT/Contents/MacOS" />
+				<option value="-Dnet.filebot.AcoustID.fpcalc=$APP_ROOT/Contents/MacOS/fpcalc" />
+
+				<option value="-Dapple.laf.useScreenMenuBar=true" />
+				<option value="-Dapple.awt.application.name=${application.name}" />
+
+				<!-- include custom macro options -->
+				<options />
+			</bundleapp>
+
+			<!-- fix permissions -->
+			<chmod perm="+x" verbose="yes">
+				<fileset dir="${dir.staging}">
+					<include name="*.app/**/MacOS/filebot.*" />
+					<include name="*.app/**/MacOS/fpcalc" />
+					<include name="*.app/**/lib/jspawnhelper" />
+					<include name="*.app/**/bin/*" />
+				</fileset>
+			</chmod>
 		</sequential>
 	</macrodef>
 
@@ -469,76 +516,16 @@
 			<fileset dir="${dir.installer}/app" includes="*.sh" />
 		</copy-replace>
 
-		<!-- fetch latest JRE -->
-		<get-macos-jre dest="${dir.staging}" />
+		<create-app-bundle dir="${dir.staging}">
+			<option value="-Dapplication.deployment=app" />
 
-		<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="${dir.staging}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/filebot.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
-			<arch name="x86_64" />
-			<runtime dir="${dir.staging}/jre-${java.version}.jre/Contents/Home">
-				<include name="**/*" />
-			</runtime>
-
-			<classpath dir="${dir.dist}/lib" />
+			<!-- include command-line tools -->
 			<librarypath dir="${dir.staging}/bin" />
-			<librarypath dir="${dir.lib}/native/mac-x86_64" />
 
-			<bundledocument role="viewer" handlerRank="none" contentTypes="public.movie" name="Video file" />
-			<bundledocument role="viewer" handlerRank="none" contentTypes="public.audio" name="Audio file" />
-			<bundledocument role="viewer" handlerRank="none" contentTypes="public.folder" name="Media folder" />
-
+			<!-- associate with *.psm files -->
 			<bundledocument extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" name="${license.description}" role="viewer" handlerRank="owner" contentTypes="net.filebot.license" />
 			<typedeclaration extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" description="${license.description}" conformsTo="public.plain-text" identifier="net.filebot.license" mimeTypes="${license.mimetype}" />
-
-			<option value="-Dapple.laf.useScreenMenuBar=true" />
-			<option value="-Dapple.awt.application.name=${application.name}" />
-
-			<option value="-Dunixfs=false" />
-			<option value="-DuseExtendedFileAttributes=true" />
-			<option value="-DuseCreationDate=false" />
-			<option value="-Djava.net.useSystemProxies=true" />
-			<option value="-Djna.nosys=true" />
-			<option value="-Djna.nounpack=true" />
-
-			<option value="-Dnet.filebot.UserFiles.fileChooser=COCOA" />
-
-			<option value="-Dapplication.deployment=app" />
-			<option value="-Dapplication.help=ask" />
-
-			<option value="-Djna.boot.library.name=jnidispatch" />
-			<option value="-Djna.boot.library.path=$APP_ROOT/Contents/MacOS" />
-
-			<option value="-Djna.library.path=$APP_ROOT/Contents/MacOS" />
-			<option value="-Djava.library.path=$APP_ROOT/Contents/MacOS" />
-			<option value="-Dnet.filebot.AcoustID.fpcalc=$APP_ROOT/Contents/MacOS/fpcalc" />
-
-
-			<option value="--illegal-access=permit" />
-			<option value="--add-opens=java.base/java.lang=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.lang.invoke=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.util=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.util.function=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.util.regex=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.net=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.io=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.nio.file=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.nio.channels=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.nio.charset=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.time=ALL-UNNAMED" />
-			<option value="--add-opens=java.base/java.time.chrono=ALL-UNNAMED" />
-			<option value="--add-opens=java.logging/java.util.logging=ALL-UNNAMED" />
-			<option value="--add-opens=java.desktop/java.awt=ALL-UNNAMED" />
-		</bundleapp>
-
-		<!-- fix permissions -->
-		<chmod perm="+x" verbose="yes">
-			<fileset dir="${dir.staging}">
-				<include name="*.app/**/MacOS/filebot.*" />
-				<include name="*.app/**/MacOS/fpcalc" />
-				<include name="*.app/**/lib/jspawnhelper" />
-				<include name="*.app/**/bin/*" />
-			</fileset>
-		</chmod>
+		</create-app-bundle>
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
@@ -564,6 +551,17 @@
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/pkg" />
 		</copy-replace>
+
+		<create-app-bundle dir="${dir.staging}">
+			<option value="-Dapplication.deployment=pkg" />
+
+			<!-- include command-line tools -->
+			<librarypath dir="${dir.staging}/bin" />
+
+			<!-- associate with *.psm files -->
+			<bundledocument extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" name="${license.description}" role="viewer" handlerRank="owner" contentTypes="net.filebot.license" />
+			<typedeclaration extensions="${license.extension}" icon="${dir.installer}/icons/filebot.icns" description="${license.description}" conformsTo="public.plain-text" identifier="net.filebot.license" mimeTypes="${license.mimetype}" />
+		</create-app-bundle>
 
 		<!-- fix permissions -->
 		<chmod perm="+x" verbose="yes">
