@@ -19,10 +19,11 @@ import javax.script.SimpleBindings;
 import org.apache.commons.io.IOUtils;
 
 import net.filebot.LicenseError;
+import net.filebot.Logging.EscapeCode;
 
 public class ArgumentProcessor {
 
-	public int run(ArgumentBean args) throws Exception {
+	public int run(ArgumentBean args) {
 		try {
 			// interactive mode enables basic selection and confirmation dialogs in the CLI
 			CmdlineInterface cli = args.isInteractive() ? new CmdlineOperationsTextUI() : new CmdlineOperations();
@@ -41,7 +42,7 @@ public class ArgumentProcessor {
 		} catch (LicenseError e) {
 			log.severe("License Error: " + e.getMessage());
 			if (LICENSE.isFile()) {
-				log.info(format(IOUtils.toString(getClass().getResource("Stegosaurus.format"), UTF_8), getPurchaseURL()));
+				printStegosaurus();
 				log.severe("FileBot requires a valid license. Please run `filebot --license *.psm` to install your FileBot license.");
 			}
 			return 2;
@@ -128,6 +129,17 @@ public class ArgumentProcessor {
 			System.out.println(v);
 			return 1;
 		}).sum() == 0 ? 1 : 0;
+	}
+
+	private void printStegosaurus() {
+		try {
+			String format = IOUtils.toString(getClass().getResource("Stegosaurus.format"), UTF_8);
+			EscapeCode style = EscapeCode.isSupported() ? EscapeCode.UNDERLINE : EscapeCode.NONE;
+			String url = getPurchaseURL();
+			log.info(format(format, style.apply(url)));
+		} catch (Exception e) {
+			debug.log(Level.WARNING, e::toString);
+		}
 	}
 
 	public void runScript(CmdlineInterface cli, ArgumentBean args) throws Throwable {

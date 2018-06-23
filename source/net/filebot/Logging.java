@@ -138,13 +138,10 @@ public final class Logging {
 
 		@Override
 		public String format(LogRecord record) {
-			StringWriter buffer = new StringWriter();
+			EscapeCode color = getColor(record.getLevel().intValue());
 
 			// BEGIN COLOR
-			EscapeCode color = getColor(record.getLevel().intValue());
-			if (color != null) {
-				buffer.append(color.begin);
-			}
+			StringWriter buffer = new StringWriter().append(color.begin);
 
 			// MESSAGE
 			String message = record.getMessage();
@@ -166,11 +163,7 @@ public final class Logging {
 			}
 
 			// END COLOR
-			if (color != null) {
-				buffer.append(color.end);
-			}
-
-			return buffer.append(System.lineSeparator()).toString();
+			return buffer.append(color.end).append(System.lineSeparator()).toString();
 		}
 
 		public EscapeCode getColor(int level) {
@@ -187,7 +180,7 @@ public final class Logging {
 				return EscapeCode.CHERRY_RED; // SEVERE
 			}
 
-			return null; // NO COLOR
+			return EscapeCode.NONE; // NO COLOR
 		}
 
 	}
@@ -231,6 +224,8 @@ public final class Logging {
 		public static final EscapeCode ITALIC = newFontStyle(2);
 		public static final EscapeCode UNDERLINE = newFontStyle(4);
 		public static final EscapeCode STRIKEOUT = newFontStyle(9);
+
+		public static final EscapeCode NONE = new EscapeCode("", "");
 
 		public static EscapeCode newColorStyle(int color) {
 			return new EscapeCode("38;5;" + color);
