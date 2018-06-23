@@ -576,7 +576,10 @@ public class CmdlineOperations implements CmdlineInterface {
 			throw new CmdlineException("Failed to identify or process any files");
 		}
 
-		LICENSE.check();
+		// allow --action test for evaluation purposes
+		if (renameAction != StandardRenameAction.TEST) {
+			LICENSE.check();
+		}
 
 		// rename files
 		Map<File, File> renameLog = new LinkedHashMap<File, File>();
