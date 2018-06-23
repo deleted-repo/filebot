@@ -847,8 +847,7 @@
 		<!-- merge all filebot related packages into a single package source file -->
 		<package-source file="${dir.dist}/syno/index.json">
 			<keyring file="${dir.installer}/gpg/FileBot.pub" />
-			<spk file="${dir.release}/${release}_noarch.spk">
-				<info name="link" value="https://get.filebot.net/${package.name}/${release}/${release}_noarch.spk" />
+			<spk url="https://get.filebot.net/${package.name}/${release}/${release}_noarch.spk" file="${dir.cache}/${release}_noarch.spk">
 				<thumbnail url="https://www.filebot.net/syno/filebot-thumbnail.png" />
 				<snapshot url="https://www.filebot.net/syno/filebot-snapshot.png" />
 			</spk>
