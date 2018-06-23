@@ -15,8 +15,10 @@ done
 # get canonical path
 BIN=`dirname "$PRG"`
 FILEBOT_HOME=`cd "$BIN/.." && pwd`
-
 JAVA_HOME="$FILEBOT_HOME/PlugIns/jre-@{java.version}.jre/Contents/Home"
+
+# select application data folder
+APP_DATA="$HOME/.filebot"
 LIBRARY_PATH="$FILEBOT_HOME/MacOS"
 
 # start filebot
