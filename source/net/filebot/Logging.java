@@ -173,7 +173,7 @@ public final class Logging {
 				if (level < Level.INFO.intValue())
 					return EscapeCode.ROYAL_BLUE;
 				if (level < Level.WARNING.intValue())
-					return null;
+					return EscapeCode.NONE; // LOG INFO => NO COLOR
 				if (level < Level.SEVERE.intValue())
 					return EscapeCode.ORANGE_RED;
 
