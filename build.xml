@@ -657,39 +657,47 @@
 	</target>
 
 
-	<target name="deploy-release" description="Upload release files">
+	<target name="stage" description="Stage release files">
 		<mkdir dir="${dir.release}" />
 
-		<!-- prepare release packages -->
-		<copy todir="${dir.release}" verbose="yes" overwrite="yes">
-			<fileset dir="${dir.dist}">
-				<include name="*.msi" />
-				<include name="*.pkg" />
-				<include name="*.deb" />
-				<include name="*.tar.xz" />
-				<include name="*.spk" />
-				<include name="*.appx" />
-				<include name="*.snap" />
-			</fileset>
-		</copy>
+		<patternset id="release.files">
+			<include name="*.msi" />
+			<include name="*.pkg" />
+			<include name="*.deb" />
+			<include name="*.tar.xz" />
+			<include name="*.spk" />
+		</patternset>
+		<patternset id="verification.files">
+			<include name="*.asc" />
+			<include name="*.sha256" />
+		</patternset>
 
 		<!-- add *.asc files -->
 		<release-sign>
-			<fileset dir="${dir.release}">
-				<exclude name="*.asc" />
-				<exclude name="*.sha256" />
+			<fileset dir="${dir.dist}">
+				<patternset refid="release.files" />
 			</fileset>
 		</release-sign>
 
 		<!-- add *.sha256 files -->
 		<checksum algorithm="SHA-256" pattern="{0}" fileext=".sha256">
-			<fileset dir="${dir.release}">
-				<exclude name="*.asc" />
-				<exclude name="*.sha256" />
+			<fileset dir="${dir.dist}">
+				<patternset refid="release.files" />
 			</fileset>
 		</checksum>
 
-		<!-- upload release files -->
+		<!-- move to release folder -->
+		<move todir="${dir.release}" verbose="yes" flatten="yes" overwrite="yes">
+			<fileset dir="${dir.dist}">
+				<patternset refid="release.files" />
+				<patternset refid="verification.files" />
+			</fileset>
+		</move>
+	</target>
+
+
+	<target name="deploy-release" description="Upload release files">
+		<!-- create release folder and upload release files -->
 		<release-deploy dir="${dir.release}/.." todir="${deploy.release}/${package.name}" />
 	</target>
 
