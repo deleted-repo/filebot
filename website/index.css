@@ -32,6 +32,7 @@ body > table {
 }
 
 body > table th {
+	color: #5c7684;
 	font-variant-caps: all-petite-caps;
 }
 
