@@ -687,7 +687,13 @@
 		</checksum>
 
 		<!-- move to release folder -->
-		<move todir="${dir.release}" verbose="yes" flatten="yes" overwrite="yes">
+		<touch datetime="now">
+			<fileset dir="${dir.dist}">
+				<patternset refid="release.files" />
+				<patternset refid="verification.files" />
+			</fileset>
+		</touch>
+		<move todir="${dir.release}" verbose="yes" flatten="yes" overwrite="yes" preservelastmodified="yes">
 			<fileset dir="${dir.dist}">
 				<patternset refid="release.files" />
 				<patternset refid="verification.files" />
