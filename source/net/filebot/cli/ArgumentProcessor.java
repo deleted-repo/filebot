@@ -19,7 +19,6 @@ import javax.script.SimpleBindings;
 import org.apache.commons.io.IOUtils;
 
 import net.filebot.LicenseError;
-import net.filebot.Logging.EscapeCode;
 
 public class ArgumentProcessor {
 
@@ -42,7 +41,7 @@ public class ArgumentProcessor {
 		} catch (LicenseError e) {
 			log.severe("License Error: " + e.getMessage());
 			if (LICENSE.isFile()) {
-				printStegosaurus();
+				printStegosaurus("Please purchase a FileBot License:", getPurchaseURL());
 				log.severe("FileBot requires a valid license. Please run `filebot --license *.psm` to install your FileBot license.");
 			}
 			return 2;
@@ -131,12 +130,9 @@ public class ArgumentProcessor {
 		}).sum() == 0 ? 1 : 0;
 	}
 
-	private void printStegosaurus() {
+	private void printStegosaurus(String line1, String line2) {
 		try {
-			String format = IOUtils.toString(getClass().getResource("Stegosaurus.format"), UTF_8);
-			EscapeCode style = EscapeCode.isSupported() ? EscapeCode.UNDERLINE : EscapeCode.NONE;
-			String url = getPurchaseURL();
-			log.info(format(format, style.apply(url)));
+			log.info(format(IOUtils.toString(getClass().getResource("Stegosaurus.format"), UTF_8), line1, line2));
 		} catch (Exception e) {
 			debug.log(Level.WARNING, e::toString);
 		}
