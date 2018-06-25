@@ -1,7 +1,9 @@
 package net.filebot.ui.transfer;
 
+import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
+import static net.filebot.util.FileUtilities.*;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -18,8 +20,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import net.filebot.platform.gnome.GVFS;
+import net.filebot.util.SystemProperty;
 
 public class FileTransferable implements Transferable {
+
+	public static final SystemProperty<Boolean> forceSortOrder = SystemProperty.of("net.filebot.dnd.sort", Boolean::valueOf);
 
 	public static final DataFlavor uriListFlavor = createUriListFlavor();
 
@@ -130,8 +135,16 @@ public class FileTransferable implements Transferable {
 			// file list flavor
 			Object transferable = tr.getTransferData(DataFlavor.javaFileListFlavor);
 
-			if (transferable instanceof List<?>) {
-				return (List<File>) transferable;
+			if (transferable instanceof List) {
+				List<File> files = (List<File>) transferable;
+
+				// Windows Explorer DnD / Selection Order is broken and will probably never be fixed,
+				// so we provide an override for users that want to enforce alphanumeric sort order of files dragged in
+				if (forceSortOrder.get()) {
+					return files.stream().sorted(HUMAN_NAME_ORDER).collect(toList());
+				}
+
+				return files;
 			}
 
 			// on some platforms transferable data will not be available until the drop has been accepted
