@@ -702,14 +702,19 @@
 	</target>
 
 
-	<target name="deploy-release" description="Upload release files">
-		<!-- create release folder and upload release files -->
-		<release-deploy dir="${dir.release}/.." todir="${deploy.release}/${package.name}" />
+	<target name="delta" description="Upload incremental update archive">
+		<tar destfile="${dir.dist}/DELTA.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
+			<tarfileset prefix="jar" dir="${dir.dist}/lib" includes="filebot.jar" />
+		</tar>
+		<antcall target="stage">
+			<param name="dir.release" value="${dir.dist}/release/HEAD" />
+		</antcall>
 	</target>
 
 
-	<target name="deploy-update" description="Upload incremental update archive">
-		<!-- TODO -->
+	<target name="deploy-release" description="Upload release files">
+		<!-- create release folder and upload release files -->
+		<release-deploy dir="${dir.release}/.." todir="${deploy.release}/${package.name}" />
 	</target>
 
 
