@@ -621,7 +621,7 @@
 			<package prefix="lib/i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
 			<package prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
 
-			<codesign secring="${dir.installer}/gpg/secring.gpg" keyid="${gpg.key}" password="${gpg.pwd}" />
+			<codesign secring="${dir.installer}/gpg/syno.gpg" keyid="${gpg.key}" password="${gpg.pwd}" />
 		</spk>
 
 		<move file="${dir.dist}/${package.name}-${application.version}-noarch.spk" tofile="${dir.dist}/${release}_noarch.spk" />
@@ -718,7 +718,7 @@
 
 		<!-- merge all filebot related packages into a single package source file -->
 		<package-source file="${dir.dist}/syno/index.json">
-			<keyring file="${dir.installer}/gpg/FileBot.pub" />
+			<keyring file="${dir.installer}/gpg/syno.pub" />
 			<spk url="https://get.filebot.net/${package.name}/${release}/${release}_noarch.spk" file="${dir.cache}/${release}_noarch.spk">
 				<thumbnail url="https://www.filebot.net/syno/filebot-thumbnail.png" />
 				<snapshot url="https://www.filebot.net/syno/filebot-snapshot.png" />
