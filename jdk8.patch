@@ -17,10 +17,10 @@ index 940479cc..0be259e9 100644
  	<classpathentry kind="lib" path="lib/jars/jacksum.jar"/>
  	<classpathentry kind="lib" path="lib/jars/simmetrics.jar"/>
 diff --git a/app.properties b/app.properties
-index 252679d3..64a6eb0a 100644
+index 1a9fafe3..4e4be0e2 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -35,11 +35,12 @@ link.patreon: https://www.patreon.com/filebot
+@@ -34,11 +34,12 @@ link.release.index: https://get.filebot.net/filebot/
  
  # Build
  main.class: net.filebot.Main
@@ -36,7 +36,7 @@ index 252679d3..64a6eb0a 100644
  
  # Package Information
  package.name: filebot
-@@ -77,7 +78,7 @@ msi.compression: high
+@@ -76,7 +77,7 @@ msi.compression: high
  deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
  
  # Default Java Options
@@ -46,7 +46,7 @@ index 252679d3..64a6eb0a 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 2860ba90..1a55833c 100644
+index a156632f..bd76f8e1 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -93,9 +93,10 @@
@@ -61,8 +61,8 @@ index 2860ba90..1a55833c 100644
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
  			</untar>
-@@ -269,7 +270,7 @@
- 		</copy>
+@@ -216,7 +217,7 @@
+ 		</groovy>
  
  		<!-- compile -->
 -		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
@@ -70,7 +70,7 @@ index 2860ba90..1a55833c 100644
  			<classpath>
  				<fileset dir="${dir.dist}/lib" />
  			</classpath>
-@@ -308,7 +309,7 @@
+@@ -255,7 +256,7 @@
  			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
  		</copy>
  		<copy todir="${dir.staging}/lib">
@@ -79,7 +79,7 @@ index 2860ba90..1a55833c 100644
  		</copy>
  		<copy todir="${dir.staging}/jar">
  			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -336,7 +337,7 @@
+@@ -283,7 +284,7 @@
  			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
  		</exec>
  		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
