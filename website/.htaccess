@@ -1,7 +1,3 @@
-# redirect to download links
-redirect 302 /files/FileBot_Subtitles.pkg https://downloads.sourceforge.net/project/filebot/filebot/LATEST/FileBot_Subtitles.pkg
-redirect 302 /files/ https://downloads.sourceforge.net/filebot/
-
 # redirect to store
 redirect 302 /windows/purchase.html https://www.microsoft.com/en-us/store/p/filebot/9nblggh52t9x?cid=purchase
 redirect 302 /mac/purchase.html https://itunes.apple.com/us/app/filebot/id905384638?mt=12&uo=6&at=1l3vupy&ct=purchase
@@ -19,7 +15,7 @@ redirect 302 /windows/support.html https://www.filebot.net/forums/viewforum.php?
 redirect 302 /mac/support.html https://www.filebot.net/forums/viewforum.php?f=12
 redirect 302 /mac/subtitles.html https://www.filebot.net/forums/viewtopic.php?f=12&t=3350
 redirect 302 /mac/brew.html https://www.filebot.net/forums/viewtopic.php?f=4&t=2049
-redirect 302 /linux/snap.html https://www.filebot.net/forums/viewtopic.php?f=11&t=5984
+redirect 302 /linux/snap.html https://snapcraft.io/filebot
 redirect 302 /linux/docker.html https://hub.docker.com/r/rednoah/filebot/
 redirect 302 /linux/syno.html https://www.filebot.net/forums/viewtopic.php?f=13&t=1802
 redirect 302 /syno/support.html https://www.filebot.net/forums/viewforum.php?f=13
