@@ -634,6 +634,13 @@
 			</fileset>
 		</checksum>
 
+		<!-- normalize Windows / Linux EOL -->
+		<FixCRLF eol="unix" eof="remove">
+			<fileset dir="${dir.dist}">
+				<patternset refid="verification.files" />
+			</fileset>
+		</FixCRLF>
+
 		<!-- move to release folder -->
 		<touch datetime="now">
 			<fileset dir="${dir.dist}">
