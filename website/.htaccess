@@ -15,6 +15,7 @@ redirect 302 /windows/support.html https://www.filebot.net/forums/viewforum.php?
 redirect 302 /mac/support.html https://www.filebot.net/forums/viewforum.php?f=12
 redirect 302 /mac/subtitles.html https://www.filebot.net/forums/viewtopic.php?f=12&t=3350
 redirect 302 /mac/brew.html https://www.filebot.net/forums/viewtopic.php?f=4&t=2049
+redirect 302 /linux/support.html https://www.filebot.net/forums/viewforum.php?f=11
 redirect 302 /linux/snap.html https://snapcraft.io/filebot
 redirect 302 /linux/docker.html https://hub.docker.com/r/rednoah/filebot/
 redirect 302 /linux/syno.html https://www.filebot.net/forums/viewtopic.php?f=13&t=1802
