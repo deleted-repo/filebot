@@ -714,7 +714,7 @@
 
 	<target name="deploy-release" description="Upload release files">
 		<!-- create release folder and upload release files -->
-		<release-deploy dir="${dir.release}/.." todir="${deploy.release}/${package.name}" />
+		<release-deploy dir="${dir.dist}/release" todir="${deploy.release}/${package.name}" />
 	</target>
 
 
