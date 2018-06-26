@@ -8,16 +8,16 @@
 	<property name="dir.lib" location="${basedir}/lib" />
 	<property name="dir.website" location="${basedir}/website" />
 	<property name="dir.installer" location="${basedir}/installer" />
+	<property name="dir.cache" location="${basedir}/cache" />
 
 	<!-- import property files -->
 	<property file="${basedir}/profile.properties" />
 	<property file="${basedir}/app.properties" />
 
+	<!-- define release files -->
 	<property name="release" value="${application.name}_${application.version}" />
-
-	<!-- define output paths -->
-	<property name="dir.cache" location="${basedir}/cache" />
-	<property name="dir.release" location="${basedir}/release/${release}" />
+	<property name="dir.release.index" location="${basedir}/release" />
+	<property name="dir.release" location="${dir.release.index}/${release}" />
 
 
 	<!-- timestamp variables -->
@@ -61,7 +61,7 @@
 		<attribute name="todir" />
 		<element name="includes" implicit="yes" optional="yes" />
 		<sequential>
-			<scp todir="@{todir}" trust="yes" verbose="true" sftp="true" keyfile="${deploy.keyfile}">
+			<scp todir="@{todir}" trust="yes" verbose="true" sftp="true" keyfile="${scp.keyfile}">
 				<fileset dir="@{dir}">
 					<includes />
 					<modified>
@@ -707,14 +707,14 @@
 			<tarfileset prefix="jar" dir="${dir.dist}/lib" includes="filebot.jar" />
 		</tar>
 		<antcall target="stage">
-			<param name="dir.release" value="${dir.dist}/release/HEAD" />
+			<param name="dir.release" value="${dir.release.index}/HEAD" />
 		</antcall>
 	</target>
 
 
 	<target name="deploy-release" description="Upload release files">
 		<!-- create release folder and upload release files -->
-		<release-deploy dir="${dir.dist}/release" todir="${deploy.release}/${package.name}" />
+		<release-deploy dir="${dir.release.index}" todir="${scp.release}" />
 	</target>
 
 
@@ -734,9 +734,7 @@
 		</package-source>
 
 		<!-- upload -->
-		<release-deploy dir="${dir.dist}" todir="${deploy.release}">
-			<include name="syno/**" />
-		</release-deploy>
+		<release-deploy dir="${dir.dist}/syno" todir="${scp.syno}" />
 	</target>
 
 
@@ -796,7 +794,7 @@
 		</copy-replace>
 
 		<!-- upload -->
-		<release-deploy dir="${dir.dist}/website" todir="${deploy.website}" />
+		<release-deploy dir="${dir.dist}/website" todir="${scp.website}" />
 	</target>
 
 
