@@ -203,70 +203,17 @@
 
 
 	<target name="build" depends="revision">
-		<!-- copy dependencies -->
-		<copy todir="${dir.dist}/lib" flatten="yes" verbose="yes">
-			<fileset dir="${dir.lib}/ivy/jar">
-				<include name="ehcache.jar" />
-				<include name="miglayout-core.jar" />
-				<include name="miglayout-swing.jar" />
-				<include name="glazedlists_java16.jar" />
-				<include name="controlsfx.jar" />
-				<include name="rsyntaxtextarea.jar" />
-				<include name="lanterna.jar" />
-				<include name="xz.jar" />
-				<include name="sevenzipjbinding.jar" />
-				<include name="commons-io.jar" />
-				<include name="commons-vfs2.jar" />
-				<include name="jaxb-api.jar" />
-				<include name="jaxb-impl.jar" />
-				<include name="junrar.jar" />
-				<include name="jna.jar" />
-				<include name="jna-platform.jar" />
-				<include name="streamex.jar" />
-				<include name="icu4j.jar" />
-				<include name="language-detector.jar" />
-				<include name="metadata-extractor.jar" />
-				<include name="xmpcore.jar" />
-				<include name="commons-logging.jar" />
-				<include name="slf4j-api.jar" />
-				<include name="slf4j-jdk14.jar" />
-				<include name="groovy.jar" />
-				<include name="groovy-ant.jar" />
-				<include name="groovy-bsf.jar" />
-				<include name="groovy-datetime.jar" />
-				<include name="groovy-dateutil.jar" />
-				<include name="groovy-json.jar" />
-				<include name="groovy-jsr223.jar" />
-				<include name="groovy-nio.jar" />
-				<include name="groovy-sql.jar" />
-				<include name="groovy-swing.jar" />
-				<include name="groovy-xml.jar" />
-				<include name="ivy.jar" />
-				<include name="jsoup.jar" />
-				<include name="ant.jar" />
-				<include name="ant-launcher.jar" />
-				<include name="ant-commons-net.jar" />
-				<include name="ant-jsch.jar" />
-				<include name="ant-javamail.jar" />
-				<include name="commons-net.jar" />
-				<include name="jsch.jar" />
-				<include name="javax.mail.jar" />
-				<include name="activation.jar" />
-				<include name="bcprov-jdk15on.jar" />
-				<include name="bcpg-jdk15on.jar" />
-			</fileset>
-			<fileset dir="${dir.lib}/ivy/bundle">
-				<include name="args4j.jar" />
-				<include name="json-io.jar" />
-				<include name="guava.jar" />
-			</fileset>
-			<fileset dir="${dir.lib}/jars">
-				<include name="xmlrpc.jar" />
-				<include name="ObjCBridge.jar" />
-				<include name="simmetrics.jar" />
-				<include name="jacksum.jar" />
-			</fileset>
-		</copy>
+		<!-- select jar dependencies -->
+		<fileset id="jar.classpath" dir="${dir.lib}" includesfile="${dir.lib}/jar.includes" />
+
+		<!-- rebuild each dependency jar with zero compression -->
+		<groovy>
+			project.references.'jar.classpath'.each { r ->
+				ant.jar(destfile: ant.project.properties.'dir.dist' + '/lib/' + r.file.name, compress: false) {
+					ant.zipfileset(src: r.file)
+				}
+			}
+		</groovy>
 
 		<!-- compile -->
 		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
@@ -651,6 +598,7 @@
 		<path id="lib.classpath">
 			<fileset dir="${dir.lib}" includes="**/*.jar" excludes="**/*-jdk14.jar" />
 		</path>
+		<taskdef resource="org/codehaus/groovy/antlib.xml" classpathref="lib.classpath" />
 		<taskdef resource="net/filebot/ant/spk/antlib.xml" classpathref="lib.classpath" />
 		<taskdef resource="org/vafer/jdeb/ant/antlib.xml" classpathref="lib.classpath" />
 		<taskdef name="bundleapp" classname="com.oracle.appbundler.AppBundlerTask" classpathref="lib.classpath" />
