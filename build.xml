@@ -634,13 +634,6 @@
 			</fileset>
 		</checksum>
 
-		<!-- normalize Windows / Linux EOL -->
-		<FixCRLF eol="unix" eof="remove">
-			<fileset dir="${dir.dist}">
-				<patternset refid="verification.files" />
-			</fileset>
-		</FixCRLF>
-
 		<!-- move to release folder -->
 		<touch datetime="now">
 			<fileset dir="${dir.dist}">
@@ -651,8 +644,21 @@
 		<move todir="${dir.release}" verbose="yes" flatten="yes" overwrite="yes" preservelastmodified="yes">
 			<fileset dir="${dir.dist}">
 				<patternset refid="release.files" />
+			</fileset>
+		</move>
+		<move todir="${dir.release}" verbose="yes" flatten="yes" overwrite="yes" preservelastmodified="yes">
+			<fileset dir="${dir.dist}">
 				<patternset refid="verification.files" />
 			</fileset>
+
+			<!-- normalize Windows / Linux EOL -->
+			<filterchain>
+				<FixCRLF eol="unix" eof="remove">
+					<fileset dir="${dir.dist}">
+						<patternset refid="verification.files" />
+					</fileset>
+				</FixCRLF>
+			</filterchain>
 		</move>
 	</target>
 
