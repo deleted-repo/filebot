@@ -656,10 +656,16 @@
 	</target>
 
 
-	<target name="delta" description="Upload incremental update archive">
-		<tar destfile="${dir.dist}/DELTA.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
-			<tarfileset prefix="jar" dir="${dir.dist}/lib" includes="filebot.jar" />
+	<target name="deploy-update" description="Upload incremental update archive">
+		<copy-replace todir="${dir.dist}/portable">
+			<fileset dir="${dir.installer}/portable" includes="*.sh" />
+		</copy-replace>
+
+		<tar destfile="${dir.dist}/CHANGES.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
+			<tarfileset dir="${dir.dist}/portable" includes="*.sh" filemode="755" />
+			<tarfileset prefix="jar" dir="${dir.dist}/lib" includes="${package.name}.jar" />
 		</tar>
+
 		<antcall target="stage">
 			<param name="dir.release" value="${dir.release.index}/HEAD" />
 		</antcall>
