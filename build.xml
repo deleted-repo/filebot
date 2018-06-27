@@ -208,8 +208,12 @@
 
 		<!-- rebuild each dependency jar with zero compression and remove signatures -->
 		<groovy>
+			def destfile = { r -> 
+				ant.project.properties.'dir.dist' + '/lib/' + r.file.name.replaceAll(/.jdk15on|.java16/, '').toLowerCase()
+			}
+
 			project.references.'jar.classpath'.each { r ->
-				ant.jar(destfile: ant.project.properties.'dir.dist' + '/lib/' + r.file.name, index: 'yes', compress: 'no') {
+				ant.jar(destfile: destfile(r), index: 'yes', indexMetaInf: 'yes', compress: 'no') {
 					zipfileset(src: r) {
 						exclude(name: 'META-INF/MANIFEST.MF')
 						exclude(name: 'META-INF/INDEX.LIST')
@@ -222,17 +226,20 @@
 			}
 		</groovy>
 
-		<!-- compile -->
-		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" debuglevel="lines,vars,source" includeAntRuntime="no">
-			<classpath>
-				<fileset dir="${dir.dist}/lib" />
-			</classpath>
-		</javac>
 
-		<!-- copy property files -->
-		<copy-replace todir="${dir.build}">
-			<fileset dir="${dir.source}" includes="**/*.properties" />
-		</copy-replace>
+		<path id="jar.classpath">
+			<fileset dir="${dir.dist}/lib">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+		<manifestclasspath property="jar.classpath" jarfile="${dir.dist}/lib/${package.name}.jar">
+			<classpath refid="jar.classpath" />
+		</manifestclasspath>
+
+		<!-- compile -->
+		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
+			<classpath refid="jar.classpath" />
+		</javac>
 
 		<!-- copy resources -->
 		<copy todir="${dir.build}">
@@ -242,13 +249,12 @@
 			</fileset>
 		</copy>
 
-		<manifestclasspath property="jar.classpath" jarfile="${dir.dist}/lib/filebot.jar">
-			<classpath>
-				<fileset dir="${dir.dist}/lib" />
-			</classpath>
-		</manifestclasspath>
+		<!-- copy property files -->
+		<copy-replace todir="${dir.build}">
+			<fileset dir="${dir.source}" includes="**/*.properties" />
+		</copy-replace>
 
-		<jar destfile="${dir.dist}/lib/filebot.jar" index="yes" compress="no">
+		<jar destfile="${dir.dist}/lib/${package.name}.jar" index="yes" indexMetaInf="yes" compress="no">
 			<fileset dir="${dir.build}" />
 			<manifest>
 				<attribute name="Main-Class" value="${main.class}" />
@@ -256,6 +262,7 @@
 				<attribute name="Build-Date" value="${tstamp.date}" />
 				<attribute name="Build-Revision" value="${revision}" />
 			</manifest>
+			<indexjars refid="jar.classpath" />
 		</jar>
 	</target>
 
