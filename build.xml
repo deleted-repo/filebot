@@ -202,15 +202,22 @@
 	</macrodef>
 
 
-	<target name="build" depends="revision">
+	<target name="jar" depends="revision">
 		<!-- select jar dependencies -->
 		<fileset id="jar.classpath" dir="${dir.lib}" includesfile="${dir.lib}/jar.includes" />
 
-		<!-- rebuild each dependency jar with zero compression -->
+		<!-- rebuild each dependency jar with zero compression and remove signatures -->
 		<groovy>
 			project.references.'jar.classpath'.each { r ->
-				ant.jar(destfile: ant.project.properties.'dir.dist' + '/lib/' + r.file.name, compress: false) {
-					ant.zipfileset(src: r.file)
+				ant.jar(destfile: ant.project.properties.'dir.dist' + '/lib/' + r.file.name, index: 'yes', compress: 'no') {
+					zipfileset(src: r) {
+						exclude(name: 'META-INF/MANIFEST.MF')
+						exclude(name: 'META-INF/INDEX.LIST')
+						exclude(name: 'META-INF/*.RSA')
+						exclude(name: 'META-INF/*.DSA')
+						exclude(name: 'META-INF/*.SF')
+						exclude(name: 'META-INF/*.EC')
+					}
 				}
 			}
 		</groovy>
@@ -234,13 +241,18 @@
 				<exclude name="**/*.properties" />
 			</fileset>
 		</copy>
-	</target>
 
+		<manifestclasspath property="jar.classpath" jarfile="${dir.dist}/lib/filebot.jar">
+			<classpath>
+				<fileset dir="${dir.dist}/lib" />
+			</classpath>
+		</manifestclasspath>
 
-	<target name="jar" depends="build">
-		<jar destfile="${dir.dist}/lib/filebot.jar" compress="no">
+		<jar destfile="${dir.dist}/lib/filebot.jar" index="yes" compress="no">
 			<fileset dir="${dir.build}" />
 			<manifest>
+				<attribute name="Main-Class" value="${main.class}" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
 				<attribute name="Build-Date" value="${tstamp.date}" />
 				<attribute name="Build-Revision" value="${revision}" />
 			</manifest>
