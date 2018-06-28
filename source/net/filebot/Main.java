@@ -6,6 +6,7 @@ import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
 import static net.filebot.util.FileUtilities.*;
+import static net.filebot.util.FileUtilities.getChildren;
 import static net.filebot.util.XPathUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -377,7 +378,7 @@ public class Main {
 	}
 
 	public static void initializeSystemProperties(ArgumentBean args) {
-		System.setProperty("http.agent", String.format("%s %s", getApplicationName(), getApplicationVersion()));
+		System.setProperty("http.agent", String.format("%s/%s (%s; %s %s; %s)", getApplicationName(), getApplicationVersion(), getApplicationDeployment().toUpperCase(), System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch")));
 		System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
 		System.setProperty("sun.net.client.defaultReadTimeout", "60000");
 
