@@ -24,7 +24,7 @@ public class BindingsHandler extends MapOptionHandler {
 
 	@Override
 	public String getDefaultMetaVariable() {
-		return "[name=value]";
+		return "name=value";
 	}
 
 	@Override

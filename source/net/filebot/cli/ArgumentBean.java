@@ -68,10 +68,10 @@ public class ArgumentBean {
 	@Option(name = "--conflict", usage = "Conflict resolution", metaVar = "[skip, override, auto, index, fail]")
 	public String conflict = "skip";
 
-	@Option(name = "--filter", usage = "Match filter expression", metaVar = "expression")
+	@Option(name = "--filter", usage = "Match filter expression", metaVar = "{expression}")
 	public String filter = null;
 
-	@Option(name = "--format", usage = "Format expression", metaVar = "expression")
+	@Option(name = "--format", usage = "Format expression", metaVar = "{expression}")
 	public String format;
 
 	@Option(name = "-non-strict", usage = "Enable advanced matching and more aggressive guessing")
@@ -107,8 +107,26 @@ public class ArgumentBean {
 	@Option(name = "-extract", usage = "Extract archives")
 	public boolean extract = false;
 
-	@Option(name = "-script", usage = "Run Groovy script", metaVar = "[fn:name] or [dev:name] or [foo.groovy]")
+	@Option(name = "-script", usage = "Run Groovy script", metaVar = "[fn:name] or [script.groovy]")
 	public String script = null;
+
+	@Option(name = "--def", usage = "Define script variables", handler = BindingsHandler.class)
+	public Map<String, String> defines = new LinkedHashMap<String, String>();
+
+	@Option(name = "-r", usage = "Recursively process folders")
+	public boolean recursive = false;
+
+	@Option(name = "--file-filter", usage = "Input file filter expression", metaVar = "{expression}")
+	public String inputFileFilter = null;
+
+	@Option(name = "-exec", usage = "Execute command", metaVar = "echo {f} [+]", handler = RestOfArgumentsHandler.class)
+	public List<String> exec = new ArrayList<String>();
+
+	@Option(name = "-unixfs", usage = "Allow special characters in file paths")
+	public boolean unixfs = false;
+
+	@Option(name = "-no-xattr", usage = "Disable extended attributes")
+	public boolean disableExtendedAttributes = false;
 
 	@Option(name = "--log", usage = "Log level", metaVar = "[all, fine, info, warning]")
 	public String log = "all";
@@ -119,20 +137,11 @@ public class ArgumentBean {
 	@Option(name = "--log-lock", usage = "Lock log file", metaVar = "[yes, no]", handler = ExplicitBooleanOptionHandler.class)
 	public boolean logLock = true;
 
-	@Option(name = "-r", usage = "Recursively process folders")
-	public boolean recursive = false;
-
 	@Option(name = "-clear-cache", usage = "Clear cached and temporary data")
 	public boolean clearCache = false;
 
 	@Option(name = "-clear-prefs", usage = "Clear application settings")
 	public boolean clearPrefs = false;
-
-	@Option(name = "-unixfs", usage = "Allow special characters in file paths")
-	public boolean unixfs = false;
-
-	@Option(name = "-no-xattr", usage = "Disable extended attributes")
-	public boolean disableExtendedAttributes = false;
 
 	@Option(name = "-version", usage = "Print version identifier")
 	public boolean version = false;
@@ -140,17 +149,8 @@ public class ArgumentBean {
 	@Option(name = "-help", usage = "Print this help message")
 	public boolean help = false;
 
-	@Option(name = "--license", usage = "Import license file", metaVar = "file")
+	@Option(name = "--license", usage = "Import license file", metaVar = "file.psm")
 	public String license = null;
-
-	@Option(name = "--def", usage = "Define script variables", handler = BindingsHandler.class)
-	public Map<String, String> defines = new LinkedHashMap<String, String>();
-
-	@Option(name = "-exec", usage = "Execute command", metaVar = "command", handler = RestOfArgumentsHandler.class)
-	public List<String> exec = new ArrayList<String>();
-
-	@Option(name = "--file-filter", usage = "Input file filter expression", metaVar = "expression")
-	public String inputFileFilter = null;
 
 	@Argument
 	public List<String> arguments = new ArrayList<String>();
