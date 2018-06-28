@@ -253,13 +253,16 @@
 		<property name="dir.staging" location="${dir.dist}/appx" />
 
 		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
+			<fileset dir="${dir.installer}/msi" includes="filebot.exe, filebot.launcher.exe" />
 		</copy>
 		<copy todir="${dir.staging}/lib">
 			<fileset dir="${dir.lib}/native/win32-x64" />
 		</copy>
 		<copy todir="${dir.staging}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
+		</copy>
+		<copy todir="${dir.staging}">
+			<fileset dir="${dir.installer}/appx" includes="**/*.png" />
 		</copy>
 
 		<!-- copy files and resolve ant variables -->
