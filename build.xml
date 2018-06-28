@@ -530,7 +530,7 @@
 			<tarfileset prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
 
 			<!-- include maintainer public key -->
-			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.pub" />
+			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.gpg" />
 		</tar>
 	</target>
 
