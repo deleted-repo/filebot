@@ -57,7 +57,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import net.filebot.util.ByteBufferOutputStream;
-import net.filebot.util.SystemProperty;
 
 public final class WebRequest {
 
@@ -346,7 +345,7 @@ public final class WebRequest {
 			String log = String.format(Locale.ROOT, "Received %,d bytes", data.remaining());
 
 			// log entire response content if enabled
-			boolean printResponse = SystemProperty.of("net.filebot.web.WebRequest.log.response", Boolean::parseBoolean, Boolean.FALSE).get();
+			boolean printResponse = Boolean.parseBoolean(System.getProperty("net.filebot.web.WebRequest.log.response"));
 
 			if (printResponse) {
 				try {

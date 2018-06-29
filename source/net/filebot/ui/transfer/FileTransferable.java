@@ -20,11 +20,10 @@ import java.util.List;
 import java.util.Scanner;
 
 import net.filebot.platform.gnome.GVFS;
-import net.filebot.util.SystemProperty;
 
 public class FileTransferable implements Transferable {
 
-	public static final SystemProperty<Boolean> forceSortOrder = SystemProperty.of("net.filebot.dnd.sort", Boolean::valueOf, false);
+	public static final boolean forceSortOrder = Boolean.parseBoolean(System.getProperty("net.filebot.dnd.sort"));
 
 	public static final DataFlavor uriListFlavor = createUriListFlavor();
 
@@ -138,11 +137,9 @@ public class FileTransferable implements Transferable {
 			if (transferable instanceof List) {
 				List<File> files = (List<File>) transferable;
 
-				System.out.println(files);
-
 				// Windows Explorer DnD / Selection Order is broken and will probably never be fixed,
 				// so we provide an override for users that want to enforce alphanumeric sort order of files dragged in
-				if (forceSortOrder.get()) {
+				if (forceSortOrder) {
 					return files.stream().sorted(HUMAN_NAME_ORDER).collect(toList());
 				}
 

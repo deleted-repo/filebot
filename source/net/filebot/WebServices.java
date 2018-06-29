@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 
 import net.filebot.media.XattrMetaInfoProvider;
 import net.filebot.similarity.MetricAvg;
-import net.filebot.util.SystemProperty;
 import net.filebot.web.AcoustIDClient;
 import net.filebot.web.AnidbClient;
 import net.filebot.web.Datasource;
@@ -54,7 +53,7 @@ public final class WebServices {
 
 	// movie sources
 	public static final OMDbClient OMDb = new OMDbClient(getApiKey("omdb"));
-	public static final TMDbClient TheMovieDB = new TMDbClientWithLocalSearch(getApiKey("themoviedb"), SystemProperty.of("net.filebot.WebServices.TheMovieDB.adult", Boolean::parseBoolean, false).get());
+	public static final TMDbClient TheMovieDB = new TMDbClientWithLocalSearch(getApiKey("themoviedb"), Boolean.parseBoolean(System.getProperty("net.filebot.WebServices.TheMovieDB.adult")));
 
 	// episode sources
 	public static final TVMazeClient TVmaze = new TVMazeClient();
