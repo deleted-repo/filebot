@@ -634,6 +634,7 @@
 			<include name="*.deb" />
 			<include name="*.tar.xz" />
 			<include name="*.spk" />
+			<include name="*.zip" />
 		</patternset>
 		<patternset id="verification.files">
 			<include name="*.asc" />
