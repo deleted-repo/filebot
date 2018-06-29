@@ -328,6 +328,22 @@
 	</target>
 
 
+	<target name="zip" depends="revision" description="Build Windows Portable ZIP package">
+		<property name="dir.staging" location="${dir.dist}/zip" />
+
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/zip" includes="*.ini" />
+		</copy-replace>
+
+		<zip destfile="${dir.dist}/${release}-portable.zip" encoding="utf-8">
+			<zipfileset dir="${dir.installer}/zip" includes="*.exe" />
+			<zipfileset dir="${dir.staging}" includes="*.ini" />
+			<zipfileset prefix="jar" dir="${dir.dist}/lib" />
+			<zipfileset prefix="lib" dir="${dir.lib}/native/win32-x64" />
+		</zip>
+	</target>
+
+
 	<target name="mas" depends="revision">
 		<property name="dir.staging" location="${dir.dist}/mas" />
 
