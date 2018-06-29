@@ -84,7 +84,7 @@ public class Main {
 				if (args.clearCache()) {
 					// clear cache must be called manually
 					if (System.console() == null) {
-						log.severe("`filebot -clear-cache` has been disabled due to abuse.");
+						log.severe("`filebot -clear-cache` must be called from an interactive console.");
 						System.exit(1);
 					}
 
@@ -378,7 +378,7 @@ public class Main {
 	}
 
 	public static void initializeSystemProperties(ArgumentBean args) {
-		System.setProperty("http.agent", String.format("%s/%s (%s; %s %s; %s)", getApplicationName(), getApplicationVersion(), getApplicationDeployment().toUpperCase(), System.getProperty("os.name"), System.getProperty("os.version"), System.getProperty("os.arch")));
+		System.setProperty("http.agent", String.format("%s/%s", getApplicationName(), getApplicationVersion()));
 		System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
 		System.setProperty("sun.net.client.defaultReadTimeout", "60000");
 
