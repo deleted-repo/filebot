@@ -46,7 +46,7 @@ index 1a9fafe3..4e4be0e2 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index c9feebce..7aadfbef 100644
+index 742fd30a..ecc1779f 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -93,9 +93,10 @@
@@ -71,7 +71,7 @@ index c9feebce..7aadfbef 100644
  		</javac>
  
 @@ -256,7 +257,7 @@
- 			<fileset dir="${dir.installer}/appx" includes="*.exe, **/*.png" />
+ 			<fileset dir="${dir.installer}/msi" includes="filebot.exe, filebot.launcher.exe" />
  		</copy>
  		<copy todir="${dir.staging}/lib">
 -			<fileset dir="${dir.lib}/native/win32-x64" />
@@ -79,7 +79,7 @@ index c9feebce..7aadfbef 100644
  		</copy>
  		<copy todir="${dir.staging}/jar">
  			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -284,7 +285,7 @@
+@@ -287,7 +288,7 @@
  			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
  		</exec>
  		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
