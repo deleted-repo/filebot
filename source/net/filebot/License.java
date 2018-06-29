@@ -2,6 +2,7 @@ package net.filebot;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Settings.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
@@ -15,7 +16,9 @@ import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
@@ -106,11 +109,24 @@ public class License implements Serializable {
 
 	private void verifyLicense(byte[] bytes) throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
-		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", null)).expire(Cache.ONE_MONTH).get();
+		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", getRequestParameters())).expire(Cache.ONE_MONTH).get();
 
 		if (getInteger(json, "status") != 200) {
 			throw new PGPException(getString(json, "message"));
 		}
+	}
+
+	private Map<String, String> getRequestParameters() {
+		Map<String, String> parameters = new HashMap<String, String>(2);
+
+		// add standard HTTP headers
+		parameters.put("Date", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
+
+		// add custom HTTP headers for user statistics
+		parameters.put("X-FileBot-OS", getSystemIdentifier());
+		parameters.put("X-FileBot-PKG", getApplicationDeployment().toUpperCase());
+
+		return parameters;
 	}
 
 	public License check() throws Exception {
