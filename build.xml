@@ -676,7 +676,7 @@
 	</target>
 
 
-	<target name="deploy-update" description="Upload incremental update archive">
+	<target name="stage-update" description="Upload incremental update archive">
 		<tar destfile="${dir.dist}/CHANGES.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset prefix="jar" dir="${dir.dist}/lib" includes="${package.name}.jar" />
 		</tar>
@@ -730,56 +730,6 @@
 		<exec executable="chocolatey" dir="${dir.dist}/chocolatey" failonerror="yes">
 			<arg line="push ${package.name}.${version}.nupkg" />
 		</exec>
-	</target>
-
-
-	<target name="deploy-website" depends="revision" description="Upload website resources">
-		<!-- copy image resources -->
-		<copy todir="${dir.dist}/website/resources" preservelastmodified="yes" verbose="yes" flatten="true">
-			<fileset dir="${dir.source}/net/filebot/resources">
-				<include name="*.png" />
-			</fileset>
-		</copy>
-
-		<!-- copy static website resources -->
-		<copy todir="${dir.dist}/website" preservelastmodified="yes" verbose="yes">
-			<fileset dir="${dir.website}">
-				<include name="*.json" />
-				<include name="*.xml" />
-				<include name="*.css" />
-				<include name="*.js" />
-				<include name="*.png" />
-				<include name="*.ico" />
-				<include name="*.txt" />
-				<include name="syno/**" />
-				<include name="images/**" />
-				<include name="screenshots/**" />
-				<include name="getting-started/**" />
-			</fileset>
-		</copy>
-
-		<!-- copy files and resolve ant variables -->
-		<copy-replace todir="${dir.dist}/website">
-			<fileset dir="${dir.website}">
-				<include name=".htaccess" />
-				<include name="*.html" />
-				<include name="*.php" />
-			</fileset>
-		</copy-replace>
-
-		<!-- upload -->
-		<release-deploy dir="${dir.dist}/website" todir="${scp.website}" />
-	</target>
-
-
-	<target name="website-docs" depends="revision" description="Generate API documentation">
-		<javadoc destdir="${dir.dist}/website/docs" linksource="yes" access="public" classpathref="lib.classpath" encoding="UTF-8" charset="UTF-8" windowtitle="${application.name}" noindex="yes" nohelp="yes" notree="yes" nodeprecated="yes" nonavbar="yes">
-			<fileset dir="${dir.source}" includesfile="${dir.website}/docs/includes.fileset" />
-			<doctitle>${application.name} ${application.version}</doctitle>
-			<bottom>${application.name} ${application.version} (r${revision}) built on ${tstamp.date}</bottom>
-			<link href="http://docs.oracle.com/javase/${jre.version}/docs/api/" />
-			<link href="http://docs.groovy-lang.org/latest/html/api/" />
-		</javadoc>
 	</target>
 
 
