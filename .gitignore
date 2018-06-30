@@ -9,6 +9,7 @@
 *.psm
 
 makefile
+makefile.variables
 profile.properties
 
 .DS_Store
