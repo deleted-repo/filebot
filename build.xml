@@ -555,6 +555,12 @@
 
 
 	<target name="spk" depends="revision" description="Build Synology NAS package">
+		<property name="dir.staging" location="${dir.dist}/spk" />
+
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/spk" />
+		</copy-replace>
+
 		<spk destdir="${dir.dist}" name="${package.name}" version="${application.version}" arch="noarch" compression="${tar.compression}">
 			<info name="displayname" value="${application.name}" />
 			<info name="description" value="${package.description}" />
@@ -578,8 +584,8 @@
 			<icon size="72" file="${dir.installer}/icons/icon72.png" />
 			<icon size="256" file="${dir.installer}/icons/icon256.png" />
 
-			<scripts dir="${dir.installer}/spk/scripts" filemode="755" />
-			<package dir="${dir.installer}/spk/package" includes="*.sh" filemode="755" />
+			<scripts dir="${dir.staging}/scripts" filemode="755" />
+			<package dir="${dir.staging}/package" includes="*.sh" filemode="755" />
 			<package prefix="jar" dir="${dir.dist}/lib" includes="*.jar" />
 
 			<!-- include native libraries for all supported platforms -->
