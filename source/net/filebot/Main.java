@@ -208,12 +208,8 @@ public class Main {
 	}
 
 	private static void startUserInterface(ArgumentBean args) {
-		// use native LaF an all platforms (use platform-independent laf for standalone jar deployment)
-		if (isPortableApp()) {
-			setNimbusLookAndFeel();
-		} else {
-			setSystemLookAndFeel();
-		}
+		// use native LaF an all platforms
+		setSystemLookAndFeel();
 
 		// start multi panel or single panel frame
 		PanelBuilder[] panels = args.getPanelBuilders();
@@ -243,7 +239,7 @@ public class Main {
 
 		// configure main window
 		if (isMacApp()) {
-			// Mac specific configuration
+			// macOS-specific configuration
 			MacAppUtilities.initializeApplication(FileBotMenuBar.createHelp(), files -> {
 				if (LICENSE.isFile() && files.size() == 1 && containsOnly(files, LICENSE_FILES)) {
 					configureLicense(files.get(0));
@@ -252,15 +248,12 @@ public class Main {
 					SwingEventBus.getInstance().post(new FileTransferable(files));
 				}
 			});
-		} else if (isUbuntuApp()) {
-			// Ubuntu/Debian specific configuration
-			frame.setIconImages(ResourceManager.getApplicationIconImages());
 		} else if (isWindowsApp()) {
-			// Windows specific configuration
+			// Windows-specific configuration
 			WinAppUtilities.initializeApplication();
 			frame.setIconImages(ResourceManager.getApplicationIconImages());
 		} else {
-			// generic Linux/FreeBSD/Solaris configuration
+			// generic Linux / FreeBSD / Solaris configuration
 			frame.setIconImages(ResourceManager.getApplicationIconImages());
 		}
 

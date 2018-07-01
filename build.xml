@@ -344,7 +344,7 @@
 	</target>
 
 
-	<target name="mas" depends="revision">
+	<target name="mas" depends="revision" description="Build MAS package">
 		<property name="dir.staging" location="${dir.dist}/mas" />
 
 		<property name="path.app" location="${dir.staging}/${application.name}.app" />
@@ -430,7 +430,7 @@
 	</target>
 
 
-	<target name="app" depends="revision" description="Build Mac app bundle">
+	<target name="app" depends="revision" description="Build macOS app bundle">
 		<property name="dir.staging" location="${dir.dist}/app" />
 
 		<copy-replace todir="${dir.staging}">
@@ -457,7 +457,7 @@
 	</target>
 
 
-	<target name="pkg" depends="revision" description="Build Mac installer package">
+	<target name="pkg" depends="revision" description="Build macOS installer package">
 		<property name="dir.staging" location="${dir.dist}/pkg" />
 
 		<copy-replace todir="${dir.staging}">
@@ -504,7 +504,7 @@
 	</target>
 
 
-	<target name="snap" depends="revision" description="Build Ubuntu snap package">
+	<target name="snap" depends="revision" description="Build Ubuntu SNAP package">
 		<property name="dir.staging" location="${dir.dist}/snap" />
 		<property name="dir.base" location="${dir.staging}/base" />
 
@@ -531,11 +531,11 @@
 	</target>
 
 
-	<target name="portable" depends="revision" description="Build portable package">
-		<property name="dir.staging" location="${dir.dist}/portable" />
+	<target name="tar" depends="revision" description="Build Linux Portable TAR package">
+		<property name="dir.staging" location="${dir.dist}/tar" />
 
 		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/portable" includes="*.sh" />
+			<fileset dir="${dir.installer}/tar" includes="*.sh" />
 		</copy-replace>
 
 		<tar destfile="${dir.dist}/${release}-portable.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
@@ -693,7 +693,6 @@
 
 
 	<target name="deploy-release" description="Upload release files">
-		<!-- create release folder and upload release files -->
 		<release-deploy dir="${dir.release.index}" todir="${scp.release}" />
 	</target>
 

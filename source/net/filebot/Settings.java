@@ -80,20 +80,20 @@ public final class Settings {
 		return System.getProperty("application.deployment", "jar");
 	}
 
-	public static boolean isPortableApp() {
-		return isApplicationDeployment("portable", "jar");
-	}
-
 	public static boolean isAppStore() {
 		return isApplicationDeployment("appx", "mas");
 	}
 
 	public static boolean isWindowsApp() {
-		return isApplicationDeployment("appx", "msi");
+		return isApplicationDeployment("appx", "msi", "zip");
 	}
 
 	public static boolean isUbuntuApp() {
-		return isApplicationDeployment("deb", "snap");
+		return isApplicationDeployment("snap");
+	}
+
+	public static boolean isLinuxApp() {
+		return isApplicationDeployment("snap", "deb", "tar");
 	}
 
 	public static boolean isMacApp() {
@@ -109,7 +109,7 @@ public final class Settings {
 	}
 
 	public static boolean isAutoUpdateEnabled() {
-		return isApplicationDeployment("mas", "appx", "snap", "spk", "aur");
+		return isApplicationDeployment("appx", "mas", "snap", "spk");
 	}
 
 	private static boolean isApplicationDeployment(String... ids) {
@@ -172,7 +172,7 @@ public final class Settings {
 		if (isWindowsApp())
 			return getApplicationProperty("link.mws");
 		if (isUbuntuApp())
-			return null;
+			return getApplicationProperty("link.usc");
 
 		return null;
 	}
