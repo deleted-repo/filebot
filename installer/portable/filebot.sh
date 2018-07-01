@@ -42,4 +42,4 @@ APP_DATA="$FILEBOT_HOME/data"
 LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH"
 
 # start filebot
-java -Dapplication.deployment=portable -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.Archive.extractor="$EXTRACTOR" -Duser.home="$APP_DATA" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="$APP_DATA/prefs.properties" @{java.application.options} @{linux.application.options} @{linux.headless.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
+java -Dapplication.deployment=portable -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.Archive.extractor="$EXTRACTOR" @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
