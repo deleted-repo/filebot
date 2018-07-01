@@ -34,23 +34,6 @@ def dir_data_master = System.getProperty('net.filebot.data.master', 'https://raw
 }
 
 
-// ------------------------------ UPDATE REVIEWS ------------------------------ //
-
-
-def reviews = []
-
-dir_root.resolve('reviews.tsv').eachLine('UTF-8'){
-	def s = it.split(/\t/, 3)*.trim()
-	reviews << [user: s[0], date: s[1], text: s[2]]
-}
-reviews = reviews.sort{ it.date }
-
-def json = new groovy.json.JsonBuilder()
-json.call(reviews as List)
-json.toPrettyString().saveAs(dir_root.resolve('website/reviews.json'))
-log.info "Reviews: " + reviews.size()
-
-
 // ------------------------------ FUNCTIONS ------------------------------ //
 
 
