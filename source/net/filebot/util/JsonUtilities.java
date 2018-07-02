@@ -4,6 +4,7 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static net.filebot.Logging.*;
 
+import java.math.BigDecimal;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -88,8 +89,12 @@ public class JsonUtilities {
 		return getStringValue(node, key, Integer::parseInt);
 	}
 
-	public static Double getDecimal(Object node, String key) {
+	public static Double getDouble(Object node, String key) {
 		return getStringValue(node, key, Double::parseDouble);
+	}
+
+	public static BigDecimal getDecimal(Object node, String key) {
+		return getStringValue(node, key, BigDecimal::new);
 	}
 
 	public static <V> V getStringValue(Object node, String key, Function<String, V> converter) {

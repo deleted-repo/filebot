@@ -162,7 +162,7 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 		info.setNetwork(getString(data, "network"));
 		info.setStatus(getString(data, "status"));
 
-		info.setRating(getDecimal(data, "siteRating"));
+		info.setRating(getDouble(data, "siteRating"));
 		info.setRatingCount(getInteger(data, "siteRatingCount"));
 
 		info.setRuntime(matchInteger(getString(data, "runtime")));
@@ -226,12 +226,16 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 				// adjust for forced absolute numbering (if possible)
 				if (sortOrder == SortOrder.DVD) {
 					Integer dvdSeasonNumber = getInteger(it, "dvdSeason");
-					Integer dvdEpisodeNumber = getInteger(it, "dvdEpisodeNumber");
+					Number dvdEpisodeNumber = getDecimal(it, "dvdEpisodeNumber"); // e.g. 4.2
 
 					// require both values to be valid integer numbers
 					if (dvdSeasonNumber != null && dvdEpisodeNumber != null) {
 						seasonNumber = dvdSeasonNumber;
-						episodeNumber = dvdEpisodeNumber;
+						episodeNumber = dvdEpisodeNumber.intValue();
+
+						if (episodeNumber.doubleValue() != dvdEpisodeNumber.doubleValue()) {
+							debug.finest(format("[%s] Coerce episode number [%s] to [%s]", info, dvdEpisodeNumber, episodeNumber));
+						}
 					}
 				} else if (sortOrder == SortOrder.Absolute && absoluteNumber != null && absoluteNumber > 0) {
 					seasonNumber = null;
@@ -292,7 +296,7 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 			String subKey = getString(it, "subKey");
 			String resolution = getString(it, "resolution");
 			URL url = getStringValue(it, "fileName", this::resolveImage);
-			Double rating = getDecimal(getMap(it, "ratingsInfo"), "average");
+			Double rating = getDouble(getMap(it, "ratingsInfo"), "average");
 
 			return new Artwork(Stream.of(category, subKey, resolution), url, locale, rating);
 		}).sorted(Artwork.RATING_ORDER).collect(toList());
@@ -337,7 +341,7 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 		Integer seriesId = getInteger(data, "seriesId");
 		String overview = getString(data, "overview");
 
-		Double rating = getDecimal(data, "siteRating");
+		Double rating = getDouble(data, "siteRating");
 		Integer votes = getInteger(data, "siteRatingCount");
 
 		List<Person> people = new ArrayList<Person>();

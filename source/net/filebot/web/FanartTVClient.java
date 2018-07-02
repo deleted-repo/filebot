@@ -49,7 +49,7 @@ public class FanartTVClient implements Datasource, ArtworkProvider {
 				try {
 					String url = getString(it, "url");
 					Locale language = getStringValue(it, "lang", Locale::new);
-					Double likes = getDecimal(it, "likes");
+					Double likes = getDouble(it, "likes");
 					String season = getString(it, "season");
 					String discType = getString(it, "disc_type");
 

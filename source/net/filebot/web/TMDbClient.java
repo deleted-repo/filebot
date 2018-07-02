@@ -96,7 +96,7 @@ public class TMDbClient implements MovieIdentificationService, ArtworkProvider {
 		return streamJsonObjects(response, "results").map(it -> {
 			int id = -1, year = -1;
 			try {
-				id = getDecimal(it, "id").intValue();
+				id = getDouble(it, "id").intValue();
 				year = matchInteger(getString(it, "release_date")); // release date is often missing
 			} catch (Exception e) {
 				debug.fine(format("Missing data: release_date => %s", it));
