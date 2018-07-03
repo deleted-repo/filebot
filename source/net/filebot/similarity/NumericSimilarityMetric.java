@@ -1,11 +1,12 @@
 package net.filebot.similarity;
 
+import static java.util.stream.Collectors.*;
 import static net.filebot.util.RegularExpressions.*;
+import static net.filebot.util.StringUtilities.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
 import uk.ac.shef.wit.simmetrics.similaritymetrics.QGramsDistance;
@@ -37,15 +38,7 @@ public class NumericSimilarityMetric implements SimilarityMetric {
 
 		@Override
 		public ArrayList<String> tokenizeToArrayList(String s) {
-			ArrayList<String> tokens = new ArrayList<String>();
-
-			Matcher m = DIGIT.matcher(s);
-			while (m.find()) {
-				// remove leading zeros
-				tokens.add(String.valueOf(Integer.parseInt(m.group())));
-			}
-
-			return tokens;
+			return matchIntegers(s).stream().map(String::valueOf).collect(toCollection(ArrayList::new));
 		}
 
 		@Override
