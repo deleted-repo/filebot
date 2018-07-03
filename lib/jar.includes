@@ -32,6 +32,7 @@ ivy/jar/groovy-jsr223.jar
 ivy/jar/groovy-nio.jar
 ivy/jar/groovy-sql.jar
 ivy/jar/groovy-swing.jar
+ivy/jar/groovy-templates.jar
 ivy/jar/groovy-xml.jar
 ivy/jar/ivy.jar
 ivy/jar/jsoup.jar
