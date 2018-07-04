@@ -603,6 +603,7 @@
 
 	<target name="qpkg" depends="revision" description="Build QNAP NAS Package">
 		<property name="dir.staging" location="${dir.dist}/qpkg" />
+		<property name="dir.base" location="${dir.dist}/qpkg/shared" />
 
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/qpkg" excludes="**/*.gif" />
@@ -611,31 +612,31 @@
 			<fileset dir="${dir.installer}/qpkg" includes="**/*.gif" />
 		</copy>
 
-		<copy todir="${dir.staging}/share/jar">
+		<copy todir="${dir.base}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
 
 		<!-- include native libraries for all supported platforms -->
-		<copy todir="${dir.staging}/share/lib/armv7l">
+		<copy todir="${dir.base}/lib/armv7l">
 			<fileset dir="${dir.lib}/native/linux-armv7l" />
 		</copy>
-		<copy todir="${dir.staging}/share/lib/armv8">
+		<copy todir="${dir.base}/lib/armv8">
 			<fileset dir="${dir.lib}/native/linux-armv8" />
 		</copy>
-		<copy todir="${dir.staging}/share/lib/i686">
+		<copy todir="${dir.base}/lib/i686">
 			<fileset dir="${dir.lib}/native/linux-i686" />
 		</copy>
-		<copy todir="${dir.staging}/share/lib/x86_64">
+		<copy todir="${dir.base}/lib/x86_64">
 			<fileset dir="${dir.lib}/native/linux-amd64" />
 		</copy>
 
 		<!-- fix execute permissions -->
 		<chmod verbose="yes" perm="+x">
-			<fileset dir="${dir.staging}" includes="**/*.sh" />
-			<fileset dir="${dir.staging}" includes="**/fpcalc" />
+			<fileset dir="${dir.base}" includes="**/*.sh" />
+			<fileset dir="${dir.base}" includes="**/fpcalc" />
 		</chmod>
 
-		<exec executable="qbuild" dir="${dir.package}/qnap" failonerror="yes">
+		<exec executable="qbuild" dir="${dir.staging}" failonerror="yes">
 			<arg line="--dir ${dir.dist}" />
 		</exec>
 	</target>
