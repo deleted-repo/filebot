@@ -620,7 +620,7 @@
 		<copy todir="${dir.base}/lib/armv7l">
 			<fileset dir="${dir.lib}/native/linux-armv7l" />
 		</copy>
-		<copy todir="${dir.base}/lib/armv8">
+		<copy todir="${dir.base}/lib/aarch64">
 			<fileset dir="${dir.lib}/native/linux-armv8" />
 		</copy>
 		<copy todir="${dir.base}/lib/i686">
