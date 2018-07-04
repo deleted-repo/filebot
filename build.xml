@@ -637,7 +637,7 @@
 		</chmod>
 
 		<exec executable="qbuild" dir="${dir.staging}" failonerror="yes">
-			<arg line="--dir ${dir.dist}" />
+			<arg line="--build-dir ${dir.dist}" />
 		</exec>
 	</target>
 
