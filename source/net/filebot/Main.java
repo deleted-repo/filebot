@@ -252,6 +252,11 @@ public class Main {
 			// Windows-specific configuration
 			WinAppUtilities.initializeApplication();
 			frame.setIconImages(ResourceManager.getApplicationIconImages());
+
+			// set AUMID manually for legacy processes
+			if (!isUWP()) {
+				WinAppUtilities.setAppUserModelID(getApplicationName());
+			}
 		} else {
 			// generic Linux / FreeBSD / Solaris configuration
 			frame.setIconImages(ResourceManager.getApplicationIconImages());
