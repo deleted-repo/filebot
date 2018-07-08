@@ -205,7 +205,11 @@ public class CmdlineOperations implements CmdlineInterface {
 
 					episodes = fetchEpisodeSet(db, seriesNames, sortOrder, locale, strict, 5); // consider episodes of up to N search results for each query
 				} else {
-					episodes = fetchEpisodeSet(db, singleton(query), sortOrder, locale, false, 1); // use --q option and pick first result
+					if (isSeriesID(query)) {
+						episodes = db.getEpisodeList(Integer.parseInt(query), sortOrder, locale);
+					} else {
+						episodes = fetchEpisodeSet(db, singleton(query), sortOrder, locale, false, 1); // use --q option and pick first result
+					}
 				}
 
 				if (episodes.isEmpty()) {
@@ -1018,7 +1022,7 @@ public class CmdlineOperations implements CmdlineInterface {
 		// collect all episode objects first
 		List<Episode> episodes = new ArrayList<Episode>();
 
-		if (query.matches("\\d{5,9}")) {
+		if (isSeriesID(query)) {
 			// lookup by id
 			episodes.addAll(db.getEpisodeList(Integer.parseInt(query), order, locale));
 		} else {
@@ -1038,6 +1042,10 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// apply filter
 		return applyExpressionFilter(episodes, filter);
+	}
+
+	private boolean isSeriesID(String query) {
+		return query.matches("\\d{5,9}");
 	}
 
 	@Override
