@@ -1,29 +1,9 @@
 ######################################################################
 # Define any package specific operations that shall be performed when
-# the package is removed.
-######################################################################
-
-
-PKG_POST_REMOVE='{
-	rm "/usr/local/bin/filebot"
-	rm "/usr/local/filebot"
-}'
-
-
-######################################################################
-# Define any package specific operations that shall be performed when
 # the package is installed.
 ######################################################################
-
 
 pkg_post_install(){
 	mkdir -m 777 "$SYS_QPKG_DIR/data"
 	chown -R admin.administrators "$SYS_QPKG_DIR/data"
-
-	# create /usr/local/bin/[package] program link
-	mkdir -p "/usr/local/bin"
-	ln -sf "$SYS_QPKG_DIR/filebot.sh" "/usr/local/bin/filebot"
-
-	# create /usr/local/[package] link
-	ln -sf "$SYS_QPKG_DIR" "/usr/local/filebot"
 }
