@@ -12,7 +12,7 @@ case "$1" in
 			exit 1
 		fi
 
-		/bin/ln -sf "$QPKG_ROOT/filebot.sh" "/usr/bin/filebot"
+		/bin/ln -sf "$QPKG_ROOT/bin/filebot.sh" "/usr/bin/filebot"
 		/bin/ln -sf "$QPKG_ROOT" "/opt/filebot"
 		;;
 
