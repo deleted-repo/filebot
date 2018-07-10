@@ -12,18 +12,19 @@ case "$1" in
 			exit 1
 		fi
 
-		# create /usr/bin/[package] program link
-		ln -sf "$QPKG_ROOT/filebot.sh" "/usr/bin/filebot"
-	;;
+		/bin/ln -sf "$QPKG_ROOT/filebot.sh" "/usr/bin/filebot"
+		/bin/ln -sf "$QPKG_ROOT" "/opt/filebot"
+		;;
 
 	stop)
-		rm "/usr/bin/filebot"
-	;;
+		rm -rf "/usr/bin/filebot"
+		rm -rf "/opt/filebot"
+		;;
 
 	restart)
 		$0 stop
 		$0 start
-	;;
+		;;
 
 	*)
 		echo "Usage: $0 {start|stop|restart}"
