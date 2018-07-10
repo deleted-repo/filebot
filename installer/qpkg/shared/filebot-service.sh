@@ -1,7 +1,7 @@
 #!/bin/sh
 CONF="/etc/config/qpkg.conf"
 QPKG_NAME="filebot"
-QPKG_ROOT=`/sbin/getcfg $QPKG_NAME Install_Path -f $CONF`
+QPKG_ROOT=$(/sbin/getcfg $QPKG_NAME Install_Path -f $CONF)
 
 
 case "$1" in
