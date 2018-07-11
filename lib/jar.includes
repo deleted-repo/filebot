@@ -47,6 +47,7 @@ ivy/jar/javax.mail.jar
 ivy/jar/activation.jar
 ivy/jar/bcprov-jdk15on.jar
 ivy/jar/bcpg-jdk15on.jar
+ivy/jar/imgscalr-lib.jar
 ivy/bundle/args4j.jar
 ivy/bundle/json-io.jar
 ivy/bundle/guava.jar

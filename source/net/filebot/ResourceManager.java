@@ -3,9 +3,7 @@ package net.filebot;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
-import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.image.BaseMultiResolutionImage;
 import java.awt.image.BufferedImage;
@@ -21,6 +19,10 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
+import org.imgscalr.Scalr.Mode;
+
 import net.filebot.util.SystemProperty;
 
 public final class ResourceManager {
@@ -32,7 +34,7 @@ public final class ResourceManager {
 			// load image
 			URL[] resource = getMultiResolutionImageResource(i);
 			if (resource.length > 0) {
-				return getMultiResolutionIcon(resource);
+				return new ImageIcon(getMultiResolutionImage(resource));
 			}
 
 			// default image
@@ -58,24 +60,18 @@ public final class ResourceManager {
 			for (URL r : resource) {
 				image.add(ImageIO.read(r));
 			}
-			return new BaseMultiResolutionImage(image.toArray(new Image[0]));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 
-	private static Icon getMultiResolutionIcon(URL[] resource) {
-		if (PRIMARY_SCALE_FACTOR == 1 || PRIMARY_SCALE_FACTOR == 2) {
-			return new ImageIcon(getMultiResolutionImage(resource));
-		}
-
-		try {
-			BufferedImage[] image = new BufferedImage[resource.length + 1];
-			for (int i = 0; i < resource.length; i++) {
-				image[i + 1] = ImageIO.read(resource[i]);
+			// Windows 10: use @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
+			if (PRIMARY_SCALE_FACTOR != 1 && PRIMARY_SCALE_FACTOR != 2) {
+				BufferedImage hidpi = image.get(image.size() - 1);
+				if (PRIMARY_SCALE_FACTOR < 2) {
+					image.add(1, scale(PRIMARY_SCALE_FACTOR, hidpi));
+				} else {
+					image.add(scale(PRIMARY_SCALE_FACTOR, hidpi));
+				}
 			}
-			image[0] = scale(PRIMARY_SCALE_FACTOR, image[image.length - 1]);
-			return new ImageIcon(new BaseMultiResolutionImage(1, image));
+
+			return new BaseMultiResolutionImage(image.toArray(new Image[0]));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -94,19 +90,7 @@ public final class ResourceManager {
 	private static BufferedImage scale(float scale, BufferedImage image) {
 		int w = (int) (scale * image.getWidth());
 		int h = (int) (scale * image.getHeight());
-
-		BufferedImage scaledImage = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g2d = scaledImage.createGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.drawImage(image, 0, 0, w, h, 0, 0, image.getWidth(), image.getHeight(), null);
-		g2d.dispose();
-
-		return scaledImage;
-	}
-
-	private ResourceManager() {
-		throw new UnsupportedOperationException();
+		return Scalr.resize(image, Method.ULTRA_QUALITY, Mode.FIT_TO_WIDTH, w, h, Scalr.OP_ANTIALIAS);
 	}
 
 }

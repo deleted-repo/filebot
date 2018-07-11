@@ -1,5 +1,5 @@
 def destfile = { r -> 
-	ant.project.properties.'dir.dist' + '/lib/' + r.file.name.replaceAll(/.jdk15on|.java16/, '').toLowerCase()
+	ant.project.properties.'dir.dist' + '/lib/' + r.file.name.replaceAll(/.lib|.jdk15on|.java16/, '').toLowerCase()
 }
 
 project.references.'jar.classpath'.each { r ->
