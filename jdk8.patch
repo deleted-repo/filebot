@@ -1,26 +1,8 @@
-diff --git a/.classpath b/.classpath
-index 940479cc..0be259e9 100644
---- a/.classpath
-+++ b/.classpath
-@@ -2,12 +2,7 @@
- <classpath>
- 	<classpathentry kind="src" path="source"/>
- 	<classpathentry kind="src" path="test"/>
--	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
--		<attributes>
--			<attribute name="module" value="true"/>
--			<attribute name="limit-modules" value="java.se,javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web,jdk.accessibility,jdk.attach,jdk.compiler,jdk.httpserver,jdk.jartool,jdk.javadoc,jdk.jconsole,jdk.jdi,jdk.management,jdk.packager,jdk.plugin.dom,jdk.sctp,jdk.security.auth,jdk.security.jgss,jdk.unsupported,oracle.desktop,oracle.net,jdk.dynalink,jdk.incubator.httpclient,jdk.jfr,jdk.jshell,jdk.jsobject,jdk.management.cmm,jdk.management.jfr,jdk.management.resource,jdk.net,jdk.packager.services,jdk.scripting.nashorn,jdk.xml.dom,java.activation,jdk.xml.bind"/>
--		</attributes>
--	</classpathentry>
-+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
- 	<classpathentry kind="lib" path="lib/ivy/bundle/args4j.jar"/>
- 	<classpathentry kind="lib" path="lib/jars/jacksum.jar"/>
- 	<classpathentry kind="lib" path="lib/jars/simmetrics.jar"/>
 diff --git a/app.properties b/app.properties
-index 1a9fafe3..4e4be0e2 100644
+index e2c6dc4c..625a83f6 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -34,11 +34,12 @@ link.release.index: https://get.filebot.net/filebot/
+@@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot/
  
  # Build
  main.class: net.filebot.Main
@@ -36,7 +18,7 @@ index 1a9fafe3..4e4be0e2 100644
  
  # Package Information
  package.name: filebot
-@@ -76,7 +77,7 @@ msi.compression: high
+@@ -77,7 +78,7 @@ msi.compression: high
  deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
  
  # Default Java Options
@@ -46,7 +28,7 @@ index 1a9fafe3..4e4be0e2 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 742fd30a..ecc1779f 100644
+index be7df8a5..81d3b49d 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -93,9 +93,10 @@
@@ -61,7 +43,7 @@ index 742fd30a..ecc1779f 100644
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
  			</untar>
-@@ -219,7 +220,7 @@
+@@ -224,7 +225,7 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -70,7 +52,7 @@ index 742fd30a..ecc1779f 100644
  			<classpath refid="jar.classpath" />
  		</javac>
  
-@@ -256,7 +257,7 @@
+@@ -262,7 +263,7 @@
  			<fileset dir="${dir.installer}/msi" includes="filebot.exe, filebot.launcher.exe" />
  		</copy>
  		<copy todir="${dir.staging}/lib">
@@ -79,7 +61,7 @@ index 742fd30a..ecc1779f 100644
  		</copy>
  		<copy todir="${dir.staging}/jar">
  			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -287,7 +288,7 @@
+@@ -293,7 +294,7 @@
  			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
  		</exec>
  		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
@@ -102,7 +84,7 @@ index 8a8817e9..6af7097d 100644
  		Version="@{application.version}.0"
  	/>
 diff --git a/ivy.xml b/ivy.xml
-index 6a2b5b6b..2aa7271f 100644
+index f096a963..70bb3b94 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -25,7 +25,7 @@
@@ -115,26 +97,37 @@ index 6a2b5b6b..2aa7271f 100644
  		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
  		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
 diff --git a/source/net/filebot/ResourceManager.java b/source/net/filebot/ResourceManager.java
-index d8ec436d..4b13a630 100644
+index 7e393cac..5eb3dadd 100644
 --- a/source/net/filebot/ResourceManager.java
 +++ b/source/net/filebot/ResourceManager.java
-@@ -4,7 +4,6 @@ import static java.util.Collections.*;
- import static java.util.stream.Collectors.*;
+@@ -5,7 +5,6 @@ import static java.util.stream.Collectors.*;
  
  import java.awt.Image;
+ import java.awt.Toolkit;
 -import java.awt.image.BaseMultiResolutionImage;
+ import java.awt.image.BufferedImage;
  import java.net.URL;
- import java.util.HashMap;
- import java.util.List;
-@@ -47,11 +46,7 @@ public final class ResourceManager {
+ import java.util.ArrayList;
+@@ -56,22 +55,7 @@ public final class ResourceManager {
  
  	private static Image getMultiResolutionImage(URL[] resource) {
  		try {
--			Image[] image = new Image[resource.length];
--			for (int i = 0; i < image.length; i++) {
--				image[i] = ImageIO.read(resource[i]);
+-			List<BufferedImage> image = new ArrayList<BufferedImage>(resource.length);
+-			for (URL r : resource) {
+-				image.add(ImageIO.read(r));
 -			}
--			return new BaseMultiResolutionImage(image);
+-
+-			// Windows 10: use @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
+-			if (PRIMARY_SCALE_FACTOR != 1 && PRIMARY_SCALE_FACTOR != 2) {
+-				BufferedImage hidpi = image.get(image.size() - 1);
+-				if (PRIMARY_SCALE_FACTOR < 2) {
+-					image.add(1, scale(PRIMARY_SCALE_FACTOR, hidpi));
+-				} else {
+-					image.add(scale(PRIMARY_SCALE_FACTOR, hidpi));
+-				}
+-			}
+-
+-			return new BaseMultiResolutionImage(image.toArray(new Image[0]));
 +			return ImageIO.read(resource[0]);
  		} catch (Exception e) {
  			throw new RuntimeException(e);
