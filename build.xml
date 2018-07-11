@@ -203,6 +203,11 @@
 
 
 	<target name="jar" depends="revision">
+		<!-- static resources -->
+		<jar destfile="${dir.dist}/lib/${package.name}-resources.jar" index="yes" indexMetaInf="yes" compress="no">
+			<fileset dir="${dir.source}" includes="**/*.png" />
+		</jar>
+
 		<!-- select jar dependencies -->
 		<fileset id="jar.classpath" dir="${dir.lib}" includesfile="${dir.lib}/jar.includes" />
 
@@ -224,9 +229,10 @@
 		</javac>
 
 		<!-- copy resources -->
-		<copy todir="${dir.build}">
+		<copy todir="${dir.build}" includeemptydirs="no">
 			<fileset dir="${dir.source}">
 				<exclude name="**/*.java" />
+				<exclude name="**/*.png" />
 				<exclude name="**/*.properties" />
 			</fileset>
 		</copy>
