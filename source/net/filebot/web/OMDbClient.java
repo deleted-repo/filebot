@@ -140,7 +140,7 @@ public class OMDbClient implements MovieIdentificationService {
 	}
 
 	public URL getResource(String file) throws Exception {
-		return new URL("http://www.omdbapi.com/" + file);
+		return new URL("https://private.omdbapi.com/" + file);
 	}
 
 	public Map<String, String> getMovieInfo(Integer i, String t, String y, boolean tomatoes) throws Exception {
