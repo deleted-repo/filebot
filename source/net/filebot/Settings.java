@@ -93,7 +93,7 @@ public final class Settings {
 	}
 
 	public static boolean isLinuxApp() {
-		return isApplicationDeployment("snap", "deb", "tar");
+		return isApplicationDeployment("snap", "deb", "tar", "spk", "qpkg");
 	}
 
 	public static boolean isMacApp() {
@@ -109,7 +109,7 @@ public final class Settings {
 	}
 
 	public static boolean isAutoUpdateEnabled() {
-		return isApplicationDeployment("appx", "mas", "snap", "spk");
+		return isApplicationDeployment("appx", "mas", "snap");
 	}
 
 	private static boolean isApplicationDeployment(String... ids) {
