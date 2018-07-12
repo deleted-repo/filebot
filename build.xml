@@ -136,10 +136,11 @@
 		<attribute name="deployment" />
 		<attribute name="runtime" />
 		<attribute name="license" />
+		<attribute name="identifier" />
 		<element name="options" implicit="yes" optional="yes" />
 		<sequential>
 			<get-macos-jre dest="@{dir}" if:true="@{runtime}" />
-			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="${package.identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
+			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="@{identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
 
 				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" if:true="@{runtime}">
@@ -356,7 +357,7 @@
 		<property name="path.app" location="${dir.staging}/${application.name}.app" />
 		<property name="path.pkg" location="${dir.staging}/${application.name}_${application.version}_r${revision}.pkg" />
 
-		<create-app-bundle dir="${dir.staging}" deployment="mas" runtime="yes" license="no">
+		<create-app-bundle dir="${dir.staging}" deployment="mas" runtime="yes" license="no" identifier="${package.identifier}">
 			<option value="-Dapplication.update=skip" />
 
 			<!-- MAS does not allow subtitle apps -->
@@ -443,7 +444,7 @@
 			<fileset dir="${dir.installer}/app" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="no" license="yes" />
+		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="no" license="yes" identifier="${package.identifier}.APP" />
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
@@ -470,7 +471,7 @@
 			<fileset dir="${dir.installer}/pkg" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="pkg" runtime="yes" license="yes" />
+		<create-app-bundle dir="${dir.staging}" deployment="pkg" runtime="yes" license="yes" identifier="${package.identifier}.PKG" />
 
 		<!-- fix permissions -->
 		<chmod perm="+x" verbose="yes">
