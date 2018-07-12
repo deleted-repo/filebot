@@ -28,6 +28,7 @@ parts:
       - gtk2-engines-murrine
       - libcanberra-gtk-module
       - hicolor-icon-theme
+      - xdg-utils
       - libmediainfo0v5
       - libchromaprint-tools
       - curl
