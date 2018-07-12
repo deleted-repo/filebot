@@ -65,7 +65,7 @@ public final class SwingUI {
 		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 		} catch (Exception e) {
-			debug.log(Level.SEVERE, "Failed to set Nimbus LaF", e);
+			log.log(Level.SEVERE, "Failed to set Nimbus LaF", e);
 		}
 	}
 
@@ -73,7 +73,7 @@ public final class SwingUI {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			debug.log(Level.SEVERE, "Failed to set System LaF", e);
+			log.log(Level.SEVERE, "Failed to set System LaF", e);
 		}
 	}
 
@@ -87,7 +87,7 @@ public final class SwingUI {
 				p.inheritIO().start();
 			}
 		} catch (Exception e) {
-			debug.log(Level.SEVERE, "Failed to open URI: " + uri, e);
+			log.log(Level.SEVERE, "Failed to open URI: " + uri, e);
 		}
 	}
 
