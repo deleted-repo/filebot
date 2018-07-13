@@ -7,52 +7,62 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/ivy/bundle/args4j.jar"/>
-	<classpathentry kind="lib" path="lib/jars/jacksum.jar"/>
-	<classpathentry kind="lib" path="lib/jars/simmetrics.jar"/>
-	<classpathentry kind="lib" path="lib/jars/xmlrpc.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/ehcache.jar" sourcepath="lib/ivy/source/ehcache.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/icu4j.jar" sourcepath="lib/ivy/source/icu4j.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/jna.jar" sourcepath="lib/ivy/source/jna.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/junit.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ehcache.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/miglayout-core.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/miglayout-swing.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/rsyntaxtextarea.jar" sourcepath="lib/ivy/source/rsyntaxtextarea.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/xz.jar" sourcepath="lib/ivy/source/xz.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/slf4j-api.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/commons-io.jar" sourcepath="lib/ivy/source/commons-io.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/jsoup.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/slf4j-jdk14.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/hamcrest-core.jar"/>
-	<classpathentry kind="lib" path="lib/jars/ObjCBridge.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/junrar.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/commons-vfs2.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/commons-logging.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/sevenzipjbinding.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/bundle/json-io.jar" sourcepath="lib/ivy/source/json-io.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/jna-platform.jar" sourcepath="lib/ivy/source/jna-platform.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/language-detector.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/bundle/guava.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/streamex.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/controlsfx.jar" sourcepath="lib/ivy/source/controlsfx.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/lanterna.jar" sourcepath="lib/ivy/source/lanterna.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/metadata-extractor.jar" sourcepath="lib/ivy/source/metadata-extractor.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/xmpcore.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/glazedlists_java16.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/controlsfx.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/rsyntaxtextarea.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/lanterna.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/xz.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/sevenzipjbinding.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/commons-io.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/commons-vfs2.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/jaxb-api.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/junrar.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/jna.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/jna-platform.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/streamex.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/icu4j.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/language-detector.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/metadata-extractor.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/xmpcore.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/slf4j-api.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/slf4j-jdk14.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-ant.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-bsf.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-datetime.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-dateutil.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-json.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-jsr223.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-nio.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-sql.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-swing.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/groovy-templates.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/groovy-xml.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/groovy.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/javax.mail-api.jar"/>
-	<classpathentry kind="lib" path="lib/ivy/jar/bcpg-jdk15on.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ivy.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/jsoup.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ant.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ant-commons-net.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ant-jsch.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/ant-javamail.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/commons-net.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/jsch.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/javax.mail.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/activation.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/bcprov-jdk15on.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/jar/bcpg-jdk15on.jar"/>
 	<classpathentry kind="lib" path="lib/ivy/jar/imgscalr-lib.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/bundle/args4j.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/bundle/json-io.jar"/>
+	<classpathentry kind="lib" path="lib/ivy/bundle/guava.jar"/>
+	<classpathentry kind="lib" path="lib/jars/xmlrpc.jar"/>
+	<classpathentry kind="lib" path="lib/jars/ObjCBridge.jar"/>
+	<classpathentry kind="lib" path="lib/jars/simmetrics.jar"/>
+	<classpathentry kind="lib" path="lib/jars/jacksum.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
