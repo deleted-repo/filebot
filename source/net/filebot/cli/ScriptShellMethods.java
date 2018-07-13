@@ -18,9 +18,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -438,6 +443,11 @@ public class ScriptShellMethods {
 
 	public static boolean isMovie(File self) {
 		return MediaDetection.isMovie(self, true);
+	}
+
+	public static String format(Date self, String format) {
+		// XXX: org.apache.groovy.datetime.extensions.DateTimeExtensions is not registered for some reason in production (maybe a bug specific to Groovy 2.5.0)
+		return DateTimeFormatter.ofPattern(format, Locale.US).format(LocalDateTime.ofInstant(self.toInstant(), ZoneId.systemDefault()));
 	}
 
 	private ScriptShellMethods() {
