@@ -747,26 +747,6 @@
 	</target>
 
 
-	<target name="deploy-synology" description="Update Synology Package Source" depends="init">
-		<mkdir dir="${dir.dist}/syno" />
-
-		<!-- merge all filebot related packages into a single package source file -->
-		<package-source file="${dir.dist}/syno/index.json">
-			<keyring file="${dir.installer}/gpg/syno.pub" />
-			<spk url="${link.release.index}/${release}/${release}_noarch.spk" file="${dir.cache}/${release}_noarch.spk">
-				<thumbnail url="https://www.filebot.net/syno/filebot-thumbnail.png" />
-				<snapshot url="https://www.filebot.net/syno/filebot-snapshot.png" />
-			</spk>
-			<source url="https://raw.githubusercontent.com/filebot/filebot-node/master/spksrc.json" />
-			<source url="https://raw.githubusercontent.com/rednoah/java-installer/master/spksrc.json" />
-			<source url="https://raw.githubusercontent.com/rednoah/ant-installer/master/spksrc.json" />
-		</package-source>
-
-		<!-- upload -->
-		<release-deploy dir="${dir.dist}/syno" todir="${scp.syno}" />
-	</target>
-
-
 	<target name="deploy-chocolatey" description="Update Chocolatey Package Source">
 		<checksum property="x64.msi.sha256" file="${dir.release}/${release}_x64.msi" algorithm="SHA-256" />
 
