@@ -45,14 +45,16 @@ fi
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# choose extractor
-EXTRACTOR="ApacheVFS"                   # use Apache Commons VFS2 with junrar plugin
-# EXTRACTOR="SevenZipExecutable"        # use the 7z executable
-# EXTRACTOR="SevenZipNativeBindings"    # use the lib7-Zip-JBinding.so native library
-
-# choose media parser
-MEDIA_PARSER="libmediainfo"             # use libmediainfo
-# MEDIA_PARSER="ffprobe"                # use ffprobe
+# choose archive extractor / media characteristics parser
+if uname -m | grep "86"; then
+	# i686 or x86_64
+	ARCHIVE_EXTRACTOR="SevenZipNativeBindings"  # use lib7-Zip-JBinding.so
+	MEDIA_PARSER="libmediainfo"                 # use libmediainfo
+else
+	# armv7l or aarch64
+	ARCHIVE_EXTRACTOR="ApacheVFS"               # use Apache Commons VFS2
+	MEDIA_PARSER="ffprobe"                      # use ffprobe
+fi
 
 # choose ffprobe executable
 FFPROBE="/volume1/@appstore/MediaServer/bin/ffprobe"
@@ -62,4 +64,4 @@ APP_DATA="$FILEBOT_HOME/data/$USER"
 LIBRARY_PATH="$SYNO_LIBRARY_PATH:$PACKAGE_LIBRARY_PATH"
 
 # start filebot
-java -Dapplication.deployment=spk -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.Archive.extractor="$EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
+java -Dapplication.deployment=spk -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.Archive.extractor="$ARCHIVE_EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
