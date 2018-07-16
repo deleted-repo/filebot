@@ -77,10 +77,8 @@ public class FFProbe implements MediaCharacteristics {
 
 	@Override
 	public Duration getDuration() {
-		double seconds = Double.parseDouble(getFormat().get("duration").toString());
-		long millis = (long) (seconds * 1000);
-
-		return Duration.ofMillis(millis);
+		long d = (long) Double.parseDouble(getFormat().get("duration").toString()) * 1000;
+		return Duration.ofMillis(d);
 	}
 
 	@Override

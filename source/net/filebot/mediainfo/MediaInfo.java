@@ -161,7 +161,8 @@ public class MediaInfo implements MediaCharacteristics {
 
 	@Override
 	public Duration getDuration() {
-		return Duration.ofMillis(Long.parseLong(get(StreamKind.General, 0, "Duration")));
+		long d = (long) Double.parseDouble(get(StreamKind.General, 0, "Duration"));
+		return Duration.ofMillis(d);
 	}
 
 	@Override
