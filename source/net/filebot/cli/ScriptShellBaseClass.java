@@ -129,11 +129,11 @@ public abstract class ScriptShellBaseClass extends Script {
 		return getShell().runScript(input, parameters);
 	}
 
-	public boolean checkLicense() {
+	public Object getLicense() {
 		try {
-			return LICENSE.check() != null;
+			return LICENSE.check();
 		} catch (Throwable e) {
-			return false;
+			return null;
 		}
 	}
 
