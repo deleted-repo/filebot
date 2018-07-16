@@ -4,6 +4,7 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
+import static net.filebot.Settings.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -126,6 +127,14 @@ public abstract class ScriptShellBaseClass extends Script {
 
 		// run given script
 		return getShell().runScript(input, parameters);
+	}
+
+	public boolean checkLicense() {
+		try {
+			return LICENSE.check() != null;
+		} catch (Throwable e) {
+			return false;
+		}
 	}
 
 	public Object tryQuietly(Closure<?> c) {
