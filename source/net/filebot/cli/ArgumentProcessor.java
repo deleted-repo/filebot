@@ -42,7 +42,11 @@ public class ArgumentProcessor {
 			log.severe("License Error: " + e.getMessage());
 			if (LICENSE.isFile()) {
 				printStegosaurus("Please purchase a FileBot License:", getPurchaseURL());
-				log.severe(format("FileBot requires a valid license. Please run `filebot --license *.psm` as user `%s` to install your FileBot license.", System.getProperty("user.name")));
+				if (isLinuxApp()) {
+					log.severe(format("FileBot requires a valid license. Please run `sudo -H -u %s filebot --license *.psm` to install your FileBot license.", System.getProperty("user.name")));
+				} else {
+					log.severe(format("FileBot requires a valid license. Please run `filebot --license *.psm` install your FileBot license."));
+				}
 			}
 			return 2;
 		} catch (Throwable e) {
