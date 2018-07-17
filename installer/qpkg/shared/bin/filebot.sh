@@ -32,4 +32,4 @@ APP_DATA="$QPKG_ROOT/data/$USER"
 LIBRARY_PATH="$QPKG_ROOT/lib/$(uname -m)"
 
 # start filebot
-java -Dapplication.deployment=qpkg -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.Archive.extractor="$ARCHIVE_EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"
+java -Dapplication.deployment=qpkg -Dnet.filebot.license="$QPKG_ROOT/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.Archive.extractor="$ARCHIVE_EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"
