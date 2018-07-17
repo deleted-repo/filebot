@@ -81,11 +81,12 @@ public class License {
 	}
 
 	public static License parseLicenseFile(File file) {
-		if (!file.exists()) {
-			return new License(new FileNotFoundException("UNREGISTERED"));
-		}
-
 		try {
+			// require non-empty license file
+			if (file.length() <= 0) {
+				throw new FileNotFoundException("UNREGISTERED");
+			}
+
 			// read and verify license file
 			byte[] bytes = Files.readAllBytes(file.toPath());
 
