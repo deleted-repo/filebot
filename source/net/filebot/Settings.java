@@ -149,7 +149,7 @@ public final class Settings {
 
 	public static void configureLicense(File file) {
 		try {
-			log.info(importLicenseFile(file) + " has been activated.");
+			log.info(importLicenseFile(file) + " has been activated successfully.");
 		} catch (Throwable e) {
 			log.severe("License Error: " + e.getMessage());
 		}
