@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import javax.swing.Icon;
 
@@ -177,15 +179,7 @@ public class OMDbClient implements MovieIdentificationService {
 		fields.put(MovieInfo.Property.vote_count, getVoteCount(data.get("imdbVotes")));
 		fields.put(MovieInfo.Property.imdb_id, data.get("imdbID"));
 		fields.put(MovieInfo.Property.poster_path, data.get("poster"));
-
-		// convert release date to yyyy-MM-dd
-		SimpleDate release = parsePartialDate(data.get("released"), "d MMM yyyy");
-		if (release == null) {
-			release = parsePartialDate(data.get("released"), "yyyy");
-		}
-		if (release != null) {
-			fields.put(MovieInfo.Property.release_date, release.toString());
-		}
+		fields.put(MovieInfo.Property.release_date, getReleaseDate(data.get("released")));
 
 		// convert lists
 		Pattern delim = Pattern.compile(",");
@@ -214,6 +208,16 @@ public class OMDbClient implements MovieIdentificationService {
 		default:
 			return Integer.toString(n.get(0) * 60 + n.get(1));// e.g 1h 30min
 		}
+	}
+
+	private String getReleaseDate(String value) {
+		if ("N/A".equals(value)) {
+			return null;
+		}
+
+		return Stream.of("d MMM yyyy", "yyyy").map(f -> {
+			return parsePartialDate(value, f);
+		}).filter(Objects::nonNull).map(Objects::toString).findFirst().orElse(null);
 	}
 
 	private SimpleDate parsePartialDate(String value, String format) {
