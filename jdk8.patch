@@ -1,14 +1,14 @@
 diff --git a/app.properties b/app.properties
-index 6a57920d..add042d9 100644
+index 34ce3b52..c6cbe6fe 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot/
  
  # Build
  main.class: net.filebot.Main
--jre.version: 10.0.1
+-jre.version: 10.0.2
 +jre.major: 8
-+jre.build: 171
++jre.build: 181
  
  # Minimum System Version
 -jvm.version: 10
