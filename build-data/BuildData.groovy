@@ -212,19 +212,21 @@ tvdb_updates.values().each{ update ->
 				if (imdbid) tryLogCatch {
 					def omdbInfo = OMDb.getMovieInfo(new Movie(imdbid.match(/tt(\d+)/) as int))
 
-					votes = omdbInfo.votes as int
-					rating = omdbInfo.rating as double
-
 					seriesNames += omdbInfo.name
 					seriesNames += omdbInfo.originalName
 					seriesNames += omdbInfo.alternativeTitles
 
-					// scrape extra alias titles from webpage (not supported yet by API yet)
-					if (votes >= 60 && rating >= 4) {
-						def jsoup = org.jsoup.Jsoup.connect("https://www.thetvdb.com/series/${seriesInfo.slug}").get()
-						def intlseries = jsoup.select('#translations div.change_translation_text')*.attr('data-title')*.trim()
-						log.fine "Scraped data $intlseries for series $seriesNames"
-						seriesNames += intlseries
+					if (omdbInfo.votes && omdbInfo.rating) {
+						votes = omdbInfo.votes as int
+						rating = omdbInfo.rating as double
+
+						// scrape extra alias titles from webpage (not supported yet by API yet)
+						if (votes >= 60 && rating >= 4) {
+							def jsoup = org.jsoup.Jsoup.connect("https://www.thetvdb.com/series/${seriesInfo.slug}").get()
+							def intlseries = jsoup.select('#translations div.change_translation_text')*.attr('data-title')*.trim()
+							log.fine "Scraped data $intlseries for series $seriesNames"
+							seriesNames += intlseries
+						}
 					}
 				}
 
