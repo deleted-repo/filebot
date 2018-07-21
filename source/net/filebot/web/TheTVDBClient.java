@@ -155,6 +155,7 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 		Object data = getMap(json, "data");
 
 		TheTVDBSeriesInfo info = new TheTVDBSeriesInfo(this, locale, series.getId());
+		info.setSlug(getString(data, "slug"));
 		info.setAliasNames(Stream.of(series.getAliasNames(), getArray(data, "aliases")).flatMap(it -> stream(it)).map(Object::toString).distinct().toArray(String[]::new));
 
 		info.setName(getString(data, "seriesName"));

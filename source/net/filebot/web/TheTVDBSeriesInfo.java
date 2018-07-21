@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public class TheTVDBSeriesInfo extends SeriesInfo implements Serializable {
 
+	protected String slug;
 	protected String imdbId;
 	protected String overview;
 	protected String airsDayOfWeek;
@@ -19,6 +20,7 @@ public class TheTVDBSeriesInfo extends SeriesInfo implements Serializable {
 
 	public TheTVDBSeriesInfo(TheTVDBSeriesInfo other) {
 		super(other);
+		this.slug = other.slug;
 		this.imdbId = other.imdbId;
 		this.overview = other.overview;
 		this.airsDayOfWeek = other.airsDayOfWeek;
@@ -29,6 +31,14 @@ public class TheTVDBSeriesInfo extends SeriesInfo implements Serializable {
 
 	public TheTVDBSeriesInfo(Datasource database, Locale language, Integer id) {
 		super(database, language, id);
+	}
+
+	public String getSlug() {
+		return slug;
+	}
+
+	public void setSlug(String slug) {
+		this.slug = slug;
 	}
 
 	public String getImdbId() {
