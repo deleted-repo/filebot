@@ -209,20 +209,23 @@ tvdb_updates.values().each{ update ->
 				def votes = seriesInfo.ratingCount ?: 0
 				def year = seriesInfo.startDate?.year ?: 0
 
-				// only retrieve additional data for reasonably popular shows
-				if (imdbid && votes >= 3 && rating >= 4) {
-					tryLogCatch{
-						seriesNames += OMDb.getMovieDescriptor(new Movie(imdbid.match(/tt(\d+)/) as int), Locale.ENGLISH).getName()
+				if (imdbid) {
+					def omdbInfo = OMDb.getMovieInfo(new Movie(imdbid.match(/tt(\d+)/) as int))
+
+					votes = omdbInfo.votes
+					rating = omdbInfo.rating
+
+					seriesNames += omdbInfo.name
+					seriesNames += omdbInfo.originalName
+					seriesNames += omdbInfo.alternativeTitles
+
+					// scrape extra alias titles from webpage (not supported yet by API yet)
+					if (votes >= 60 && rating >= 4) {
+						def jsoup = org.jsoup.Jsoup.connect("https://www.thetvdb.com/series/${seriesInfo.slug}").get()
+						def intlseries = jsoup.select('#translations div.change_translation_text')*.attr('data-title')*.trim()
+						log.fine "Scraped data $intlseries for series $seriesNames"
+						seriesNames += intlseries
 					}
-
-					// scrape extra alias titles from webpage (not supported yet by API)
-					def jsoup = org.jsoup.Jsoup.connect("https://thetvdb.com/?tab=series&id=${update.id}").get()
-					def intlseries = jsoup.select('#translations div.change_translation_text')
-						*.attr('data-title')
-						*.trim()
-
-					log.fine "Scraped data $intlseries for series $seriesNames"
-					seriesNames += intlseries
 				}
 
 				def data = [update.time, update.id, imdbid, rating, votes, year] + seriesNames.findAll{ it != null && it.length() > 0 }
