@@ -279,7 +279,7 @@ tvdb.values().each{ r ->
 	}
 
 	// always include if alias has been manually added
-	if (alias != null || (votes >= 5 && rating >= 4) || (votes >= 2 && rating >= 6) || (votes >= 1 && rating >= 10)) {
+	if (alias != null || (votes >= 600 && rating >= 4) || (votes >= 400 && rating >= 6) || (votes >= 200 && rating >= 8)) {
 		getNamePermutations(names).each{ n ->
 			thetvdb_index << [tvdb_id, n]
 		}
