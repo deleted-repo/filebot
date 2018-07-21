@@ -143,7 +143,7 @@
 			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="@{identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
 
-				<runtime dir="@{dir}/jre-${java.version}.jre/Contents/Home" if:true="@{runtime}">
+				<runtime dir="@{dir}/jre-${jre.version}.jre/Contents/Home" if:true="@{runtime}">
 					<include name="**/*" />
 				</runtime>
 
@@ -384,7 +384,7 @@
 		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${application.identifier}.jre" encoding="UTF-8" summary="true" />
 
 		<!-- fix broken symlink -->
-		<copy file="${dir.staging}/jre-${java.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
+		<copy file="${dir.staging}/jre-${jre.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
 
 		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
 		<chmod perm="+x">
