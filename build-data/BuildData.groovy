@@ -209,11 +209,11 @@ tvdb_updates.values().each{ update ->
 				def votes = seriesInfo.ratingCount ?: 0
 				def year = seriesInfo.startDate?.year ?: 0
 
-				if (imdbid) {
+				if (imdbid) tryLogCatch {
 					def omdbInfo = OMDb.getMovieInfo(new Movie(imdbid.match(/tt(\d+)/) as int))
 
-					votes = omdbInfo.votes
-					rating = omdbInfo.rating
+					votes = omdbInfo.votes as int
+					rating = omdbInfo.rating as double
 
 					seriesNames += omdbInfo.name
 					seriesNames += omdbInfo.originalName
