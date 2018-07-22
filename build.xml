@@ -597,7 +597,7 @@
 
 			<!-- include native libraries for all supported platforms -->
 			<package prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
-			<package prefix="lib/armv8" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
+			<package prefix="lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
 			<package prefix="lib/i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
 			<package prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
 
