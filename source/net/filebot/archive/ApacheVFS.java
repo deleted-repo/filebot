@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.vfs2.AllFileSelector;
+import org.apache.commons.vfs2.CacheStrategy;
 import org.apache.commons.vfs2.FileObject;
 import org.apache.commons.vfs2.FileSelectInfo;
 import org.apache.commons.vfs2.FileSelector;
-import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.FileType;
-import org.apache.commons.vfs2.VFS;
+import org.apache.commons.vfs2.cache.NullFilesCache;
+import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
 
 import net.filebot.vfs.FileInfo;
 import net.filebot.vfs.SimpleFileInfo;
@@ -23,7 +24,7 @@ public class ApacheVFS implements ArchiveExtractor, Closeable {
 
 	private static final FileSelector ALL_FILES = new AllFileSelector();
 
-	private final FileSystemManager fsm;
+	private final DefaultFileSystemManager fsm;
 	private final FileObject archive;
 
 	public ApacheVFS(File file) throws Exception {
@@ -31,7 +32,9 @@ public class ApacheVFS implements ArchiveExtractor, Closeable {
 			throw new FileNotFoundException(file.getAbsolutePath());
 		}
 
-		this.fsm = VFS.getManager();
+		this.fsm = new DefaultFileSystemManager();
+		this.fsm.setCacheStrategy(CacheStrategy.MANUAL);
+		this.fsm.setFilesCache(new NullFilesCache());
 		this.archive = fsm.createFileSystem(fsm.toFileObject(file));
 	}
 
