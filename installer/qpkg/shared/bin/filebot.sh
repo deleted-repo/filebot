@@ -14,8 +14,7 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 # choose archive extractor / media characteristics parser
-if uname -m | grep "86"; then
-	# i686 or x86_64
+if uname -m | egrep "i386|i686|amd64|x86_64"; then
 	ARCHIVE_EXTRACTOR="SevenZipNativeBindings"  # use lib7-Zip-JBinding.so
 	MEDIA_PARSER="libmediainfo"                 # use libmediainfo
 else
