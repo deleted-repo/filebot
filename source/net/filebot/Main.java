@@ -121,11 +121,11 @@ public class Main {
 						configureLicense(f);
 						System.exit(0);
 					});
-				}
 
-				// set AUMID manually for legacy processes
-				if (isWindowsApp() && !isUWP()) {
-					WinAppUtilities.setAppUserModelID(getApplicationName());
+					// set AUMID manually for legacy processes
+					if (isWindowsApp()) {
+						WinAppUtilities.setAppUserModelID(getApplicationName());
+					}
 				}
 
 				int status = new ArgumentProcessor().run(args);
