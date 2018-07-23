@@ -550,10 +550,11 @@
 			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
 
 			<!-- include native libraries for all supported platforms -->
-			<tarfileset prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
-			<tarfileset prefix="lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
-			<tarfileset prefix="lib/i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
-			<tarfileset prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
+			<tarfileset prefix="lib/Linux-armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
+			<tarfileset prefix="lib/Linux-aarch64" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
+			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
+			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
+			<tarfileset prefix="lib/FreeBSD-x86_64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
 
 			<!-- include maintainer public key -->
 			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.gpg" />
@@ -806,6 +807,11 @@
 			<param name="arch" value="linux-armv8" />
 			<param name="arch.jna" value="linux-aarch64" />
 			<param name="arch.7zj" value="linux-aarch64" />
+		</antcall>
+		<antcall target="resolve-import-native">
+			<param name="arch" value="freebsd-amd64" />
+			<param name="arch.jna" value="freebsd-x86-64" />
+			<param name="arch.7zj" value="FreeBSD-amd64" />
 		</antcall>
 	</target>
 

@@ -17,7 +17,8 @@ PRG_DIR=`dirname "$PRG"`
 FILEBOT_HOME=`cd "$PRG_DIR" && pwd`
 
 # add package lib folder to library path
-PACKAGE_LIBRARY_PATH="$FILEBOT_HOME/lib/$(uname -m)"
+PACKAGE_LIBRARY_ARCH="$(uname -s)-$(uname -m)"
+PACKAGE_LIBRARY_PATH="$FILEBOT_HOME/lib/$PACKAGE_LIBRARY_ARCH"
 
 # make sure required environment variables are set
 if [ -z "$USER" ]; then
@@ -29,15 +30,23 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 # choose archive extractor / media characteristics parser
-if uname -m | egrep "i386|i686|amd64|x86_64"; then
-	# i686 or x86_64
-	ARCHIVE_EXTRACTOR="SevenZipNativeBindings"  # use lib7-Zip-JBinding.so
-	MEDIA_PARSER="libmediainfo"                 # use libmediainfo
-else
-	# armv7l or aarch64
-	ARCHIVE_EXTRACTOR="ApacheVFS"               # use Apache Commons VFS2
-	MEDIA_PARSER="ffprobe"                      # use ffprobe
-fi
+case $PACKAGE_LIBRARY_ARCH in
+	Linux-x86_64|Linux-i686)
+		# i686 or x86_64
+		ARCHIVE_EXTRACTOR="SevenZipNativeBindings"
+		MEDIA_PARSER="libmediainfo"
+	;;
+	FreeBSD-amd64)
+		PACKAGE_LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$(dirname $PACKAGE_LIBRARY_PATH)/Linux-x86_64"  # default to Linux binaries
+		ARCHIVE_EXTRACTOR="SevenZipNativeBindings"
+		MEDIA_PARSER="libmediainfo"
+	;;
+	*)
+		# armv7l or aarch64
+		ARCHIVE_EXTRACTOR="ApacheVFS"
+		MEDIA_PARSER="ffprobe"
+	;;
+;
 
 # select application data folder
 APP_DATA="$FILEBOT_HOME/data/$USER"
