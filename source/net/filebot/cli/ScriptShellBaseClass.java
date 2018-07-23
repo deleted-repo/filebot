@@ -133,6 +133,7 @@ public abstract class ScriptShellBaseClass extends Script {
 		try {
 			return LICENSE.check();
 		} catch (Throwable e) {
+			printException(e, false);
 			return null;
 		}
 	}
@@ -305,7 +306,8 @@ public abstract class ScriptShellBaseClass extends Script {
 		Stream<String> cmd = stream(args).filter(Objects::nonNull).map(Objects::toString);
 
 		if (Platform.isWindows()) {
-			// normalize file separator for windows and run with powershell so any executable in PATH will just work
+			// normalize file separator for windows and run with powershell so any
+			// executable in PATH will just work
 			cmd = Stream.concat(Stream.of("powershell", "-NonInteractive", "-NoProfile", "-NoLogo", "-ExecutionPolicy", "Bypass", "-Command"), cmd);
 		} else if (args.length == 1) {
 			// make Unix shell parse arguments
@@ -330,7 +332,8 @@ public abstract class ScriptShellBaseClass extends Script {
 	}
 
 	/**
-	 * Retry given closure until it returns successfully (indefinitely if -1 is passed as retry count)
+	 * Retry given closure until it returns successfully (indefinitely if -1 is
+	 * passed as retry count)
 	 */
 	public Object retry(int retryCountLimit, int retryWaitTime, Closure<?> c) throws InterruptedException {
 		for (int i = 0; retryCountLimit < 0 || i <= retryCountLimit; i++) {
@@ -462,7 +465,8 @@ public abstract class ScriptShellBaseClass extends Script {
 		// clone default arguments
 		ArgumentBean args = new ArgumentBean(getArgumentBean().getArgumentArray());
 
-		// for compatibility reasons [forceExtractAll: true] and [strict: true] is the same as -non-strict
+		// for compatibility reasons [forceExtractAll: true] and [strict: true] is the
+		// same as -non-strict
 		Stream.of("forceExtractAll", "strict").map(parameters::remove).filter(Objects::nonNull).forEach(v -> {
 			args.nonStrict = !DefaultTypeTransformation.castToBoolean(v);
 		});
