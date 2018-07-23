@@ -26,7 +26,7 @@ public class WinAppUtilities {
 	public static String getAppUserModelID() {
 		try {
 			PointerByReference ppszAppID = new PointerByReference();
-			if (Shell32.INSTANCE.GetCurrentProcessExplicitAppUserModelID(ppszAppID) == WinError.S_OK) {
+			if (Shell32.INSTANCE.GetCurrentProcessExplicitAppUserModelID(ppszAppID).equals(WinError.S_OK)) {
 				return ppszAppID.getValue().getWideString(0);
 			}
 		} catch (Throwable t) {
