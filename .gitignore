@@ -13,6 +13,7 @@ makefile.variables
 profile.properties
 
 .classpath
+.settings
 .externalToolBuilders
 
 .DS_Store
