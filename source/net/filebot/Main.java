@@ -121,11 +121,6 @@ public class Main {
 						configureLicense(f);
 						System.exit(0);
 					});
-
-					// set AUMID manually for legacy processes
-					if (isWindowsApp()) {
-						WinAppUtilities.setAppUserModelID(getApplicationName());
-					}
 				}
 
 				int status = new ArgumentProcessor().run(args);
@@ -256,13 +251,8 @@ public class Main {
 			});
 		} else if (isWindowsApp()) {
 			// Windows-specific configuration
-			WinAppUtilities.initializeApplication();
+			WinAppUtilities.initializeApplication(isUWP() ? null : getApplicationName());
 			frame.setIconImages(ResourceManager.getApplicationIconImages());
-
-			// set AUMID manually for legacy processes
-			if (!isUWP()) {
-				WinAppUtilities.setAppUserModelID(getApplicationName());
-			}
 		} else {
 			// generic Linux / FreeBSD / Solaris configuration
 			frame.setIconImages(ResourceManager.getApplicationIconImages());

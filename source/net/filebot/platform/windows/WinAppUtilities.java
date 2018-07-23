@@ -15,9 +15,9 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class WinAppUtilities {
 
-	public static void setAppUserModelID(String appID) {
+	public static void setAppUserModelID(String aumid) {
 		try {
-			Shell32.INSTANCE.SetCurrentProcessExplicitAppUserModelID(new WString(appID));
+			Shell32.INSTANCE.SetCurrentProcessExplicitAppUserModelID(new WString(aumid));
 		} catch (Throwable t) {
 			debug.log(Level.WARNING, t.getMessage(), t);
 		}
@@ -35,7 +35,11 @@ public class WinAppUtilities {
 		return null;
 	}
 
-	public static void initializeApplication() {
+	public static void initializeApplication(String aumid) {
+		if (aumid != null) {
+			setAppUserModelID(aumid);
+		}
+
 		// improved UI defaults
 		UIManager.put("TitledBorder.border", createCompoundBorder(createLineBorder(new Color(0xD7D7D7), 1, true), createCompoundBorder(createMatteBorder(6, 5, 6, 5, new Color(0xE5E5E5)), createEmptyBorder(0, 2, 0, 2))));
 	}
