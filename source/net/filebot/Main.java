@@ -123,6 +123,11 @@ public class Main {
 					});
 				}
 
+				// set AUMID manually for legacy processes
+				if (isWindowsApp() && !isUWP()) {
+					WinAppUtilities.setAppUserModelID(getApplicationName());
+				}
+
 				int status = new ArgumentProcessor().run(args);
 				System.exit(status);
 			}
@@ -224,7 +229,8 @@ public class Main {
 		frame.addWindowListener(windowClosed(evt -> {
 			evt.getWindow().setVisible(false);
 
-			// make sure any long running operations are done now and not later on the shutdown hook thread
+			// make sure any long running operations are done now and not later on the
+			// shutdown hook thread
 			HistorySpooler.getInstance().commit();
 
 			if (isAppStore()) {
@@ -345,12 +351,15 @@ public class Main {
 	}
 
 	/**
-	 * Initialize default SecurityManager and grant all permissions via security policy. Initialization is required in order to run {@link ExpressionFormat} in a secure sandbox.
+	 * Initialize default SecurityManager and grant all permissions via security
+	 * policy. Initialization is required in order to run {@link ExpressionFormat}
+	 * in a secure sandbox.
 	 */
 	private static void initializeSecurityManager() {
 		try {
 			// initialize security policy used by the default security manager
-			// because default the security policy is very restrictive (e.g. no FilePermission)
+			// because default the security policy is very restrictive (e.g. no
+			// FilePermission)
 			Policy.setPolicy(new Policy() {
 
 				@Override
