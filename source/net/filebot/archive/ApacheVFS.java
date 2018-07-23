@@ -15,7 +15,7 @@ import org.apache.commons.vfs2.FileSelectInfo;
 import org.apache.commons.vfs2.FileSelector;
 import org.apache.commons.vfs2.FileType;
 import org.apache.commons.vfs2.cache.NullFilesCache;
-import org.apache.commons.vfs2.impl.DefaultFileSystemManager;
+import org.apache.commons.vfs2.impl.StandardFileSystemManager;
 
 import net.filebot.vfs.FileInfo;
 import net.filebot.vfs.SimpleFileInfo;
@@ -24,7 +24,7 @@ public class ApacheVFS implements ArchiveExtractor, Closeable {
 
 	private static final FileSelector ALL_FILES = new AllFileSelector();
 
-	private final DefaultFileSystemManager fsm;
+	private final StandardFileSystemManager fsm;
 	private final FileObject archive;
 
 	public ApacheVFS(File file) throws Exception {
@@ -32,10 +32,12 @@ public class ApacheVFS implements ArchiveExtractor, Closeable {
 			throw new FileNotFoundException(file.getAbsolutePath());
 		}
 
-		this.fsm = new DefaultFileSystemManager();
-		this.fsm.setCacheStrategy(CacheStrategy.MANUAL);
-		this.fsm.setFilesCache(new NullFilesCache());
-		this.archive = fsm.createFileSystem(fsm.toFileObject(file));
+		fsm = new StandardFileSystemManager();
+		fsm.setCacheStrategy(CacheStrategy.MANUAL);
+		fsm.setFilesCache(new NullFilesCache());
+		fsm.init();
+
+		archive = fsm.createFileSystem(fsm.toFileObject(file));
 	}
 
 	@Override
@@ -63,6 +65,7 @@ public class ApacheVFS implements ArchiveExtractor, Closeable {
 	@Override
 	public void close() throws IOException {
 		archive.close();
+		fsm.close();
 	}
 
 	private static class FileFilterSelector implements FileSelector {
