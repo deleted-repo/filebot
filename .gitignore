@@ -1,9 +1,10 @@
-/bin/
-/build/
-/build-data/
-/dist/
-/cache/
-/lib/ivy/
+bin
+build
+build-data
+dist
+release
+cache
+ivy
 
 *.txt
 *.psm
