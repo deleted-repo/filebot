@@ -36,11 +36,6 @@ case $PACKAGE_LIBRARY_ARCH in
 		ARCHIVE_EXTRACTOR="SevenZipNativeBindings"
 		MEDIA_PARSER="libmediainfo"
 	;;
-	FreeBSD-amd64)
-		PACKAGE_LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$(dirname $PACKAGE_LIBRARY_PATH)/Linux-x86_64"  # default to Linux binaries
-		ARCHIVE_EXTRACTOR="SevenZipNativeBindings"
-		MEDIA_PARSER="libmediainfo"
-	;;
 	*)
 		# armv7l or aarch64
 		ARCHIVE_EXTRACTOR="ApacheVFS"
