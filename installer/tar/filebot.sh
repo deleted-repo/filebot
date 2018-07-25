@@ -41,7 +41,7 @@ case $PACKAGE_LIBRARY_ARCH in
 		ARCHIVE_EXTRACTOR="ApacheVFS"
 		MEDIA_PARSER="ffprobe"
 	;;
-;
+esac
 
 # select application data folder
 APP_DATA="$FILEBOT_HOME/data/$USER"
