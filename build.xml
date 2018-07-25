@@ -614,10 +614,10 @@
 		<property name="dir.base" location="${dir.dist}/qpkg/shared" />
 
 		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/qpkg" excludes="**/*.gif" />
+			<fileset dir="${dir.installer}/qpkg" excludes="**/*.png" />
 		</copy-replace>
 		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/qpkg" includes="**/*.gif" />
+			<fileset dir="${dir.installer}/qpkg" includes="**/*.png" />
 		</copy>
 
 		<copy todir="${dir.base}/jar">
