@@ -156,6 +156,11 @@ public class License {
 	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> parseLicenseFile(FILE.get()));
 
 	public static License importLicenseFile(File file) throws Exception {
+		// require non-empty license file
+		if (file.length() <= 0) {
+			throw new FileNotFoundException("License file not found: " + file);
+		}
+
 		// lock memoized resource while validating and setting a new license
 		synchronized (License.INSTANCE) {
 			// check if license file is valid and not expired
