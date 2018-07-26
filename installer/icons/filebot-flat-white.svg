@@ -19,7 +19,7 @@
 	<stop  offset="0.805" style="stop-color:#3A5B71"/>
 	<stop  offset="1" style="stop-color:#37596E"/>
 </linearGradient>
-<rect width="150" height="150" fill="url(#SVGID_1_)" stroke="url(#SVGID_2_)" stroke-width="5" />
+<rect width="150" height="150" fill="url(#SVGID_1_)" stroke="url(#SVGID_2_)" stroke-width="0" rx="25" ry="25" />
 <g>
 	<path fill="#E57025" d="M79.124,33.484c0,0.149-0.02,0.382-0.056,0.698c-0.038,0.317-0.084,0.67-0.14,1.061
 		c-0.056,0.391-0.14,0.801-0.252,1.228c-0.111,0.428-0.242,0.829-0.391,1.201s-0.316,0.67-0.502,0.893
