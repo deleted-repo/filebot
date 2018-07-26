@@ -1,6 +1,6 @@
 #!/bin/sh
 FILEBOT_HOME="/Applications/FileBot.app/Contents"
-JAVA_HOME="$FILEBOT_HOME/PlugIns/jre-@{java.version}.jre/Contents/Home"
+JAVA_HOME="$FILEBOT_HOME/PlugIns/jre-@{jre.version}.jre/Contents/Home"
 
 # select application data folder
 APP_DATA="$HOME/.filebot"
