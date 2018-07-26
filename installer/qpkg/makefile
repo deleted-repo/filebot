@@ -1,5 +1,5 @@
 QPKG_NAME := filebot
-ICON := ../icons/filebot-flat-white.png
+ICON := ../icons/filebot-round-rect.png
 
 resize-icons:
 	convert -verbose $(ICON) -resize 64x64 -gravity center -background transparent -extent 64x64 icons/$(QPKG_NAME).png
