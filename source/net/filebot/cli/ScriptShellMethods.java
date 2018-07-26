@@ -65,6 +65,10 @@ public class ScriptShellMethods {
 		return new File(self, path.getPath());
 	}
 
+	public static File div(String self, File path) {
+		return new File(self, path.getPath());
+	}
+
 	public static String negative(String self) {
 		return '-' + self;
 	}
