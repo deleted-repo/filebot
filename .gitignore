@@ -13,6 +13,7 @@ makefile
 makefile.variables
 profile.properties
 
+.project
 .classpath
 .settings
 .externalToolBuilders
