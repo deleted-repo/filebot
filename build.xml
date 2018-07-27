@@ -38,6 +38,9 @@
 						<propertyref builtin="all" />
 					</propertyset>
 				</filterset>
+				<filtermapper>
+					<replacetokens begintoken="@{" endtoken="}" propertiesResource="app.properties" />
+				</filtermapper>
 			</copy>
 		</sequential>
 	</macrodef>
