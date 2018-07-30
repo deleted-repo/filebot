@@ -557,7 +557,7 @@
 			<tarfileset prefix="lib/Linux-aarch64" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
 			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
 			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
-			<tarfileset prefix="lib/FreeBSD-x86_64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
+			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
 
 			<!-- include maintainer public key -->
 			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.gpg" />
