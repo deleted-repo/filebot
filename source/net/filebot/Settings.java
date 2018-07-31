@@ -93,7 +93,7 @@ public final class Settings {
 	}
 
 	public static boolean isLinuxApp() {
-		return isApplicationDeployment("snap", "deb", "tar", "docker", "spk", "qpkg", "aur");
+		return isApplicationDeployment("snap", "deb", "tar", "spk", "qpkg", "docker", "aur");
 	}
 
 	public static boolean isMacApp() {
