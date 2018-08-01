@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index 34ce3b52..c6cbe6fe 100644
+index d65e10a9..4c1091a1 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot/
@@ -18,20 +18,21 @@ index 34ce3b52..c6cbe6fe 100644
  
  # Package Information
  package.name: filebot
-@@ -77,7 +78,7 @@ msi.compression: high
+@@ -77,8 +78,7 @@ msi.compression: high
  deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
  
  # Default Java Options
--java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true --illegal-access=permit --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.function=ALL-UNNAMED --add-opens=java.base/java.util.regex=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio.file=ALL-UNNAMED --add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.time.chrono=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.logging/java.util.logging=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED
+-java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true \
+-                          --illegal-access=permit --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.function=ALL-UNNAMED --add-opens=java.base/java.util.regex=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio.file=ALL-UNNAMED --add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.time.chrono=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.logging/java.util.logging=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED
 +java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true
  
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 851cb6ac..18762d77 100644
+index 836e447d..3d724439 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -93,9 +93,10 @@
+@@ -96,9 +96,10 @@
  		<attribute name="dest" />
  		<sequential>
  			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
@@ -43,7 +44,7 @@ index 851cb6ac..18762d77 100644
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
  			</untar>
-@@ -225,7 +226,7 @@
+@@ -228,7 +229,7 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -52,7 +53,7 @@ index 851cb6ac..18762d77 100644
  			<classpath refid="jar.classpath" />
  		</javac>
  
-@@ -263,7 +264,7 @@
+@@ -266,7 +267,7 @@
  			<fileset dir="${dir.installer}/msi" includes="filebot.exe, filebot.launcher.exe" />
  		</copy>
  		<copy todir="${dir.staging}/lib">
@@ -61,7 +62,7 @@ index 851cb6ac..18762d77 100644
  		</copy>
  		<copy todir="${dir.staging}/jar">
  			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -294,7 +295,7 @@
+@@ -297,7 +298,7 @@
  			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
  		</exec>
  		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
@@ -84,7 +85,7 @@ index 8a8817e9..6af7097d 100644
  		Version="@{application.version}.0"
  	/>
 diff --git a/ivy.xml b/ivy.xml
-index f096a963..70bb3b94 100644
+index 088bbd3b..06259dfb 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -25,7 +25,7 @@
