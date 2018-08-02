@@ -738,7 +738,7 @@
 
 	<target name="stage-update" description="Upload incremental update archive">
 		<tar destfile="${dir.dist}/CHANGES.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
-			<tarfileset prefix="jar" dir="${dir.dist}/lib" includes="${package.name}.jar" />
+			<tarfileset src="${dir.dist}/${release}-portable.tar.xz" includesfile="${dir.installer}/tar/CHANGES.includes" />
 		</tar>
 		<antcall target="stage">
 			<param name="dir.release" value="${dir.release.index}/HEAD" />
