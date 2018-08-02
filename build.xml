@@ -737,11 +737,11 @@
 
 
 	<target name="stage-update" description="Upload incremental update archive">
-		<tar destfile="${dir.dist}/CHANGES/CHANGES.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
+		<tar destfile="${dir.dist}/HEAD/CHANGES.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset src="${dir.dist}/${release}-portable.tar.xz" includesfile="${dir.installer}/tar/CHANGES.includes" />
 		</tar>
 		<antcall target="stage">
-			<param name="dir.dist" value="${dir.dist}/CHANGES" />
+			<param name="dir.dist" value="${dir.dist}/HEAD" />
 			<param name="dir.release" value="${dir.release.index}/HEAD" />
 		</antcall>
 	</target>
