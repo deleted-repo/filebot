@@ -22,6 +22,7 @@ import net.filebot.format.ExpressionFileFilter;
 import net.filebot.format.ExpressionFileFormat;
 import net.filebot.format.ExpressionFilter;
 import net.filebot.format.ExpressionFormat;
+import net.filebot.media.LocalDatasource;
 import net.filebot.web.Datasource;
 import net.filebot.web.EpisodeListProvider;
 import net.filebot.web.MovieIdentificationService;
@@ -127,9 +128,8 @@ public class Preset {
 			return new MusicMatcher((MusicIdentificationService) db);
 		}
 
-		// PhotoFileMatcher / XattrFileMatcher / PlainFileMatcher
-		if (db instanceof AutoCompleteMatcher) {
-			return (AutoCompleteMatcher) db;
+		if (db instanceof LocalDatasource) {
+			return new LocalFileMatcher((LocalDatasource) db);
 		}
 
 		throw new IllegalStateException("Illegal datasource: " + db);
