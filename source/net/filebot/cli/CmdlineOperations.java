@@ -55,8 +55,8 @@ import net.filebot.hash.VerificationFileWriter;
 import net.filebot.media.AutoDetection;
 import net.filebot.media.AutoDetection.Group;
 import net.filebot.media.AutoDetection.Type;
+import net.filebot.media.LocalDatasource;
 import net.filebot.media.VideoQuality;
-import net.filebot.media.XattrMetaInfoProvider;
 import net.filebot.similarity.CommonSequenceMatcher;
 import net.filebot.similarity.EpisodeMatcher;
 import net.filebot.similarity.Match;
@@ -101,9 +101,9 @@ public class CmdlineOperations implements CmdlineInterface {
 			return renameMusic(files, action, conflict, output, format, singletonList((MusicIdentificationService) db), exec);
 		}
 
-		// generic file / xattr mode
-		if (db instanceof XattrMetaInfoProvider) {
-			return renameFiles(files, action, conflict, output, format, (XattrMetaInfoProvider) db, filter, strict, exec);
+		// photo / xattr / plain file mode
+		if (db instanceof LocalDatasource) {
+			return renameFiles(files, action, conflict, output, format, (LocalDatasource) db, filter, strict, exec);
 		}
 
 		// auto-detect mode for each fileset
@@ -513,7 +513,7 @@ public class CmdlineOperations implements CmdlineInterface {
 		return renameAll(formatMatches(matches, format, outputDir), renameAction, conflictAction, null, exec);
 	}
 
-	public List<File> renameFiles(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, XattrMetaInfoProvider service, ExpressionFilter filter, boolean strict, ExecCommand exec) throws Exception {
+	public List<File> renameFiles(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, LocalDatasource service, ExpressionFilter filter, boolean strict, ExecCommand exec) throws Exception {
 		log.config(format("Rename files using [%s]", service.getName()));
 
 		Map<File, File> renameMap = new LinkedHashMap<File, File>();

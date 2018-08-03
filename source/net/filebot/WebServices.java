@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
-import net.filebot.media.XattrMetaInfoProvider;
+import net.filebot.media.LocalDatasource;
 import net.filebot.similarity.MetricAvg;
 import net.filebot.web.AcoustIDClient;
 import net.filebot.web.AnidbClient;
@@ -70,11 +70,10 @@ public final class WebServices {
 	// other sources
 	public static final FanartTVClient FanartTV = new FanartTVClient(getApiKey("fanart.tv"));
 	public static final AcoustIDClient AcoustID = new AcoustIDClient(getApiKey("acoustid"));
-	public static final XattrMetaInfoProvider XattrMetaData = new XattrMetaInfoProvider();
 	public static final ID3Lookup MediaInfoID3 = new ID3Lookup();
 
 	public static Datasource[] getServices() {
-		return new Datasource[] { TheMovieDB, OMDb, TheTVDB, AniDB, TheMovieDB_TV, TVmaze, AcoustID, MediaInfoID3, XattrMetaData, OpenSubtitles, Shooter, FanartTV };
+		return new Datasource[] { TheMovieDB, OMDb, TheTVDB, AniDB, TheMovieDB_TV, TVmaze, AcoustID, MediaInfoID3, LocalDatasource.EXIF, LocalDatasource.XATTR, LocalDatasource.FILE, OpenSubtitles, Shooter, FanartTV };
 	}
 
 	public static MovieIdentificationService[] getMovieIdentificationServices() {
@@ -87,6 +86,10 @@ public final class WebServices {
 
 	public static MusicIdentificationService[] getMusicIdentificationServices() {
 		return new MusicIdentificationService[] { AcoustID, MediaInfoID3 };
+	}
+
+	public static LocalDatasource[] getLocalDatasources() {
+		return new LocalDatasource[] { LocalDatasource.EXIF, LocalDatasource.XATTR, LocalDatasource.FILE };
 	}
 
 	public static SubtitleProvider[] getSubtitleProviders(Locale locale) {

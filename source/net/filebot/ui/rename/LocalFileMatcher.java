@@ -10,32 +10,39 @@ import java.util.Locale;
 
 import javax.swing.Icon;
 
-import net.filebot.ResourceManager;
+import net.filebot.media.LocalDatasource;
 import net.filebot.similarity.Match;
 import net.filebot.web.Datasource;
 import net.filebot.web.SortOrder;
 
-public class PlainFileMatcher implements Datasource, AutoCompleteMatcher {
+public class LocalFileMatcher implements Datasource, AutoCompleteMatcher {
+
+	private final LocalDatasource datasource;
+
+	public LocalFileMatcher(LocalDatasource datasource) {
+		this.datasource = datasource;
+	}
 
 	@Override
 	public String getIdentifier() {
-		return "file";
+		return datasource.getIdentifier();
 	}
 
 	@Override
 	public String getName() {
-		return "Plain File";
+		return datasource.getName();
 	}
 
 	@Override
 	public Icon getIcon() {
-		return ResourceManager.getIcon("search.generic");
+		return datasource.getIcon();
 	}
 
 	@Override
 	public List<Match<File, ?>> match(Collection<File> files, boolean strict, SortOrder order, Locale locale, boolean autodetection, Component parent) throws Exception {
-		return files.stream().map(f -> {
-			return new Match<File, File>(f, f);
+		// always use strict mode internally to make behavior more simple and consistent for GUI users
+		return datasource.match(files, true).entrySet().stream().map(it -> {
+			return new Match<File, Object>(it.getKey(), it.getValue());
 		}).collect(toList());
 	}
 

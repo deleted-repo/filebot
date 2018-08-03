@@ -141,11 +141,7 @@ public class Preset {
 	}
 
 	public static Datasource[] getSupportedServices() {
-		return Stream.of(getEpisodeListProviders(), getMovieIdentificationServices(), getMusicIdentificationServices(), getGenericFileMatcherServices()).flatMap(Stream::of).toArray(Datasource[]::new);
-	}
-
-	public static Datasource[] getGenericFileMatcherServices() {
-		return new Datasource[] { new PhotoFileMatcher(), new XattrFileMatcher(), new PlainFileMatcher() };
+		return Stream.of(getEpisodeListProviders(), getMovieIdentificationServices(), getMusicIdentificationServices(), getLocalDatasources()).flatMap(Stream::of).toArray(Datasource[]::new);
 	}
 
 	public static StandardRenameAction[] getSupportedActions() {

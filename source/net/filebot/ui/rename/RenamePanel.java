@@ -65,6 +65,7 @@ import net.filebot.UserFiles;
 import net.filebot.WebServices;
 import net.filebot.format.ExpressionFileFormat;
 import net.filebot.format.MediaBindingBean;
+import net.filebot.media.LocalDatasource;
 import net.filebot.media.MetaAttributes;
 import net.filebot.platform.mac.MacAppUtilities;
 import net.filebot.similarity.Match;
@@ -323,7 +324,7 @@ public class RenamePanel extends JComponent {
 			withWaitCursor(evt.getSource(), () -> {
 				if (namesList.getModel().isEmpty()) {
 					// match to xattr metadata object or the file itself
-					Map<File, Object> xattr = WebServices.XattrMetaData.match(renameModel.files(), false);
+					Map<File, Object> xattr = LocalDatasource.XATTR.match(renameModel.files(), false);
 
 					renameModel.clear();
 					renameModel.addAll(xattr.values(), xattr.keySet());
