@@ -74,6 +74,8 @@ public enum LocalDatasource implements Datasource {
 					ImageMetadata metadata = new ImageMetadata(f);
 					if (metadata.getDateTaken().isPresent()) {
 						exifMap.put(f, f); // photo mode is the same as generic file mode (but only select photo files)
+					} else if (!strict) {
+						exifMap.put(f, f);
 					}
 				} catch (Exception e) {
 					debug.warning(format("%s [%s]", e, f));
