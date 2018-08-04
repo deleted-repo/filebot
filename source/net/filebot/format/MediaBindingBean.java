@@ -53,6 +53,7 @@ import net.filebot.Settings;
 import net.filebot.hash.HashType;
 import net.filebot.media.FFProbe;
 import net.filebot.media.ImageMetadata;
+import net.filebot.media.LocalDatasource.PhotoFile;
 import net.filebot.media.MetaAttributes;
 import net.filebot.media.PlexNamingStandard;
 import net.filebot.media.VideoFormat;
@@ -945,6 +946,9 @@ public class MediaBindingBean {
 
 	@Define("photo")
 	public ImageMetadata getPhoto() throws Exception {
+		if (infoObject instanceof PhotoFile) {
+			return ((PhotoFile) infoObject).getMetadata();
+		}
 		return new ImageMetadata((File) infoObject);
 	}
 

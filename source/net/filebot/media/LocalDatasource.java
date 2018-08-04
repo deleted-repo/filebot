@@ -73,7 +73,7 @@ public enum LocalDatasource implements Datasource {
 				try {
 					ImageMetadata metadata = new ImageMetadata(f);
 					if (metadata.getDateTaken().isPresent()) {
-						exifMap.put(f, f); // photo mode is the same as generic file mode (but only select photo files)
+						exifMap.put(f, new PhotoFile(f, metadata)); // photo mode is the same as generic file mode (but only select photo files)
 					} else if (!strict) {
 						exifMap.put(f, f);
 					}
@@ -89,5 +89,19 @@ public enum LocalDatasource implements Datasource {
 
 	// enable xattr regardless of -DuseExtendedFileAttributes system properties
 	private static final XattrMetaInfo xattr = new XattrMetaInfo(true, false);
+
+	public static class PhotoFile extends File {
+
+		private final ImageMetadata metadata;
+
+		public PhotoFile(File file, ImageMetadata metadata) {
+			super(file.getPath());
+			this.metadata = metadata;
+		}
+
+		public ImageMetadata getMetadata() {
+			return metadata;
+		}
+	}
 
 }
