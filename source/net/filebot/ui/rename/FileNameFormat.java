@@ -10,8 +10,8 @@ import net.filebot.util.FileUtilities;
 public class FileNameFormat extends Format {
 
 	@Override
-	public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-		return toAppendTo.append(FileUtilities.getName((File) obj));
+	public StringBuffer format(Object obj, StringBuffer sb, FieldPosition pos) {
+		return sb.append(FileUtilities.getName((File) obj));
 	}
 
 	@Override

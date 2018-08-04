@@ -27,6 +27,7 @@ import com.drew.metadata.Tag;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import com.drew.metadata.exif.GpsDirectory;
+import com.drew.metadata.file.FileSystemDirectory;
 
 import net.filebot.Cache;
 import net.filebot.CacheType;
@@ -67,6 +68,10 @@ public class ImageMetadata {
 		}
 
 		return values;
+	}
+
+	public Optional<String> getName() {
+		return extract(m -> m.getFirstDirectoryOfType(FileSystemDirectory.class)).map(d -> d.getString(FileSystemDirectory.TAG_FILE_NAME));
 	}
 
 	public Optional<ZonedDateTime> getDateTaken() {

@@ -223,7 +223,7 @@ public class MediaBindingBean {
 
 		// try EXIF Date-Taken for image files or File Last-Modified for generic files
 		try {
-			return new ImageMetadata(f).getDateTaken().get();
+			return getPhoto().getDateTaken().get();
 		} catch (Exception e) {
 			// ignore and default to file creation date
 		}
@@ -895,17 +895,17 @@ public class MediaBindingBean {
 
 	@Define("exif")
 	public AssociativeScriptObject getImageMetadata() throws Exception {
-		return new AssociativeScriptObject(new ImageMetadata(getMediaFile()).snapshot());
+		return new AssociativeScriptObject(getPhoto().snapshot());
 	}
 
 	@Define("camera")
 	public AssociativeEnumObject getCamera() throws Exception {
-		return new ImageMetadata(getMediaFile()).getCameraModel().map(AssociativeEnumObject::new).orElse(null);
+		return getPhoto().getCameraModel().map(AssociativeEnumObject::new).orElse(null);
 	}
 
 	@Define("location")
 	public AssociativeEnumObject getLocation() throws Exception {
-		return new ImageMetadata(getMediaFile()).getLocationTaken().map(AssociativeEnumObject::new).orElse(null);
+		return getPhoto().getLocationTaken().map(AssociativeEnumObject::new).orElse(null);
 	}
 
 	@Define("artist")
@@ -941,6 +941,11 @@ public class MediaBindingBean {
 	@Define("music")
 	public AudioTrack getMusic() {
 		return (AudioTrack) infoObject;
+	}
+
+	@Define("photo")
+	public ImageMetadata getPhoto() throws Exception {
+		return new ImageMetadata((File) infoObject);
 	}
 
 	@Define("pi")
