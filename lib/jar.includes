@@ -4,6 +4,7 @@ ivy/jar/miglayout-swing.jar
 ivy/jar/glazedlists_java16.jar
 ivy/jar/controlsfx.jar
 ivy/jar/rsyntaxtextarea.jar
+ivy/jar/autocomplete.jar
 ivy/jar/lanterna.jar
 ivy/jar/xz.jar
 ivy/jar/sevenzipjbinding.jar
