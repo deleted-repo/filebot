@@ -4,7 +4,6 @@ import static net.filebot.Logging.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dialog.ModalExclusionType;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -35,6 +34,7 @@ import javax.swing.text.JTextComponent;
 import org.fife.ui.rsyntaxtextarea.FileLocation;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.TextEditorPane;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import net.filebot.ApplicationFolder;
@@ -49,8 +49,11 @@ public class GroovyPad extends JFrame {
 	public GroovyPad() throws IOException {
 		super("Groovy Pad");
 
-		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, createEditor(), createOutputLog());
-		splitPane.setResizeWeight(0.7);
+		RTextScrollPane editorPane = createEditor(Theme.load(Theme.class.getResourceAsStream("themes/eclipse.xml")));
+		RTextScrollPane outputPane = createOutputLog(Theme.load(Theme.class.getResourceAsStream("themes/dark.xml")));
+
+		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, editorPane, outputPane);
+		splitPane.setResizeWeight(0.4);
 
 		JComponent c = (JComponent) getContentPane();
 		c.setLayout(new BorderLayout(0, 0));
@@ -101,8 +104,10 @@ public class GroovyPad extends JFrame {
 	protected TextEditorPane editor;
 	protected TextEditorPane output;
 
-	protected JComponent createEditor() {
+	protected RTextScrollPane createEditor(Theme theme) {
 		editor = new TextEditorPane(TextEditorPane.INSERT_MODE, false);
+		theme.apply(editor);
+
 		editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_GROOVY);
 		editor.setAutoscrolls(false);
 		editor.setAnimateBracketMatching(false);
@@ -133,14 +138,15 @@ public class GroovyPad extends JFrame {
 		return new RTextScrollPane(editor, true);
 	}
 
-	protected JComponent createOutputLog() throws IOException {
+	protected RTextScrollPane createOutputLog(Theme theme) throws IOException {
 		output = new TextEditorPane(TextEditorPane.INSERT_MODE, false);
+		theme.apply(output);
+
 		output.setEditable(false);
 		output.setReadOnly(true);
 		output.setAutoscrolls(true);
-		output.setBackground(new Color(255, 255, 218));
 
-		output.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
+		output.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_HOSTS);
 		output.setAnimateBracketMatching(false);
 		output.setAntiAliasingEnabled(true);
 		output.setAutoIndentEnabled(false);
