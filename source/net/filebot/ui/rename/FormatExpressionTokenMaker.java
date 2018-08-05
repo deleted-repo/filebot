@@ -13,7 +13,7 @@ public class FormatExpressionTokenMaker extends TokenMakerBase {
 	private static final GroovyExpressionTokenMaker groovyTokenMaker = new GroovyExpressionTokenMaker();
 
 	public static final int LANGUAGE_LITERAL = 0;
-	public static final int LANGUAGE_GROOVY = 10;
+	public static final int LANGUAGE_GROOVY = 1;
 
 	@Override
 	public Token getTokenList(Segment segment, int initialTokenType, int startOffset) {
@@ -70,9 +70,7 @@ public class FormatExpressionTokenMaker extends TokenMakerBase {
 				Segment groovySegment = new Segment(segment.array, segment.getBeginIndex() + start, end - start);
 				addToken(groovyTokenMaker.getTokenList(groovySegment, initialTokenType, startOffset + start));
 			}
-			if (firstToken == null) {
-				addToken(segment, segment.getBeginIndex() + start, segment.getBeginIndex() + end - 1, initialTokenType, startOffset + start);
-			}
+			addLevelToken(level);
 			break;
 		default:
 			if (start != end) {
@@ -85,8 +83,13 @@ public class FormatExpressionTokenMaker extends TokenMakerBase {
 		return firstToken;
 	}
 
+	protected void addLevelToken(int level) {
+		addNullToken();
+		currentToken.setType(-level);
+	}
+
 	protected int getInitialLevel(Segment segment, int initialTokenType, int startOffset) {
-		return initialTokenType == TokenTypes.NULL ? 0 : 1;
+		return initialTokenType < 0 ? -initialTokenType : 0;
 	}
 
 	protected void addToken(Token token) {
@@ -111,6 +114,11 @@ public class FormatExpressionTokenMaker extends TokenMakerBase {
 		if (tail != null && tail.getType() != TokenTypes.NULL) {
 			addToken(tail);
 		}
+	}
+
+	@Override
+	public int getClosestStandardTokenTypeForInternalType(int type) {
+		return type < 0 ? TokenTypes.NULL : groovyTokenMaker.getClosestStandardTokenTypeForInternalType(type);
 	}
 
 	@Override
