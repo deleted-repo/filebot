@@ -25,7 +25,6 @@ ivy/jar/slf4j-api.jar
 ivy/jar/slf4j-jdk14.jar
 ivy/jar/groovy.jar
 ivy/jar/groovy-ant.jar
-ivy/jar/groovy-bsf.jar
 ivy/jar/groovy-datetime.jar
 ivy/jar/groovy-dateutil.jar
 ivy/jar/groovy-json.jar
