@@ -373,18 +373,21 @@
 			<option value="-Djava.io.tmpdir=Library/Caches/java.io.tmpdir" />
 		</create-app-bundle>
 
-		<!-- remove unused language resources -->
+		<!-- strip bundle from unused resources -->
 		<delete verbose="yes" includeEmptyDirs="yes">
 			<fileset dir="${path.app}/Contents/Resources">
 				<include name="**.lproj/**" />
 				<exclude name="en.lproj/**" />
+			</fileset>
+			<fileset dir="${path.app}/Contents/PlugIns/jre-${jre.version}.jre">
+				<include name="bin/**" />
 			</fileset>
 		</delete>
 
 		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/jre-${jre.version}.jre" />
 
 		<!-- MAS validation is a bit buggy and requires even libraries and frameworks to have a unique CFBundleIdentifier Collision -->
-		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${application.identifier}.jre" encoding="UTF-8" summary="true" />
+		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${package.identifier}" encoding="UTF-8" summary="true" />
 
 		<!-- fix broken symlink -->
 		<copy file="${dir.staging}/jre-${jre.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
@@ -829,12 +832,9 @@
 			</patternset>
 			<chainedmapper>
 				<flattenmapper />
-				<compositemapper>
-					<globmapper from="*.jnilib" to="*.dylib" />
-					<identitymapper />
-				</compositemapper>
 			</chainedmapper>
 		</unzip>
+
 		<unzip src="${dir.lib}/ivy/jar/sevenzipjbinding-all-platforms.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
 			<patternset>
 				<include name="**/${arch.7zj}/*.dll" />
@@ -849,6 +849,11 @@
 				</compositemapper>
 			</chainedmapper>
 		</unzip>
+
+		<!-- strip x86 and PPC native code from universal library -->
+		<exec executable="ditto" os="Mac OS X" dir="${dir.lib}/native/mac-x86_64">
+			<arg line="--arch x86_64 libjnidispatch.jnilib libjnidispatch.dylib" />
+		</exec>
 	</target>
 
 

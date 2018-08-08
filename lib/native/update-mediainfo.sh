@@ -27,12 +27,14 @@ done
 # Copy native libraries into repository
 cd ..
 
-cp Staging/*Mac*x86_64*/*/*/libmediainfo.0.dylib mac-x86_64/libmediainfo.dylib
 cp Staging/*Windows*x64*/MediaInfo.dll win32-x64/MediaInfo.dll
 cp Staging/*Windows*i386*/MediaInfo.dll win32-x86/MediaInfo.dll
 cp Staging/*/data/usr/lib/x86_64-linux-gnu/libmediainfo.so.0.0.0 linux-amd64/libmediainfo.so 
 cp Staging/*/data/usr/lib/i386-linux-gnu/libmediainfo.so.0.0.0 linux-i686/libmediainfo.so
 cp Staging/*/data/usr/lib/x86_64-linux-gnu/libzen.so.0.0.0 linux-amd64/libzen.so
 cp Staging/*/data/usr/lib/i386-linux-gnu/libzen.so.0.0.0 linux-i686/libzen.so
+
+# Strip x86 and PPC native code from universal library
+ditto --arch x86_64 Staging/*Mac*x86_64*/*/*/libmediainfo.0.dylib mac-x86_64/libmediainfo.dylib
 
 rm -r Staging
