@@ -1,5 +1,7 @@
 package net.filebot.util.ui;
 
+import static javax.swing.BorderFactory.*;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -18,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultSingleSelectionModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -55,7 +56,7 @@ public class SelectButton<T> extends JButton {
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setVerticalAlignment(SwingConstants.CENTER);
 
-		setBorder(BorderFactory.createLineBorder(new Color(0xA4A4A4), 1));
+		setBorder(createLineBorder(new Color(0xA4A4A4), 1));
 		setPreferredSize(new Dimension(32, 22));
 
 		addActionListener(new OpenPopupOnClick());

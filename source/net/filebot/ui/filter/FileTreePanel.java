@@ -1,10 +1,10 @@
 package net.filebot.ui.filter;
 
+import static javax.swing.BorderFactory.*;
 import static net.filebot.ui.transfer.BackgroundFileTransferablePolicy.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -25,7 +25,7 @@ class FileTreePanel extends JComponent {
 	public FileTreePanel() {
 		fileTree.setTransferHandler(new DefaultTransferHandler(transferablePolicy, null));
 
-		setBorder(BorderFactory.createTitledBorder("File Tree"));
+		setBorder(createTitledBorder("File Tree"));
 
 		setLayout(new MigLayout("insets 0, nogrid, fill", "align center", "[fill][pref!]"));
 		add(new LoadingOverlayPane(new JScrollPane(fileTree), this), "grow, wrap 1.2mm");

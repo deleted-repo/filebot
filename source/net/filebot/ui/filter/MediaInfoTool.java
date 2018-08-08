@@ -1,6 +1,7 @@
 package net.filebot.ui.filter;
 
 import static java.util.Collections.*;
+import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.util.FileUtilities.*;
@@ -15,7 +16,6 @@ import java.util.concurrent.CancellationException;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 
-import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -47,7 +47,7 @@ class MediaInfoTool extends Tool<TableModel> {
 		table.setRowHeight(25);
 
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.setBorder(createEmptyBorder());
 
 		setLayout(new MigLayout("insets 0, fill"));
 		add(new LoadingOverlayPane(scrollPane, this), "grow");

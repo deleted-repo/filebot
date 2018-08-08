@@ -1,5 +1,6 @@
 package net.filebot.ui;
 
+import static javax.swing.BorderFactory.*;
 import static javax.swing.ScrollPaneConstants.*;
 import static net.filebot.Logging.*;
 import static net.filebot.util.ui.SwingUI.*;
@@ -17,7 +18,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -57,11 +57,11 @@ public abstract class AbstractSearchPanel<S, E> extends JComponent {
 		historyPanel.setColumnHeader(2, "Duration");
 
 		JScrollPane historyScrollPane = new JScrollPane(historyPanel, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
-		historyScrollPane.setBorder(BorderFactory.createEmptyBorder());
+		historyScrollPane.setBorder(createEmptyBorder());
 
 		tabbedPane.addTab("History", ResourceManager.getIcon("action.find"), historyScrollPane);
 
-		tabbedPaneGroup.setBorder(BorderFactory.createTitledBorder("Search Results"));
+		tabbedPaneGroup.setBorder(createTitledBorder("Search Results"));
 		tabbedPaneGroup.add(tabbedPane, "grow, wrap");
 		setLayout(new MigLayout("nogrid, novisualpadding, fill, insets 10px 10px 15px 10px", "align 45%", "[pref!]10px[fill]"));
 

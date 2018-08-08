@@ -1,6 +1,7 @@
 package net.filebot.ui.filter;
 
 import static java.util.Collections.*;
+import static javax.swing.BorderFactory.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
@@ -10,11 +11,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.CancellationException;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.CancellationException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -36,7 +36,7 @@ class TypeTool extends Tool<TreeModel> {
 
 		setLayout(new MigLayout("insets 0, fill"));
 		JScrollPane treeScrollPane = new JScrollPane(tree);
-		treeScrollPane.setBorder(BorderFactory.createEmptyBorder());
+		treeScrollPane.setBorder(createEmptyBorder());
 
 		add(new LoadingOverlayPane(treeScrollPane, this), "grow");
 

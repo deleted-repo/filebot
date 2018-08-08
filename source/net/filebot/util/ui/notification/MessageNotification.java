@@ -4,6 +4,7 @@
 
 package net.filebot.util.ui.notification;
 
+import static javax.swing.BorderFactory.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.BorderLayout;
@@ -32,8 +33,8 @@ public class MessageNotification extends NotificationWindow {
 	}
 
 	private int margin = 10;
-	private Border marginBorder = BorderFactory.createEmptyBorder(margin, margin, margin, margin);
-	private Border border = BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(new Color(245, 155, 15), Color.WHITE), marginBorder);
+	private Border marginBorder = createEmptyBorder(margin, margin, margin, margin);
+	private Border border = createCompoundBorder(createEtchedBorder(new Color(245, 155, 15), Color.WHITE), marginBorder);
 
 	private JLabel headLabel;
 	private JTextPane textArea;

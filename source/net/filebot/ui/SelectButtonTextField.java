@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -45,7 +44,7 @@ public class SelectButtonTextField<T> extends JComponent {
 	public SelectButtonTextField() {
 		selectButton.addActionListener(textFieldFocusOnClick);
 
-		editor.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, ((LineBorder) selectButton.getBorder()).getLineColor()));
+		editor.setBorder(createMatteBorder(1, 0, 1, 1, ((LineBorder) selectButton.getBorder()).getLineColor()));
 
 		setLayout(new MigLayout("fill, nogrid, novisualpadding"));
 		add(selectButton, "h pref!, w pref!, sizegroupy editor");
@@ -162,7 +161,7 @@ public class SelectButtonTextField<T> extends JComponent {
 			editor.setEnabled(comboBox.isEnabled());
 			editor.setFocusable(comboBox.isFocusable());
 			editor.setFont(comboBox.getFont());
-			editor.setBorder(BorderFactory.createEmptyBorder(0, 3, 0, 3));
+			editor.setBorder(createEmptyBorder(0, 3, 0, 3));
 
 			editor.addFocusListener(createFocusListener());
 

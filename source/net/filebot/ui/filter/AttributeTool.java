@@ -1,5 +1,6 @@
 package net.filebot.ui.filter;
 
+import static javax.swing.BorderFactory.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.util.FileUtilities.*;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 
-import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -42,7 +42,7 @@ class AttributeTool extends Tool<TableModel> {
 		table.setRowHeight(25);
 
 		JScrollPane scrollPane = new JScrollPane(table);
-		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.setBorder(createEmptyBorder());
 
 		setLayout(new MigLayout("insets 0, fill"));
 		add(new LoadingOverlayPane(scrollPane, this), "grow");
