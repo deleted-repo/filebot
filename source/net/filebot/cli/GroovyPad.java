@@ -1,5 +1,6 @@
 package net.filebot.cli;
 
+import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -159,7 +160,12 @@ public class GroovyPad extends JFrame {
 		output.setRoundedSelectionEdges(false);
 		output.setTabsEmulated(false);
 
-		return new RTextScrollPane(output, true);
+		output.setBorder(createEmptyBorder(2, 2, 2, 2));
+
+		RTextScrollPane sp = new RTextScrollPane(output, true);
+		sp.setBorder(createEmptyBorder());
+		sp.setLineNumbersEnabled(false);
+		return sp;
 	}
 
 	protected final ScriptShell shell;
