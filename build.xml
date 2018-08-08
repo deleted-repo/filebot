@@ -379,8 +379,8 @@
 				<include name="**.lproj/**" />
 				<exclude name="en.lproj/**" />
 			</fileset>
-			<fileset dir="${path.app}/Contents/PlugIns/jre-${jre.version}.jre">
-				<include name="bin/**" />
+			<fileset dir="${path.app}/Contents/PlugIns">
+				<include name="**/bin/**" />
 			</fileset>
 		</delete>
 
