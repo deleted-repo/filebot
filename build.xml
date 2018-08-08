@@ -820,6 +820,14 @@
 			<param name="arch.jna" value="freebsd-x86-64" />
 			<param name="arch.7zj" value="FreeBSD-amd64" />
 		</antcall>
+
+		<!-- strip x86 and PPC native code from universal library -->
+		<exec executable="ditto" os="Mac OS X" dir="${dir.lib}/native/mac-x86_64">
+			<arg line="--arch x86_64 libjnidispatch.jnilib libjnidispatch.dylib" />
+		</exec>
+		<delete verbose="yes">
+			<fileset dir="${dir.lib}/native/mac-x86_64" includes="*.jnilib" />
+		</delete>
 	</target>
 
 
@@ -849,14 +857,6 @@
 				</compositemapper>
 			</chainedmapper>
 		</unzip>
-
-		<!-- strip x86 and PPC native code from universal library -->
-		<exec executable="ditto" os="Mac OS X" dir="${dir.lib}/native/mac-x86_64">
-			<arg line="--arch x86_64 libjnidispatch.jnilib libjnidispatch.dylib" />
-		</exec>
-		<delete verbose="yes">
-			<fileset dir="${dir.lib}/native/mac-x86_64" includes="*.jnilib" />
-		</delete>
 	</target>
 
 
