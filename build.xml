@@ -755,19 +755,19 @@
 		<checksum property="x64.msi.sha256" file="${dir.release}/${release}_x64.msi" algorithm="SHA-256" />
 
 		<!-- replace variables for new release -->
-		<copy-replace todir="${dir.dist}/chocolatey">
-			<fileset dir="${dir.installer}/chocolatey">
+		<copy-replace todir="${dir.dist}/choco">
+			<fileset dir="${dir.installer}/choco">
 				<include name="**/*.ps1" />
 				<include name="**/*.nuspec" />
 			</fileset>
 		</copy-replace>
 
 		<!-- chocolatey pack and push -->
-		<exec executable="chocolatey" dir="${dir.dist}/chocolatey" failonerror="yes">
+		<exec executable="choco" dir="${dir.dist}/choco" failonerror="yes">
 			<arg line="pack" />
 		</exec>
-		<exec executable="chocolatey" dir="${dir.dist}/chocolatey" failonerror="yes">
-			<arg line="push ${package.name}.${version}.nupkg" />
+		<exec executable="choco" dir="${dir.dist}/choco" failonerror="yes">
+			<arg line="push ${package.name}.${application.version}.nupkg" />
 		</exec>
 	</target>
 
