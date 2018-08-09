@@ -8,6 +8,7 @@
 		<owners>@{package.maintainer}</owners>
 		<summary>@{package.synopsis}</summary>
 		<description>@{package.description}</description>
+		<tags>filebot renamer plex kodi emby checksum crc32 md5 sha256 admin</tags>
 		<iconUrl>@{link.image.logo}</iconUrl>
 		<projectUrl>@{package.homepage}</projectUrl>
 		<docsUrl>@{link.intro}</docsUrl>
