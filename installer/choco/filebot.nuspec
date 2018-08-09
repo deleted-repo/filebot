@@ -8,7 +8,6 @@
 		<owners>@{package.maintainer}</owners>
 		<summary>@{package.synopsis}</summary>
 		<description>@{package.description}</description>
-		<tags>@{package.tags}</tags>
 		<iconUrl>@{link.image.logo}</iconUrl>
 		<projectUrl>@{package.homepage}</projectUrl>
 		<docsUrl>@{link.intro}</docsUrl>
