@@ -11,9 +11,12 @@
 		<tags>filebot renamer plex kodi emby checksum crc32 md5 sha256 admin</tags>
 		<iconUrl>@{link.image.logo}</iconUrl>
 		<projectUrl>@{package.homepage}</projectUrl>
+		<licenseUrl>https://github.com/filebot/filebot/blob/master/LICENSE.md</licenseUrl>
+		<packageSourceUrl>https://github.com/filebot/filebot/tree/master/installer/choco</packageSourceUrl>
 		<docsUrl>@{link.intro}</docsUrl>
 		<mailingListUrl>@{link.forums}</mailingListUrl>
 		<bugTrackerUrl>@{link.bugs}</bugTrackerUrl>
+		<releaseNotes>https://www.filebot.net/forums/viewforum.php?f=7</releaseNotes>
 		<copyright>@{tstamp.year} @{package.developer}</copyright>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 	</metadata>
