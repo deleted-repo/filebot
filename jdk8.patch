@@ -1,8 +1,8 @@
 diff --git a/app.properties b/app.properties
-index d65e10a9..4c1091a1 100644
+index 5c9c2ef7..b7dcc03f 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot/
+@@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot
  
  # Build
  main.class: net.filebot.Main
@@ -29,7 +29,7 @@ index d65e10a9..4c1091a1 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 836e447d..3d724439 100644
+index d8b74dcc..bb6f9ee0 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -96,9 +96,10 @@
@@ -85,10 +85,10 @@ index 8a8817e9..6af7097d 100644
  		Version="@{application.version}.0"
  	/>
 diff --git a/ivy.xml b/ivy.xml
-index 088bbd3b..06259dfb 100644
+index f1395934..bc7531be 100644
 --- a/ivy.xml
 +++ b/ivy.xml
-@@ -25,7 +25,7 @@
+@@ -26,7 +26,7 @@
  		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
  		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
  		<dependency rev="0.6.7" org="one.util" name="streamex" />
