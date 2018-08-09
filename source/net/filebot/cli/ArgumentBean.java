@@ -358,6 +358,10 @@ public class ArgumentBean {
 
 	private final String[] args;
 
+	public ArgumentBean() {
+		this.args = new String[0];
+	}
+
 	public ArgumentBean(String... args) throws CmdLineException {
 		this.args = args;
 

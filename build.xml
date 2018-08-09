@@ -363,10 +363,6 @@
 		<create-app-bundle dir="${dir.staging}" deployment="mas" runtime="yes" license="no" identifier="${package.identifier}">
 			<option value="-Dapplication.update=skip" />
 
-			<!-- MAS does not allow subtitle apps -->
-			<argument value="--mode" />
-			<argument value="Rename|Episodes|SFV|Filter|List" />
-
 			<!-- WORKING_DIR is sandbox data folder -->
 			<option value="-Dapplication.dir=Library/Application Support/User Data" />
 			<option value="-Dapplication.cache=Library/Caches/ehcache.disk.store" />

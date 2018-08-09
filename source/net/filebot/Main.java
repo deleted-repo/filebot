@@ -1,6 +1,7 @@
 package net.filebot;
 
 import static java.awt.GraphicsEnvironment.*;
+import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
@@ -57,7 +58,7 @@ public class Main {
 	public static void main(String[] argv) {
 		try {
 			// parse arguments
-			ArgumentBean args = new ArgumentBean(argv);
+			ArgumentBean args = isMacSandbox() ? new ArgumentBean() : new ArgumentBean(argv); // MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333)
 
 			// just print help message or version string and then exit
 			if (args.printHelp()) {
@@ -216,10 +217,15 @@ public class Main {
 		// use native LaF an all platforms
 		setSystemLookAndFeel();
 
-		// start multi panel or single panel frame
+		// start standard frame or single panel frame
 		PanelBuilder[] panels = args.getPanelBuilders();
-		JFrame frame = panels.length > 1 ? new MainFrame(panels) : new SinglePanelFrame(panels[0]);
 
+		// MAS does not allow subtitle applications
+		if (isMacSandbox()) {
+			panels = stream(panels).filter(p -> !p.getName().equals("Subtitles")).toArray(PanelBuilder[]::new);
+		}
+
+		JFrame frame = panels.length > 1 ? new MainFrame(panels) : new SinglePanelFrame(panels[0]);
 		try {
 			restoreWindowBounds(frame, Settings.forPackage(MainFrame.class)); // restore previous size and location
 		} catch (Exception e) {
@@ -346,9 +352,7 @@ public class Main {
 	}
 
 	/**
-	 * Initialize default SecurityManager and grant all permissions via security
-	 * policy. Initialization is required in order to run {@link ExpressionFormat}
-	 * in a secure sandbox.
+	 * Initialize default SecurityManager and grant all permissions via security policy. Initialization is required in order to run {@link ExpressionFormat} in a secure sandbox.
 	 */
 	private static void initializeSecurityManager() {
 		try {
