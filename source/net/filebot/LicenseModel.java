@@ -1,9 +1,8 @@
 package net.filebot;
 
+import static java.nio.file.Files.*;
+import static java.nio.file.Paths.*;
 import static net.filebot.platform.windows.WinAppUtilities.*;
-
-import java.io.File;
-import java.util.stream.Stream;
 
 public enum LicenseModel {
 
@@ -27,7 +26,7 @@ public enum LicenseModel {
 
 	MacAppStore {
 
-		private final Resource<Boolean> SANDBOX = Resource.lazy(() -> System.getenv("APP_SANDBOX_CONTAINER_ID").equals("net.filebot.FileBot") && Stream.of(File.listRoots()).noneMatch(File::canRead));
+		private final Resource<Boolean> SANDBOX = Resource.lazy(() -> System.getenv("APP_SANDBOX_CONTAINER_ID").equals("net.filebot.FileBot") && !isReadable(get("/tmp")));
 
 		@Override
 		public Object check() throws LicenseError {
