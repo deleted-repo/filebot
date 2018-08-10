@@ -8,7 +8,7 @@ public enum LicenseModel {
 
 	MicrosoftStore {
 
-		private final Resource<Boolean> AUMID = Resource.lazy(() -> getAppUserModelID() == null || getAppUserModelID().equals("PointPlanck.FileBot"));
+		private final Resource<Boolean> AUMID = Resource.lazy(() -> getAppUserModelID() == null && !isWritable(get(System.getProperty("java.class.path"))));
 
 		@Override
 		public Object check() throws LicenseError {
