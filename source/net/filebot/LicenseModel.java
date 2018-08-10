@@ -9,7 +9,7 @@ public enum LicenseModel {
 
 	MicrosoftStore {
 
-		private final Resource<Boolean> AUMID = Resource.lazy(() -> File.pathSeparatorChar == ':' && System.getProperty("java.home").matches("^[A-Z]:\\\\Program.Files\\\\WindowsApps\\\\PointPlanck.FileBot.*") && !isWritable(get(System.getProperty("java.class.path"))));
+		private final Resource<Boolean> AUMID = Resource.lazy(() -> File.pathSeparatorChar == ':' && System.getProperty("java.home").contains("PointPlanck.FileBot") && !isWritable(get(System.getProperty("java.class.path"))));
 
 		@Override
 		public Object check() throws LicenseError {
