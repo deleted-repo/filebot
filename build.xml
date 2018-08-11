@@ -260,7 +260,7 @@
 
 
 	<target name="appx" depends="revision" description="Build Windows 10 package">
-		<property name="appx.arch" location="x64" />
+		<property name="appx.arch" value="x64" />
 		<property name="dir.staging" location="${dir.dist}/appx" />
 
 		<copy todir="${dir.staging}">
