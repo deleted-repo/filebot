@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index 5c9c2ef7..b7dcc03f 100644
+index 755d034a..9f77f227 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -29,7 +29,7 @@ index 5c9c2ef7..b7dcc03f 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index d8b74dcc..bb6f9ee0 100644
+index f758da13..fe2b52a7 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -96,9 +96,10 @@
@@ -53,24 +53,15 @@ index d8b74dcc..bb6f9ee0 100644
  			<classpath refid="jar.classpath" />
  		</javac>
  
-@@ -266,7 +267,7 @@
- 			<fileset dir="${dir.installer}/msi" includes="filebot.exe, filebot.launcher.exe" />
- 		</copy>
- 		<copy todir="${dir.staging}/lib">
--			<fileset dir="${dir.lib}/native/win32-x64" />
-+			<fileset dir="${dir.lib}/native/win32-x86" />
- 		</copy>
- 		<copy todir="${dir.staging}/jar">
- 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
-@@ -297,7 +298,7 @@
- 			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
- 		</exec>
- 		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
--			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_x64.appx" />
-+			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_x86.appx" />
- 		</exec>
- 	</target>
+@@ -260,7 +261,7 @@
  
+ 
+ 	<target name="appx" depends="revision" description="Build Windows 10 package">
+-		<property name="appx.arch" location="x64" />
++		<property name="appx.arch" location="x86" />
+ 		<property name="dir.staging" location="${dir.dist}/appx" />
+ 
+ 		<copy todir="${dir.staging}">
 diff --git a/installer/appx/AppxManifest.xml b/installer/appx/AppxManifest.xml
 index 8a8817e9..6af7097d 100644
 --- a/installer/appx/AppxManifest.xml
