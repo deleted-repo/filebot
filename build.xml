@@ -260,13 +260,14 @@
 
 
 	<target name="appx" depends="revision" description="Build Windows 10 package">
+		<property name="appx.arch" location="x64" />
 		<property name="dir.staging" location="${dir.dist}/appx" />
 
 		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/msi" includes="filebot.exe, filebot.launcher.exe" />
+			<fileset dir="${dir.installer}/appx/${appx.arch}" includes="*.exe" />
 		</copy>
 		<copy todir="${dir.staging}/lib">
-			<fileset dir="${dir.lib}/native/win32-x64" />
+			<fileset dir="${dir.lib}/native/win32-${appx.arch}" />
 		</copy>
 		<copy todir="${dir.staging}/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
@@ -297,7 +298,7 @@
 			<arg line="new /o /pr . /cf priconfig.xml /in ${microsoft.application.name}" />
 		</exec>
 		<exec executable="makeappx" dir="${dir.dist}" failonerror="yes">
-			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_x64.appx" />
+			<arg line="pack /v /o /d ${dir.staging} /p ${release}_r${revision}_${appx.arch}.appx" />
 		</exec>
 	</target>
 
