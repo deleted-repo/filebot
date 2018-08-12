@@ -29,7 +29,7 @@ index 755d034a..9f77f227 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 857a623f..b28b4971 100644
+index 901226e9..cc019503 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -96,9 +96,10 @@
@@ -62,19 +62,19 @@ index 857a623f..b28b4971 100644
  		<property name="dir.staging" location="${dir.dist}/appx" />
  
  		<copy todir="${dir.staging}">
-diff --git a/installer/appx/AppxManifest.xml b/installer/appx/AppxManifest.xml
-index 8a8817e9..6af7097d 100644
---- a/installer/appx/AppxManifest.xml
-+++ b/installer/appx/AppxManifest.xml
-@@ -9,7 +9,7 @@
+@@ -304,9 +305,9 @@
  
- 	<Identity
- 		Name="@{microsoft.application.name}"
--		ProcessorArchitecture="x64"
-+		ProcessorArchitecture="x86"
- 		Publisher="@{microsoft.application.publisher}"
- 		Version="@{application.version}.0"
- 	/>
+ 
+ 	<target name="msi" depends="revision" description="Build Windows Installer package">
+-		<property name="msi.package.platform" value="x64" />
+-		<property name="msi.directory.id" value="ProgramFiles64Folder" />
+-		<property name="msi.component.win64" value="yes" />
++		<property name="msi.package.platform" value="x86" />
++		<property name="msi.directory.id" value="ProgramFilesFolder" />
++		<property name="msi.component.win64" value="no" />
+ 
+ 		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
+ 
 diff --git a/ivy.xml b/ivy.xml
 index f1395934..bc7531be 100644
 --- a/ivy.xml
