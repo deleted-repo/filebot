@@ -29,7 +29,7 @@ index 755d034a..9f77f227 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 901226e9..cc019503 100644
+index d4b82928..1661247f 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -96,9 +96,10 @@
@@ -59,9 +59,9 @@ index 901226e9..cc019503 100644
  	<target name="appx" depends="revision" description="Build Windows 10 package">
 -		<property name="appx.arch" value="x64" />
 +		<property name="appx.arch" value="x86" />
- 		<property name="dir.staging" location="${dir.dist}/appx" />
  
- 		<copy todir="${dir.staging}">
+ 		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
+ 
 @@ -304,9 +305,9 @@
  
  
