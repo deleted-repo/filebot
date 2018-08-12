@@ -338,7 +338,7 @@
 
 		<!-- 3. compile MSI package (use -b to add additional resource folders) -->
 		<exec executable="light" dir="${dir.staging}" failonerror="true">
-			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi -sval -ext WixUIExtension -out ${dir.dist}/${release}_${msi.package.platform}.msi" />
+			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi/${msi.package.platform} -b ${dir.installer}/msi -sval -ext WixUIExtension -out ${dir.dist}/${release}_${msi.package.platform}.msi" />
 		</exec>
 	</target>
 
