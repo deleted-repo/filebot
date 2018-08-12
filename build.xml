@@ -304,7 +304,8 @@
 
 
 	<target name="msi" depends="revision" description="Build Windows Installer package">
-		<property name="dir.staging" location="${dir.dist}/msi/x64" />
+		<property name="msi.arch" value="x64" />
+		<property name="dir.staging" location="${dir.dist}/msi/${msi.arch}" />
 
 		<!-- 1. prepare application files for heat harvest -->
 		<get-windows-jre dest="${dir.staging}/base/jre" />
@@ -313,7 +314,7 @@
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
 		<copy todir="${dir.staging}/base/lib">
-			<fileset dir="${dir.lib}/native/win32-x64" />
+			<fileset dir="${dir.lib}/native/win32-${msi.arch}" />
 		</copy>
 
 		<exec executable="heat" dir="${dir.staging}" failonerror="true">
@@ -334,7 +335,7 @@
 
 		<!-- 3. compile MSI package (use -b to add additional resource folders) -->
 		<exec executable="light" dir="${dir.staging}" failonerror="true">
-			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi -sval -ext WixUIExtension -out ${dir.dist}/${release}_x64.msi" />
+			<arg line="filebot.wixobj base.wixobj -b base -b ${dir.installer}/msi -sval -ext WixUIExtension -out ${dir.dist}/${release}_${msi.arch}.msi" />
 		</exec>
 	</target>
 
