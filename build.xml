@@ -261,7 +261,8 @@
 
 	<target name="appx" depends="revision" description="Build Windows 10 package">
 		<property name="appx.arch" value="x64" />
-		<property name="dir.staging" location="${dir.dist}/appx" />
+
+		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
 
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/appx/${appx.arch}" includes="*.exe" />
@@ -278,7 +279,7 @@
 
 		<!-- copy files and resolve ant variables -->
 		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/appx" includes="*.xml, *.ini" excludes="*.l4j.xml" />
+			<fileset dir="${dir.installer}/appx" includes="*.xml, *.ini" />
 		</copy-replace>
 
 		<!-- fetch latest JRE -->
@@ -288,7 +289,6 @@
 		<delete verbose="yes">
 			<fileset dir="${dir.staging}/jre" includes="**/*120*.dll" />
 		</delete>
-
 
 		<!-- package APPX -->
 		<exec executable="makepri" dir="${dir.staging}" failonerror="yes">
