@@ -1,6 +1,7 @@
 package net.filebot.platform.windows;
 
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -13,8 +14,8 @@ public interface Kernel32 extends StdCallLibrary {
 	long APPMODEL_ERROR_NO_PACKAGE = 15700;
 	long ERROR_INSUFFICIENT_BUFFER = 122;
 
-	long GetCurrentPackageFullName(UINTByReference packageFullNameLength, LPWSTR packageFullName);
+	NativeLong GetCurrentPackageFullName(UINTByReference packageFullNameLength, LPWSTR packageFullName);
 
-	long GetCurrentApplicationUserModelId(UINTByReference applicationUserModelIdLength, LPWSTR applicationUserModelId);
+	NativeLong GetCurrentApplicationUserModelId(UINTByReference applicationUserModelIdLength, LPWSTR applicationUserModelId);
 
 }

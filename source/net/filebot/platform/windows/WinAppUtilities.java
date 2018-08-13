@@ -10,6 +10,7 @@ import javax.swing.UIManager;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Shell32;
 import com.sun.jna.platform.win32.W32Errors;
@@ -45,10 +46,10 @@ public class WinAppUtilities {
 		UINTByReference packageFullNameLength = new UINTByReference(new UINT(64));
 		LPWSTR packageFullName = new LPWSTR(new Memory(packageFullNameLength.getValue().intValue() * Native.WCHAR_SIZE));
 
-		long r = Kernel32.INSTANCE.GetCurrentPackageFullName(packageFullNameLength, packageFullName);
+		NativeLong r = Kernel32.INSTANCE.GetCurrentPackageFullName(packageFullNameLength, packageFullName);
 
-		if (r != W32Errors.ERROR_SUCCESS) {
-			throw new IllegalStateException(String.format("Kernel32.GetCurrentPackageFullName (%d)", r));
+		if (r.intValue() != W32Errors.ERROR_SUCCESS) {
+			throw new IllegalStateException(String.format("Kernel32.GetCurrentPackageFullName (%s)", r));
 		}
 
 		return packageFullName.getValue();
@@ -58,9 +59,9 @@ public class WinAppUtilities {
 		UINTByReference applicationUserModelIdLength = new UINTByReference(new UINT(64));
 		LPWSTR applicationUserModelId = new LPWSTR(new Memory(applicationUserModelIdLength.getValue().intValue() * Native.WCHAR_SIZE));
 
-		long r = Kernel32.INSTANCE.GetCurrentApplicationUserModelId(applicationUserModelIdLength, applicationUserModelId);
+		NativeLong r = Kernel32.INSTANCE.GetCurrentApplicationUserModelId(applicationUserModelIdLength, applicationUserModelId);
 
-		if (r != W32Errors.ERROR_SUCCESS) {
+		if (r.intValue() != W32Errors.ERROR_SUCCESS) {
 			throw new IllegalStateException(String.format("Kernel32.GetCurrentApplicationUserModelId (%d)", r));
 		}
 
