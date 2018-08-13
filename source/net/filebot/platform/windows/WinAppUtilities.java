@@ -8,9 +8,14 @@ import java.util.logging.Level;
 
 import javax.swing.UIManager;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinError;
+import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.ptr.PointerByReference;
 
 public class WinAppUtilities {
@@ -33,6 +38,25 @@ public class WinAppUtilities {
 			debug.log(Level.WARNING, t.getMessage(), t);
 		}
 		return null;
+	}
+
+	public static String getPackageName() {
+		System.out.println("WinAppUtilities.getPackageName()");
+
+		UINTByReference length = new UINTByReference(new UINT(0));
+		Kernel32.INSTANCE.GetCurrentPackageFullName(length, null);
+
+		System.out.println(length);
+		System.out.println(length.getValue());
+		System.out.println(length.getValue().longValue());
+
+		LPWSTR lpwstr = new LPWSTR(new Memory(length.getValue().intValue() * Native.WCHAR_SIZE));
+		Kernel32.INSTANCE.GetCurrentPackageFullName(length, lpwstr);
+		System.out.println(length);
+		System.out.println(length.getValue());
+		System.out.println(lpwstr);
+
+		return lpwstr.toString();
 	}
 
 	public static void initializeApplication(String aumid) {
