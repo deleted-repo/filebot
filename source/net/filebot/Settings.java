@@ -85,7 +85,7 @@ public final class Settings {
 	}
 
 	public static boolean isWindowsApp() {
-		return File.separatorChar != '/' || isApplicationDeployment("appx", "msi", "zip");
+		return isApplicationDeployment("appx", "msi", "zip");
 	}
 
 	public static boolean isUbuntuApp() {

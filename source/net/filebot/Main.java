@@ -122,11 +122,6 @@ public class Main {
 						configureLicense(f);
 						System.exit(0);
 					});
-
-					// manually set AUMID for legacy processes
-					if (isWindowsApp()) {
-						WinAppUtilities.initializeApplication(getApplicationName());
-					}
 				}
 
 				int status = new ArgumentProcessor().run(args);
