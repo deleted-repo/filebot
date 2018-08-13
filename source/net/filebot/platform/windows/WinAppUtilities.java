@@ -62,7 +62,7 @@ public class WinAppUtilities {
 		NativeLong r = Kernel32.INSTANCE.GetCurrentApplicationUserModelId(applicationUserModelIdLength, applicationUserModelId);
 
 		if (r.intValue() != W32Errors.ERROR_SUCCESS) {
-			throw new IllegalStateException(String.format("Kernel32.GetCurrentApplicationUserModelId (%d)", r));
+			throw new IllegalStateException(String.format("Kernel32.GetCurrentApplicationUserModelId (%s)", r));
 		}
 
 		return applicationUserModelId.getValue();
