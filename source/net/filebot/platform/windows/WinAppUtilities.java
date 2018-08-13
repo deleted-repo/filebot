@@ -12,6 +12,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Shell32;
+import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinError;
@@ -41,20 +42,15 @@ public class WinAppUtilities {
 	}
 
 	public static String getPackageName() {
-		System.out.println("WinAppUtilities.getPackageName()");
-
 		UINTByReference length = new UINTByReference(new UINT(0));
-		Kernel32.INSTANCE.GetCurrentPackageFullName(length, null);
-
-		System.out.println(length);
-		System.out.println(length.getValue());
-		System.out.println(length.getValue().longValue());
+		if (Kernel32.INSTANCE.GetCurrentPackageFullName(length, null) != W32Errors.ERROR_SUCCESS) {
+			throw new IllegalStateException("Kernel32.GetCurrentPackageFullName");
+		}
 
 		LPWSTR lpwstr = new LPWSTR(new Memory(length.getValue().intValue() * Native.WCHAR_SIZE));
-		Kernel32.INSTANCE.GetCurrentPackageFullName(length, lpwstr);
-		System.out.println(length);
-		System.out.println(length.getValue());
-		System.out.println(lpwstr);
+		if (Kernel32.INSTANCE.GetCurrentPackageFullName(length, null) != W32Errors.ERROR_SUCCESS) {
+			throw new IllegalStateException("Kernel32.GetCurrentPackageFullName");
+		}
 
 		return lpwstr.toString();
 	}

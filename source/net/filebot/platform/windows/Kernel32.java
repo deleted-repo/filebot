@@ -8,10 +8,10 @@ import com.sun.jna.win32.W32APIOptions;
 
 public interface Kernel32 extends StdCallLibrary {
 
-	public static final long APPMODEL_ERROR_NO_PACKAGE = 15700;
-
 	Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	long GetCurrentPackageFullName(UINTByReference packageFullNameLength, LPWSTR packageFullName);
+
+	long APPMODEL_ERROR_NO_PACKAGE = 15700;
 
 }
