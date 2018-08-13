@@ -10,8 +10,11 @@ public interface Kernel32 extends StdCallLibrary {
 
 	Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
+	long APPMODEL_ERROR_NO_PACKAGE = 15700;
+	long ERROR_INSUFFICIENT_BUFFER = 122;
+
 	long GetCurrentPackageFullName(UINTByReference packageFullNameLength, LPWSTR packageFullName);
 
-	long APPMODEL_ERROR_NO_PACKAGE = 15700;
+	long GetCurrentApplicationUserModelId(UINTByReference applicationUserModelIdLength, LPWSTR applicationUserModelId);
 
 }

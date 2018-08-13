@@ -13,10 +13,10 @@ import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Shell32;
 import com.sun.jna.platform.win32.W32Errors;
+import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinError;
-import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.ptr.PointerByReference;
 
 public class WinAppUtilities {
@@ -42,17 +42,29 @@ public class WinAppUtilities {
 	}
 
 	public static String getPackageName() {
-		UINTByReference length = new UINTByReference(new UINT(0));
-		if (Kernel32.INSTANCE.GetCurrentPackageFullName(length, null) != W32Errors.ERROR_SUCCESS) {
-			throw new IllegalStateException("Kernel32.GetCurrentPackageFullName");
+		UINTByReference packageFullNameLength = new UINTByReference(new UINT(64));
+		LPWSTR packageFullName = new LPWSTR(new Memory(packageFullNameLength.getValue().intValue() * Native.WCHAR_SIZE));
+
+		long r = Kernel32.INSTANCE.GetCurrentPackageFullName(packageFullNameLength, packageFullName);
+
+		if (r != W32Errors.ERROR_SUCCESS) {
+			throw new IllegalStateException(String.format("Kernel32.GetCurrentPackageFullName (%d)", r));
 		}
 
-		LPWSTR lpwstr = new LPWSTR(new Memory(length.getValue().intValue() * Native.WCHAR_SIZE));
-		if (Kernel32.INSTANCE.GetCurrentPackageFullName(length, null) != W32Errors.ERROR_SUCCESS) {
-			throw new IllegalStateException("Kernel32.GetCurrentPackageFullName");
+		return packageFullName.getValue();
+	}
+
+	public static String getPackageAppUserModelID() {
+		UINTByReference applicationUserModelIdLength = new UINTByReference(new UINT(64));
+		LPWSTR applicationUserModelId = new LPWSTR(new Memory(applicationUserModelIdLength.getValue().intValue() * Native.WCHAR_SIZE));
+
+		long r = Kernel32.INSTANCE.GetCurrentPackageFullName(applicationUserModelIdLength, applicationUserModelId);
+
+		if (r != W32Errors.ERROR_SUCCESS) {
+			throw new IllegalStateException(String.format("Kernel32.GetCurrentApplicationUserModelId (%d)", r));
 		}
 
-		return lpwstr.toString();
+		return applicationUserModelId.getValue();
 	}
 
 	public static void initializeApplication(String aumid) {
