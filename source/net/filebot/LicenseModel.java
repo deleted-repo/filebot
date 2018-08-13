@@ -2,14 +2,13 @@ package net.filebot;
 
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
-
-import java.io.File;
+import static net.filebot.platform.windows.WinAppUtilities.*;
 
 public enum LicenseModel {
 
 	MicrosoftStore {
 
-		private final Resource<Boolean> AUMID = Resource.lazy(() -> File.pathSeparatorChar == ';' && System.getProperty("java.home").contains("PointPlanck.FileBot") && !isWritable(get(System.getProperty("java.class.path"))));
+		private final Resource<Boolean> AUMID = Resource.lazy(() -> getPackageAppUserModelID().equals("PointPlanck.FileBot"));
 
 		@Override
 		public Object check() throws LicenseError {
@@ -27,7 +26,7 @@ public enum LicenseModel {
 
 	MacAppStore {
 
-		private final Resource<Boolean> SANDBOX = Resource.lazy(() -> File.pathSeparatorChar == ':' && System.getenv("APP_SANDBOX_CONTAINER_ID").equals("net.filebot.FileBot") && !isReadable(get("/tmp")));
+		private final Resource<Boolean> SANDBOX = Resource.lazy(() -> System.getenv("APP_SANDBOX_CONTAINER_ID").equals("net.filebot.FileBot") && !isReadable(get("/tmp")));
 
 		@Override
 		public Object check() throws LicenseError {
