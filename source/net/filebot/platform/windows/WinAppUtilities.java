@@ -58,7 +58,7 @@ public class WinAppUtilities {
 		UINTByReference applicationUserModelIdLength = new UINTByReference(new UINT(64));
 		LPWSTR applicationUserModelId = new LPWSTR(new Memory(applicationUserModelIdLength.getValue().intValue() * Native.WCHAR_SIZE));
 
-		long r = Kernel32.INSTANCE.GetCurrentPackageFullName(applicationUserModelIdLength, applicationUserModelId);
+		long r = Kernel32.INSTANCE.GetCurrentApplicationUserModelId(applicationUserModelIdLength, applicationUserModelId);
 
 		if (r != W32Errors.ERROR_SUCCESS) {
 			throw new IllegalStateException(String.format("Kernel32.GetCurrentApplicationUserModelId (%d)", r));
