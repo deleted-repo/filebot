@@ -67,11 +67,6 @@ public class ArgumentProcessor {
 	}
 
 	public int runCommand(CmdlineInterface cli, ArgumentBean args) throws Exception {
-		// sanity checks
-		if (args.getSubtitles && args.recursive) {
-			throw new CmdlineException("`filebot -get-subtitles -r` has been disabled due to abuse. Please see http://bit.ly/suball for details.");
-		}
-
 		// print episode info or rename files in linear order
 		if (args.list) {
 			if (args.rename) {
