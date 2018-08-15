@@ -25,7 +25,7 @@ PACKAGE_LIBRARY_PATH="$FILEBOT_HOME/lib/$(uname -m)"
 SYNO_LIBRARY_PATH="/usr/local/mediainfo/lib:/usr/local/chromaprint/lib"
 
 # add fpcalc to the $PATH by default
-export PATH="$PATH:/usr/local/chromaprint/bin"
+export PATH="$PATH:/usr/local/chromaprint/bin:$PACKAGE_LIBRARY_PATH"
 
 
 # restore original working dir (which may be /root and yield permission denied)

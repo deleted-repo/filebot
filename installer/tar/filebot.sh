@@ -16,14 +16,20 @@ done
 PRG_DIR=`dirname "$PRG"`
 FILEBOT_HOME=`cd "$PRG_DIR" && pwd`
 
-# add package lib folder to library path
-PACKAGE_LIBRARY_ARCH="$(uname -s)-$(uname -m)"
-PACKAGE_LIBRARY_PATH="$FILEBOT_HOME/lib/$PACKAGE_LIBRARY_ARCH"
 
 # make sure required environment variables are set
 if [ -z "$USER" ]; then
 	export USER=`whoami`
 fi
+
+
+# add package lib folder to library path
+PACKAGE_LIBRARY_ARCH="$(uname -s)-$(uname -m)"
+PACKAGE_LIBRARY_PATH="$FILEBOT_HOME/lib/$PACKAGE_LIBRARY_ARCH"
+
+# add fpcalc to the $PATH by default
+export PATH="$PATH:$PACKAGE_LIBRARY_PATH"
+
 
 # force JVM language and encoding settings
 export LANG="en_US.UTF-8"
