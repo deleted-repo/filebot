@@ -14,14 +14,8 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 # choose archive extractor / media characteristics parser
-if uname -m | egrep "i386|i686|amd64|x86_64"; then
-	ARCHIVE_EXTRACTOR="SevenZipNativeBindings"  # use lib7-Zip-JBinding.so
-	MEDIA_PARSER="libmediainfo"                 # use libmediainfo
-else
-	# armv7l or aarch64
-	ARCHIVE_EXTRACTOR="ApacheVFS"               # use Apache Commons VFS2
-	MEDIA_PARSER="ffprobe"                      # use ffprobe
-fi
+ARCHIVE_EXTRACTOR="ApacheVFS"
+MEDIA_PARSER="ffprobe"
 
 # choose ffprobe executable
 FFPROBE="/mnt/ext/opt/medialibrary/bin/ffprobe"
