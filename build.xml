@@ -630,7 +630,6 @@
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/qpkg">
 				<include name="**/*.png" />
-				<include name="**/*.so" />
 			</fileset>
 		</copy>
 
@@ -650,6 +649,13 @@
 		</copy>
 		<copy todir="${dir.base}/lib/x86_64">
 			<fileset dir="${dir.lib}/native/linux-amd64" />
+		</copy>
+
+		<!-- overwrite native libraries with QNAP compatible ones -->
+		<copy todir="${dir.staging}" overwrite="yes">
+			<fileset dir="${dir.installer}/qpkg">
+				<include name="**/*.so" />
+			</fileset>
 		</copy>
 
 		<!-- fix execute permissions -->
