@@ -624,7 +624,7 @@
 			<fileset dir="${dir.installer}/qpkg">
 				<include name="**/*.sh" />
 				<include name="**/*.cfg" />
-				<include name="**/*_routines" />
+				<include name="**/package_routines" />
 			</fileset>
 		</copy-replace>
 		<copy todir="${dir.staging}">
