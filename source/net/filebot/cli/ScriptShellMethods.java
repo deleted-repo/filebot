@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 import org.codehaus.groovy.runtime.typehandling.DefaultTypeTransformation;
 
+import groovy.json.JsonBuilder;
 import groovy.lang.Closure;
 import groovy.lang.Range;
 import net.filebot.MediaTypes;
@@ -447,6 +448,10 @@ public class ScriptShellMethods {
 
 	public static boolean isMovie(File self) {
 		return MediaDetection.isMovie(self, true);
+	}
+
+	public static Object toJsonString(Object object) {
+		return new JsonBuilder(object).toPrettyString();
 	}
 
 	public static String format(Date self, String format) {
