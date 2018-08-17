@@ -17,7 +17,7 @@ public enum LicenseModel {
 					throw new LicenseError("Desktop Bridge not found");
 				}
 			} catch (Exception e) {
-				throw new IllegalStateException(e);
+				throw new LicenseError(e.getMessage());
 			}
 
 			return "Microsoft Store License";
@@ -35,7 +35,7 @@ public enum LicenseModel {
 					throw new LicenseError("Mac App Sandbox not found");
 				}
 			} catch (Exception e) {
-				throw new IllegalStateException(e);
+				throw new LicenseError(e.getMessage());
 			}
 
 			return "Mac App Store License";
