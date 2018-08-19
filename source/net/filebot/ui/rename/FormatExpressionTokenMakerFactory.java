@@ -1,4 +1,5 @@
 package net.filebot.ui.rename;
+
 import static java.util.Collections.*;
 
 import java.util.Set;

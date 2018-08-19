@@ -57,7 +57,7 @@ import javax.swing.event.PopupMenuListener;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import net.filebot.ResourceManager;
@@ -359,22 +359,30 @@ public class FormatDialog extends JDialog {
 	}
 
 	private RSyntaxTextArea createEditor() {
-		RSyntaxTextArea editor = new RSyntaxTextArea(new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_GROOVY), "", 1, 80);
+		RSyntaxDocument document = new RSyntaxDocument(new FormatExpressionTokenMakerFactory(), FormatExpressionTokenMakerFactory.SYNTAX_STYLE_GROOVY_FORMAT_EXPRESSION);
+		RSyntaxTextArea editor = new RSyntaxTextArea(document, "", 1, 80);
+
+		try {
+			Theme.load(FormatDialog.class.getResourceAsStream("FormatExpression.RSyntaxTheme.xml")).apply(editor);
+		} catch (Exception e) {
+			debug.log(Level.WARNING, e, e::toString);
+		}
 
 		editor.setAntiAliasingEnabled(true);
-		editor.setAnimateBracketMatching(false);
-		editor.setAutoIndentEnabled(false);
-		editor.setClearWhitespaceLinesEnabled(false);
+		editor.setAnimateBracketMatching(true);
+		editor.setAutoIndentEnabled(true);
 		editor.setBracketMatchingEnabled(true);
-		editor.setCloseCurlyBraces(false);
+		editor.setCloseCurlyBraces(true);
 		editor.setCodeFoldingEnabled(false);
 		editor.setHyperlinksEnabled(false);
 		editor.setUseFocusableTips(false);
+		editor.setClearWhitespaceLinesEnabled(false);
 		editor.setHighlightCurrentLine(false);
+		editor.setHighlightSecondaryLanguages(false);
 		editor.setLineWrap(false);
+		editor.setMarkOccurrences(false);
 		editor.setPaintMarkOccurrencesBorder(false);
 		editor.setPaintTabLines(false);
-		editor.setMarkOccurrences(false);
 		editor.setFont(new Font(MONOSPACED, PLAIN, 14));
 
 		// update format on change
