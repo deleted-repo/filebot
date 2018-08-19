@@ -454,11 +454,6 @@ public class ScriptShellMethods {
 		return new JsonBuilder(object).toPrettyString();
 	}
 
-	public static String format(Date self, String format) {
-		// XXX: org.apache.groovy.datetime.extensions.DateTimeExtensions is not registered for some reason in production (maybe a bug specific to Groovy 2.5.0)
-		return DateTimeFormatter.ofPattern(format, Locale.US).format(LocalDateTime.ofInstant(self.toInstant(), ZoneId.systemDefault()));
-	}
-
 	private ScriptShellMethods() {
 		throw new UnsupportedOperationException();
 	}
