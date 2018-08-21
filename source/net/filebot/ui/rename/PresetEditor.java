@@ -1,13 +1,11 @@
 package net.filebot.ui.rename;
 
-import static java.awt.Font.*;
 import static java.util.Collections.*;
 import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Font;
 import java.awt.Window;
 import java.io.File;
 import java.util.List;
@@ -28,7 +26,6 @@ import javax.swing.ListCellRenderer;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import net.filebot.Language;
@@ -83,8 +80,8 @@ public class PresetEditor extends JDialog {
 		selectRadio = new JRadioButton("<html><nobr>Do <b>Select</b> files</nobr></html>");
 		pathInput = new JTextField(40);
 
-		filterEditor = createEditor();
-		formatEditor = createEditor();
+		filterEditor = new FormatExpressionTextArea(new RSyntaxDocument(RSyntaxDocument.SYNTAX_STYLE_GROOVY));
+		formatEditor = new FormatExpressionTextArea();
 
 		actionCombo = createRenameActionCombo();
 		providerCombo = createDataProviderCombo();
@@ -197,28 +194,6 @@ public class PresetEditor extends JDialog {
 		JPanel inputGroup = new JPanel(new MigLayout("insets dialog, hidemode 3, nogrid, fill"));
 		inputGroup.setBorder(createTitledBorder(title));
 		return inputGroup;
-	}
-
-	private RSyntaxTextArea createEditor() {
-		RSyntaxTextArea editor = new RSyntaxTextArea(new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_GROOVY), "", 1, 80);
-
-		editor.setAntiAliasingEnabled(true);
-		editor.setAnimateBracketMatching(false);
-		editor.setAutoIndentEnabled(false);
-		editor.setClearWhitespaceLinesEnabled(false);
-		editor.setBracketMatchingEnabled(true);
-		editor.setCloseCurlyBraces(false);
-		editor.setCodeFoldingEnabled(false);
-		editor.setHyperlinksEnabled(false);
-		editor.setUseFocusableTips(false);
-		editor.setHighlightCurrentLine(false);
-		editor.setLineWrap(false);
-		editor.setPaintMarkOccurrencesBorder(false);
-		editor.setPaintTabLines(false);
-		editor.setMarkOccurrences(false);
-		editor.setFont(new Font(MONOSPACED, PLAIN, 14));
-
-		return editor;
 	}
 
 	private RTextScrollPane wrapEditor(RSyntaxTextArea editor) {

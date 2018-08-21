@@ -55,9 +55,6 @@ import javax.swing.Timer;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import net.filebot.ResourceManager;
@@ -74,7 +71,6 @@ import net.filebot.util.DefaultThreadFactory;
 import net.filebot.util.PreferencesList;
 import net.filebot.util.PreferencesMap.PreferencesEntry;
 import net.filebot.util.ui.GradientStyle;
-import net.filebot.util.ui.LazyDocumentListener;
 import net.filebot.util.ui.LinkButton;
 import net.filebot.util.ui.ProgressIndicator;
 import net.filebot.util.ui.notification.SeparatorBorder;
@@ -103,7 +99,7 @@ public class FormatDialog extends JDialog {
 	private JLabel preview = new JLabel();
 	private JLabel status = new JLabel();
 
-	private RSyntaxTextArea editor = createEditor();
+	private FormatExpressionTextArea editor = new FormatExpressionTextArea();
 	private ProgressIndicator progressIndicator = new ProgressIndicator();
 
 	private JLabel title = new JLabel();
@@ -255,6 +251,11 @@ public class FormatDialog extends JDialog {
 			log.info("Error message has been copied to clipboard");
 		}));
 
+		// update format on change
+		editor.onChange(evt -> {
+			checkFormatInBackground();
+		});
+
 		// update preview if sample has changed
 		addPropertyChangeListener("sample", evt -> {
 			if (isMacSandbox()) {
@@ -356,51 +357,6 @@ public class FormatDialog extends JDialog {
 		} catch (Exception e) {
 			debug.warning(e::toString);
 		}
-	}
-
-	private RSyntaxTextArea createEditor() {
-		RSyntaxDocument document = new RSyntaxDocument(new FormatExpressionTokenMakerFactory(), FormatExpressionTokenMakerFactory.SYNTAX_STYLE_GROOVY_FORMAT_EXPRESSION);
-		RSyntaxTextArea editor = new RSyntaxTextArea(document, "", 1, 80);
-
-		try {
-			Theme.load(FormatDialog.class.getResourceAsStream("FormatExpression.RSyntaxTheme.xml")).apply(editor);
-		} catch (Exception e) {
-			debug.log(Level.WARNING, e, e::toString);
-		}
-
-		editor.setAntiAliasingEnabled(true);
-		editor.setAnimateBracketMatching(true);
-		editor.setAutoIndentEnabled(true);
-		editor.setBracketMatchingEnabled(true);
-		editor.setCloseCurlyBraces(true);
-		editor.setCodeFoldingEnabled(false);
-		editor.setHyperlinksEnabled(false);
-		editor.setUseFocusableTips(false);
-		editor.setClearWhitespaceLinesEnabled(false);
-		editor.setHighlightCurrentLine(false);
-		editor.setHighlightSecondaryLanguages(false);
-		editor.setLineWrap(false);
-		editor.setMarkOccurrences(false);
-		editor.setPaintMarkOccurrencesBorder(false);
-		editor.setPaintTabLines(false);
-		editor.setFont(new Font(MONOSPACED, PLAIN, 14));
-
-		// update format on change
-		editor.getDocument().addDocumentListener(new LazyDocumentListener(evt -> {
-			checkFormatInBackground();
-		}));
-
-		// dynamically resize the code editor depending on how many lines the current format expression has
-		editor.getDocument().addDocumentListener(new LazyDocumentListener(0, evt -> {
-			int r1 = editor.getRows();
-			int r2 = (int) editor.getText().chars().filter(c -> c == '\n').count() + 1;
-			if (r1 != r2) {
-				editor.setRows(r2);
-				getWindow(editor).revalidate();
-			}
-		}));
-
-		return editor;
 	}
 
 	private JComponent createSyntaxPanel(Mode mode) {
