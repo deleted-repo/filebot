@@ -8,7 +8,7 @@
 		<owners>@{package.maintainer}</owners>
 		<summary>@{package.synopsis}</summary>
 		<description>@{package.description}</description>
-		<tags>filebot renamer plex kodi emby checksum crc32 md5 sha256 admin</tags>
+		<tags>filebot renamer plex kodi emby checksum crc32 md5 sha256 utility license admin</tags>
 		<iconUrl>@{link.image.logo}</iconUrl>
 		<projectUrl>@{package.homepage}</projectUrl>
 		<licenseUrl>https://github.com/filebot/filebot/blob/master/LICENSE.md</licenseUrl>
