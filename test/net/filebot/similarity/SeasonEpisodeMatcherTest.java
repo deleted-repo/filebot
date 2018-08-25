@@ -66,6 +66,9 @@ public class SeasonEpisodeMatcherTest {
 
 		// test high values
 		assertEquals(new SxE(12, 345), matcher.match("Test - S12E345 - High Values").get(0));
+
+		// test odd patterns
+		assertEquals(new SxE(3, 4), matcher.match("S3-04").get(0));
 	}
 
 	@Test
