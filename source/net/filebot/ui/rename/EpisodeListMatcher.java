@@ -161,9 +161,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 			synchronized (inputMemory) {
 				List<String> input = inputMemory.get(suggestion);
 				if (input == null || suggestion == null || suggestion.isEmpty()) {
-					synchronized (parent) {
-						input = showMultiValueInputDialog(getQueryInputMessage("Please identify the following files:", "Enter series name:", files), suggestion, provider.getName(), parent);
-					}
+					input = showMultiValueInputDialog(getQueryInputMessage("Please identify the following files:", "Enter series name:", files), suggestion, provider.getName(), parent);
 					inputMemory.put(suggestion, input);
 				}
 
@@ -279,7 +277,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 			}
 
 			// allow only one select dialog at a time
-			synchronized (parent) {
+			synchronized (INPUT_DIALOG_LOCK) {
 				SwingUtilities.invokeAndWait(showSelectDialog);
 				SearchResult userSelection = showSelectDialog.get();
 

@@ -229,9 +229,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 
 				if (input == null || suggestion == null || suggestion.isEmpty()) {
 					File movieFolder = guessMovieFolder(movieFile);
-					synchronized (parent) {
-						input = showInputDialog(getQueryInputMessage("Please identify the following files:", "Enter movie name:", movieFile), suggestion != null && suggestion.length() > 0 ? suggestion : getName(movieFile), movieFolder == null ? movieFile.getName() : String.join(" / ", movieFolder.getName(), movieFile.getName()), parent);
-					}
+					input = showInputDialog(getQueryInputMessage("Please identify the following files:", "Enter movie name:", movieFile), suggestion != null && suggestion.length() > 0 ? suggestion : getName(movieFile), movieFolder == null ? movieFile.getName() : String.join(" / ", movieFolder.getName(), movieFile.getName()), parent);
 					inputMemory.put(suggestion, input);
 				}
 
@@ -391,7 +389,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 				return null;
 			}
 
-			synchronized (parent) {
+			synchronized (INPUT_DIALOG_LOCK) {
 				SwingUtilities.invokeAndWait(showSelectDialog);
 
 				// cache selected value

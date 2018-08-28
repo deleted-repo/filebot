@@ -226,7 +226,7 @@ public final class SwingUI {
 		return (frame.getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 	}
 
-	public static List<String> showMultiValueInputDialog(final Object message, final String initialValue, final String title, final Component parent) {
+	public static List<String> showMultiValueInputDialog(Object message, String initialValue, String title, Component parent) {
 		String input = showInputDialog(message, initialValue, title, parent);
 		if (input == null || input.isEmpty()) {
 			return emptyList();
@@ -252,15 +252,19 @@ public final class SwingUI {
 		return singletonList(input);
 	}
 
-	public static String showInputDialog(final Object message, final String initialValue, final String title, final Component parent) {
-		final StringBuilder buffer = new StringBuilder();
+	public static final Object INPUT_DIALOG_LOCK = new Object();
 
-		runOnEventDispatchThread(() -> {
-			Object value = JOptionPane.showInputDialog(parent, message, title, PLAIN_MESSAGE, null, null, initialValue);
-			if (value != null) {
-				buffer.append(value.toString().trim());
-			}
-		});
+	public static String showInputDialog(Object message, String initialValue, String title, Component parent) {
+		StringBuilder buffer = new StringBuilder();
+
+		synchronized (INPUT_DIALOG_LOCK) {
+			runOnEventDispatchThread(() -> {
+				Object value = JOptionPane.showInputDialog(parent, message, title, PLAIN_MESSAGE, null, null, initialValue);
+				if (value != null) {
+					buffer.append(value.toString().trim());
+				}
+			});
+		}
 
 		return buffer.length() == 0 ? null : buffer.toString();
 	}
