@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -231,7 +232,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 		}
 
 		// show selection dialog on EDT
-		RunnableFuture<SearchResult> showSelectDialog = new FutureTask<SearchResult>(() -> {
+		Callable<SearchResult> showSelectDialog = () -> {
 			JLabel header = new JLabel(getQueryInputMessage("Failed to identify some of the following files:", null, getFilesForQuery(files, query)));
 			header.setBorder(createCompoundBorder(createTitledBorder(""), createEmptyBorder(3, 3, 3, 3)));
 
@@ -261,7 +262,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 
 			// selected value or null if the dialog was canceled by the user
 			return selectDialog.getSelectedValue();
-		});
+		};
 
 		synchronized (selectionMemory) {
 			if (selectionMemory.containsKey(query)) {
@@ -277,14 +278,11 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 			}
 
 			// allow only one select dialog at a time
-			synchronized (INPUT_DIALOG_LOCK) {
-				SwingUtilities.invokeAndWait(showSelectDialog);
-				SearchResult userSelection = showSelectDialog.get();
+			SearchResult userSelection = showInputDialog(showSelectDialog);
 
-				// remember selected value
-				selectionMemory.put(query, userSelection);
-				return userSelection;
-			}
+			// remember selected value
+			selectionMemory.put(query, userSelection);
+			return userSelection;
 		}
 	}
 

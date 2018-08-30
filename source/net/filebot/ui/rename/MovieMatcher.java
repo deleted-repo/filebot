@@ -29,18 +29,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RunnableFuture;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
 
 import javax.swing.Action;
 import javax.swing.JLabel;
-import javax.swing.SwingUtilities;
 
 import net.filebot.similarity.Match;
 import net.filebot.similarity.NameSimilarityMetric;
@@ -340,7 +338,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 		}
 
 		// show selection dialog on EDT
-		RunnableFuture<Movie> showSelectDialog = new FutureTask<Movie>(() -> {
+		Callable<Movie> showSelectDialog = () -> {
 			String query = fileQuery.length() >= 2 || folderQuery.length() <= 2 ? fileQuery : folderQuery;
 			JLabel header = new JLabel(getQueryInputMessage("Failed to identify some of the following files:", null, movieFile));
 			header.setBorder(createCompoundBorder(createTitledBorder(""), createEmptyBorder(3, 3, 3, 3)));
@@ -372,7 +370,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 
 			// selected value or null if the dialog was canceled by the user
 			return selectDialog.getSelectedValue();
-		});
+		};
 
 		// allow only one select dialog at a time
 		synchronized (selectionMemory) {
@@ -389,13 +387,12 @@ class MovieMatcher implements AutoCompleteMatcher {
 				return null;
 			}
 
-			synchronized (INPUT_DIALOG_LOCK) {
-				SwingUtilities.invokeAndWait(showSelectDialog);
+			// allow only one select dialog at a time
+			Movie userSelection = showInputDialog(showSelectDialog);
 
-				// cache selected value
-				selectionMemory.put(selectionKey, showSelectDialog.get());
-				return showSelectDialog.get();
-			}
+			// cache selected value
+			selectionMemory.put(selectionKey, userSelection);
+			return userSelection;
 		}
 	}
 

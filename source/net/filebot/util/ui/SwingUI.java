@@ -31,7 +31,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -226,7 +228,39 @@ public final class SwingUI {
 		return (frame.getExtendedState() & Frame.MAXIMIZED_BOTH) != 0;
 	}
 
-	public static List<String> showMultiValueInputDialog(Object message, String initialValue, String title, Component parent) {
+	private static final ReentrantLock INPUT_DIALOG_LOCK = new ReentrantLock(true); // use fair lock to display dialogs in FIFO order
+
+	public static <T> T showInputDialog(Callable<T> callable) throws Exception {
+		Object[] value = { null };
+
+		// display only one dialog at a time, one after another, in the correct sequence
+		INPUT_DIALOG_LOCK.lock();
+		try {
+			if (SwingUtilities.isEventDispatchThread()) {
+				value[0] = callable.call();
+			} else {
+				SwingUtilities.invokeAndWait(() -> {
+					try {
+						value[0] = callable.call();
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				});
+			}
+		} finally {
+			INPUT_DIALOG_LOCK.unlock();
+		}
+
+		return (T) value[0];
+	}
+
+	public static String showInputDialog(Object message, String initialValue, String title, Component parent) throws Exception {
+		return showInputDialog(() -> {
+			return (String) JOptionPane.showInputDialog(parent, message, title, PLAIN_MESSAGE, null, null, initialValue);
+		});
+	}
+
+	public static List<String> showMultiValueInputDialog(Object message, String initialValue, String title, Component parent) throws Exception {
 		String input = showInputDialog(message, initialValue, title, parent);
 		if (input == null || input.isEmpty()) {
 			return emptyList();
@@ -250,23 +284,6 @@ public final class SwingUI {
 		}
 
 		return singletonList(input);
-	}
-
-	public static final Object INPUT_DIALOG_LOCK = new Object();
-
-	public static String showInputDialog(Object message, String initialValue, String title, Component parent) {
-		StringBuilder buffer = new StringBuilder();
-
-		synchronized (INPUT_DIALOG_LOCK) {
-			runOnEventDispatchThread(() -> {
-				Object value = JOptionPane.showInputDialog(parent, message, title, PLAIN_MESSAGE, null, null, initialValue);
-				if (value != null) {
-					buffer.append(value.toString().trim());
-				}
-			});
-		}
-
-		return buffer.length() == 0 ? null : buffer.toString();
 	}
 
 	public static Window getWindow(Object component) {
