@@ -72,9 +72,15 @@ class RenameAction extends AbstractAction {
 
 		Window window = getWindow(evt.getSource());
 		withWaitCursor(window, () -> {
-			Map<File, File> renameMap = validate(model.getRenameMap(), window);
+			// prepare rename map (abort and notify the user if background computation is still in progress)
+			Map<File, File> renameMap = null;
+			try {
+				renameMap = validate(model.getRenameMap(), window);
+			} catch (Exception e) {
+				log.log(Level.WARNING, e::getMessage);
+			}
 
-			if (renameMap.isEmpty()) {
+			if (renameMap == null || renameMap.isEmpty()) {
 				return;
 			}
 

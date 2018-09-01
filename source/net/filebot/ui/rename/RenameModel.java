@@ -92,7 +92,7 @@ public class RenameModel extends MatchModel<Object, File> {
 				} catch (ExecutionException e) {
 					throw new IllegalStateException(String.format("\"%s\" could not be formatted: %s.", task.preview(), e.getCause().getMessage()));
 				} catch (TimeoutException e) {
-					throw new IllegalStateException(String.format("\"%s\" has not been formatted yet.", task.preview()));
+					throw new IllegalStateException(String.format("\"%s\" has not been formatted yet. Applying custom formats may take a while.", task.preview()));
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				}
