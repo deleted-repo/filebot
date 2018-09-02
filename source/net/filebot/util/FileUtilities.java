@@ -159,6 +159,10 @@ public final class FileUtilities {
 		return destination.toFile();
 	}
 
+	public static boolean existsNoFollowLinks(File file) {
+		return Files.exists(file.toPath(), LinkOption.NOFOLLOW_LINKS);
+	}
+
 	public static void delete(File file) throws IOException {
 		if (file.isDirectory()) {
 			Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>() {
@@ -620,8 +624,7 @@ public final class FileUtilities {
 	/**
 	 * Strip file name of invalid characters
 	 *
-	 * @param filename
-	 *            original filename
+	 * @param filename original filename
 	 * @return valid file name stripped of invalid characters
 	 */
 	public static String validateFileName(CharSequence filename) {

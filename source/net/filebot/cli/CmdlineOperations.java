@@ -600,7 +600,7 @@ public class CmdlineOperations implements CmdlineInterface {
 						destination = resolve(source, destination);
 					}
 
-					if (!destination.equals(source) && destination.exists()) {
+					if (!destination.equals(source) && existsNoFollowLinks(destination)) {
 						if (conflictAction == ConflictAction.FAIL) {
 							throw new CmdlineException(String.format("Failed to process [%s] because [%s] already exists", source, destination));
 						}
