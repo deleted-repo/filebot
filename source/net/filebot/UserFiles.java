@@ -32,7 +32,7 @@ public class UserFiles {
 
 	public static void trash(File file) throws IOException {
 		// use system trash if possible
-		if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
 			try {
 				if (Desktop.getDesktop().moveToTrash(file)) {
 					return;
