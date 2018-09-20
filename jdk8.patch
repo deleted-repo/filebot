@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index 755d034a..9f77f227 100644
+index 62b16cd1..eeeb1494 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -29,7 +29,7 @@ index 755d034a..9f77f227 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index d4b82928..1661247f 100644
+index e4fa7677..b134fc3d 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -96,9 +96,10 @@
@@ -76,7 +76,7 @@ index d4b82928..1661247f 100644
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
 diff --git a/ivy.xml b/ivy.xml
-index f1395934..bc7531be 100644
+index 8f413c72..73800510 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -26,7 +26,7 @@
@@ -125,7 +125,7 @@ index 7e393cac..5eb3dadd 100644
  			throw new RuntimeException(e);
  		}
 diff --git a/source/net/filebot/UserFiles.java b/source/net/filebot/UserFiles.java
-index 660c7cef..d551a310 100644
+index bb0f65de..25b687ab 100644
 --- a/source/net/filebot/UserFiles.java
 +++ b/source/net/filebot/UserFiles.java
 @@ -2,7 +2,6 @@ package net.filebot;
@@ -157,8 +157,8 @@ index 660c7cef..d551a310 100644
  
  	public static void trash(File file) throws IOException {
  		// use system trash if possible
--		if (Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
-+		if (FileUtils.getInstance().hasTrash()) {
+-		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.MOVE_TO_TRASH)) {
++		if (Desktop.isDesktopSupported() && FileUtils.getInstance().hasTrash()) {
  			try {
 -				if (Desktop.getDesktop().moveToTrash(file)) {
 -					return;
