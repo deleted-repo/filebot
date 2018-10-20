@@ -1158,6 +1158,11 @@ public class CmdlineOperations implements CmdlineInterface {
 					outputMapping.add(new SimpleFileInfo(outputPath.getPath(), it.getLength()));
 				}
 
+				// print warning message if archive appears empty
+				if (outputMapping.isEmpty()) {
+					log.warning(format("[%s] contains [%s] files", file.getName(), outputMapping.size()));
+				}
+
 				Set<FileInfo> selection = new TreeSet<FileInfo>();
 				for (FileInfo future : outputMapping) {
 					if (filter == null || filter.accept(future.toFile())) {
