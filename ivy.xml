@@ -40,14 +40,16 @@
 		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-datetime" />
 		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-dateutil" />
 		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-templates" />
+		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-nio" />
+		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-swing" />
 
 		<!-- Apache Ant -->
-		<dependency rev="1.10.3" org="org.apache.ant" name="ant" />
-		<dependency rev="1.10.3" org="org.apache.ant" name="ant-launcher" />
-		<dependency rev="1.10.3" org="org.apache.ant" name="ant-commons-net" />
-		<dependency rev="1.10.3" org="org.apache.ant" name="ant-javamail" />
-		<dependency rev="1.10.3" org="org.apache.ant" name="ant-jsch" />
-		<dependency rev="1.10.3" org="org.apache.ant" name="ant-junit" />
+		<dependency rev="1.10.5" org="org.apache.ant" name="ant" />
+		<dependency rev="1.10.5" org="org.apache.ant" name="ant-launcher" />
+		<dependency rev="1.10.5" org="org.apache.ant" name="ant-commons-net" />
+		<dependency rev="1.10.5" org="org.apache.ant" name="ant-javamail" />
+		<dependency rev="1.10.5" org="org.apache.ant" name="ant-jsch" />
+		<dependency rev="1.10.5" org="org.apache.ant" name="ant-junit" />
 		<dependency rev="2.4.0" org="org.apache.ivy" name="ivy" />
 		<dependency rev="1.6.1" org="com.sun.mail" name="javax.mail" />
 		<dependency rev="1.1.1" org="javax.activation" name="activation" />
