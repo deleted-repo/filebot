@@ -454,10 +454,12 @@ public final class SubtitleUtilities {
 		}
 
 		// detect language from subtitle text content
-		MemoryFile data = new MemoryFile(file.getName(), ByteBuffer.wrap(readFile(file)));
-		List<DetectedLanguage> options = detectSubtitleLanguage(data);
-		if (options.size() > 0) {
-			return Language.getLanguage(options.get(0).getLocale().getLanguage());
+		if (file.length() < ONE_MEGABYTE) {
+			MemoryFile data = new MemoryFile(file.getName(), ByteBuffer.wrap(readFile(file)));
+			List<DetectedLanguage> options = detectSubtitleLanguage(data);
+			if (options.size() > 0) {
+				return Language.getLanguage(options.get(0).getLocale().getLanguage());
+			}
 		}
 
 		return null;
