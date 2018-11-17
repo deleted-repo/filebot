@@ -13,8 +13,32 @@ import net.filebot.web.Episode;
 import net.filebot.web.EpisodeFormat;
 import net.filebot.web.Movie;
 import net.filebot.web.MoviePart;
+import net.filebot.web.MultiEpisode;
 
-public class PlexNamingStandard {
+public class NamingStandard {
+
+	/**
+	 * Plex Naming Standard (i.e. Default Implementation)
+	 * 
+	 * https://support.plex.tv/articles/categories/media-preparation/
+	 */
+	public static final NamingStandard PLEX = new NamingStandard();
+
+	/**
+	 * Kodi Naming Standard (i.e. same as Plex, but with SxE and non-range based multi-episode formatting)
+	 * 
+	 * https://kodi.wiki/view/Naming_video_files
+	 */
+	public static final NamingStandard KODI = new NamingStandard() {
+
+		@Override
+		public String formatEpisodeNumbers(Episode e) {
+			if (e instanceof MultiEpisode) {
+				return EpisodeFormat.SeasonEpisode.formatMultiSxE((MultiEpisode) e);
+			}
+			return EpisodeFormat.SeasonEpisode.formatSxE(e);
+		}
+	};
 
 	public String getPath(Object o) {
 		if (o instanceof Episode)
@@ -133,7 +157,6 @@ public class PlexNamingStandard {
 			// TV Series
 			return EpisodeFormat.SeasonEpisode.formatS00E00(e);
 		}
-
 	}
 
 	public String formatEpisodeTitle(Episode e) {

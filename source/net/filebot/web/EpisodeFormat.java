@@ -119,6 +119,21 @@ public class EpisodeFormat extends Format {
 		}).collect(joining(" - "));
 	}
 
+	public String formatMultiSxE(Iterable<Episode> episodes) {
+		return formatMultiNumbers(episodes, "%01dx", "%02d", "x");
+	}
+
+	public String formatMultiS00E00(Iterable<Episode> episodes) {
+		return formatMultiNumbers(episodes, "S%02d", "E%02d", "-");
+	}
+
+	public String formatMultiNumbers(Iterable<Episode> episodes, String seasonFormat, String episodeFormat, String delimiter) {
+		return getSeasonEpisodeNumbers(episodes).entrySet().stream().map(it -> {
+			String s = it.getKey() >= 0 ? String.format(seasonFormat, it.getKey()) : "";
+			return it.getValue().stream().distinct().map(i -> String.format(episodeFormat, i)).collect(joining(delimiter, s, ""));
+		}).collect(joining(" - "));
+	}
+
 	private SortedMap<Integer, SortedSet<Integer>> getSeasonEpisodeNumbers(Iterable<Episode> episodes) {
 		SortedMap<Integer, SortedSet<Integer>> n = new TreeMap<Integer, SortedSet<Integer>>();
 		for (Episode it : episodes) {

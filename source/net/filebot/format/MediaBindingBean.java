@@ -55,7 +55,7 @@ import net.filebot.media.FFProbe;
 import net.filebot.media.ImageMetadata;
 import net.filebot.media.LocalDatasource.PhotoFile;
 import net.filebot.media.MetaAttributes;
-import net.filebot.media.PlexNamingStandard;
+import net.filebot.media.NamingStandard;
 import net.filebot.media.VideoFormat;
 import net.filebot.mediainfo.MediaInfo;
 import net.filebot.mediainfo.MediaInfo.StreamKind;
@@ -201,7 +201,7 @@ public class MediaBindingBean {
 		}
 
 		// enforce title length limit by default
-		return truncateText(t, PlexNamingStandard.TITLE_MAX_LENGTH);
+		return truncateText(t, NamingStandard.TITLE_MAX_LENGTH);
 	}
 
 	@Define("d")
@@ -1074,7 +1074,18 @@ public class MediaBindingBean {
 
 	@Define("plex")
 	public File getPlexStandardPath() throws Exception {
-		String path = new PlexNamingStandard().getPath(infoObject);
+		String path = NamingStandard.PLEX.getPath(infoObject);
+		try {
+			path = path.concat(getSubtitleTags()); // NPE if {subt} is undefined
+		} catch (Exception e) {
+			// ignore => no language tags
+		}
+		return new File(path);
+	}
+
+	@Define("kodi")
+	public File getKodiStandardPath() throws Exception {
+		String path = NamingStandard.KODI.getPath(infoObject);
 		try {
 			path = path.concat(getSubtitleTags()); // NPE if {subt} is undefined
 		} catch (Exception e) {

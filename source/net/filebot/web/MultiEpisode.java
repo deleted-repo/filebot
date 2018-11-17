@@ -5,9 +5,10 @@ import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
-public class MultiEpisode extends Episode {
+public class MultiEpisode extends Episode implements Iterable<Episode> {
 
 	protected Episode[] episodes;
 
@@ -21,6 +22,11 @@ public class MultiEpisode extends Episode {
 
 	public MultiEpisode(List<Episode> episodes) {
 		this.episodes = episodes.toArray(new Episode[0]);
+	}
+
+	@Override
+	public Iterator<Episode> iterator() {
+		return stream(episodes).iterator();
 	}
 
 	public List<Episode> getEpisodes() {
