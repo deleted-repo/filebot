@@ -87,10 +87,9 @@
 				<rescap3:Extension Category="windows.desktopAppMigration">
 					<rescap3:DesktopAppMigration>
 						<rescap3:DesktopApp AumId="@{application.name}" />
-						<rescap3:DesktopApp AumId="@{package.identifier}" />
 						<rescap3:DesktopApp ShortcutPath="%USERPROFILE%\Desktop\@{application.name}.lnk" />
 						<rescap3:DesktopApp ShortcutPath="%APPDATA%\Microsoft\Windows\Start Menu\Programs\@{application.name}.lnk" />
-						<rescap3:DesktopApp ShortcutPath="%APPDATA%\Microsoft\Windows\SendTo\@{application.name}.lnk"/>
+						<rescap3:DesktopApp ShortcutPath="%APPDATA%\Microsoft\Windows\SendTo\@{application.name}.lnk" />
 					</rescap3:DesktopAppMigration>
 				</rescap3:Extension>
 			</Extensions>
