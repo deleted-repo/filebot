@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
+import static net.filebot.ui.GettingStartedUtil.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.FileUtilities.getChildren;
 import static net.filebot.util.XPathUtilities.*;
@@ -42,7 +43,6 @@ import net.filebot.format.ExpressionFormat;
 import net.filebot.platform.mac.MacAppUtilities;
 import net.filebot.platform.windows.WinAppUtilities;
 import net.filebot.ui.FileBotMenuBar;
-import net.filebot.ui.GettingStartedStage;
 import net.filebot.ui.MainFrame;
 import net.filebot.ui.NotificationHandler;
 import net.filebot.ui.PanelBuilder;
@@ -322,7 +322,7 @@ public class Main {
 			started.flush();
 
 			// open Getting Started
-			SwingUtilities.invokeLater(() -> GettingStartedStage.start("show".equals(System.getProperty("application.help"))));
+			SwingUtilities.invokeLater(() -> openGettingStarted("show".equals(System.getProperty("application.help"))));
 		}
 	}
 
