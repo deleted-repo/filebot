@@ -464,7 +464,7 @@
 			<fileset dir="${dir.installer}/app" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="no" license="yes" identifier="${package.identifier}.APP" />
+		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="yes" license="yes" identifier="${package.identifier}.APP" />
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">

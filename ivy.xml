@@ -44,6 +44,9 @@
 		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-swing" />
 		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-groovydoc" />
 
+		<!-- JavaFX -->
+		<dependency rev="11.0.1" org="org.openjfx" name="javafx-controls" />
+
 		<!-- Apache Ant -->
 		<dependency rev="1.10.5" org="org.apache.ant" name="ant" />
 		<dependency rev="1.10.5" org="org.apache.ant" name="ant-launcher" />
