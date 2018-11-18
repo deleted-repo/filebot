@@ -89,6 +89,18 @@
 		<include name="**/javaw.exe" />
 
 		<exclude name="**/src.zip" />
+
+		<exclude name="**/javafx.web.jar" />
+		<exclude name="**/javafx.media.jar" />
+		<exclude name="**/javafx.fxml.jar" />
+		<exclude name="**/javafx-swt.jar" />
+
+		<exclude name="**/libjfxmedia_avf.*" />
+		<exclude name="**/libglib-lite.*" />
+		<exclude name="**/libfxplugins.*" />
+		<exclude name="**/libgstreamer-lite.*" />
+		<exclude name="**/libjfxmedia.*" />
+		<exclude name="**/libjfxwebkit*" />
 	</patternset>
 
 
