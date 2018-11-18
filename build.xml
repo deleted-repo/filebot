@@ -98,7 +98,7 @@
 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
 				<arg line="get-java get jdk x86_64" />
 			</exec>
-			<untar src="${dir.cache}/jre-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+			<untar src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
@@ -118,7 +118,7 @@
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
 				<arg line="get jdk x86_64 Darwin" />
 			</exec>
-			<untar src="${dir.cache}/jre-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+			<untar src="${dir.cache}/openjdk-${jre.version}_osx-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
@@ -138,7 +138,7 @@
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
 				<arg line="get jre x86_64 Linux" />
 			</exec>
-			<untar src="${dir.cache}/jre-${jre.version}_linux-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+			<untar src="${dir.cache}/openjdk-${jre.version}_linux-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
