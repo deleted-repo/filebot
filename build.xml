@@ -87,6 +87,8 @@
 		<include name="**/java" />
 		<include name="**/java.exe" />
 		<include name="**/javaw.exe" />
+
+		<exclude name="**/src.zip" />
 	</patternset>
 
 
@@ -104,6 +106,7 @@
 				<arg line="get-java get jfx x86_64" />
 			</exec>
 			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
+				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</unzip>
 		</sequential>
@@ -145,6 +148,7 @@
 				<arg line="get jfx x86_64 Linux" />
 			</exec>
 			<unzip src="${dir.cache}/openjfx-${jfx.version}_linux-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
+				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</unzip>
 		</sequential>
