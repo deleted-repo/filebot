@@ -32,16 +32,17 @@
 		<dependency rev="4.2" org="org.imgscalr" name="imgscalr-lib" />
 
 		<!-- Apache Groovy -->
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-jsr223" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-ant" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-json" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-xml" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-datetime" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-dateutil" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-templates" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-nio" />
-		<dependency rev="2.5.3" org="org.codehaus.groovy" name="groovy-swing" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-jsr223" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-ant" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-json" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-xml" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-datetime" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-dateutil" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-templates" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-nio" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-swing" />
+		<dependency rev="2.5.4" org="org.codehaus.groovy" name="groovy-groovydoc" />
 
 		<!-- Apache Ant -->
 		<dependency rev="1.10.5" org="org.apache.ant" name="ant" />
