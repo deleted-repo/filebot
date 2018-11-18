@@ -248,6 +248,8 @@
 		<!-- compile -->
 		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
 			<classpath refid="jar.classpath" />
+			<modulepath path="${jfx.path}" />
+			<compilerarg line="--add-modules ALL-MODULE-PATH" />
 		</javac>
 
 		<!-- copy resources -->
