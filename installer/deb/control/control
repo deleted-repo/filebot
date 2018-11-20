@@ -7,5 +7,5 @@ Description: @{package.synopsis}
 Homepage: @{package.homepage}
 Section: utils
 Priority: extra
-Suggests: @{deb.application.depends}
+Recommends: @{deb.application.depends}
 Enhances: nautilus-actions
