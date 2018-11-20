@@ -381,6 +381,8 @@
 	<target name="zip" depends="revision" description="Build Windows Portable ZIP package">
 		<property name="dir.staging" location="${dir.dist}/zip" />
 
+		<get-windows-jre dest="${dir.staging}/jre" />
+
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/zip" includes="*.ini" />
 		</copy-replace>
