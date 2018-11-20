@@ -1,2 +1,8 @@
-#!/bin/sh
-ln -sf /Applications/FileBot.app/Contents/MacOS/filebot.sh /usr/local/bin/filebot
+#!/bin/sh -xu
+
+# $2: Full path to the installation destination.
+# For example: /Applications
+
+ln -sf $2/FileBot.app/Contents/MacOS/filebot.sh /usr/local/bin/filebot
+
+exit 0
