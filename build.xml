@@ -486,7 +486,7 @@
 			<fileset dir="${dir.installer}/app" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="yes" license="yes" identifier="${package.identifier}.APP" />
+		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="yes" license="yes" identifier="${package.identifier}.app" />
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
@@ -513,7 +513,7 @@
 			<fileset dir="${dir.installer}/pkg" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="pkg" runtime="yes" license="yes" identifier="${package.identifier}.PKG" />
+		<create-app-bundle dir="${dir.staging}" deployment="pkg" runtime="yes" license="yes" identifier="${package.identifier}.pkg" />
 
 		<!-- fix permissions -->
 		<chmod perm="+x" verbose="yes">
