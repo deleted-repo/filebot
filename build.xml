@@ -540,11 +540,14 @@
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
 
-		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_amd64.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
+		<jdeb destfile="${dir.dist}/${application.name}_${application.version}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
 
-			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-amd64" includes="libjnidispatch.so" />
+			<tarfileset prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="${deb.jna.depends}" />
+			<tarfileset prefix="lib/i686" dir="${dir.lib}/native/linux-i686" includes="${deb.jna.depends}" />
+			<tarfileset prefix="lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="${deb.jna.depends}" />
+			<tarfileset prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="${deb.jna.depends}" />
 
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
 			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" />
