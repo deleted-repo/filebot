@@ -18,6 +18,12 @@ parts:
     plugin: dump
     source: base
     stage-packages:
+      - openjdk-11-jre
+      - openjfx
+      - mediainfo
+      - libchromaprint-tools
+      - p7zip-full
+      - p7zip-rar
       - libxrender1
       - libxext6
       - libx11-6
