@@ -534,8 +534,6 @@
 	<target name="deb" depends="revision" description="Build Debian package">
 		<property name="dir.staging" location="${dir.dist}/deb" />
 
-		<get-linux-jre dest="${dir.staging}/jre" />
-
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
@@ -602,6 +600,31 @@
 			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.gpg" />
 		</tar>
 	</target>
+
+
+	<target name="aur" depends="revision" description="Build Arch Linux TAR package for AUR">
+		<property name="dir.staging" location="${dir.dist}/aur" />
+
+		<!-- use Debian package structure -->
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/deb" />
+		</copy-replace>
+		<replace file="${dir.staging}/filebot.sh" token="-Dapplication.deployment=deb" value="-Dapplication.deployment=aur" encoding="utf-8" />
+
+		<tar destfile="${dir.dist}/${application.name}_${application.version}-aur.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
+			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
+			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
+
+			<tarfileset prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="${deb.jna.depends}" />
+			<tarfileset prefix="lib/i686" dir="${dir.lib}/native/linux-i686" includes="${deb.jna.depends}" />
+			<tarfileset prefix="lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="${deb.jna.depends}" />
+			<tarfileset prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="${deb.jna.depends}" />
+
+			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
+			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" />
+		</tar>
+	</target>
+
 
 
 	<target name="spk" depends="revision" description="Build Synology NAS package">
