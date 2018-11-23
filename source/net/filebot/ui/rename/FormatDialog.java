@@ -1,9 +1,11 @@
 package net.filebot.ui.rename;
 
 import static java.awt.Font.*;
+import static java.awt.event.KeyEvent.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static javax.swing.BorderFactory.*;
+import static javax.swing.KeyStroke.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 import static net.filebot.util.ExceptionUtilities.*;
@@ -204,7 +206,7 @@ public class FormatDialog extends JDialog {
 		header.add(preview, "wmin 150px, hmin 16px, gap indent, hidemode 3, wmax 90%");
 		header.add(status, "wmin 150px, hmin 16px, gap indent, hidemode 3, wmax 90%, newline");
 
-		JPanel content = new JPanel(new MigLayout("insets dialog, nogrid, fill"));
+		JPanel content = new JPanel(new MigLayout("insets dialog, nogrid, fill, hidemode 1"));
 
 		RTextScrollPane editorScrollPane = new RTextScrollPane(editor, false);
 		editorScrollPane.setLineNumbersEnabled(false);
@@ -299,6 +301,9 @@ public class FormatDialog extends JDialog {
 			bindings = new MediaBindingBean(bindings.getInfoObject(), restoreSample(initMode).getFileObject());
 		}
 
+		// install show / hide help keyboard shortcut
+		installAction(this.getRootPane(), getKeyStroke(VK_F1, 0), newAction("Help", evt -> help.setVisible(!help.isVisible())));
+
 		// initialize data
 		setState(initMode, bindings, locked);
 	}
@@ -334,11 +339,13 @@ public class FormatDialog extends JDialog {
 	private JComponent updateHelpPanel(Mode mode) {
 		help.removeAll();
 
-		help.add(new JLabel("Syntax"), "gap indent+unrel, wrap 0");
-		help.add(createSyntaxPanel(mode), "gapx indent indent, wrap 8px");
+		if (help.isVisible()) {
+			help.add(new JLabel("Syntax"), "gap indent+unrel, wrap 0");
+			help.add(createSyntaxPanel(mode), "gapx indent indent, wrap 8px");
 
-		help.add(new JLabel("Examples"), "gap indent+unrel, wrap 0");
-		help.add(createExamplesPanel(mode), "growx, h pref!, gapx indent indent");
+			help.add(new JLabel("Examples"), "gap indent+unrel, wrap 0");
+			help.add(createExamplesPanel(mode), "growx, h pref!, gapx indent indent");
+		}
 
 		return help;
 	}
