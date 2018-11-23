@@ -110,10 +110,10 @@
 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
 				<arg line="get-java get jdk x86_64" />
 			</exec>
-			<untar src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}" compression="gzip">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
-			</untar>
+			</unzip>
 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
 				<arg line="get-java get jfx x86_64" />
 			</exec>
