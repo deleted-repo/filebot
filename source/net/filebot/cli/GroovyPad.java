@@ -98,6 +98,7 @@ public class GroovyPad extends JFrame {
 		setModalExclusionType(ModalExclusionType.TOOLKIT_EXCLUDE);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLocationByPlatform(true);
+		setIconImages(ResourceManager.getApplicationIconImages());
 		setSize(800, 600);
 	}
 
