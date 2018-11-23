@@ -81,12 +81,13 @@
 		<include name="**/lib/**" />
 		<include name="**/conf/**" />
 
+		<include name="**/java" />
 		<include name="**/MacOS/**" />
 		<include name="**/*.plist" />
 
-		<include name="**/java" />
 		<include name="**/java.exe" />
 		<include name="**/javaw.exe" />
+		<include name="**/*.dll" />
 
 		<exclude name="**/src.zip" />
 
@@ -95,12 +96,11 @@
 		<exclude name="**/javafx.fxml.jar" />
 		<exclude name="**/javafx-swt.jar" />
 
-		<exclude name="**/libjfxmedia_avf.*" />
-		<exclude name="**/libglib-lite.*" />
-		<exclude name="**/libfxplugins.*" />
-		<exclude name="**/libgstreamer-lite.*" />
-		<exclude name="**/libjfxmedia.*" />
-		<exclude name="**/libjfxwebkit*" />
+		<exclude name="**/*glib*" />
+		<exclude name="**/*fxplugins*" />
+		<exclude name="**/*gstreamer*" />
+		<exclude name="**/*jfxmedia*" />
+		<exclude name="**/*jfxwebkit*" />
 	</patternset>
 
 
