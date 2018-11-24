@@ -220,7 +220,6 @@
 				<option value="-Dfile.encoding=UTF-8" />
 
 				<!-- libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies -->
-				<option value="-Dapplication.help=ask" />
 				<option value="-Dapplication.deployment=@{deployment}" />
 
 				<!-- associate with *.psm files -->
