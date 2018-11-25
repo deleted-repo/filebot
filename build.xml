@@ -391,6 +391,7 @@
 			<zipfileset dir="${dir.staging}" includes="*.ini" />
 			<zipfileset prefix="jar" dir="${dir.dist}/lib" />
 			<zipfileset prefix="lib" dir="${dir.lib}/native/win32-x64" />
+			<zipfileset prefix="jre" dir="${dir.staging}/jre" />
 		</zip>
 	</target>
 
