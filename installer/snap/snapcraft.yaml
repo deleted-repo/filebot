@@ -26,6 +26,10 @@ parts:
   filebot:
     plugin: dump
     source: base
+    build-packages:
+      - ca-certificates
+      - ca-certificates-java
+      - openjdk-8-jdk
     stage-packages:
       - openjdk-8-jre
       - openjfx
