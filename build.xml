@@ -382,16 +382,17 @@
 
 		<get-windows-jre dest="${dir.staging}/jre" />
 
+		<copy todir="${dir.staging}">
+			<fileset dir="${dir.installer}/zip" includes="*.exe" />
+		</copy>
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/zip" includes="*.ini" />
 		</copy-replace>
 
 		<zip destfile="${dir.dist}/${release}-portable.zip" encoding="utf-8">
-			<zipfileset dir="${dir.installer}/zip" includes="*.exe" />
-			<zipfileset dir="${dir.staging}" includes="*.ini" />
+			<zipfileset dir="${dir.staging}" />
 			<zipfileset prefix="jar" dir="${dir.dist}/lib" />
 			<zipfileset prefix="lib" dir="${dir.lib}/native/win32-x64" />
-			<zipfileset prefix="jre" dir="${dir.staging}/jre" />
 		</zip>
 	</target>
 
