@@ -8,45 +8,35 @@ grade: stable
 
 architectures: [amd64]
 
-plugs:
-  gtk-2-engines:
-    interface: content
-    target: $SNAP/lib/gtk-2.0
-    default-provider: gtk2-common-themes:gtk-2-engines
-  gtk-2-themes:
-    interface: content
-    target: $SNAP/share/themes
-    default-provider: gtk-common-themes:gtk-2-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/share/icons
-    default-provider: gtk-common-themes:icon-themes
-
-environment:
-  GTK_PATH: $SNAP/lib/gtk-2.0
-  GTK_DATA_PREFIX: $SNAP
-  XDG_DATA_DIRS: $SNAP/share:$XDG_DATA_DIRS
-
 apps:
   filebot:
     command: desktop-launch $SNAP/bin/filebot.sh
-    plugs: [desktop, desktop-legacy, x11, gsettings, dbus, home, removable-media, network, network-bind]
+    plugs:
+      - desktop
+      - desktop-legacy
+      - x11
+      - gsettings
+      - dbus
+      - home
+      - removable-media
+      - network
+      - network-bind
 
 parts:
   filebot:
     plugin: dump
     source: base
-    stage-packages: [openjdk-8-jre, openjfx, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar, xdg-utils, curl]
-    after: [desktop-gtk2]
-  extra:
-    plugin: dump
-    override-build: |
-      set -ex
-      snapcraftctl build
-      mkdir -p $SNAPCRAFT_PART_INSTALL/lib/gtk-2.0
-      mkdir -p $SNAPCRAFT_PART_INSTALL/share/themes
-      mkdir -p $SNAPCRAFT_PART_INSTALL/share/icons
-    stage:
-      - lib/gtk-2.0
-      - share/themes
-      - share/icons
+    stage-packages:
+      - openjdk-8-jre
+      - openjfx
+      - libmediainfo0v5
+      - libchromaprint-tools
+      - p7zip-full
+      - p7zip-rar
+      - xdg-utils
+      - curl
+      - gtk2-engines-murrine
+      - libcanberra-gtk-module
+      - hicolor-icon-theme
+    after:
+      - desktop-gtk2
