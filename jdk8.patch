@@ -1,24 +1,25 @@
 diff --git a/app.properties b/app.properties
-index 62b16cd1..eeeb1494 100644
+index ff0a5540..76d745bf 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -35,11 +35,12 @@ link.release.index: https://get.filebot.net/filebot
+@@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
  
  # Build
  main.class: net.filebot.Main
--jre.version: 10.0.2
+-jre.version: 11.0.1
+-jfx.version: 11.0.1
 +jre.major: 8
 +jre.build: 181
  
  # Minimum System Version
--jvm.version: 10
+-jvm.version: 11
 -mac.version: 10.10
 +jvm.version: 1.8
 +mac.version: 10.8
  
  # Package Information
  package.name: filebot
-@@ -77,8 +78,7 @@ msi.compression: high
+@@ -79,8 +79,7 @@ msi.compression: high
  deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
  
  # Default Java Options
@@ -27,33 +28,86 @@ index 62b16cd1..eeeb1494 100644
 +java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true
  
  # Default Windows Java Options
- windows.application.options: -Dapplication.help=show -Dapplication.dir="%APPDATA%\\FileBot" -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
+ windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" --add-modules ALL-MODULE-PATH -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index e4fa7677..b134fc3d 100644
+index 415c771d..a859c209 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -96,9 +96,10 @@
+@@ -78,29 +78,14 @@
+ 
+ 
+ 	<patternset id="pattern.jre">
+-		<include name="**/lib/**" />
+-		<include name="**/conf/**" />
+-
+-		<include name="**/java" />
+-		<include name="**/MacOS/**" />
+-		<include name="**/*.plist" />
+-
+-		<include name="**/java.exe" />
+-		<include name="**/javaw.exe" />
+-		<include name="**/*.dll" />
+-
+-		<exclude name="**/src.zip" />
+-
+-		<exclude name="**/javafx.web.jar" />
+-		<exclude name="**/javafx.media.jar" />
+-		<exclude name="**/javafx.fxml.jar" />
+-		<exclude name="**/javafx-swt.jar" />
+-
+-		<exclude name="**/*glib*" />
+-		<exclude name="**/*fxplugins*" />
+-		<exclude name="**/*gstreamer*" />
+-		<exclude name="**/*jfxmedia*" />
+-		<exclude name="**/*jfxwebkit*" />
++		<!-- exclude Windows browser plugin -->
++		<exclude name="**/dtplugin/**" />
++		<exclude name="**/plugin2/**" />
++
++		<!-- exclude Mac browser plugin -->
++		<exclude name="**/deploy/**" />
++		<exclude name="**/nibs/**" />
++		<exclude name="**/shortcuts/**" />
+ 	</patternset>
+ 
+ 
+@@ -108,19 +93,13 @@
  		<attribute name="dest" />
  		<sequential>
  			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+-				<arg line="get-java get jdk x86_64" />
+-			</exec>
+-			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
+-				<patternset refid="pattern.jre" />
+-				<cutdirsmapper dirs="1" />
+-			</unzip>
+-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+-				<arg line="get-java get jfx x86_64" />
 +				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
- 				<arg line="get-java" />
++				<arg line="get-java" />
  			</exec>
--			<untar src="${dir.cache}/jre-${jre.version}_windows-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
+-			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
- 			</untar>
-@@ -228,7 +229,7 @@
+-			</unzip>
++			</untar>
+ 		</sequential>
+ 	</macrodef>
+ 
+@@ -265,10 +244,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
 -		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
 +		<javac srcdir="${dir.source}" destdir="${dir.build}" target="${jvm.version}" source="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
  			<classpath refid="jar.classpath" />
+-			<modulepath path="${jfx.path}" />
+-			<compilerarg line="--add-modules ALL-MODULE-PATH" />
  		</javac>
  
-@@ -260,7 +261,7 @@
+ 		<!-- copy resources -->
+@@ -299,7 +276,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -62,7 +116,7 @@ index e4fa7677..b134fc3d 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -304,9 +305,9 @@
+@@ -338,9 +315,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -76,10 +130,10 @@ index e4fa7677..b134fc3d 100644
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
 diff --git a/ivy.xml b/ivy.xml
-index 8f413c72..73800510 100644
+index 27882b15..c20a1e36 100644
 --- a/ivy.xml
 +++ b/ivy.xml
-@@ -26,7 +26,7 @@
+@@ -25,7 +25,7 @@
  		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
  		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
  		<dependency rev="0.6.7" org="one.util" name="streamex" />
