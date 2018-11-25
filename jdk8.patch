@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index e3bcda50..31c85894 100644
+index e3bcda50..6bed7fec 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -19,7 +19,7 @@ index e3bcda50..31c85894 100644
  
  # Package Information
  package.name: filebot
-@@ -79,8 +79,7 @@ msi.compression: high
+@@ -79,11 +79,10 @@ msi.compression: high
  deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
  
  # Default Java Options
@@ -28,7 +28,11 @@ index e3bcda50..31c85894 100644
 +java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true
  
  # Default Windows Java Options
- windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" --add-modules ALL-MODULE-PATH -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
+-windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" --add-modules ALL-MODULE-PATH -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
++windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
+ windows.portable.application.options: -Dapplication.dir="%EXEDIR%\\data" -Duser.home="%EXEDIR%\\data" -Djava.io.tmpdir="%EXEDIR%\\data\\tmp" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="%EXEDIR%\\data\\prefs.properties"
+ 
+ # Default Linux Java Options
 diff --git a/build.xml b/build.xml
 index 2fed3e01..411d96a8 100644
 --- a/build.xml
