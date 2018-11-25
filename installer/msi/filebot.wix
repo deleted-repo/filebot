@@ -23,7 +23,7 @@
 							</Shortcut>
 						</File>
 
-						<File Id='filebot.platform.launcher.exe' Name='filebot.platform.launcher.exe' Source='filebot.platform.launcher.exe'>
+						<File Id='filebot.platform.launcher.exe' Name='filebot.platform.launcher.exe' Source='filebot.launcher.exe'>
 							<Shortcut Id="shortcut.menu.filebot.platform" Directory="ProgramMenuDir" Name="FileBot (platform)" Description="Launch FileBot with platform-independent configuration" WorkingDirectory='INSTALLDIR' Icon="icon.ico" IconIndex="0" Advertise="no" />
 						</File>
 

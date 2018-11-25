@@ -304,7 +304,7 @@
 		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
 
 		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/appx/${appx.arch}" includes="*.exe" />
+			<fileset dir="${dir.installer}/msi/${appx.arch}" includes="*.exe" />
 		</copy>
 		<copy todir="${dir.staging}/lib">
 			<fileset dir="${dir.lib}/native/win32-${appx.arch}" />
@@ -383,7 +383,7 @@
 		<get-windows-jre dest="${dir.staging}/jre" />
 
 		<copy todir="${dir.staging}">
-			<fileset dir="${dir.installer}/zip" includes="*.exe" />
+			<fileset dir="${dir.installer}/msi/x64" includes="*.exe" />
 		</copy>
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/zip" includes="*.ini" />
