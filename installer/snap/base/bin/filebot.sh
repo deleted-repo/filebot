@@ -2,10 +2,7 @@
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-export JAVA_HOME="$SNAP/usr/lib/jvm/java-8-openjdk-amd64"
-export FILEBOT_HOME="$SNAP/filebot"
-
 APP_DATA="$SNAP_USER_DATA/data"
-LIBRARY_PATH="$FILEBOT_HOME/lib"
+LIBRARY_PATH="$SNAP/filebot/lib:$SNAP/usr/lib/x86_64-linux-gnu"
 
-"$JAVA_HOME/bin/java" -Dapplication.deployment=snap -Dapplication.update=skip -Dnet.filebot.AcoustID.fpcalc="$SNAP/usr/bin/fpcalc" @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
+"$SNAP/usr/lib/jvm/java-8-openjdk-amd64/bin/java" -Dapplication.deployment=snap -Dapplication.update=skip -Dnet.filebot.AcoustID.fpcalc="$SNAP/usr/bin/fpcalc" @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$SNAP/filebot/jar/filebot.jar" "$@"
