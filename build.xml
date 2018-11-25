@@ -565,7 +565,7 @@
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
 		<copy todir="${dir.base}/filebot/lib">
-			<fileset dir="${dir.lib}/native/linux-amd64" />
+			<fileset dir="${dir.lib}/native/linux-amd64" includes="${deb.jna.depends}" />
 		</copy>
 		<chmod perm="+x" verbose="yes">
 			<fileset dir="${dir.base}" includes="**/bin/**" />
