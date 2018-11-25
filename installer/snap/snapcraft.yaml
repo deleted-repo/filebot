@@ -14,7 +14,6 @@ apps:
     plugs:
       - desktop
       - desktop-legacy
-      - wayland
       - unity7
       - x11
       - opengl
@@ -23,6 +22,11 @@ apps:
       - removable-media
       - network
       - network-bind
+
+environment:
+  GTK_PATH: $SNAP/usr/lib/x86_64-linux-gnu/gtk-2.0
+  GTK_DATA_PREFIX: $SNAP/usr
+  XDG_DATA_DIRS: $SNAP/usr/share:$XDG_DATA_DIRS
 
 parts:
   filebot:
