@@ -30,72 +30,34 @@ index e3bcda50..31c85894 100644
  # Default Windows Java Options
  windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" --add-modules ALL-MODULE-PATH -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 diff --git a/build.xml b/build.xml
-index 415c771d..a859c209 100644
+index 2fed3e01..411d96a8 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -78,29 +78,14 @@
- 
- 
- 	<patternset id="pattern.jre">
--		<include name="**/lib/**" />
--		<include name="**/conf/**" />
--
--		<include name="**/java" />
--		<include name="**/MacOS/**" />
--		<include name="**/*.plist" />
--
--		<include name="**/java.exe" />
--		<include name="**/javaw.exe" />
--		<include name="**/*.dll" />
--
--		<exclude name="**/src.zip" />
--
--		<exclude name="**/javafx.web.jar" />
--		<exclude name="**/javafx.media.jar" />
--		<exclude name="**/javafx.fxml.jar" />
--		<exclude name="**/javafx-swt.jar" />
--
--		<exclude name="**/*glib*" />
--		<exclude name="**/*fxplugins*" />
--		<exclude name="**/*gstreamer*" />
--		<exclude name="**/*jfxmedia*" />
--		<exclude name="**/*jfxwebkit*" />
-+		<!-- exclude Windows browser plugin -->
-+		<exclude name="**/dtplugin/**" />
-+		<exclude name="**/plugin2/**" />
-+
-+		<!-- exclude Mac browser plugin -->
-+		<exclude name="**/deploy/**" />
-+		<exclude name="**/nibs/**" />
-+		<exclude name="**/shortcuts/**" />
- 	</patternset>
- 
- 
-@@ -108,19 +93,13 @@
+@@ -111,19 +111,13 @@
  		<attribute name="dest" />
  		<sequential>
  			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
 -				<arg line="get-java get jdk x86_64" />
--			</exec>
--			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
--				<patternset refid="pattern.jre" />
--				<cutdirsmapper dirs="1" />
--			</unzip>
--			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
--				<arg line="get-java get jfx x86_64" />
 +				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
 +				<arg line="get-java" />
  			</exec>
--			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
+-			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
+-			</unzip>
+-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+-				<arg line="get-java get jfx x86_64" />
+-			</exec>
+-			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
+-				<patternset refid="pattern.jre" />
+-				<cutdirsmapper dirs="1" />
 -			</unzip>
 +			</untar>
  		</sequential>
  	</macrodef>
  
-@@ -265,10 +244,8 @@
+@@ -268,10 +262,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -107,7 +69,7 @@ index 415c771d..a859c209 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -299,7 +276,7 @@
+@@ -302,7 +294,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -116,7 +78,7 @@ index 415c771d..a859c209 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -338,9 +315,9 @@
+@@ -341,9 +333,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
