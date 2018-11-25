@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index ff0a5540..76d745bf 100644
+index e3bcda50..31c85894 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -9,7 +9,7 @@ index ff0a5540..76d745bf 100644
 -jre.version: 11.0.1
 -jfx.version: 11.0.1
 +jre.major: 8
-+jre.build: 181
++jre.build: 191
  
  # Minimum System Version
 -jvm.version: 11
