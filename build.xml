@@ -613,7 +613,9 @@
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
-		<replace file="${dir.staging}/filebot.sh" token="-Dapplication.deployment=deb" value="-Dapplication.deployment=aur" encoding="utf-8" />
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/aur" />
+		</copy-replace>
 
 		<tar destfile="${dir.dist}/${application.name}_${application.version}-aur.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
