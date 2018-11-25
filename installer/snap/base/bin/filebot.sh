@@ -2,7 +2,7 @@
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-export JAVA_HOME="$SNAP/usr/lib/jvm/java-@{jvm.version}-openjdk-amd64/bin/java"
+export JAVA_HOME="$SNAP/usr/lib/jvm/java-8-openjdk-amd64"
 export FILEBOT_HOME="$SNAP/filebot"
 
 APP_DATA="$SNAP_USER_DATA/data"
