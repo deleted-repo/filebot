@@ -89,7 +89,10 @@
 		<include name="**/javaw.exe" />
 		<include name="**/*.dll" />
 
-		<exclude name="**/src.zip" />
+		<exclude name="**/dtplugin/**" />
+		<exclude name="**/plugin2/**" />
+
+		<exclude name="**/*.zip" />
 
 		<exclude name="**/javafx.web.jar" />
 		<exclude name="**/javafx.media.jar" />
