@@ -676,7 +676,7 @@
 			<codesign secring="${dir.installer}/gpg/syno.gpg" keyid="${gpg.key}" password="${gpg.pwd}" />
 		</spk>
 
-		<move file="${dir.dist}/${package.name}-${application.version}-noarch.spk" tofile="${dir.dist}/${release}_noarch.spk" />
+		<move file="${dir.dist}/${package.name}-${application.version}-noarch.spk" tofile="${dir.dist}/${release}.spk" />
 	</target>
 
 
