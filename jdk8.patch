@@ -34,7 +34,7 @@ index 33adfd4b..ab3bb606 100644
  
  # Default Linux Java Options
 diff --git a/build.xml b/build.xml
-index 04ca5170..84adb489 100644
+index 04ca5170..f71f3335 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -94,6 +94,15 @@ index 04ca5170..84adb489 100644
 +		<property name="msi.component.win64" value="no" />
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
+ 
+@@ -568,7 +560,7 @@
+ 			<fileset dir="${dir.installer}/deb-universal" />
+ 		</copy-replace>
+ 
+-		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_universal.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
++		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_universal-jdk8.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
+ 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
+ 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
  
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
 index b8e7f8b2..005f702f 100644
