@@ -7,5 +7,5 @@ Description: @{package.synopsis}
 Homepage: @{package.homepage}
 Section: utils
 Priority: extra
-Depends: @{deb.application.depends}
+Depends: openjdk-@{jvm.version}-jre, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
 Enhances: nautilus-actions
