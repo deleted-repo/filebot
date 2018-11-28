@@ -153,7 +153,7 @@
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
-				<arg line="get jre x86_64 Linux" />
+				<arg line="get jdk x86_64 Linux" />
 			</exec>
 			<untar src="${dir.cache}/openjdk-${jre.version}_linux-x64_bin.tar.gz" dest="@{dest}" compression="gzip">
 				<patternset refid="pattern.jre" />
