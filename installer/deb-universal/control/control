@@ -7,5 +7,5 @@ Description: @{package.synopsis}
 Homepage: @{package.homepage}
 Section: utils
 Priority: extra
-Depends: openjdk-8-jre, openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
+Depends: openjdk-8-jre | openjdk-11-jre, openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
 Enhances: nautilus-actions
