@@ -619,9 +619,12 @@
 
 		<tar destfile="${dir.dist}/${application.name}_${application.version}-aur.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
-			<tarfileset prefix="/usr/share/filebot/mod" dir="${dir.staging}/jre/ext/modules/lib" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
-			<tarfileset prefix="/usr/share/filebot/lib" dir="${dir.lib}/native/linux-amd64" includes="${deb.jna.depends}" />
+
+			<tarfileset prefix="/usr/share/filebot/lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="${deb.jna.depends}" />
+			<tarfileset prefix="/usr/share/filebot/lib/i686" dir="${dir.lib}/native/linux-i686" includes="${deb.jna.depends}" />
+			<tarfileset prefix="/usr/share/filebot/lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="${deb.jna.depends}" />
+			<tarfileset prefix="/usr/share/filebot/lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="${deb.jna.depends}" />
 
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
 			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" />
