@@ -101,6 +101,7 @@
 
 		<exclude name="**/*glib*" />
 		<exclude name="**/*fxplugins*" />
+		<exclude name="**/*avplugin*" />
 		<exclude name="**/*gstreamer*" />
 		<exclude name="**/*jfxmedia*" />
 		<exclude name="**/*jfxwebkit*" />
