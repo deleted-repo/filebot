@@ -545,7 +545,7 @@
 			<fileset dir="${dir.installer}/deb" />
 		</copy-replace>
 
-		<jdeb destfile="${dir.dist}/${application.name}_${application.version}.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
+		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_amd64.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
 			<tarfileset prefix="/usr/share/filebot/mod" dir="${dir.staging}/jre/ext/modules/lib" />
 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
