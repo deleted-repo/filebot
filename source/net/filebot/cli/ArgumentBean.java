@@ -156,7 +156,7 @@ public class ArgumentBean {
 	public List<String> arguments = new ArrayList<String>();
 
 	public boolean runCLI() {
-		return rename || getSubtitles || check || list || mediaInfo || revert || extract || script != null || (license != null && isHeadless());
+		return rename || getSubtitles || check || list || mediaInfo || revert || extract || script != null || (license != null && (isHeadless() || System.console() != null));
 	}
 
 	public boolean isInteractive() {
