@@ -1,6 +1,6 @@
 #!/bin/sh
 FILEBOT_HOME="/usr/share/filebot"
-JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+JAVA_HOME="/usr/lib/jvm/java-@{jvm.version}-openjdk-amd64"
 
 if [ -z "$HOME" ]; then
 	echo '$HOME must be set'
