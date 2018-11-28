@@ -104,6 +104,18 @@ index 04ca5170..f71f3335 100644
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
  
+diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
+index b4680d5c..80dd525b 100644
+--- a/installer/deb-universal/control/control
++++ b/installer/deb-universal/control/control
+@@ -7,6 +7,6 @@ Description: @{package.synopsis}
+ Homepage: @{package.homepage}
+ Section: utils
+ Priority: extra
+-Depends: openjdk-@{jvm.version}-jre
++Depends: openjdk-8-jre
+ Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
+ Enhances: nautilus-actions
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
 index b8e7f8b2..005f702f 100644
 --- a/installer/deb-universal/filebot.sh
