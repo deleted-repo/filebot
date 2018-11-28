@@ -7,5 +7,6 @@ Description: @{package.synopsis}
 Homepage: @{package.homepage}
 Section: utils
 Priority: extra
-Depends: openjdk-@{jvm.version}-jre, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
+Depends: openjdk-@{jvm.version}-jre
+Recommends: libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
 Enhances: nautilus-actions
