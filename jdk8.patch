@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index e3bcda50..6bed7fec 100644
+index 33adfd4b..ab3bb606 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -19,7 +19,7 @@ index e3bcda50..6bed7fec 100644
  
  # Package Information
  package.name: filebot
-@@ -79,11 +79,10 @@ msi.compression: high
+@@ -78,11 +78,10 @@ msi.compression: high
  deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
  
  # Default Java Options
@@ -34,10 +34,10 @@ index e3bcda50..6bed7fec 100644
  
  # Default Linux Java Options
 diff --git a/build.xml b/build.xml
-index 2fed3e01..411d96a8 100644
+index 04ca5170..84adb489 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -111,19 +111,13 @@
+@@ -112,19 +112,13 @@
  		<attribute name="dest" />
  		<sequential>
  			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
@@ -61,7 +61,7 @@ index 2fed3e01..411d96a8 100644
  		</sequential>
  	</macrodef>
  
-@@ -268,10 +262,8 @@
+@@ -269,10 +263,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -73,7 +73,7 @@ index 2fed3e01..411d96a8 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -302,7 +294,7 @@
+@@ -303,7 +295,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -82,7 +82,7 @@ index 2fed3e01..411d96a8 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -341,9 +333,9 @@
+@@ -342,9 +334,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -95,6 +95,18 @@ index 2fed3e01..411d96a8 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
+diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
+index b8e7f8b2..005f702f 100644
+--- a/installer/deb-universal/filebot.sh
++++ b/installer/deb-universal/filebot.sh
+@@ -9,6 +9,5 @@ fi
+ # select application data folder
+ APP_DATA="$HOME/.filebot"
+ LIBRARY_PATH="/usr/lib/$(uname -m)-linux-gnu/jni"
+-MODULE_PATH="/usr/share/openjfx/lib"
+ 
+-java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
++java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
 index 27882b15..c20a1e36 100644
 --- a/ivy.xml
