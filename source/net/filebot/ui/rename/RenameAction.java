@@ -1,6 +1,5 @@
 package net.filebot.ui.rename;
 
-import static java.nio.charset.StandardCharsets.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -12,9 +11,7 @@ import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.AbstractList;
@@ -30,8 +27,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
@@ -247,31 +242,6 @@ class RenameAction extends AbstractAction {
 
 	private ActionPopup createLicensePopup(String message, ActionEvent evt) {
 		ActionPopup actionPopup = new ActionPopup("License Required", ResourceManager.getIcon("file.lock"));
-
-		// check copy & paste
-		String clip = null;
-		try {
-			clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-		} catch (Exception e) {
-			debug.warning(e::toString);
-		}
-
-		if (clip != null) {
-			Matcher matcher = Pattern.compile("-----BEGIN PGP SIGNED MESSAGE-----(.*?)-----END PGP SIGNATURE-----", Pattern.MULTILINE | Pattern.DOTALL).matcher(clip);
-			if (matcher.find()) {
-				actionPopup.add(newAction("Paste License", ResourceManager.getIcon("license.import"), e -> {
-					withWaitCursor(evt.getSource(), () -> {
-						File psm = File.createTempFile("clip", ".psm");
-						writeFile(matcher.group().getBytes(UTF_8), psm);
-
-						configureLicense(psm);
-						SwingEventBus.getInstance().post(LICENSE);
-
-						psm.delete();
-					});
-				}));
-			}
-		}
 
 		actionPopup.add(newAction("Select License", ResourceManager.getIcon("license.import"), e -> {
 			withWaitCursor(evt.getSource(), () -> {
