@@ -2,15 +2,13 @@ package net.filebot.util;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,14 +69,7 @@ public class PGP {
 	}
 
 	public static String findClearSignMessage(File file) throws IOException {
-		try (Scanner scanner = new Scanner(file, UTF_8)) {
-			Optional<MatchResult> match = scanner.findAll(PGP_SIGNED_MESSAGE).findFirst();
-			if (match.isPresent()) {
-				return match.get().group();
-			}
-		}
-
-		throw new IllegalArgumentException("PGP SIGNED MESSAGE not found");
+		return findClearSignMessage(readTextFile(file));
 	}
 
 }
