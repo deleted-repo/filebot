@@ -66,15 +66,15 @@ public class FormatExpressionTokenMaker extends TokenMakerBase {
 
 		switch (getLanguageIndex()) {
 		case LANGUAGE_GROOVY:
-			if (start != end) {
+			// keyboard navigation doesn't work right unless there's a null token to end the line
+			if (start <= end) {
 				Segment groovySegment = new Segment(segment.array, segment.getBeginIndex() + start, end - start);
 				addToken(groovyTokenMaker.getTokenList(groovySegment, initialTokenType, startOffset + start));
 			}
-			addNullToken(); // keyboard navigation doesn't work right unless there's a null token to end the line
 			addLevelToken(level);
 			break;
 		default:
-			if (start != end) {
+			if (start < end) {
 				addToken(segment, segment.getBeginIndex() + start, segment.getBeginIndex() + end - 1, Token.MARKUP_CDATA, startOffset + start);
 			}
 			addNullToken();
