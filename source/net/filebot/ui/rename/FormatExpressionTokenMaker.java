@@ -70,6 +70,7 @@ public class FormatExpressionTokenMaker extends TokenMakerBase {
 				Segment groovySegment = new Segment(segment.array, segment.getBeginIndex() + start, end - start);
 				addToken(groovyTokenMaker.getTokenList(groovySegment, initialTokenType, startOffset + start));
 			}
+			addNullToken(); // keyboard navigation doesn't work right unless there's a null token to end the line
 			addLevelToken(level);
 			break;
 		default:
