@@ -1,5 +1,6 @@
 package net.filebot.ui.rename;
 
+import static java.nio.charset.StandardCharsets.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -9,11 +10,16 @@ import static net.filebot.media.MediaDetection.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
+import static net.filebot.util.PGP.*;
 import static net.filebot.util.ui.SwingUI.*;
 
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -243,7 +249,7 @@ class RenameAction extends AbstractAction {
 	private ActionPopup createLicensePopup(String message, ActionEvent evt) {
 		ActionPopup actionPopup = new ActionPopup("License Required", ResourceManager.getIcon("file.lock"));
 
-		actionPopup.add(newAction("Select License", ResourceManager.getIcon("license.import"), e -> {
+		actionPopup.add(newAction("Select License File", ResourceManager.getIcon("license.import"), c -> {
 			withWaitCursor(evt.getSource(), () -> {
 				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", evt);
 				if (files.size() > 0) {
@@ -253,7 +259,28 @@ class RenameAction extends AbstractAction {
 			});
 		}));
 
-		actionPopup.add(newAction("Purchase License", ResourceManager.getIcon("license.purchase"), e -> {
+		actionPopup.add(newAction("Paste License Key", ResourceManager.getIcon("license.import"), c -> {
+			withWaitCursor(evt.getSource(), () -> {
+				try {
+					String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
+					String psm = findClearSignMessage(clip);
+
+					Path tmp = Files.createTempFile("clip", ".txt");
+					Files.writeString(tmp, psm, UTF_8);
+
+					configureLicense(tmp.toFile());
+					SwingEventBus.getInstance().post(LICENSE);
+
+					Files.delete(tmp);
+				} catch (Exception e) {
+					log.info("The clipboard does not contain a license key. Please select and copy the license key first.");
+					debug.log(Level.WARNING, e, e::getMessage);
+				}
+
+			});
+		}));
+
+		actionPopup.add(newAction("Purchase License", ResourceManager.getIcon("license.purchase"), c -> {
 			openURI(getPurchaseURL());
 		}));
 
