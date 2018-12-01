@@ -18,8 +18,6 @@ import java.awt.Window;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -265,13 +263,13 @@ class RenameAction extends AbstractAction {
 					String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
 					String psm = findClearSignMessage(clip);
 
-					Path tmp = Files.createTempFile("clip", ".txt");
-					Files.writeString(tmp, psm, UTF_8);
+					File tmp = File.createTempFile("clip", ".txt");
+					writeFile(psm.getBytes(UTF_8), tmp);
 
-					configureLicense(tmp.toFile());
+					configureLicense(tmp);
 					SwingEventBus.getInstance().post(LICENSE);
 
-					Files.delete(tmp);
+					tmp.delete();
 				} catch (Exception e) {
 					log.info("The clipboard does not contain a license key. Please select and copy the license key first.");
 					debug.log(Level.WARNING, e, e::getMessage);

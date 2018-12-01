@@ -6,7 +6,6 @@ import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
@@ -72,7 +71,7 @@ public class PGP {
 	}
 
 	public static String findClearSignMessage(File file) throws IOException {
-		try (Scanner scanner = new Scanner(new FileInputStream(file), UTF_8)) {
+		try (Scanner scanner = new Scanner(file, UTF_8)) {
 			Optional<MatchResult> match = scanner.findAll(PGP_SIGNED_MESSAGE).findFirst();
 			if (match.isPresent()) {
 				return match.get().group();
