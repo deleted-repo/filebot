@@ -5,6 +5,15 @@ import static java.util.stream.Collectors.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.openpgp.PGPException;
@@ -18,8 +27,8 @@ import org.bouncycastle.openpgp.operator.bc.BcPGPContentVerifierBuilderProvider;
 
 public class PGP {
 
-	public static String verifyClearSignMessage(byte[] psm, byte[] pub) throws Exception {
-		ArmoredInputStream armoredInput = new ArmoredInputStream(new ByteArrayInputStream(psm));
+	public static String verifyClearSignMessage(String psm, InputStream pub) throws Exception {
+		ArmoredInputStream armoredInput = new ArmoredInputStream(new ByteArrayInputStream(psm.getBytes(UTF_8)));
 
 		// read content
 		ByteBufferOutputStream content = new ByteBufferOutputStream(256);
@@ -49,6 +58,28 @@ public class PGP {
 		}
 
 		return clearSignMessage;
+	}
+
+	private static final Pattern PGP_SIGNED_MESSAGE = Pattern.compile("-----BEGIN PGP SIGNED MESSAGE-----(.*?)-----END PGP SIGNATURE-----", Pattern.MULTILINE | Pattern.DOTALL);
+
+	public static String findClearSignMessage(CharSequence content) {
+		Matcher matcher = PGP_SIGNED_MESSAGE.matcher(content);
+		if (matcher.find()) {
+			return matcher.group();
+		}
+
+		throw new IllegalArgumentException("PGP SIGNED MESSAGE not found");
+	}
+
+	public static String findClearSignMessage(File file) throws IOException {
+		try (Scanner scanner = new Scanner(new FileInputStream(file), UTF_8)) {
+			Optional<MatchResult> match = scanner.findAll(PGP_SIGNED_MESSAGE).findFirst();
+			if (match.isPresent()) {
+				return match.get().group();
+			}
+		}
+
+		throw new IllegalArgumentException("PGP SIGNED MESSAGE not found");
 	}
 
 }

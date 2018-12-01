@@ -1,5 +1,6 @@
 package net.filebot;
 
+import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Settings.*;
 import static net.filebot.util.JsonUtilities.*;
@@ -19,8 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import org.apache.commons.io.IOUtils;
 
 import net.filebot.util.SystemProperty;
 import net.filebot.web.WebRequest;
@@ -88,10 +87,10 @@ public class License {
 			}
 
 			// read and verify license file
-			byte[] bytes = Files.readAllBytes(file.toPath());
+			String psm = findClearSignMessage(file);
 
 			// verify and get clear signed content
-			Map<String, String> properties = getProperties(bytes);
+			Map<String, String> properties = getProperties(psm);
 
 			String product = properties.get("Product");
 			String id = properties.get("Order");
@@ -101,7 +100,7 @@ public class License {
 			checkExpirationDate(expires);
 
 			// verify license online
-			verifyLicense(id, bytes);
+			verifyLicense(id, psm);
 
 			return new License(product, id, expires);
 		} catch (Exception error) {
@@ -109,9 +108,8 @@ public class License {
 		}
 	}
 
-	private static Map<String, String> getProperties(byte[] bytes) throws Exception {
-		byte[] pub = IOUtils.toByteArray(License.class.getResource("license.key"));
-		String msg = verifyClearSignMessage(bytes, pub);
+	private static Map<String, String> getProperties(String psm) throws Exception {
+		String msg = verifyClearSignMessage(psm, License.class.getResourceAsStream("license.key"));
 
 		return NEWLINE.splitAsStream(msg).map(s -> s.split(": ", 2)).collect(toMap(a -> a[0], a -> a[1]));
 	}
@@ -130,9 +128,9 @@ public class License {
 		}
 	}
 
-	private static void verifyLicense(String id, byte[] bytes) throws Exception {
+	private static void verifyLicense(String id, String psm) throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
-		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, bytes, "application/octet-stream", getRequestParameters())).expire(Cache.ONE_MONTH).get();
+		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, psm.getBytes(UTF_8), "application/octet-stream", getRequestParameters())).expire(Cache.ONE_MONTH).get();
 
 		if (getInteger(json, "status") != 200) {
 			throw new IllegalStateException(getString(json, "message"));
