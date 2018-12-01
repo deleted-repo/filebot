@@ -271,7 +271,7 @@ class RenameAction extends AbstractAction {
 
 					tmp.delete();
 				} catch (Exception e) {
-					log.info("The clipboard does not contain a license key. Please select and copy the license key first.");
+					log.info("The clipboard does not contain a license key. Please select and copy your license key first.");
 					debug.log(Level.WARNING, e, e::getMessage);
 				}
 
