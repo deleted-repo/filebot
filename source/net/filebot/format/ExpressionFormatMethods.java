@@ -573,18 +573,18 @@ public class ExpressionFormatMethods {
 	}
 
 	public static String format(Temporal self, String pattern) {
-		return DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH).format(self);
+		return DateTimeFormatter.ofPattern(pattern).format(self);
 	}
 
 	public static String format(TemporalAmount self, String pattern) {
-		return DateTimeFormatter.ofPattern(pattern, Locale.ENGLISH).format(LocalTime.MIDNIGHT.plus(self));
+		return DateTimeFormatter.ofPattern(pattern).format(LocalTime.MIDNIGHT.plus(self));
 	}
 
 	public static String format(Date self, String format) {
 		return new SimpleDateFormat(format).format(self);
 	}
 
-	public static Date toDate(String self, String format) throws ParseException {
+	public static Date parseDate(String self, String format) throws ParseException {
 		return new SimpleDateFormat(format).parse(self);
 	}
 
