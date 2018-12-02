@@ -427,13 +427,13 @@
 			</fileset>
 		</delete>
 
-		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/jre-${jre.version}.jre" />
+		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/jdk-${jre.version}.jdk" />
 
 		<!-- MAS validation is a bit buggy and requires even libraries and frameworks to have a unique CFBundleIdentifier Collision -->
-		<replace file="${path.app.jre}/Contents/Info.plist" token="com.oracle.java.${jre.version}.jre" value="${package.identifier}" encoding="UTF-8" summary="true" />
+		<replace file="${path.app.jre}/Contents/Info.plist" token="net.java.openjdk.${jre.version}.jdk" value="${package.identifier}.jdk" encoding="UTF-8" summary="true" />
 
 		<!-- fix broken symlink -->
-		<copy file="${dir.staging}/jre-${jre.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
+		<copy file="${dir.staging}/jdk-${jre.version}.jdk/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
 
 		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
 		<chmod perm="+x">
