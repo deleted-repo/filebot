@@ -116,7 +116,7 @@ public class TMDbClientTest {
 
 	@Test
 	public void getCollection() throws Exception {
-		List<Movie> collection = TheMovieDB.getCollection(new Movie(24253), Locale.ENGLISH); // Serenity
+		List<Movie> collection = TheMovieDB.getCollection(24253, Locale.ENGLISH); // Serenity
 
 		assertEquals("[The Girl with the Dragon Tattoo (2009), The Girl Who Played with Fire (2009), The Girl Who Kicked the Hornet's Nest (2009)]", collection.toString());
 	}

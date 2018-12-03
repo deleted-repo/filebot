@@ -285,17 +285,14 @@ public class TMDbClient implements MovieIdentificationService, ArtworkProvider {
 		return new MovieInfo(fields, alternativeTitles, genres, certifications, spokenLanguages, productionCountries, productionCompanies, cast, trailers);
 	}
 
-	public List<Movie> getCollection(Movie movie, Locale locale) throws Exception {
-		Object movieResponse = request("movie/" + movie.getTmdbId(), emptyMap(), locale);
+	public List<Movie> getCollection(int id, Locale locale) throws Exception {
+		Object movieResponse = request("movie/" + id, emptyMap(), locale);
 		Map<?, ?> collectionObject = getMap(movieResponse, "belongs_to_collection");
 		Integer collectionId = getInteger(collectionObject, "id");
 		Object collectionResponse = request("collection/" + collectionId, emptyMap(), locale);
 
 		return streamJsonObjects(collectionResponse, "parts").filter(it -> null != getString(it, "release_date")).sorted(comparing(it -> getString(it, "release_date"))).map(it -> {
-			int id = getDouble(it, "id").intValue();
-			int year = matchInteger(getString(it, "release_date")); // release date is often missing
-			String title = getString(it, "title");
-			return new Movie(title, null, year, -1, id, locale);
+			return new Movie(getString(it, "title"), null, matchInteger(getString(it, "release_date")), -1, getInteger(it, "id"), locale);
 		}).collect(toList());
 	}
 

@@ -710,7 +710,7 @@ public class MediaBindingBean {
 	@Define("ci")
 	public Integer getCollectionIndex() throws Exception {
 		if (infoObject instanceof Movie && getMovie().getTmdbId() > 0)
-			return TheMovieDB.getCollection(getMovie(), Locale.US).indexOf(getMovie()) + 1;
+			return TheMovieDB.getCollection(getMovie().getTmdbId(), Locale.US).indexOf(getMovie()) + 1;
 
 		return null;
 	}
