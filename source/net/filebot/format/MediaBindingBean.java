@@ -707,6 +707,14 @@ public class MediaBindingBean {
 		return null;
 	}
 
+	@Define("ci")
+	public Integer getCollectionIndex() throws Exception {
+		if (infoObject instanceof Movie && getMovie().getTmdbId() > 0)
+			return TheMovieDB.getCollection(getMovie(), Locale.US).indexOf(getMovie()) + 1;
+
+		return null;
+	}
+
 	@Define("info")
 	public synchronized AssociativeScriptObject getMetaInfo() {
 		if (infoObject instanceof Movie)

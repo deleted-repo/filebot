@@ -115,6 +115,13 @@ public class TMDbClientTest {
 	}
 
 	@Test
+	public void getCollection() throws Exception {
+		List<Movie> collection = TheMovieDB.getCollection(new Movie(24253), Locale.ENGLISH); // Serenity
+
+		assertEquals("[The Girl with the Dragon Tattoo (2009), The Girl Who Played with Fire (2009), The Girl Who Kicked the Hornet's Nest (2009)]", collection.toString());
+	}
+
+	@Test
 	public void getArtwork() throws Exception {
 		Artwork a = TheMovieDB.getArtwork(16320, "backdrops", Locale.ROOT).get(0);
 		assertEquals("[backdrops, 1920x1080]", a.getTags().toString());
