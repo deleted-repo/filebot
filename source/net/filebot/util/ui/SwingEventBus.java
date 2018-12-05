@@ -20,6 +20,10 @@ public class SwingEventBus extends AsyncEventBus {
 		return instance;
 	}
 
+	public static synchronized boolean isActive() {
+		return instance != null;
+	}
+
 	public SwingEventBus() {
 		super(SwingUtilities::invokeLater, SwingEventBus::handleException);
 	}

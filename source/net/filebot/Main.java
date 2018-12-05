@@ -118,10 +118,11 @@ public class Main {
 			if (args.runCLI()) {
 				// just import and print license when running with --license option
 				if (LICENSE.isFile()) {
-					args.getLicenseFile().ifPresent(f -> {
-						configureLicense(f);
+					String psm = args.getLicenseKey();
+					if (psm != null) {
+						configureLicense(psm);
 						System.exit(0);
-					});
+					}
 				}
 
 				int status = new ArgumentProcessor().run(args);
@@ -174,12 +175,16 @@ public class Main {
 			SwingEventBus.getInstance().post(new FileTransferable(files));
 		}
 
+		// import license if launched with license file
 		if (LICENSE.isFile()) {
-			// import license if launched with license file
-			args.getLicenseFile().ifPresent(f -> configureLicense(f));
-
-			// make sure license is validated and cached
-			SwingEventBus.getInstance().post(LICENSE);
+			try {
+				String psm = args.getLicenseKey();
+				if (psm != null) {
+					configureLicense(psm);
+				}
+			} catch (Throwable e) {
+				debug.log(Level.WARNING, e, e::getMessage);
+			}
 		}
 
 		// JavaFX is used for ProgressMonitor and GettingStartedDialog
@@ -250,7 +255,6 @@ public class Main {
 			MacAppUtilities.initializeApplication(FileBotMenuBar.createHelp(), files -> {
 				if (LICENSE.isFile() && files.size() == 1 && containsOnly(files, LICENSE_FILES)) {
 					configureLicense(files.get(0));
-					SwingEventBus.getInstance().post(LICENSE);
 				} else {
 					SwingEventBus.getInstance().post(new FileTransferable(files));
 				}

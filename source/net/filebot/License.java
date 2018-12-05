@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -87,8 +86,14 @@ public class License {
 			}
 
 			// read and verify license file
-			String psm = findClearSignMessage(file);
+			return parseLicenseText(new String(Files.readAllBytes(file.toPath()), UTF_8));
+		} catch (Exception error) {
+			return new License(error);
+		}
+	}
 
+	public static License parseLicenseText(String psm) {
+		try {
 			// verify and get clear signed content
 			Map<String, String> properties = getProperties(psm);
 
@@ -153,19 +158,14 @@ public class License {
 	public static final SystemProperty<File> FILE = SystemProperty.of("net.filebot.license", File::new, ApplicationFolder.AppData.resolve("license.txt"));
 	public static final MemoizedResource<License> INSTANCE = Resource.lazy(() -> parseLicenseFile(FILE.get()));
 
-	public static License importLicenseFile(File file) throws Exception {
-		// require non-empty license file
-		if (file.length() <= 0) {
-			throw new FileNotFoundException("License file not found: " + file);
-		}
-
+	public static License importLicense(String psm) throws Exception {
 		// lock memoized resource while validating and setting a new license
 		synchronized (License.INSTANCE) {
 			// check if license file is valid and not expired
-			License license = parseLicenseFile(file).check();
+			License license = parseLicenseText(psm).check();
 
 			// write to default license file path
-			Files.copy(file.toPath(), License.FILE.get().toPath(), StandardCopyOption.REPLACE_EXISTING);
+			Files.write(License.FILE.get().toPath(), psm.getBytes(UTF_8));
 
 			// clear memoized instance and reload on next access
 			License.INSTANCE.clear();

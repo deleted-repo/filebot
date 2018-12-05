@@ -1,6 +1,5 @@
 package net.filebot.ui.rename;
 
-import static java.nio.charset.StandardCharsets.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
@@ -10,11 +9,11 @@ import static net.filebot.media.MediaDetection.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
-import static net.filebot.util.PGP.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -252,7 +251,7 @@ class RenameAction extends AbstractAction {
 				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", evt);
 				if (files.size() > 0) {
 					configureLicense(files.get(0));
-					SwingEventBus.getInstance().post(LICENSE);
+					return;
 				}
 			});
 		}));
@@ -260,21 +259,17 @@ class RenameAction extends AbstractAction {
 		actionPopup.add(newAction("Paste License Key", ResourceManager.getIcon("license.import"), c -> {
 			withWaitCursor(evt.getSource(), () -> {
 				try {
-					String clip = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-					String psm = findClearSignMessage(clip);
-
-					File tmp = File.createTempFile("clip", ".txt");
-					writeFile(psm.getBytes(UTF_8), tmp);
-
-					configureLicense(tmp);
-					SwingEventBus.getInstance().post(LICENSE);
-
-					tmp.delete();
+					Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+					if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
+						String clip = (String) clipboard.getData(DataFlavor.stringFlavor);
+						configureLicense(clip);
+						return;
+					}
 				} catch (Exception e) {
-					log.info("The clipboard does not contain a license key. Please select and copy your license key first.");
 					debug.log(Level.WARNING, e, e::getMessage);
 				}
 
+				log.info("The clipboard does not contain a license key. Please select and copy your license key first.");
 			});
 		}));
 

@@ -2,6 +2,8 @@ package net.filebot;
 
 import static net.filebot.License.*;
 import static net.filebot.Logging.*;
+import static net.filebot.util.FileUtilities.*;
+import static net.filebot.util.PGP.*;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -23,6 +25,7 @@ import net.filebot.util.PreferencesMap;
 import net.filebot.util.PreferencesMap.JsonAdapter;
 import net.filebot.util.PreferencesMap.PreferencesEntry;
 import net.filebot.util.PreferencesMap.StringAdapter;
+import net.filebot.util.ui.SwingEventBus;
 
 public final class Settings {
 
@@ -149,9 +152,22 @@ public final class Settings {
 
 	public static void configureLicense(File file) {
 		try {
-			log.info(importLicenseFile(file) + " has been activated successfully.");
+			configureLicense(findClearSignMessage(readTextFile(file)));
+		} catch (Exception e) {
+			log.severe("Invalid License File: " + e.getMessage());
+		}
+	}
+
+	public static void configureLicense(String text) {
+		try {
+			log.info(importLicense(findClearSignMessage(text)) + " has been activated successfully.");
 		} catch (Throwable e) {
 			log.severe("License Error: " + e.getMessage());
+		}
+
+		// make sure license is validated and cached
+		if (SwingEventBus.isActive()) {
+			SwingEventBus.getInstance().post(LICENSE);
 		}
 	}
 

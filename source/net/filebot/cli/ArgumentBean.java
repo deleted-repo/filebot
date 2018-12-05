@@ -8,6 +8,7 @@ import static net.filebot.hash.VerificationUtilities.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.subtitle.SubtitleUtilities.*;
 import static net.filebot.util.FileUtilities.*;
+import static net.filebot.util.PGP.*;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -352,8 +353,12 @@ public class ArgumentBean {
 		}).orElseThrow(error("Illegal mode", mode));
 	}
 
-	public Optional<File> getLicenseFile() {
-		return optional(license).map(File::new);
+	public String getLicenseKey() {
+		try {
+			return license == null || license.isEmpty() ? null : findClearSignMessage(readTextFile(new File(license)));
+		} catch (Exception e) {
+			throw new CmdlineException("Invalid License File: " + e.getMessage(), e);
+		}
 	}
 
 	private final String[] args;

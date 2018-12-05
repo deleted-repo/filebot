@@ -68,8 +68,4 @@ public class PGP {
 		throw new IllegalArgumentException("PGP SIGNED MESSAGE not found");
 	}
 
-	public static String findClearSignMessage(File file) throws IOException {
-		return findClearSignMessage(readTextFile(file));
-	}
-
 }
