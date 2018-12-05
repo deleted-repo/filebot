@@ -536,13 +536,13 @@ public class MediaBindingBean {
 	@Define("source")
 	public String getVideoSource() {
 		// look for video source patterns in media file and it's parent folder (use inferred media file)
-		return releaseInfo.getVideoSource(getFileNames(getInferredMediaFile()));
+		return releaseInfo.getVideoSource(getMediaTitles());
 	}
 
 	@Define("tags")
 	public List<String> getVideoTags() {
 		// look for video source patterns in media file and it's parent folder (use inferred media file)
-		List<String> matches = releaseInfo.getVideoTags(getFileNames(getInferredMediaFile()));
+		List<String> matches = releaseInfo.getVideoTags(getMediaTitles());
 		if (matches.isEmpty()) {
 			return null;
 		}
@@ -555,7 +555,7 @@ public class MediaBindingBean {
 
 	@Define("s3d")
 	public String getStereoscopic3D() {
-		return releaseInfo.getStereoscopic3D(getFileNames(getInferredMediaFile()));
+		return releaseInfo.getStereoscopic3D(getMediaTitles());
 	}
 
 	@Define("group")
@@ -564,7 +564,7 @@ public class MediaBindingBean {
 		Pattern[] nonGroupPattern = { getKeywordExcludePattern(), releaseInfo.getVideoSourcePattern(), releaseInfo.getVideoFormatPattern(true), releaseInfo.getResolutionPattern(), releaseInfo.getStructureRootPattern() };
 
 		// consider foldername, filename and original filename of inferred media file
-		String[] filenames = stream(getFileNames(getInferredMediaFile())).map(s -> releaseInfo.clean(s, nonGroupPattern)).filter(s -> s.length() > 0).toArray(String[]::new);
+		String[] filenames = stream(getMediaTitles()).map(s -> releaseInfo.clean(s, nonGroupPattern)).filter(s -> s.length() > 0).toArray(String[]::new);
 
 		// look for release group names in media file and it's parent folder
 		return releaseInfo.getReleaseGroup(filenames);
@@ -1295,17 +1295,53 @@ public class MediaBindingBean {
 	}
 
 	private String[] getFileNames(File file) {
-		List<String> names = new ArrayList<String>(3);
-		names.add(getNameWithoutExtension(file.getName())); // current file name
+		List<String> names = new ArrayList<String>();
 
+		// current file name
+		names.add(getNameWithoutExtension(file.getName()));
+
+		// original file name via xattr
 		String original = xattr.getOriginalName(file);
 		if (original != null) {
-			names.add(getNameWithoutExtension(original)); // original file name
+			names.add(getNameWithoutExtension(original));
 		}
 
+		// current folder name
 		File parent = file.getParentFile();
 		if (parent != null && parent.getParent() != null) {
-			names.add(parent.getName()); // current folder name
+			names.add(parent.getName());
+		}
+
+		return names.toArray(new String[0]);
+	}
+
+	private String[] getMediaTitles() {
+		File file = getInferredMediaFile();
+		List<String> names = new ArrayList<String>();
+
+		// current file name
+		names.add(getNameWithoutExtension(file.getName()));
+
+		// media title via embedded tags
+		try {
+			String title = getMediaInfo().get(StreamKind.General, 0, "Title");
+			if (title.length() > 0) {
+				names.add(title);
+			}
+		} catch (Exception e) {
+			debug.fine(e::toString);
+		}
+
+		// original file name via xattr
+		String original = xattr.getOriginalName(file);
+		if (original != null) {
+			names.add(getNameWithoutExtension(original));
+		}
+
+		// current folder name
+		File parent = file.getParentFile();
+		if (parent != null && parent.getParent() != null) {
+			names.add(parent.getName());
 		}
 
 		return names.toArray(new String[0]);
