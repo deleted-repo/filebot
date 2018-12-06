@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 
 import com.ibm.icu.text.Transliterator;
 
-import net.filebot.format.BindingException;
-import net.filebot.format.MediaBindingBean;
+import net.filebot.media.MediaCharacteristics;
+import net.filebot.media.MediaCharacteristicsParser;
 import net.filebot.media.SmartSeasonEpisodeMatcher;
 import net.filebot.similarity.SeasonEpisodeMatcher.SxE;
 import net.filebot.vfs.FileInfo;
@@ -538,10 +538,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 		private long getTimeStamp(File file) {
 			if (VIDEO_FILES.accept(file) && file.length() > ONE_MEGABYTE) {
-				try {
-					return new MediaBindingBean(file, file).getEncodedDate().getTimeStamp();
-				} catch (BindingException e) {
-					debug.finest(e::getMessage); // Binding "General[0][Encoded_Date]": undefined => normal if Encoded_Date is undefined => ignore
+				try (MediaCharacteristics mi = MediaCharacteristicsParser.open(file)) {
+					Instant t = mi.getCreationTime();
+					if (t != null) {
+						return t.toEpochMilli();
+					}
 				} catch (Exception e) {
 					debug.warning("Failed to read media encoding date: " + e.getMessage());
 				}

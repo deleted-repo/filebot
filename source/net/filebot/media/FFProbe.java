@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -103,8 +104,26 @@ public class FFProbe implements MediaCharacteristics {
 		}).get();
 	}
 
+	@Override
+	public String getTitle() {
+		return getTag("title").orElse(null);
+	}
+
+	@Override
+	public Instant getCreationTime() {
+		return getTag("creation_time").map(Instant::parse).orElse(null);
+	}
+
 	public Map<String, Object> getFormat() {
 		return (Map) json.get("format");
+	}
+
+	public Map<String, Object> getTags() {
+		return (Map<String, Object>) getFormat().get("tags");
+	}
+
+	public Optional<String> getTag(String tag) {
+		return Optional.ofNullable(getTags()).map(m -> (String) m.get(tag));
 	}
 
 	public List<Map<String, Object>> getStreams() {

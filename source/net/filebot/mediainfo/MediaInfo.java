@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.lang.ref.Cleaner;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
@@ -178,6 +181,21 @@ public class MediaInfo implements MediaCharacteristics {
 	@Override
 	public Float getFrameRate() {
 		return Float.parseFloat(get(StreamKind.Video, 0, "FrameRate"));
+	}
+
+	@Override
+	public String getTitle() {
+		return get(StreamKind.General, 0, "Title");
+	}
+
+	@Override
+	public Instant getCreationTime() {
+		String d = get(StreamKind.General, 0, "Encoded_Date");
+		if (d.isEmpty()) {
+			return null;
+		}
+		// e.g. UTC 2008-01-08 19:54:39
+		return ZonedDateTime.parse(d, DateTimeFormatter.ofPattern("zzz uuuu-MM-dd HH:mm:ss")).toInstant();
 	}
 
 	public Map<StreamKind, List<Map<String, String>>> snapshot() {

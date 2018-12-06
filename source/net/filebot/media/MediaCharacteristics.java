@@ -1,6 +1,7 @@
 package net.filebot.media;
 
 import java.time.Duration;
+import java.time.Instant;
 
 public interface MediaCharacteristics extends AutoCloseable {
 
@@ -19,5 +20,9 @@ public interface MediaCharacteristics extends AutoCloseable {
 	Integer getHeight();
 
 	Float getFrameRate();
+
+	String getTitle();
+
+	Instant getCreationTime();
 
 }
