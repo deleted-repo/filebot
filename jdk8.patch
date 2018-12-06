@@ -34,7 +34,7 @@ index 33adfd4b..ab3bb606 100644
  
  # Default Linux Java Options
 diff --git a/build.xml b/build.xml
-index 04ca5170..f71f3335 100644
+index 9991e46e..7ccebe59 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -129,7 +129,7 @@ index b8e7f8b2..005f702f 100644
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
-index 27882b15..c20a1e36 100644
+index 6383ff72..94d00694 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -25,7 +25,7 @@
@@ -242,7 +242,7 @@ index bb0f65de..25b687ab 100644
  		files.stream().map(it -> it.getParentFile()).distinct().forEach(it -> {
  			try {
 diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
-index befa2d5f..b6594ee2 100644
+index 269e1bbe..84c57d6a 100644
 --- a/source/net/filebot/mediainfo/MediaInfo.java
 +++ b/source/net/filebot/mediainfo/MediaInfo.java
 @@ -8,7 +8,6 @@ import static net.filebot.util.RegularExpressions.*;
@@ -251,9 +251,9 @@ index befa2d5f..b6594ee2 100644
  import java.io.RandomAccessFile;
 -import java.lang.ref.Cleaner;
  import java.time.Duration;
- import java.util.ArrayList;
- import java.util.EnumMap;
-@@ -27,12 +26,10 @@ import net.filebot.media.MediaCharacteristics;
+ import java.time.Instant;
+ import java.time.ZonedDateTime;
+@@ -30,12 +29,10 @@ import net.filebot.media.MediaCharacteristics;
  public class MediaInfo implements MediaCharacteristics {
  
  	private Pointer handle;
@@ -266,7 +266,7 @@ index befa2d5f..b6594ee2 100644
  		} catch (LinkageError e) {
  			throw new MediaInfoException(e);
  		}
-@@ -229,7 +226,22 @@ public class MediaInfo implements MediaCharacteristics {
+@@ -247,7 +244,22 @@ public class MediaInfo implements MediaCharacteristics {
  
  	@Override
  	public synchronized void close() {
@@ -290,7 +290,7 @@ index befa2d5f..b6594ee2 100644
  	}
  
  	public enum StreamKind {
-@@ -314,24 +326,4 @@ public class MediaInfo implements MediaCharacteristics {
+@@ -332,24 +344,4 @@ public class MediaInfo implements MediaCharacteristics {
  		}
  	}
  
