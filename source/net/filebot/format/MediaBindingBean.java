@@ -2,7 +2,9 @@ package net.filebot.format;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
+import static java.util.Collections.sort;
 import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.joining;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.WebServices.*;
@@ -27,7 +29,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1033,9 +1034,7 @@ public class MediaBindingBean {
 
 	@Define("encodedDate")
 	public SimpleDate getEncodedDate() {
-		String date = getMediaInfo(StreamKind.General, 0, "Encoded_Date"); // e.g. UTC 2008-01-08 19:54:39
-		ZonedDateTime time = ZonedDateTime.parse(date, DateTimeFormatter.ofPattern("zzz uuuu-MM-dd HH:mm:ss"));
-		return new SimpleDate(time);
+		return new SimpleDate(getMediaInfo().getCreationTime().toEpochMilli());
 	}
 
 	@Define("today")
