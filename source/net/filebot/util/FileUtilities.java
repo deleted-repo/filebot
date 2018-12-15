@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -289,19 +290,20 @@ public final class FileUtilities {
 			return false;
 		}
 
-		// must not be a folder
-		if (a.isDirectory() || b.isDirectory()) {
-			return false;
-		}
-
-		// must be equal byte by byte
-		try {
-			return FileUtils.contentEquals(a, b);
-		} catch (Exception e) {
-			log.warning(cause(e));
+		// must be a regular file and must be equal byte by byte
+		if (a.isFile() && b.isFile()) {
+			try {
+				return FileUtils.contentEquals(a, b);
+			} catch (Exception e) {
+				log.log(Level.WARNING, e, e::getMessage);
+			}
 		}
 
 		return false;
+	}
+
+	public static boolean equalsLastModified(File a, File b, int granularity) {
+		return a.lastModified() / granularity == b.lastModified() / granularity;
 	}
 
 	/**

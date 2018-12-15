@@ -606,8 +606,8 @@ public class CmdlineOperations implements CmdlineInterface {
 						}
 
 						// do not allow abuse of online databases by repeatedly processing the same files
-						if (matches != null && renameAction.canRevert() && source.length() > 0 && equalsFileContent(source, destination)) {
-							throw new CmdlineException(String.format("Failed to process [%s] because [%s] is an exact copy and already exists", source, destination));
+						if (matches != null && renameAction.canRevert() && source.length() > 0 && equalsLastModified(source, destination, 2000) && equalsFileContent(source, destination)) {
+							throw new CmdlineException(String.format("Failed to process [%s] because [%s] is an exact copy and already exists [Last-Modified: %tc]", source, destination, destination.lastModified()));
 						}
 
 						// delete existing destination path if necessary
@@ -683,6 +683,13 @@ public class CmdlineOperations implements CmdlineInterface {
 				}
 			}
 		}
+
+		// preserve Last Modified date
+		log.forEach((source, destination) -> {
+			if (destination != null) {
+				destination.setLastModified(source.lastModified());
+			}
+		});
 	}
 
 	protected File nextAvailableIndexedName(File file) {
