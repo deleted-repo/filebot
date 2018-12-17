@@ -367,8 +367,8 @@ public class ArgumentBean {
 		this.args = new String[0];
 	}
 
-	public ArgumentBean(String... args) throws CmdLineException {
-		this.args = args;
+	public ArgumentBean(String[] args) throws CmdLineException {
+		this.args = args.clone();
 
 		CmdLineParser parser = new CmdLineParser(this);
 		parser.parseArgument(args);
@@ -391,6 +391,11 @@ public class ArgumentBean {
 
 	private static Supplier<CmdlineException> error(String message, Object value) {
 		return () -> new CmdlineException(message + ": " + value);
+	}
+
+	public static ArgumentBean parse(String... args) throws CmdLineException {
+		// MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333) so we ignore arguments completely in this case
+		return Boolean.parseBoolean(System.getProperty("apple.app.launcher")) || args == null ? new ArgumentBean() : new ArgumentBean(args);
 	}
 
 }

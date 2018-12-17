@@ -223,6 +223,9 @@
 				<option value="-Dapple.laf.useScreenMenuBar=true" />
 				<option value="-Dfile.encoding=UTF-8" />
 
+				<!-- MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333) so we ignore arguments completely in this case -->
+				<option value="-Dapple.app.launcher=true" />
+
 				<!-- libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies -->
 				<option value="-Dapplication.deployment=@{deployment}" />
 

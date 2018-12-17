@@ -58,7 +58,7 @@ public class Main {
 	public static void main(String[] argv) {
 		try {
 			// parse arguments
-			ArgumentBean args = isMacSandbox() ? new ArgumentBean() : new ArgumentBean(argv); // MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333)
+			ArgumentBean args = ArgumentBean.parse(argv);
 
 			// just print help message or version string and then exit
 			if (args.printHelp()) {
