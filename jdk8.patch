@@ -34,7 +34,7 @@ index 33adfd4b..ab3bb606 100644
  
  # Default Linux Java Options
 diff --git a/build.xml b/build.xml
-index 9991e46e..7ccebe59 100644
+index d17b3005..91b3a85e 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -61,7 +61,7 @@ index 9991e46e..7ccebe59 100644
  		</sequential>
  	</macrodef>
  
-@@ -269,10 +263,8 @@
+@@ -272,10 +266,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -73,7 +73,7 @@ index 9991e46e..7ccebe59 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -303,7 +295,7 @@
+@@ -306,7 +298,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -82,7 +82,7 @@ index 9991e46e..7ccebe59 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -342,9 +334,9 @@
+@@ -345,9 +337,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -95,7 +95,7 @@ index 9991e46e..7ccebe59 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -568,7 +560,7 @@
+@@ -571,7 +563,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
