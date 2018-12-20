@@ -853,17 +853,36 @@ public final class FileUtilities {
 		}
 	}
 
-	public static class RegexFileFilter implements FileFilter, FilenameFilter {
+	public static class RegexMatchFilter implements FileFilter, FilenameFilter {
 
 		private final Pattern pattern;
 
-		public RegexFileFilter(Pattern pattern) {
+		public RegexMatchFilter(Pattern pattern) {
 			this.pattern = pattern;
 		}
 
 		@Override
 		public boolean accept(File dir, String name) {
 			return pattern.matcher(name).matches();
+		}
+
+		@Override
+		public boolean accept(File file) {
+			return accept(file.getParentFile(), file.getName());
+		}
+	}
+
+	public static class RegexFindFilter implements FileFilter, FilenameFilter {
+
+		private final Pattern pattern;
+
+		public RegexFindFilter(Pattern pattern) {
+			this.pattern = pattern;
+		}
+
+		@Override
+		public boolean accept(File dir, String name) {
+			return pattern.matcher(name).find();
 		}
 
 		@Override

@@ -85,6 +85,10 @@ public class MediaDetection {
 		return releaseInfo.getClutterFileFilter();
 	}
 
+	public static FileFilter getClutterTypeFilter() {
+		return releaseInfo.getClutterTypeFilter();
+	}
+
 	public static boolean isDiskFolder(File folder) {
 		return getDiskFolderFilter().accept(folder);
 	}

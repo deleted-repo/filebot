@@ -1,12 +1,16 @@
 package net.filebot.ui.filter;
 
+import static net.filebot.Logging.*;
+
 import java.awt.datatransfer.Transferable;
+import java.util.logging.Level;
 
 import javax.swing.JComponent;
 import javax.swing.JTabbedPane;
 
 import com.google.common.eventbus.Subscribe;
 
+import net.filebot.ui.transfer.FileTransferable;
 import net.filebot.ui.transfer.TransferablePolicy;
 import net.filebot.ui.transfer.TransferablePolicy.TransferAction;
 import net.miginfocom.swing.MigLayout;
@@ -32,6 +36,14 @@ public class FilterPanel extends JComponent {
 
 	public void addTool(Tool<?> tool) {
 		toolsPanel.addTab(tool.getName(), tool);
+	}
+
+	public void reload() {
+		try {
+			fileTreePanel.getTransferablePolicy().handleTransferable(new FileTransferable(fileTreePanel.getFileTree().getRoot()), TransferAction.PUT);
+		} catch (Exception e) {
+			debug.log(Level.WARNING, e, e::toString);
+		}
 	}
 
 	@Subscribe

@@ -2,6 +2,7 @@ package net.filebot.ui.filter;
 
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Logging.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.event.ActionEvent;
@@ -14,12 +15,14 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -66,7 +69,7 @@ public class FileTree extends JTree {
 				return file.getFile();
 			}
 			return null;
-		}).collect(toList());
+		}).filter(f -> f != null && f.exists()).collect(toList());
 	}
 
 	public void clear() {
@@ -109,6 +112,9 @@ public class FileTree extends JTree {
 
 			add(newAction("Expand all", ResourceManager.getIcon("tree.expand"), evt -> expandAll()));
 			add(newAction("Collapse all", ResourceManager.getIcon("tree.collapse"), evt -> collapseAll()));
+
+			addSeparator();
+			add(new TrashAction(selectedFiles));
 		}
 
 		private Collection<File> getFiles(TreePath[] selection) {
@@ -145,6 +151,31 @@ public class FileTree extends JTree {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				UserFiles.revealFiles(files);
+			}
+		}
+
+		private class TrashAction extends AbstractAction {
+
+			private Collection<File> files;
+
+			public TrashAction(Collection<File> files) {
+				super("Move to Trash");
+				this.files = files;
+			}
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					for (File f : files) {
+						UserFiles.trash(f);
+					}
+				} catch (Exception e) {
+					log.log(Level.SEVERE, e, e::toString);
+				}
+
+				// reload file tree after files have been deleted
+				FilterPanel parent = (FilterPanel) SwingUtilities.getAncestorOfClass(FilterPanel.class, FileTree.this);
+				parent.reload();
 			}
 		}
 

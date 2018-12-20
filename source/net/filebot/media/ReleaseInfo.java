@@ -44,7 +44,8 @@ import net.filebot.ApplicationFolder;
 import net.filebot.Cache;
 import net.filebot.CacheType;
 import net.filebot.Resource;
-import net.filebot.util.FileUtilities.RegexFileFilter;
+import net.filebot.util.FileUtilities.RegexFindFilter;
+import net.filebot.util.FileUtilities.RegexMatchFilter;
 import net.filebot.util.SystemProperty;
 import net.filebot.web.Movie;
 import net.filebot.web.SearchResult;
@@ -393,29 +394,38 @@ public class ReleaseInfo {
 		return diskFolderFilter;
 	}
 
-	private static RegexFileFilter diskFolderEntryFilter;
+	private static RegexMatchFilter diskFolderEntryFilter;
 
 	public FileFilter getDiskFolderEntryFilter() {
 		if (diskFolderEntryFilter == null) {
-			diskFolderEntryFilter = new RegexFileFilter(compile(getProperty("pattern.diskfolder.entry")));
+			diskFolderEntryFilter = new RegexMatchFilter(compile(getProperty("pattern.diskfolder.entry")));
 		}
 		return diskFolderEntryFilter;
+	}
+
+	private static ClutterFileFilter clutterTypeFilter;
+
+	public FileFilter getClutterTypeFilter() {
+		if (clutterTypeFilter == null) {
+			clutterTypeFilter = new ClutterFileFilter(new RegexFindFilter(compile(getProperty("pattern.clutter.types"), CASE_INSENSITIVE)), Long.parseLong(getProperty("number.clutter.maxfilesize")));
+		}
+		return clutterTypeFilter;
 	}
 
 	private static ClutterFileFilter clutterFileFilter;
 
 	public FileFilter getClutterFileFilter() {
 		if (clutterFileFilter == null) {
-			clutterFileFilter = new ClutterFileFilter(getExcludePattern(), Long.parseLong(getProperty("number.clutter.maxfilesize"))); // only files smaller than 250 MB may be considered clutter
+			clutterFileFilter = new ClutterFileFilter(new FileFolderNameFilter(getExcludePattern()), Long.parseLong(getProperty("number.clutter.maxfilesize")));
 		}
 		return clutterFileFilter;
 	}
 
-	private static RegexFileFilter systemFilesFilter;
+	private static RegexMatchFilter systemFilesFilter;
 
 	public FileFilter getSystemFilesFilter() {
 		if (systemFilesFilter == null) {
-			systemFilesFilter = new RegexFileFilter(compile(getProperty("pattern.system.files"), CASE_INSENSITIVE));
+			systemFilesFilter = new RegexMatchFilter(compile(getProperty("pattern.system.files"), CASE_INSENSITIVE));
 		}
 		return systemFilesFilter;
 	}
@@ -535,18 +545,19 @@ public class ReleaseInfo {
 		}
 	}
 
-	public static class ClutterFileFilter extends FileFolderNameFilter {
+	public static class ClutterFileFilter implements FileFilter {
 
+		private FileFilter filter;
 		private long maxFileSize;
 
-		public ClutterFileFilter(Pattern namePattern, long maxFileSize) {
-			super(namePattern);
+		public ClutterFileFilter(FileFilter filter, long maxFileSize) {
+			this.filter = filter;
 			this.maxFileSize = maxFileSize;
 		}
 
 		@Override
 		public boolean accept(File file) {
-			return super.accept(file) && file.isFile() && file.length() < maxFileSize;
+			return filter.accept(file) && file.isFile() && file.length() < maxFileSize;
 		}
 	}
 
