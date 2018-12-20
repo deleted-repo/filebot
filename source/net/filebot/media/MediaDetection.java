@@ -93,10 +93,6 @@ public class MediaDetection {
 		return getDiskFolderFilter().accept(folder);
 	}
 
-	public static boolean isClutterFile(File file) throws IOException {
-		return getClutterFileFilter().accept(file);
-	}
-
 	public static boolean isVideoDiskFile(File file) throws Exception {
 		if (file.isFile() && file.length() > ONE_MEGABYTE) {
 			try (Archive iso = Archive.open(file)) {

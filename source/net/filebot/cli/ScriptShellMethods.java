@@ -135,6 +135,10 @@ public class ScriptShellMethods {
 		return false;
 	}
 
+	public static boolean isClutter(File self) {
+		return MediaDetection.getClutterTypeFilter().accept(self) || MediaDetection.getClutterFileFilter().accept(self);
+	}
+
 	public static File getDir(File self) {
 		return self.getParentFile();
 	}
