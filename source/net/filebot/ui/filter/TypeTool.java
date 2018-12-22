@@ -87,14 +87,14 @@ class TypeTool extends Tool<TreeModel> {
 		Map<String, FileFilter> types = new LinkedHashMap<String, FileFilter>();
 		types.put("Movie", f -> MediaDetection.isMovie(f, true));
 		types.put("Episode", f -> MediaDetection.isEpisode(f, true));
-		types.put("Extras", MediaDetection.getClutterFileFilter());
+		types.put("Disk Folder", MediaDetection.getDiskFolderFilter());
 		types.put("Video", MediaTypes.VIDEO_FILES);
 		types.put("Subtitle", MediaTypes.SUBTITLE_FILES);
 		types.put("Audio", MediaTypes.AUDIO_FILES);
 		types.put("Archive", MediaTypes.ARCHIVE_FILES);
 		types.put("Verification", MediaTypes.VERIFICATION_FILES);
+		types.put("Extras", MediaDetection.getClutterFileFilter());
 		types.put("Clutter", MediaDetection.getClutterTypeFilter());
-		types.put("Disk Folder", MediaDetection.getDiskFolderFilter());
 		return types;
 	}
 
