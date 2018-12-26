@@ -17,21 +17,27 @@ import java.util.Set;
 
 import com.sun.jna.Platform;
 
+import net.filebot.platform.bsd.ExtAttrView;
 import net.filebot.platform.mac.MacXattrView;
 
 public class MetaAttributeView extends AbstractMap<String, String> {
 
-	private final Object xattr;
+	private Object xattr;
 
 	public MetaAttributeView(File file) throws IOException {
 		// resolve symlinks
 		Path path = file.toPath().toRealPath();
 
-		// UserDefinedFileAttributeView (for Windows and Linux) OR our own xattr.h JNA wrapper via MacXattrView (for Mac) because UserDefinedFileAttributeView is not supported (Oracle Java 7/8)
-		if (Platform.isMac()) {
-			xattr = new MacXattrView(path);
-		} else {
-			xattr = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+		// UserDefinedFileAttributeView (for Windows and Linux)
+		xattr = Files.getFileAttributeView(path, UserDefinedFileAttributeView.class);
+
+		// OR our own xattr.h JNA wrapper via MacXattrView (for Mac) because UserDefinedFileAttributeView is not supported (Oracle Java 7/8)
+		if (xattr == null) {
+			if (Platform.isMac()) {
+				xattr = new MacXattrView(path);
+			} else if (Platform.isFreeBSD() || Platform.isOpenBSD() || Platform.isNetBSD()) {
+				xattr = new ExtAttrView(path);
+			}
 		}
 
 		// sanity check
@@ -65,6 +71,11 @@ public class MetaAttributeView extends AbstractMap<String, String> {
 				MacXattrView macXattr = (MacXattrView) xattr;
 				return macXattr.read(key);
 			}
+
+			if (xattr instanceof ExtAttrView) {
+				ExtAttrView bsdXattr = (ExtAttrView) xattr;
+				return bsdXattr.read(key);
+			}
 		} catch (IOException e) {
 			debug.warning(cause(e));
 		}
@@ -82,6 +93,7 @@ public class MetaAttributeView extends AbstractMap<String, String> {
 				} else {
 					attributeView.write(key, UTF_8.encode(value));
 				}
+				return null;
 			}
 
 			if (xattr instanceof MacXattrView) {
@@ -91,6 +103,17 @@ public class MetaAttributeView extends AbstractMap<String, String> {
 				} else {
 					macXattr.write(key, value);
 				}
+				return null;
+			}
+
+			if (xattr instanceof ExtAttrView) {
+				ExtAttrView bsdXattr = (ExtAttrView) xattr;
+				if (value == null || value.isEmpty()) {
+					bsdXattr.delete(key);
+				} else {
+					bsdXattr.write(key, value);
+				}
+				return null;
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -119,6 +142,11 @@ public class MetaAttributeView extends AbstractMap<String, String> {
 		if (xattr instanceof MacXattrView) {
 			MacXattrView macXattr = (MacXattrView) xattr;
 			return macXattr.list();
+		}
+
+		if (xattr instanceof ExtAttrView) {
+			ExtAttrView bsdXattr = (ExtAttrView) xattr;
+			return bsdXattr.list();
 		}
 
 		return null;
