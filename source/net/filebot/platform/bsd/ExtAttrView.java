@@ -22,15 +22,16 @@ public class ExtAttrView {
 	}
 
 	public List<String> list() throws IOException {
-		CharSequence output = execute("lsextattr", "-q", "user", path);
-
-		return SPACE.splitAsStream(output).map(String::trim).filter(s -> s.length() > 0).collect(toList());
+		return SPACE.splitAsStream(execute("lsextattr", "-q", "user", path)).map(String::trim).filter(s -> s.length() > 0).collect(toList());
 	}
 
-	public String read(String key) throws IOException {
-		CharSequence output = execute("getextattr", "-q", "user", key, path);
-
-		return output.toString().trim();
+	public String read(String key) {
+		try {
+			return execute("getextattr", "-q", "user", key, path).toString().trim();
+		} catch (IOException e) {
+			debug.finest(e::getMessage);
+		}
+		return null;
 	}
 
 	public void write(String key, String value) throws IOException {
@@ -57,7 +58,7 @@ public class ExtAttrView {
 			if (returnCode == 0) {
 				return output;
 			} else {
-				throw new IOException(String.format("%s failed with exit code %d: %s", command[0], returnCode, SPACE.matcher(output).replaceAll(" ").trim()));
+				throw new IOException(String.format("%s failed with exit code %d", command[0], returnCode));
 			}
 		} catch (InterruptedException e) {
 			throw new IOException(String.format("%s timed out", command[0]), e);
