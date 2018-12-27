@@ -30,9 +30,8 @@ public class ExtAttrView implements XattrView {
 		try {
 			return execute("getextattr", "-q", "user", key, path).toString().trim();
 		} catch (IOException e) {
-			debug.finest(e::getMessage);
+			return null;
 		}
-		return null;
 	}
 
 	public void write(String key, String value) throws IOException {
