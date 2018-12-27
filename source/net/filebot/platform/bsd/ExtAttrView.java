@@ -12,13 +12,14 @@ import java.nio.file.Path;
 import java.util.List;
 
 import net.filebot.util.ByteBufferOutputStream;
+import net.filebot.util.XattrView;
 
-public class ExtAttrView {
+public class ExtAttrView implements XattrView {
 
 	private final String path;
 
 	public ExtAttrView(Path path) {
-		this.path = path.toAbsolutePath().toString();
+		this.path = path.toString();
 	}
 
 	public List<String> list() throws IOException {
