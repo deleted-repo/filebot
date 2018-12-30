@@ -19,8 +19,8 @@
 		<dependency rev="5.2" org="com.miglayout" name="miglayout-swing" />
 		<dependency rev="2.2" org="org.apache.commons" name="commons-vfs2" />
 		<dependency rev="3.1.0" org="com.github.junrar" name="junrar" />
-		<dependency rev="2.6.1" org="com.fifesoft" name="rsyntaxtextarea" />
-		<dependency rev="2.6.1" org="com.fifesoft" name="autocomplete" />
+		<dependency rev="3.0.0" org="com.fifesoft" name="rsyntaxtextarea" />
+		<dependency rev="3.0.0" org="com.fifesoft" name="autocomplete" />
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding" />
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
 		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
