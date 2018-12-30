@@ -2,12 +2,9 @@ package net.filebot.util;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
-import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

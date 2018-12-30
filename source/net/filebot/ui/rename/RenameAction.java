@@ -47,7 +47,6 @@ import net.filebot.similarity.Match;
 import net.filebot.util.ui.ActionPopup;
 import net.filebot.util.ui.ProgressMonitor;
 import net.filebot.util.ui.ProgressMonitor.ProgressWorker;
-import net.filebot.util.ui.SwingEventBus;
 
 class RenameAction extends AbstractAction {
 
