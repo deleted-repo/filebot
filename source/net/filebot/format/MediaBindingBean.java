@@ -4,7 +4,6 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Collections.sort;
 import static java.util.stream.Collectors.*;
-import static java.util.stream.Collectors.joining;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.WebServices.*;
