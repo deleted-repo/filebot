@@ -15,16 +15,18 @@ public class PlainFileXattrView implements XattrView {
 
 	private static final String XATTR_FOLDER = System.getProperty("net.filebot.xattr.store", ".xattr");
 
-	private final Path folder;
+	private final Path root;
+	private final Path node;
 
 	public PlainFileXattrView(Path path) throws IOException {
-		folder = path.getParent().resolve(XATTR_FOLDER).resolve(path.getFileName());
+		root = path.getParent().resolve(XATTR_FOLDER);
+		node = root.resolve(path.getFileName());
 	}
 
 	@Override
 	public List<String> list() throws IOException {
-		if (Files.isDirectory(folder)) {
-			return Files.list(folder).map(Path::getFileName).map(Path::toString).collect(toList());
+		if (Files.isDirectory(node)) {
+			return Files.list(node).map(Path::getFileName).map(Path::toString).collect(toList());
 		}
 		return emptyList();
 	}
@@ -32,7 +34,7 @@ public class PlainFileXattrView implements XattrView {
 	@Override
 	public String read(String key) throws IOException {
 		try {
-			return new String(Files.readAllBytes(folder.resolve(key)), UTF_8);
+			return new String(Files.readAllBytes(node.resolve(key)), UTF_8);
 		} catch (NoSuchFileException e) {
 			return null;
 		}
@@ -40,21 +42,21 @@ public class PlainFileXattrView implements XattrView {
 
 	@Override
 	public void write(String key, String value) throws IOException {
-		if (!Files.isDirectory(folder)) {
-			Files.createDirectories(folder);
+		if (!Files.isDirectory(node)) {
+			Files.createDirectories(node);
 
 			// set Hidden on Windows
-			if (Files.getFileStore(folder).supportsFileAttributeView(DosFileAttributeView.class)) {
-				Files.getFileAttributeView(folder, DosFileAttributeView.class).setHidden(true);
+			if (Files.getFileStore(root).supportsFileAttributeView(DosFileAttributeView.class)) {
+				Files.getFileAttributeView(root, DosFileAttributeView.class).setHidden(true);
 			}
 		}
 
-		Files.write(folder.resolve(key), value.getBytes(UTF_8));
+		Files.write(node.resolve(key), value.getBytes(UTF_8));
 	}
 
 	@Override
 	public void delete(String key) throws IOException {
-		Files.deleteIfExists(folder.resolve(key));
+		Files.deleteIfExists(node.resolve(key));
 	}
 
 }
