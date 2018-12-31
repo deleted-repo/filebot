@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.attribute.DosFileAttributeView;
 import java.util.List;
 
 public class PlainFileXattrView implements XattrView {
@@ -39,7 +40,15 @@ public class PlainFileXattrView implements XattrView {
 
 	@Override
 	public void write(String key, String value) throws IOException {
-		Files.createDirectories(folder);
+		if (!Files.isDirectory(folder)) {
+			Files.createDirectories(folder);
+
+			// set Hidden on Windows
+			if (Files.getFileStore(folder).supportsFileAttributeView(DosFileAttributeView.class)) {
+				Files.getFileAttributeView(folder, DosFileAttributeView.class).setHidden(true);
+			}
+		}
+
 		Files.write(folder.resolve(key), value.getBytes(UTF_8));
 	}
 
