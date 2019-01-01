@@ -2,7 +2,6 @@ package net.filebot.format;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
-import static java.util.Collections.sort;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
@@ -125,9 +124,9 @@ public class MediaBindingBean {
 	}
 
 	@Define("y")
-	public Integer getYear() {
+	public Integer getYear() throws Exception {
 		if (infoObject instanceof Episode)
-			return getEpisode().getSeriesInfo().getStartDate().getYear();
+			return getStartDate().getYear();
 		if (infoObject instanceof Movie)
 			return getMovie().getYear();
 
@@ -138,9 +137,8 @@ public class MediaBindingBean {
 	public String getNameWithYear() {
 		String n = getName();
 		try {
-			String y = String.format(" (%d)", getYear());
-
 			// account for TV Shows that contain the year in the series name, e.g. Doctor Who (2005)
+			String y = String.format(" (%d)", getYear());
 			return n.endsWith(y) ? n : n + y;
 		} catch (Exception e) {
 			// default to {n} if {y} is undefined
@@ -260,8 +258,16 @@ public class MediaBindingBean {
 	}
 
 	@Define("startdate")
-	public SimpleDate getStartDate() {
-		return getEpisode().getSeriesInfo().getStartDate();
+	public SimpleDate getStartDate() throws Exception {
+		SimpleDate startdate = getEpisode().getSeriesInfo().getStartDate();
+
+		// use series metadata startdate if possible
+		if (startdate != null) {
+			return startdate;
+		}
+
+		// access episode list and find minimum airdate if necessary
+		return getEpisodeList().stream().filter(e -> isRegular(e)).map(Episode::getAirdate).filter(Objects::nonNull).min(SimpleDate::compareTo).get();
 	}
 
 	@Define("absolute")
@@ -1343,7 +1349,7 @@ public class MediaBindingBean {
 					keys.add(e.getTitle());
 				}
 			} else if (infoObject instanceof Movie) {
-				keys.add(getYear());
+				keys.add(getMovie().getYear());
 			}
 		}
 
