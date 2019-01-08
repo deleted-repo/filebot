@@ -676,20 +676,22 @@ public class CmdlineOperations implements CmdlineInterface {
 		if (matches != null) {
 			for (Match<File, ?> match : matches) {
 				if (match.getCandidate() != null) {
-					File destination = log.get(match.getValue());
+					File source = match.getValue();
+					File destination = log.get(source);
+
 					if (destination != null && destination.isFile()) {
+						// remember Last Modified date
+						long timestamp = source.isFile() ? source.lastModified() : destination.lastModified();
+
+						// store xattr
 						xattr.setMetaInfo(destination, match.getCandidate(), match.getValue().getName());
+
+						// restore Last Modified date
+						destination.setLastModified(timestamp);
 					}
 				}
 			}
 		}
-
-		// preserve Last Modified date
-		log.forEach((source, destination) -> {
-			if (destination != null && destination.isFile() && source.exists()) {
-				destination.setLastModified(source.lastModified());
-			}
-		});
 	}
 
 	protected File nextAvailableIndexedName(File file) {
