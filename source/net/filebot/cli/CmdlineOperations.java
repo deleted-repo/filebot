@@ -686,7 +686,7 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// preserve Last Modified date
 		log.forEach((source, destination) -> {
-			if (destination != null && source.exists()) {
+			if (destination != null && destination.isFile() && source.exists()) {
 				destination.setLastModified(source.lastModified());
 			}
 		});
