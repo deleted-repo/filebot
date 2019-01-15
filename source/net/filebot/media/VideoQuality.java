@@ -4,6 +4,8 @@ import static java.util.Comparator.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.media.MediaDetection.*;
+import static net.filebot.media.XattrMetaInfo.*;
+import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.StringUtilities.*;
 
 import java.io.File;
@@ -20,7 +22,7 @@ public class VideoQuality implements Comparator<File> {
 		return DESCENDING_ORDER.compare(f1, f2) < 0;
 	}
 
-	private final Comparator<File> chain = comparing(f -> new MediaBindingBean(f, f), comparingInt(this::getRepack).thenComparingInt(this::getResolution).thenComparingLong(MediaBindingBean::getFileSize));
+	private final Comparator<File> chain = comparingInt(this::getRepack).thenComparingInt(this::getResolution).thenComparingLong(File::length);
 
 	@Override
 	public int compare(File f1, File f2) {
@@ -29,19 +31,19 @@ public class VideoQuality implements Comparator<File> {
 
 	private final Pattern repack = releaseInfo.getRepackPattern();
 
-	private int getRepack(MediaBindingBean m) {
-		return find(m.getFileName(), repack) || find(m.getOriginalFileName(), repack) ? 1 : 0;
+	private int getRepack(File f) {
+		return find(f.getName(), repack) || find(xattr.getOriginalName(f), repack) ? 1 : 0;
 	}
 
-	private int getResolution(MediaBindingBean m) {
-		// use video file for video/subtitle pairs when comparing the subtitle file
-		File mediaFile = m.getInferredMediaFile();
+	private int getResolution(File f) {
+		// use primary video file when checking video resolution of subtitle files or disk folders
+		f = new MediaBindingBean(f, f).getInferredMediaFile();
 
-		if (VIDEO_FILES.accept(mediaFile)) {
-			try {
-				return m.getDimension().stream().mapToInt(Number::intValue).reduce((a, b) -> a * b).orElse(0);
+		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
+			try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+				return mi.getWidth() * mi.getHeight();
 			} catch (Exception e) {
-				debug.warning("Failed to read media info: " + e);
+				debug.warning("Failed to read video resolution: " + e.getMessage());
 			}
 		}
 
