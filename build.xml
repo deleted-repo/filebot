@@ -753,7 +753,7 @@
 		</chmod>
 
 		<exec executable="docker" failonerror="yes">
-			<arg line="run -it --rm -v ${dir.staging}:/src rednoah/qpkg-build --7zip" />
+			<arg line="run --rm -v ${dir.staging}:/src rednoah/qpkg-build --7zip" />
 		</exec>
 		<copy file="${dir.staging}/build/${package.name}_${application.version}.qpkg" tofile="${dir.dist}/${release}.qpkg" />
 	</target>
