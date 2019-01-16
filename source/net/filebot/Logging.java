@@ -12,6 +12,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
@@ -34,6 +37,8 @@ public final class Logging {
 	private static final SystemProperty<Level> debugLevel = SystemProperty.of("net.filebot.logging.debug", Level::parse, Level.WARNING);
 	private static final SystemProperty<Pattern> anonymizePattern = SystemProperty.of("net.filebot.logging.anonymize", Pattern::compile);
 	private static final SystemProperty<Boolean> color = SystemProperty.of("net.filebot.logging.color", Boolean::parseBoolean, EscapeCode.isSupported());
+	private static final SystemProperty<Boolean> timeStamp = SystemProperty.of("net.filebot.logging.time", Boolean::parseBoolean, false);
+	private static final SystemProperty<DateTimeFormatter> timeStampFormat = SystemProperty.of("net.filebot.logging.time.format", DateTimeFormatter::ofPattern, DateTimeFormatter.ofPattern("'['uuuu-MM-dd HH:mm:ss.SSS']' "));
 
 	public static final Logger log = createConsoleLogger("net.filebot.console", Level.ALL);
 	public static final Logger debug = createConsoleLogger("net.filebot.debug", debugLevel.get());
@@ -69,7 +74,7 @@ public final class Logging {
 			}
 		}
 
-		StreamHandler handler = new StreamHandler(newOutputStream(channel), new ConsoleFormatter(anonymizePattern.get(), false));
+		StreamHandler handler = new StreamHandler(newOutputStream(channel), new ConsoleFormatter(anonymizePattern.get(), false, createTimeStampFormat()));
 		handler.setEncoding("UTF-8");
 		handler.setLevel(level);
 		return handler;
@@ -78,8 +83,12 @@ public final class Logging {
 	public static ConsoleHandler createConsoleHandler(Level level) {
 		ConsoleHandler handler = new ConsoleHandler();
 		handler.setLevel(level);
-		handler.setFormatter(new ConsoleFormatter(anonymizePattern.get(), color.get()));
+		handler.setFormatter(new ConsoleFormatter(anonymizePattern.get(), color.get(), createTimeStampFormat()));
 		return handler;
+	}
+
+	private static DateTimeFormatter createTimeStampFormat() {
+		return timeStamp.get() ? timeStampFormat.get().withLocale(Locale.US).withZone(ZoneId.systemDefault()) : null;
 	}
 
 	public static Supplier<String> format(String format, Object... args) {
@@ -130,18 +139,27 @@ public final class Logging {
 
 		private final Pattern anonymize;
 		private final boolean colorize;
+		private final DateTimeFormatter dateTimeFormatter;
 
-		public ConsoleFormatter(Pattern anonymize, boolean colorize) {
+		public ConsoleFormatter(Pattern anonymize, boolean colorize, DateTimeFormatter dateTimeFormatter) {
 			this.anonymize = anonymize;
 			this.colorize = colorize;
+			this.dateTimeFormatter = dateTimeFormatter;
 		}
 
 		@Override
 		public String format(LogRecord record) {
 			EscapeCode color = getColor(record.getLevel().intValue());
 
+			StringWriter buffer = new StringWriter(80);
+
+			// ADD TIMESTAMP
+			if (dateTimeFormatter != null) {
+				dateTimeFormatter.formatTo(record.getInstant(), buffer);
+			}
+
 			// BEGIN COLOR
-			StringWriter buffer = new StringWriter().append(color.begin);
+			buffer.append(color.begin);
 
 			// MESSAGE
 			String message = record.getMessage();
