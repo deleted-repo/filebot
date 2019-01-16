@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index 33adfd4b..ab3bb606 100644
+index 33adfd4b..4a92a73b 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -9,7 +9,7 @@ index 33adfd4b..ab3bb606 100644
 -jre.version: 11.0.1
 -jfx.version: 11.0.1
 +jre.major: 8
-+jre.build: 191
++jre.build: 201
  
  # Minimum System Version
 -jvm.version: 11
@@ -129,7 +129,7 @@ index b8e7f8b2..005f702f 100644
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
-index 6383ff72..94d00694 100644
+index b363fd05..fc0895ef 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -25,7 +25,7 @@
