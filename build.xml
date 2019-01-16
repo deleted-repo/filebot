@@ -752,10 +752,10 @@
 			<fileset dir="${dir.base}" includes="**/fpcalc" />
 		</chmod>
 
-		<exec executable="qbuild" dir="${dir.staging}" failonerror="yes">
-			<arg line="--7zip --build-dir ${dir.dist}" />
+		<exec executable="docker" failonerror="yes">
+			<arg line="run -it --rm -v ${dir.staging}:/src rednoah/qpkg-build --7zip" />
 		</exec>
-		<move file="${dir.dist}/${package.name}_${application.version}.qpkg" tofile="${dir.dist}/${release}.qpkg" />
+		<copy file="${dir.staging}/build/${package.name}_${application.version}.qpkg" tofile="${dir.dist}/${release}.qpkg" />
 	</target>
 
 
