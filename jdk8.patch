@@ -1,13 +1,13 @@
 diff --git a/app.properties b/app.properties
-index 33adfd4b..4a92a73b 100644
+index 6581b002..4a92a73b 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
  
  # Build
  main.class: net.filebot.Main
--jre.version: 11.0.1
--jfx.version: 11.0.1
+-jre.version: 11.0.2
+-jfx.version: 11.0.2
 +jre.major: 8
 +jre.build: 201
  
@@ -34,7 +34,7 @@ index 33adfd4b..4a92a73b 100644
  
  # Default Linux Java Options
 diff --git a/build.xml b/build.xml
-index d17b3005..91b3a85e 100644
+index 18652e5d..25577787 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
