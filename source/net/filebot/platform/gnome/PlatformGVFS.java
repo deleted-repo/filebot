@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class PlatformGVFS implements GVFS {
@@ -16,8 +17,23 @@ public class PlatformGVFS implements GVFS {
 		this.gvfs = gvfs;
 	}
 
-	public File getPathForURI(URI uri) {
-		return Protocol.forName(uri.getScheme()).getFile(gvfs, uri);
+	public File getPathForURI(String resource) {
+		return getPathForURI(parseURI(resource));
+	}
+
+	public File getPathForURI(URI resource) {
+		return Protocol.forName(resource.getScheme()).getFile(gvfs, resource);
+	}
+
+	public URI parseURI(String resource) {
+		try {
+			// DIRTY WORK AROUND: Square Brackets [] are reserved as per RFC2732 but some file managers (e.g. KDE Dolphin) don't URI encode them correctly
+			resource = resource.replace("[", "%5B").replace("]", "%5D");
+
+			return new URI(resource);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
