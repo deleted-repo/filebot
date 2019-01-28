@@ -612,10 +612,11 @@ public class CmdlineOperations implements CmdlineInterface {
 
 						// delete existing destination path if necessary
 						if (conflictAction == ConflictAction.OVERRIDE || (conflictAction == ConflictAction.AUTO && VideoQuality.isBetter(source, destination))) {
-							// do not delete files in test mode
-							if (renameAction.canRevert()) {
+							log.fine(format("[%s] Delete [%s]", conflictAction, destination));
+
+							// do not actually delete files in test mode
+							if (renameAction != StandardRenameAction.TEST) {
 								try {
-									log.fine(format("[%s] Delete [%s]", conflictAction, destination));
 									delete(destination);
 								} catch (Exception e) {
 									log.warning(format("[%s] Failed to delete [%s]: %s", conflictAction, destination, e));
