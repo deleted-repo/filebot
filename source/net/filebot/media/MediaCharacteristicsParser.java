@@ -7,21 +7,24 @@ import net.filebot.util.SystemProperty;
 
 public enum MediaCharacteristicsParser {
 
-	libmediainfo, ffprobe;
+	libmediainfo {
 
-	public static MediaCharacteristicsParser getDefault() {
-		return SystemProperty.of("net.filebot.media.parser", MediaCharacteristicsParser::valueOf, libmediainfo).get();
-	}
-
-	public static MediaCharacteristics open(File f) throws Exception {
-		switch (getDefault()) {
-		case libmediainfo:
+		@Override
+		public MediaCharacteristics open(File f) throws Exception {
 			return new MediaInfo().open(f);
-		case ffprobe:
+		}
+	},
+
+	ffprobe {
+
+		@Override
+		public MediaCharacteristics open(File f) throws Exception {
 			return new FFProbe().open(f);
 		}
+	};
 
-		throw new IllegalStateException();
-	}
+	public abstract MediaCharacteristics open(File f) throws Exception;
+
+	public static final MediaCharacteristicsParser DEFAULT = SystemProperty.of("net.filebot.media.parser", MediaCharacteristicsParser::valueOf, libmediainfo).get();
 
 }

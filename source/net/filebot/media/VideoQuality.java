@@ -40,7 +40,7 @@ public class VideoQuality implements Comparator<File> {
 		f = new MediaBindingBean(f, f).getInferredMediaFile();
 
 		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
-			try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 				return mi.getWidth() * mi.getHeight();
 			} catch (Exception e) {
 				debug.warning("Failed to read video resolution: " + e.getMessage());

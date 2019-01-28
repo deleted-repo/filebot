@@ -538,7 +538,7 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 		private long getTimeStamp(File file) {
 			if (VIDEO_FILES.accept(file) && file.length() > ONE_MEGABYTE) {
-				try (MediaCharacteristics mi = MediaCharacteristicsParser.open(file)) {
+				try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(file)) {
 					Instant t = mi.getCreationTime();
 					if (t != null) {
 						return t.toEpochMilli();

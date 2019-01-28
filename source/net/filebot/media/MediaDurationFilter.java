@@ -22,7 +22,7 @@ public class MediaDurationFilter implements FileFilter {
 	}
 
 	public long getDuration(File f) {
-		try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+		try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 			return mi.getDuration().toMillis();
 		} catch (Exception e) {
 			debug.warning(format("Failed to read video duration: %s", e.getMessage()));

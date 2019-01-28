@@ -118,7 +118,7 @@ public class AutoDetection {
 
 		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
 			// check for Japanese audio or characteristic subtitles
-			try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 				return mi.getDuration().toMinutes() < 60 || find(mi.getAudioLanguage(), JAPANESE_AUDIO_LANGUAGE_PATTERN) && find(mi.getSubtitleCodec(), JAPANESE_SUBTITLE_CODEC_PATTERN);
 			} catch (Exception e) {
 				debug.warning("Failed to read audio language: " + e.getMessage());

@@ -185,7 +185,7 @@ public enum SubtitleMetrics implements SimilarityMetric {
 
 		private Map<String, Object> getVideoProperties(File file) {
 			return mediaInfoCache.computeIfAbsent(file, f -> {
-				try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+				try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 					return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
 				} catch (Exception e) {
 					debug.warning("Failed to read video properties: " + e.getMessage());

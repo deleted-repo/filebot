@@ -1114,7 +1114,7 @@ public class MediaDetection {
 
 			filesByExtension.stream().collect(groupingBy(f -> {
 				if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
-					try (MediaCharacteristics mi = MediaCharacteristicsParser.open(f)) {
+					try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 						ChronoUnit d = mi.getDuration().toMinutes() < 10 ? ChronoUnit.MINUTES : ChronoUnit.HOURS;
 						String v = mi.getVideoCodec();
 						String a = mi.getAudioCodec();
