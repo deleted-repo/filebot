@@ -13,6 +13,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -154,7 +155,8 @@ public class EpisodeMatcher extends Matcher<File, Object> {
 
 		// check drill-down integrity
 		return stream(episodes).skip(1).allMatch(e -> {
-			return episodes[0].getSeriesName().equals(e.getSeriesName());
+			// do an equals check but account for null values
+			return Objects.equals(episodes[0].getSeriesName(), e.getSeriesName());
 		});
 	}
 

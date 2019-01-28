@@ -192,6 +192,11 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 			return fetchSeriesData(series, sortOrder, DEFAULT_LOCALE);
 		}
 
+		// if series name isn't even available in English then just use whatever value we've got
+		if (info.getName() == null) {
+			info.setName(series.getName());
+		}
+
 		// fetch episode data
 		List<Episode> episodes = new ArrayList<Episode>();
 		List<Episode> specials = new ArrayList<Episode>();
