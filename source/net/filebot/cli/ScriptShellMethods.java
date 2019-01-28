@@ -34,6 +34,8 @@ import groovy.lang.Closure;
 import groovy.lang.Range;
 import net.filebot.MediaTypes;
 import net.filebot.MetaAttributeView;
+import net.filebot.media.MediaCharacteristics;
+import net.filebot.media.MediaCharacteristicsParser;
 import net.filebot.media.MediaDetection;
 import net.filebot.media.XattrMetaInfo;
 import net.filebot.similarity.NameSimilarityMetric;
@@ -439,6 +441,10 @@ public class ScriptShellMethods {
 			debug.log(Level.WARNING, e::toString);
 		}
 		return null;
+	}
+
+	public static MediaCharacteristics getMediaCharacteristics(File self) throws Exception {
+		return MediaCharacteristicsParser.DEFAULT.open(self);
 	}
 
 	public static boolean isEpisode(File self) {
