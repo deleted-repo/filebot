@@ -21,12 +21,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -141,12 +141,12 @@ public class AutoDetection {
 
 	public Map<Group, Set<File>> group() {
 		// sort keys and values
-		Map<Group, Set<File>> groups = new TreeMap<Group, Set<File>>();
+		Map<Group, Set<File>> groups = new LinkedHashMap<Group, Set<File>>();
 
 		// can't use parallel stream because default fork/join pool doesn't play well with the security manager
 		ExecutorService workerThreadPool = Executors.newFixedThreadPool(getPreferredThreadPoolSize());
 		try {
-			stream(files).collect(toMap(f -> f, f -> workerThreadPool.submit(() -> detectGroup(f)))).forEach((file, group) -> {
+			stream(files).collect(toMap(f -> f, f -> workerThreadPool.submit(() -> detectGroup(f)), (a, b) -> a, LinkedHashMap::new)).forEach((file, group) -> {
 				try {
 					groups.computeIfAbsent(group.get(), k -> new TreeSet<File>()).add(new File(file.getPath())); // use FastFile internally but do not expose to outside code that expects File objects
 				} catch (Exception e) {
