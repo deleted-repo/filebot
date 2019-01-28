@@ -431,6 +431,43 @@ public class AutoDetection {
 			return this;
 		}
 
+		public Group movie() {
+			put(Type.Movie, Boolean.TRUE);
+			return this;
+		}
+
+		public Group series() {
+			put(Type.Series, Boolean.TRUE);
+			return this;
+
+		}
+
+		public Group anime() {
+			put(Type.Anime, Boolean.TRUE);
+			return this;
+		}
+
+		public Group music() {
+			put(Type.Music, Boolean.TRUE);
+			return this;
+		}
+
+		public boolean isMovie() {
+			return get(Type.Movie) != null;
+		}
+
+		public boolean isSeries() {
+			return get(Type.Series) != null;
+		}
+
+		public boolean isAnime() {
+			return get(Type.Anime) != null;
+		}
+
+		public boolean isMusic() {
+			return get(Type.Music) != null;
+		}
+
 		public Type[] types() {
 			return entrySet().stream().filter(it -> it.getValue() != null).map(it -> it.getKey()).toArray(Type[]::new);
 		}
