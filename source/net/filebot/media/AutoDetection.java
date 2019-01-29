@@ -254,20 +254,20 @@ public class AutoDetection {
 
 		public Group apply() throws Exception {
 			List<Rule> rules = new ArrayList<Rule>(15);
-			rules.add(new Rule(-1, 0, this::equalsMovieName));
-			rules.add(new Rule(-1, 0, this::containsMovieYear));
-			rules.add(new Rule(-1, 0, this::containsMovieNameYear));
-			rules.add(new Rule(5, -1, this::containsEpisodeNumbers));
-			rules.add(new Rule(5, -1, this::commonNumberPattern));
-			rules.add(new Rule(1, -1, this::episodeWithoutNumbers));
-			rules.add(new Rule(1, -1, this::episodeNumbers));
-			rules.add(new Rule(-1, 1, this::hasImdbId));
-			rules.add(new Rule(-1, 1, this::nonNumberName));
-			rules.add(new Rule(-1, 5, this::exactMovieMatch));
-			rules.add(new Rule(-1, 1, this::containsMovieName));
-			rules.add(new Rule(-1, 1, this::similarNameYear));
-			rules.add(new Rule(-1, 1, this::similarNameNoNumbers));
-			rules.add(new Rule(-1, 1, this::aliasNameMatch));
+			rules.add(new Rule(-1, 0, this::equalsMovieName, "AutoDetection::equalsMovieName"));
+			rules.add(new Rule(-1, 0, this::containsMovieYear, "AutoDetection::containsMovieYear"));
+			rules.add(new Rule(-1, 0, this::containsMovieNameYear, "AutoDetection::containsMovieNameYear"));
+			rules.add(new Rule(5, -1, this::containsEpisodeNumbers, "AutoDetection::containsEpisodeNumbers"));
+			rules.add(new Rule(5, -1, this::commonNumberPattern, "AutoDetection::commonNumberPattern"));
+			rules.add(new Rule(1, -1, this::episodeWithoutNumbers, "AutoDetection::episodeWithoutNumbers"));
+			rules.add(new Rule(1, -1, this::episodeNumbers, "AutoDetection::episodeNumbers"));
+			rules.add(new Rule(-1, 1, this::hasImdbId, "AutoDetection::hasImdbId"));
+			rules.add(new Rule(-1, 1, this::nonNumberName, "AutoDetection::nonNumberName"));
+			rules.add(new Rule(-1, 5, this::exactMovieMatch, "AutoDetection::exactMovieMatch"));
+			rules.add(new Rule(-1, 1, this::containsMovieName, "AutoDetection::containsMovieName"));
+			rules.add(new Rule(-1, 1, this::similarNameYear, "AutoDetection::similarNameYear"));
+			rules.add(new Rule(-1, 1, this::similarNameNoNumbers, "AutoDetection::similarNameNoNumbers"));
+			rules.add(new Rule(-1, 1, this::aliasNameMatch, "AutoDetection::aliasNameMatch"));
 
 			int score_s = 0;
 			int score_m = 0;
@@ -276,12 +276,18 @@ public class AutoDetection {
 					score_s += rule.s;
 					score_m += rule.m;
 
+					debug.finest(format("[+] %s", rule));
+
 					if (score_s >= 1 && score_m <= -1) {
+						debug.fine(format("[X] Rule as Series", score_s, score_m));
 						return group.movie(null);
 					}
 					if (score_m >= 1 && score_s <= -1) {
+						debug.fine(format("[X] Rule as Movie", score_s, score_m));
 						return group.series(null);
 					}
+				} else {
+					debug.finest(format("[-] %s", rule));
 				}
 			}
 			return group;
@@ -372,11 +378,13 @@ public class AutoDetection {
 		public final int m;
 
 		private final Test t;
+		private final String name;
 
-		public Rule(int s, int m, Test t) {
+		public Rule(int s, int m, Test t, String name) {
 			this.s = s;
 			this.m = m;
 			this.t = t;
+			this.name = name;
 		}
 
 		@Override
@@ -386,7 +394,7 @@ public class AutoDetection {
 
 		@Override
 		public String toString() {
-			return String.format("[%d, %d]", s, m);
+			return name;
 		}
 	}
 
