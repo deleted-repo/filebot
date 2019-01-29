@@ -9,13 +9,13 @@ import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -136,31 +136,28 @@ public final class WebServices {
 		}
 
 		// local TheMovieDB search index
-		private final Map<Integer, LocalSearch<Movie>> localIndexPerYear = new ConcurrentHashMap<>(64);
+		private final Map<Integer, Resource<LocalSearch<Movie>>> localIndexPerYear = synchronizedMap(new HashMap<>(64));
 
-		private LocalSearch<Movie> getLocalIndexByYear(int year) {
-			return localIndexPerYear.computeIfAbsent(year, y -> {
-				try {
-					// limit search index to a given year (so we don't have to check all movies of all time all the time)
-					Movie[] movies = stream(releaseInfo.getMovieList()).filter(m -> year == m.getYear()).toArray(Movie[]::new);
+		private LocalSearch<Movie> computeLocalIndex(int year) throws Exception {
+			if (year > 0) {
+				// limit search index to a given year (so we don't have to check all movies of all time all the time)
+				Movie[] movies = stream(releaseInfo.getMovieList()).filter(m -> year == m.getYear()).toArray(Movie[]::new);
 
-					// search by primary movie name and all known alias names
-					return new LocalSearch<>(movies, Movie::getEffectiveNamesWithoutYear);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			});
+				// search by primary movie name and all known alias names
+				return new LocalSearch<>(movies, Movie::getEffectiveNamesWithoutYear);
+			} else {
+				// check all movies of all time if release year is not known (but only compare to primary title for performance reasons)
+				return new LocalSearch<>(releaseInfo.getMovieList(), m -> singleton(m.getName()));
+			}
 		}
 
-		private LocalSearch<Movie> getLocalIndex() throws Exception {
-			return localIndexPerYear.computeIfAbsent(0, y -> {
-				try {
-					// check all movies of all time if release year is not known (but only compare to primary title for performance reasons)
-					return new LocalSearch<>(releaseInfo.getMovieList(), m -> singleton(m.getName()));
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
+		private LocalSearch<Movie> getLocalIndex(int year) throws Exception {
+			Resource<LocalSearch<Movie>> index = localIndexPerYear.computeIfAbsent(year, y -> {
+				return Resource.lazy(() -> computeLocalIndex(y));
 			});
+
+			// make sure that LocalSearch initialization happens outside of the synchronized map
+			return index.get();
 		}
 
 		@Override
@@ -173,12 +170,12 @@ public final class WebServices {
 
 			if (movieYear > 0) {
 				// the year might be off by 1 so we also check movies from the previous year and the next year
-				searches.add(() -> getLocalIndexByYear(movieYear).search(movieName));
-				searches.add(() -> getLocalIndexByYear(movieYear - 1).search(movieName));
-				searches.add(() -> getLocalIndexByYear(movieYear + 1).search(movieName));
+				searches.add(() -> getLocalIndex(movieYear).search(movieName));
+				searches.add(() -> getLocalIndex(movieYear - 1).search(movieName));
+				searches.add(() -> getLocalIndex(movieYear + 1).search(movieName));
 			} else {
 				// search all movies of all years if year is unknown
-				searches.add(() -> getLocalIndex().search(movieName));
+				searches.add(() -> getLocalIndex(0).search(movieName));
 			}
 
 			// combine alias names into a single search results, and keep API search name as primary name
