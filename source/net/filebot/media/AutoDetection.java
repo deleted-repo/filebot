@@ -79,7 +79,7 @@ public class AutoDetection {
 	private static final Pattern SERIES_PATTERN = Pattern.compile("TV.Shows|TV.Series|Season.[0-9]+", CASE_INSENSITIVE);
 	private static final Pattern ANIME_PATTERN = Pattern.compile("Anime", CASE_INSENSITIVE);
 
-	private static final Pattern EPISODE_PATTERN = Pattern.compile("E[P]?\\d{1,3}", CASE_INSENSITIVE);
+	private static final Pattern ABSOLUTE_EPISODE_PATTERN = Pattern.compile("(?<!\\p{Alnum})E[P]?\\d{1,3}(?!\\p{Alnum})", CASE_INSENSITIVE);
 	private static final Pattern SERIES_EPISODE_PATTERN = Pattern.compile("^tv[sp][ _.-]", CASE_INSENSITIVE);
 	private static final Pattern ANIME_EPISODE_PATTERN = Pattern.compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
 
@@ -173,7 +173,7 @@ public class AutoDetection {
 			return group.anime(getSeriesMatches(f, true));
 
 		// ignore movie matches if filename looks like an episode
-		if (find(f.getName(), EPISODE_PATTERN))
+		if (find(f.getName(), ABSOLUTE_EPISODE_PATTERN))
 			return group.series(getSeriesMatches(f, false));
 
 		// Movie VS Episode
@@ -296,8 +296,10 @@ public class AutoDetection {
 		}
 
 		public boolean containsMovieNameYear() {
-			return mn.equals(sn) && Stream.of(dn, fn).anyMatch(it -> {
-				return parseEpisodeNumber(after(it, YEAR).orElse(""), false) == null;
+			return find(mn, snm) && Stream.of(dn, fn).anyMatch(it -> {
+				return after(it, YEAR).map(ay -> {
+					return parseEpisodeNumber(ay, false) == null;
+				}).orElse(false);
 			});
 		}
 
@@ -320,7 +322,7 @@ public class AutoDetection {
 		public boolean episodeNumbers() throws Exception {
 			String n = stripReleaseInfo(asn, false);
 			if (parseEpisodeNumber(n, false) != null || NUMBER_PAIR.matcher(n).find()) {
-				return Stream.of(dn, fn).anyMatch(it -> snm.matcher(it).find()) && getMovieMatches(f, true).isEmpty();
+				return Stream.of(dn, fn).anyMatch(it -> snm.matcher(it).find()) && matchMovieName(singleton(fn), true, 0).isEmpty();
 			}
 			return false;
 		}
@@ -380,6 +382,11 @@ public class AutoDetection {
 		@Override
 		public boolean test() throws Exception {
 			return t.test();
+		}
+
+		@Override
+		public String toString() {
+			return String.format("[%d, %d]", s, m);
 		}
 	}
 
