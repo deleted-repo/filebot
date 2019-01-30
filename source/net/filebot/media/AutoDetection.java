@@ -108,7 +108,7 @@ public class AutoDetection {
 	}
 
 	public boolean isAnime(File f) {
-		if (MediaDetection.parseEpisodeNumber(f.getName(), false) == null) {
+		if (parseEpisodeNumber(f.getName(), false) == null) {
 			return false;
 		}
 
@@ -131,7 +131,7 @@ public class AutoDetection {
 
 	public boolean anyMatch(File file, Pattern pattern) {
 		// episode characteristics override movie characteristics (e.g. episodes in ~/Movies folder which is considered a volume root)
-		for (File f = file; f != null && !MediaDetection.isVolumeRoot(f); f = f.getParentFile()) {
+		for (File f = file; f != null && !isVolumeRoot(f); f = f.getParentFile()) {
 			if (pattern.matcher(f.getName()).matches()) {
 				return true;
 			}
@@ -202,7 +202,7 @@ public class AutoDetection {
 	}
 
 	private List<Movie> getMovieMatches(File file, boolean strict) throws Exception {
-		return MediaDetection.detectMovie(file, TheMovieDB, locale, strict);
+		return detectMovie(file, TheMovieDB, locale, strict);
 	}
 
 	private List<File> getVideoFiles(File parent) {
@@ -250,6 +250,10 @@ public class AutoDetection {
 
 		private float getSimilarity(String self, String other) {
 			return new NameSimilarityMetric().getSimilarity(self, other);
+		}
+
+		private boolean matchMovie(String name) {
+			return matchMovieName(singleton(name), true, 0).size() > 0;
 		}
 
 		public Group apply() throws Exception {
@@ -322,13 +326,13 @@ public class AutoDetection {
 		}
 
 		public boolean episodeWithoutNumbers() throws Exception {
-			return find(asn, DASH) && getMovieMatches(f, true).isEmpty();
+			return find(asn, DASH) && !matchMovie(fn);
 		}
 
 		public boolean episodeNumbers() throws Exception {
 			String n = stripReleaseInfo(asn, false);
 			if (parseEpisodeNumber(n, false) != null || NUMBER_PAIR.matcher(n).find()) {
-				return Stream.of(dn, fn).anyMatch(it -> snm.matcher(it).find()) && matchMovieName(singleton(fn), true, 0).isEmpty();
+				return Stream.of(dn, fn).anyMatch(it -> snm.matcher(it).find() && !matchMovie(it));
 			}
 			return false;
 		}
