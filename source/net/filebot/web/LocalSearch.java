@@ -5,6 +5,8 @@ import static java.util.Collections.reverseOrder;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.similarity.Normalization.*;
+import static org.simmetrics.builders.StringMetricBuilder.*;
+import static org.simmetrics.tokenizers.Tokenizers.*;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collection;
@@ -16,21 +18,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
-import com.ibm.icu.text.Transliterator;
+import org.simmetrics.StringMetric;
+import org.simmetrics.metrics.BlockDistance;
 
-import uk.ac.shef.wit.simmetrics.similaritymetrics.AbstractStringMetric;
-import uk.ac.shef.wit.simmetrics.similaritymetrics.QGramsDistance;
+import com.ibm.icu.text.Transliterator;
 
 public class LocalSearch<T> {
 
-	private AbstractStringMetric metric = new QGramsDistance();
-	private float resultMinimumSimilarity = 0.5f;
-	private int resultSetSize = 20;
+	private final StringMetric metric = with(new BlockDistance<String>()).tokenize(qGramWithPadding(3)).build();
 
-	private Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
+	private final Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
 
-	private T[] objects;
-	private Set<String>[] fields;
+	private final float resultMinimumSimilarity = 0.5f;
+	private final int resultSetSize = 20;
+
+	private final T[] objects;
+	private final Set<String>[] fields;
 
 	public LocalSearch(T[] data, Function<T, Collection<String>> keywords) {
 		objects = data.clone();
@@ -45,18 +48,10 @@ public class LocalSearch<T> {
 			Set<String> field = fields[i];
 
 			boolean match = field.stream().anyMatch(it -> it.contains(query));
-			double similarity = field.stream().mapToDouble(it -> metric.getSimilarity(query, it)).max().orElse(0);
+			double similarity = field.stream().mapToDouble(it -> metric.compare(query, it)).max().orElse(0);
 
 			return match || similarity > resultMinimumSimilarity ? new SimpleImmutableEntry<T, Double>(object, similarity) : null;
 		}).filter(Objects::nonNull).sorted(reverseOrder(comparing(Entry::getValue))).limit(resultSetSize).map(Entry::getKey).collect(toList());
-	}
-
-	public void setResultMinimumSimilarity(float resultMinimumSimilarity) {
-		this.resultMinimumSimilarity = resultMinimumSimilarity;
-	}
-
-	public void setResultSetSize(int resultSetSize) {
-		this.resultSetSize = resultSetSize;
 	}
 
 	protected Set<String> normalize(Collection<String> values) {
