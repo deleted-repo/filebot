@@ -324,18 +324,18 @@ public class AutoDetection {
 		}
 
 		public boolean commonNumberPattern() {
-			return getChildren(f.getParentFile(), VIDEO_FILES, HUMAN_NAME_ORDER).stream().filter(it -> {
+			return getChildren(f.getParentFile(), VIDEO_FILES).stream().filter(it -> {
 				return find(dn, snm) || find(normalize(it.getName()), snm);
 			}).map(it -> {
 				return streamMatches(it.getName(), EPISODE_NUMBERS).map(Integer::parseInt).collect(toSet());
 			}).filter(it -> it.size() > 0).distinct().count() >= 10;
 		}
 
-		public boolean episodeWithoutNumbers() throws Exception {
+		public boolean episodeWithoutNumbers() {
 			return find(asn, DASH) && !matchMovie(fn);
 		}
 
-		public boolean episodeNumbers() throws Exception {
+		public boolean episodeNumbers() {
 			String n = stripReleaseInfo(asn, false);
 			if (parseEpisodeNumber(n, false) != null || find(n, NUMBER_PAIR)) {
 				return Stream.of(dn, fn).anyMatch(it -> find(it, snm) && !matchMovie(it));
