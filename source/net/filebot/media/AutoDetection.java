@@ -76,7 +76,7 @@ public class AutoDetection {
 	private static final Pattern ANIME_FOLDER_PATTERN = compile("Anime", CASE_INSENSITIVE);
 
 	private static final Pattern ABSOLUTE_EPISODE_PATTERN = compile("(?<!\\p{Alnum})E[P]?\\d{1,3}(?!\\p{Alnum})", CASE_INSENSITIVE);
-	private static final Pattern SERIES_EPISODE_PATTERN = compile("(?<!\\p{Alnum})(tv[sp][ _.-]|Season\\D?\\d{1,2}|\\d{4}.S\\d{2})(?!\\p{Alnum})", CASE_INSENSITIVE);
+	private static final Pattern SERIES_EPISODE_PATTERN = compile("(?<!\\p{Alnum})(tv[sp]|Season\\D?\\d{1,2}|\\d{4}.S\\d{2})(?!\\p{Alnum})", CASE_INSENSITIVE);
 	private static final Pattern ANIME_EPISODE_PATTERN = compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
 
 	private static final Pattern JAPANESE_AUDIO_LANGUAGE_PATTERN = compile("jpn|Japanese", CASE_INSENSITIVE);
