@@ -6,7 +6,6 @@ import static java.util.regex.Pattern.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
-import static net.filebot.Settings.*;
 import static net.filebot.WebServices.*;
 import static net.filebot.format.ExpressionFormatMethods.*;
 import static net.filebot.media.MediaDetection.*;
@@ -19,17 +18,14 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -75,16 +71,16 @@ public class AutoDetection {
 		return unmodifiableList(asList(files));
 	}
 
-	private static final Pattern MOVIE_PATTERN = Pattern.compile("Movies", CASE_INSENSITIVE);
-	private static final Pattern SERIES_PATTERN = Pattern.compile("TV.Shows|TV.Series|Season.[0-9]+", CASE_INSENSITIVE);
-	private static final Pattern ANIME_PATTERN = Pattern.compile("Anime", CASE_INSENSITIVE);
+	private static final Pattern MOVIE_PATTERN = compile("Movies", CASE_INSENSITIVE);
+	private static final Pattern SERIES_PATTERN = compile("TV.Shows|TV.Series|Season.[0-9]+", CASE_INSENSITIVE);
+	private static final Pattern ANIME_PATTERN = compile("Anime", CASE_INSENSITIVE);
 
-	private static final Pattern ABSOLUTE_EPISODE_PATTERN = Pattern.compile("(?<!\\p{Alnum})E[P]?\\d{1,3}(?!\\p{Alnum})", CASE_INSENSITIVE);
-	private static final Pattern SERIES_EPISODE_PATTERN = Pattern.compile("^tv[sp][ _.-]", CASE_INSENSITIVE);
-	private static final Pattern ANIME_EPISODE_PATTERN = Pattern.compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
+	private static final Pattern ABSOLUTE_EPISODE_PATTERN = compile("(?<!\\p{Alnum})E[P]?\\d{1,3}(?!\\p{Alnum})", CASE_INSENSITIVE);
+	private static final Pattern SERIES_EPISODE_PATTERN = compile("^tv[sp][ _.-]", CASE_INSENSITIVE);
+	private static final Pattern ANIME_EPISODE_PATTERN = compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
 
-	private static final Pattern JAPANESE_AUDIO_LANGUAGE_PATTERN = Pattern.compile("jpn|Japanese", CASE_INSENSITIVE);
-	private static final Pattern JAPANESE_SUBTITLE_CODEC_PATTERN = Pattern.compile("ASS|SSA", CASE_INSENSITIVE);
+	private static final Pattern JAPANESE_AUDIO_LANGUAGE_PATTERN = compile("jpn|Japanese", CASE_INSENSITIVE);
+	private static final Pattern JAPANESE_SUBTITLE_CODEC_PATTERN = compile("ASS|SSA", CASE_INSENSITIVE);
 
 	public boolean isMusic(File f) {
 		return AUDIO_FILES.accept(f) && !VIDEO_FILES.accept(f);
@@ -140,22 +136,30 @@ public class AutoDetection {
 	}
 
 	public Map<Group, Set<File>> group() {
-		// sort keys and values
 		Map<Group, Set<File>> groups = new LinkedHashMap<Group, Set<File>>();
 
-		// can't use parallel stream because default fork/join pool doesn't play well with the security manager
-		ExecutorService workerThreadPool = Executors.newFixedThreadPool(getPreferredThreadPoolSize());
-		try {
-			stream(files).collect(toMap(f -> f, f -> workerThreadPool.submit(() -> detectGroup(f)), (a, b) -> a, LinkedHashMap::new)).forEach((file, group) -> {
-				try {
-					groups.computeIfAbsent(group.get(), k -> new TreeSet<File>()).add(new File(file.getPath())); // use FastFile internally but do not expose to outside code that expects File objects
-				} catch (Exception e) {
-					debug.log(Level.SEVERE, e.getMessage(), e);
-				}
-			});
-		} finally {
-			workerThreadPool.shutdownNow();
+		for (File file : files) {
+			try {
+				Group group = detectGroup(file);
+				groups.computeIfAbsent(group, g -> new LinkedHashSet<File>()).add(new File(file.getPath())); // use FastFile internally but do not expose to outside code that expects File objects
+			} catch (Exception e) {
+				debug.log(Level.SEVERE, e, e::toString);
+			}
 		}
+
+		return groups;
+	}
+
+	public Map<Group, Set<File>> groupParallel(ExecutorService threadPool) {
+		Map<Group, Set<File>> groups = new LinkedHashMap<Group, Set<File>>();
+
+		stream(files).collect(toMap(f -> f, f -> threadPool.submit(() -> detectGroup(f)), (a, b) -> a, LinkedHashMap::new)).forEach((file, group) -> {
+			try {
+				groups.computeIfAbsent(group.get(), k -> new LinkedHashSet<File>()).add(new File(file.getPath())); // use FastFile internally but do not expose to outside code that expects File objects
+			} catch (Exception e) {
+				debug.log(Level.SEVERE, e.getMessage(), e);
+			}
+		});
 
 		return groups;
 	}
@@ -166,7 +170,7 @@ public class AutoDetection {
 		if (isMusic(f))
 			return group.music(f);
 		if (isMovie(f))
-			return group.movie(getMovieMatches(f, false));
+			return group.movie(getMovieMatches(f));
 		if (isEpisode(f))
 			return group.series(getSeriesMatches(f, false));
 		if (isAnime(f))
@@ -177,7 +181,7 @@ public class AutoDetection {
 			return group.series(getSeriesMatches(f, false));
 
 		// Movie VS Episode
-		List<Movie> m = getMovieMatches(f, false);
+		List<Movie> m = getMovieMatches(f);
 		List<String> s = getSeriesMatches(f, false);
 
 		if (m.isEmpty() && s.isEmpty())
@@ -201,19 +205,19 @@ public class AutoDetection {
 		return names;
 	}
 
-	private List<Movie> getMovieMatches(File file, boolean strict) throws Exception {
-		return detectMovie(file, TheMovieDB, locale, strict);
+	private List<Movie> getMovieMatches(File file) throws Exception {
+		return detectMovie(file, TheMovieDB, locale, false);
 	}
 
 	private List<File> getVideoFiles(File parent) {
 		return stream(files).filter(it -> parent.equals(it.getParentFile())).filter(VIDEO_FILES::accept).collect(toList());
 	}
 
-	private static final Pattern YEAR = Pattern.compile("\\D(?:19|20)\\d{2}\\D");
-	private static final Pattern EPISODE_NUMBERS = Pattern.compile("\\b\\d{1,3}\\b");
-	private static final Pattern DASH = Pattern.compile("^.{0,3}\\s[-]\\s.+$", UNICODE_CHARACTER_CLASS);
-	private static final Pattern NUMBER_PAIR = Pattern.compile("\\D\\d{1,2}\\D{1,3}\\d{1,2}\\D");
-	private static final Pattern NON_NUMBER_NAME = Pattern.compile("^[\\p{L}\\p{Space}\\p{Punct}]+$", UNICODE_CHARACTER_CLASS);
+	private static final Pattern YEAR = compile("\\D(?:19|20)\\d{2}\\D");
+	private static final Pattern EPISODE_NUMBERS = compile("\\b\\d{1,3}\\b");
+	private static final Pattern DASH = compile("^.{0,3}\\s[-]\\s.+$", UNICODE_CHARACTER_CLASS);
+	private static final Pattern NUMBER_PAIR = compile("\\D\\d{1,2}\\D{1,3}\\d{1,2}\\D");
+	private static final Pattern NON_NUMBER_NAME = compile("^[\\p{L}\\p{Space}\\p{Punct}]+$", UNICODE_CHARACTER_CLASS);
 
 	private class Rules {
 
@@ -223,8 +227,8 @@ public class AutoDetection {
 		private final String s;
 		private final Movie m;
 
-		private final String dn, fn, sn, mn, my, asn;
-		private final Pattern snm, mnm;
+		private final String dn, fn, sn, mn, asn;
+		private final Pattern snm, mnm, mym;
 
 		public Rules(File file, List<String> series, List<Movie> movie) throws Exception {
 			group = new Group().series(series).movie(movie);
@@ -237,10 +241,10 @@ public class AutoDetection {
 			fn = normalize(getName(f));
 			sn = normalize(s);
 			mn = normalize(m.getName());
-			my = Integer.toString(m.getYear());
 
 			snm = compile(sn, LITERAL);
 			mnm = compile(mn, LITERAL);
+			mym = compile(Integer.toString(m.getYear()), LITERAL);
 			asn = after(fn, snm).orElse(fn);
 		}
 
@@ -253,7 +257,7 @@ public class AutoDetection {
 		}
 
 		private boolean matchMovie(String name) {
-			return matchMovieName(singleton(name), true, 0).size() > 0;
+			return find(name, YEAR) && !matchMovieName(singleton(name), true, 0).isEmpty();
 		}
 
 		public Group apply() throws Exception {
@@ -302,7 +306,9 @@ public class AutoDetection {
 		}
 
 		public boolean containsMovieYear() {
-			return m.getYear() >= 1950 && listPathTail(f, 3, true).stream().anyMatch(it -> it.getName().contains(my) && parseEpisodeNumber(it.getName(), false) == null);
+			return m.getYear() >= 1950 && listPathTail(f, 3, true).stream().anyMatch(it -> {
+				return after(it.getName(), mym).map(amy -> parseEpisodeNumber(amy, false) == null).orElse(false);
+			});
 		}
 
 		public boolean containsMovieNameYear() {
@@ -331,8 +337,8 @@ public class AutoDetection {
 
 		public boolean episodeNumbers() throws Exception {
 			String n = stripReleaseInfo(asn, false);
-			if (parseEpisodeNumber(n, false) != null || NUMBER_PAIR.matcher(n).find()) {
-				return Stream.of(dn, fn).anyMatch(it -> snm.matcher(it).find() && !matchMovie(it));
+			if (parseEpisodeNumber(n, false) != null || find(n, NUMBER_PAIR)) {
+				return Stream.of(dn, fn).anyMatch(it -> find(it, snm) && !matchMovie(it));
 			}
 			return false;
 		}
@@ -346,7 +352,8 @@ public class AutoDetection {
 		}
 
 		public boolean exactMovieMatch() throws Exception {
-			return getMovieMatches(f, true).size() > 0 && Stream.of(dn, fn).anyMatch(it -> find(it, YEAR));
+			List<Movie> matches = detectMovieWithYear(f, TheMovieDB, Locale.US, true);
+			return matches != null && !matches.isEmpty();
 		}
 
 		public boolean containsMovieName() {
@@ -406,26 +413,10 @@ public class AutoDetection {
 		Movie, Series, Anime, Music;
 	}
 
-	public static class Group extends EnumMap<Type, Object> implements Comparable<Group> {
+	public static class Group extends EnumMap<Type, Object> {
 
 		public Group() {
 			super(Type.class);
-		}
-
-		public Object getMovie() {
-			return get(Type.Movie);
-		}
-
-		public Object getSeries() {
-			return get(Type.Series);
-		}
-
-		public Object getAnime() {
-			return get(Type.Anime);
-		}
-
-		public Object getMusic() {
-			return get(Type.Music);
 		}
 
 		public Group movie(List<Movie> movies) {
@@ -450,23 +441,39 @@ public class AutoDetection {
 			return this;
 		}
 
-		public Group movie() {
+		public Object getMovie() {
+			return get(Type.Movie);
+		}
+
+		public Object getSeries() {
+			return get(Type.Series);
+		}
+
+		public Object getAnime() {
+			return get(Type.Anime);
+		}
+
+		public Object getMusic() {
+			return get(Type.Music);
+		}
+
+		public Group setMovie() {
 			put(Type.Movie, Boolean.TRUE);
 			return this;
 		}
 
-		public Group series() {
+		public Group setSeries() {
 			put(Type.Series, Boolean.TRUE);
 			return this;
 
 		}
 
-		public Group anime() {
+		public Group setAnime() {
 			put(Type.Anime, Boolean.TRUE);
 			return this;
 		}
 
-		public Group music() {
+		public Group setMusic() {
 			put(Type.Music, Boolean.TRUE);
 			return this;
 		}
@@ -490,18 +497,6 @@ public class AutoDetection {
 		public Type[] types() {
 			return entrySet().stream().filter(it -> it.getValue() != null).map(it -> it.getKey()).toArray(Type[]::new);
 		}
-
-		@Override
-		public int compareTo(Group other) {
-			if (size() != other.size()) {
-				return Integer.compare(size(), other.size());
-			}
-
-			return stream(Type.values()).mapToInt(t -> {
-				return Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER).compare(Objects.toString(get(t), null), Objects.toString(other.get(t), null));
-			}).filter(i -> i != 0).findFirst().orElse(0);
-		}
-
 	}
 
 }

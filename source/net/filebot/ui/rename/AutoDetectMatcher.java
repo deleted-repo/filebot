@@ -38,12 +38,13 @@ class AutoDetectMatcher implements AutoCompleteMatcher {
 
 	@Override
 	public List<Match<File, ?>> match(Collection<File> files, boolean strict, SortOrder order, Locale locale, boolean autodetection, Component parent) throws Exception {
-		Map<Group, Set<File>> groups = new AutoDetection(files, false, locale).group();
-
 		// can't use parallel stream because default fork/join pool doesn't play well with the security manager
 		ExecutorService workerThreadPool = Executors.newFixedThreadPool(getPreferredThreadPoolSize());
+
 		try {
 			// match groups in parallel
+			Map<Group, Set<File>> groups = new AutoDetection(files, false, locale).groupParallel(workerThreadPool);
+
 			List<Future<List<Match<File, ?>>>> matches = groups.entrySet().stream().filter(it -> {
 				return it.getKey().types().length == 1; // unambiguous group
 			}).map(it -> {
