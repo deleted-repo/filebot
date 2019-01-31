@@ -963,9 +963,6 @@
 
 
 	<target name="eclipse-properties-builder">
-		<exec executable="git" outputproperty="revision" failonerror="true">
-			<arg line="rev-list --count master" />
-		</exec>
 		<copy-replace todir="bin">
 			<fileset dir="source" includes="**/*.properties" />
 		</copy-replace>
