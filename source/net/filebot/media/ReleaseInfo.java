@@ -302,7 +302,7 @@ public class ReleaseInfo {
 	public Pattern getVideoFormatPattern(boolean strict) {
 		// pattern matching any video source name
 		String pattern = getProperty("pattern.video.format");
-		return strict ? compileWordPattern(pattern) : compile(pattern, CASE_INSENSITIVE);
+		return strict ? compile("(?<!\\p{Alpha})(" + pattern + ")(?!\\p{Alpha})", CASE_INSENSITIVE) : compile(pattern, CASE_INSENSITIVE);
 	}
 
 	public Pattern getVideoSourcePattern() {

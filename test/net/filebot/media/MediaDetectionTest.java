@@ -18,6 +18,7 @@ public class MediaDetectionTest {
 
 	@Test
 	public void stripFormatInfo() throws Exception {
+		assertEquals("One Piece 01", MediaDetection.stripFormatInfo("One Piece 01v2 1080p"));
 		assertEquals("3.Idiots.PAL.DVD..", MediaDetection.stripFormatInfo("3.Idiots.PAL.DVD.DD5.1.x264"));
 	}
 
