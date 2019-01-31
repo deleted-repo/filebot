@@ -26,9 +26,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -59,6 +57,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import net.filebot.util.ByteBufferOutputStream;
 
 public final class WebRequest {
+
+	private static final boolean LOG_RESPONSE_CONTENT = Boolean.parseBoolean(System.getProperty("net.filebot.web.WebRequest.log.response"));
 
 	private static final String ENCODING_GZIP = "gzip";
 	private static final String CHARSET_UTF8 = "UTF-8";
@@ -342,21 +342,16 @@ public final class WebRequest {
 				return "Received 0 bytes";
 			}
 
-			String log = String.format(Locale.ROOT, "Received %,d bytes", data.remaining());
-
-			// log entire response content if enabled
-			boolean printResponse = Boolean.parseBoolean(System.getProperty("net.filebot.web.WebRequest.log.response"));
-
-			if (printResponse) {
+			if (LOG_RESPONSE_CONTENT) {
 				try {
 					CharBuffer textContent = UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT).decode(data.duplicate());
-					return log + System.lineSeparator() + textContent + System.lineSeparator();
+					return String.format("Received %s%n%s%n", formatSize(data.remaining()), textContent);
 				} catch (Exception e) {
-					CharBuffer binaryContent = UTF_8.decode(Base64.getEncoder().encode(data.duplicate()));
-					return log + System.lineSeparator() + binaryContent + System.lineSeparator();
+					return String.format("Received %s%n[%s]%n", formatSize(data.remaining()), md5(data));
 				}
 			}
-			return log;
+
+			return "Received " + formatSize(data.remaining());
 		};
 
 	}
