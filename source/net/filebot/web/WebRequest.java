@@ -347,7 +347,7 @@ public final class WebRequest {
 					CharBuffer textContent = UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT).decode(data.duplicate());
 					return String.format("Received %s%n%s%n", formatSize(data.remaining()), textContent);
 				} catch (Exception e) {
-					return String.format("Received %s%n[%s]%n", formatSize(data.remaining()), md5(data));
+					return String.format("Received %s%n[%s]%n", formatSize(data.remaining()), md5(data.duplicate()));
 				}
 			}
 
