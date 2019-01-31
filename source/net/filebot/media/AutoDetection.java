@@ -71,12 +71,12 @@ public class AutoDetection {
 		return unmodifiableList(asList(files));
 	}
 
-	private static final Pattern MOVIE_PATTERN = compile("Movies", CASE_INSENSITIVE);
-	private static final Pattern SERIES_PATTERN = compile("TV.Shows|TV.Series|Season.[0-9]+", CASE_INSENSITIVE);
-	private static final Pattern ANIME_PATTERN = compile("Anime", CASE_INSENSITIVE);
+	private static final Pattern MOVIE_FOLDER_PATTERN = compile("Movies", CASE_INSENSITIVE);
+	private static final Pattern SERIES_FOLDER_PATTERN = compile("TV.Shows|TV.Series|Season.\\d+", CASE_INSENSITIVE);
+	private static final Pattern ANIME_FOLDER_PATTERN = compile("Anime", CASE_INSENSITIVE);
 
 	private static final Pattern ABSOLUTE_EPISODE_PATTERN = compile("(?<!\\p{Alnum})E[P]?\\d{1,3}(?!\\p{Alnum})", CASE_INSENSITIVE);
-	private static final Pattern SERIES_EPISODE_PATTERN = compile("^tv[sp][ _.-]", CASE_INSENSITIVE);
+	private static final Pattern SERIES_EPISODE_PATTERN = compile("(?<!\\p{Alnum})(tv[sp][ _.-]|Season\\D?\\d{1,2}|\\d{4}.S\\d{2})(?!\\p{Alnum})", CASE_INSENSITIVE);
 	private static final Pattern ANIME_EPISODE_PATTERN = compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
 
 	private static final Pattern JAPANESE_AUDIO_LANGUAGE_PATTERN = compile("jpn|Japanese", CASE_INSENSITIVE);
@@ -87,11 +87,11 @@ public class AutoDetection {
 	}
 
 	public boolean isMovie(File f) {
-		return anyMatch(f.getParentFile(), MOVIE_PATTERN) || MediaDetection.isMovie(f, true);
+		return anyMatch(f.getParentFile(), MOVIE_FOLDER_PATTERN) || MediaDetection.isMovie(f, true);
 	}
 
 	public boolean isEpisode(File f) {
-		if (MediaDetection.isEpisode(f.getName(), false) && (anyMatch(f.getParentFile(), SERIES_PATTERN) || find(f.getName(), SERIES_EPISODE_PATTERN))) {
+		if (anyMatch(f.getParentFile(), SERIES_FOLDER_PATTERN) || find(f.getPath(), SERIES_EPISODE_PATTERN)) {
 			return true;
 		}
 
@@ -100,7 +100,11 @@ public class AutoDetection {
 		}
 
 		Object metaInfo = xattr.getMetaInfo(f);
-		return metaInfo instanceof Episode && !AniDB.getIdentifier().equals(((Episode) metaInfo).getSeriesInfo().getDatabase());
+		if (metaInfo instanceof Episode) {
+			return !AniDB.getIdentifier().equals(((Episode) metaInfo).getSeriesInfo().getDatabase()); // return true for known non-Anime Episode objects
+		}
+
+		return false;
 	}
 
 	public boolean isAnime(File f) {
@@ -108,7 +112,7 @@ public class AutoDetection {
 			return false;
 		}
 
-		if (anyMatch(f.getParentFile(), ANIME_PATTERN) || find(f.getName(), ANIME_EPISODE_PATTERN) || find(f.getName(), EMBEDDED_CHECKSUM)) {
+		if (anyMatch(f.getParentFile(), ANIME_FOLDER_PATTERN) || find(f.getName(), ANIME_EPISODE_PATTERN) || find(f.getName(), EMBEDDED_CHECKSUM)) {
 			return true;
 		}
 
