@@ -25,6 +25,10 @@ public enum MediaCharacteristicsParser {
 
 	public abstract MediaCharacteristics open(File f) throws Exception;
 
+	public static MediaCharacteristicsParser getDefault() {
+		return DEFAULT;
+	}
+
 	public static final MediaCharacteristicsParser DEFAULT = SystemProperty.of("net.filebot.media.parser", MediaCharacteristicsParser::valueOf, libmediainfo).get();
 
 }
