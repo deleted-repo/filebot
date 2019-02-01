@@ -52,6 +52,7 @@ ivy/jar/imgscalr-lib.jar
 ivy/bundle/args4j.jar
 ivy/bundle/json-io.jar
 ivy/bundle/guava.jar
+ivy/bundle/failureaccess.jar
 jars/xmlrpc.jar
 jars/ObjCBridge.jar
 jars/jacksum.jar
