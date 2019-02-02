@@ -34,7 +34,7 @@ index 6581b002..4a92a73b 100644
  
  # Default Linux Java Options
 diff --git a/build.xml b/build.xml
-index 18652e5d..25577787 100644
+index c43400d1..ae4fd60d 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -129,18 +129,18 @@ index b8e7f8b2..005f702f 100644
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
-index fc724d52..2b8170a7 100644
+index bb8fa3b6..e43425ca 100644
 --- a/ivy.xml
 +++ b/ivy.xml
-@@ -25,7 +25,7 @@
- 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
- 		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
- 		<dependency rev="0.6.7" org="one.util" name="streamex" />
+@@ -34,7 +34,7 @@
+ 
+ 
+ 		<!-- JavaFX -->
 -		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
 +		<dependency rev="8.40.14" org="org.controlsfx" name="controlsfx" />
- 		<dependency rev="3.0.0" org="com.googlecode.lanterna" name="lanterna" />
- 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
- 		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
+ 
+ 
+ 		<!-- Apache Groovy -->
 diff --git a/source/net/filebot/Logging.java b/source/net/filebot/Logging.java
 index af5319e6..b2d5795f 100644
 --- a/source/net/filebot/Logging.java
