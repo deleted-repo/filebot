@@ -22,19 +22,11 @@ public class NameSimilarityMetric implements SimilarityMetric {
 	}
 
 	protected String normalize(Object object) {
-		// use string representation
-		String name = object.toString();
-
-		// apply transliterator
-		if (transliterator != null) {
-			name = transliterator.transform(name);
-		}
-
-		// normalize separators
-		name = normalizePunctuation(name);
-
-		// normalize case and trim
-		return name.toLowerCase();
+		// 1. use string representation
+		// 2. apply transliterator
+		// 3. normalize separators
+		// 4. normalize case and trim
+		return normalizePunctuation(transliterator.transform(object.toString())).toLowerCase();
 	}
 
 }
