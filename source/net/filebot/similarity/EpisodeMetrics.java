@@ -22,10 +22,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.ibm.icu.text.Transliterator;
 
 import net.filebot.media.MediaCharacteristics;
@@ -701,7 +705,8 @@ public enum EpisodeMetrics implements SimilarityMetric {
 		return metric.getSimilarity(o1, o2);
 	}
 
-	private static final Map<Object, String> transformCache = synchronizedMap(new HashMap<Object, String>(64, 4));
+	private static final Cache<Object, String> transformCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+
 	private static final Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
 
 	public static String normalizeObject(Object object) {
@@ -709,22 +714,18 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			return "";
 		}
 
-		return transformCache.computeIfAbsent(object, o -> {
-			String name = normalizeFileName(o);
-
-			// remove checksums, any [...] or (...)
-			name = removeEmbeddedChecksum(name);
-
-			// remove obvious release info
-			name = stripFormatInfo(name);
-
-			synchronized (transliterator) {
-				name = transliterator.transform(name);
-			}
-
-			// remove or normalize special characters
-			return normalizePunctuation(name).toLowerCase();
-		});
+		try {
+			return transformCache.get(object, () -> {
+				// 1. convert to string
+				// 2. remove checksums, any [...] or (...)
+				// 3. remove obvious release info
+				// 4. apply transliterator
+				// 5. remove or normalize special characters
+				return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(object))))).toLowerCase();
+			});
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e.getCause());
+		}
 	}
 
 	private static String normalizeFileName(Object object) {
