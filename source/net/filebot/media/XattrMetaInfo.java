@@ -5,10 +5,13 @@ import static net.filebot.Settings.*;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import net.filebot.Cache;
-import net.filebot.CacheType;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import net.filebot.Resource;
 import net.filebot.WebServices;
 import net.filebot.web.Episode;
@@ -22,8 +25,8 @@ public class XattrMetaInfo {
 	private final boolean useExtendedFileAttributes;
 	private final boolean useCreationDate;
 
-	private final Cache xattrMetaInfoCache = Cache.getCache(MetaAttributes.METADATA_KEY, CacheType.Ephemeral);
-	private final Cache xattrOriginalNameCache = Cache.getCache(MetaAttributes.FILENAME_KEY, CacheType.Ephemeral);
+	private final Cache<File, Object> xattrMetaInfoCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
+	private final Cache<File, Object> xattrOriginalNameCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
 
 	public XattrMetaInfo(boolean useExtendedFileAttributes, boolean useCreationDate) {
 		this.useExtendedFileAttributes = useExtendedFileAttributes;
@@ -60,17 +63,18 @@ public class XattrMetaInfo {
 		return (String) getXattrValue(xattrOriginalNameCache, file, MetaAttributes::getOriginalName);
 	}
 
-	private Object getXattrValue(Cache cache, File file, Function<MetaAttributes, Object> compute) {
+	private Object getXattrValue(Cache<File, Object> cache, File file, Function<MetaAttributes, Object> compute) {
 		// try in-memory cache of previously stored xattr metadata
 		if (!useExtendedFileAttributes) {
-			return cache.get(file);
+			return cache.getIfPresent(file);
 		}
 
 		try {
-			return cache.computeIfAbsent(file, element -> compute.apply(xattr(file))); // read only
-		} catch (Throwable e) {
-			debug.warning(cause("Failed to read xattr", e));
+			return cache.get(file, () -> compute.apply(xattr(file)));// read only
+		} catch (ExecutionException e) {
+			debug.warning(cause("Failed to read xattr", e.getCause()));
 		}
+
 		return null;
 	}
 
@@ -134,8 +138,8 @@ public class XattrMetaInfo {
 
 	public synchronized void clear(File file) {
 		// clear in-memory cache
-		xattrMetaInfoCache.remove(file);
-		xattrOriginalNameCache.remove(file);
+		xattrMetaInfoCache.invalidate(file);
+		xattrOriginalNameCache.invalidate(file);
 
 		if (useExtendedFileAttributes) {
 			try {
