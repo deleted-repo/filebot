@@ -27,11 +27,13 @@
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
 		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
 		<dependency rev="0.6.7" org="one.util" name="streamex" />
-		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
 		<dependency rev="3.0.1" org="com.googlecode.lanterna" name="lanterna" />
 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
 		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
 		<dependency rev="4.2" org="org.imgscalr" name="imgscalr-lib" />
+
+		<!-- JavaFX -->
+		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
 
 		<!-- Apache Groovy -->
 		<dependency rev="2.5.5" org="org.codehaus.groovy" name="groovy" />
