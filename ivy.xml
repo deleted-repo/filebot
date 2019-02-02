@@ -28,7 +28,7 @@
 		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
 		<dependency rev="0.6.7" org="one.util" name="streamex" />
 		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
-		<dependency rev="3.0.0" org="com.googlecode.lanterna" name="lanterna" />
+		<dependency rev="3.0.1" org="com.googlecode.lanterna" name="lanterna" />
 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
 		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
 		<dependency rev="4.2" org="org.imgscalr" name="imgscalr-lib" />
