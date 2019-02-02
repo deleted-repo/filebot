@@ -36,10 +36,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import net.filebot.ApplicationFolder;
 import net.filebot.Language;
@@ -60,7 +65,6 @@ import net.filebot.mediainfo.MediaInfoException;
 import net.filebot.similarity.Normalization;
 import net.filebot.similarity.SimilarityComparator;
 import net.filebot.util.FileUtilities;
-import net.filebot.util.WeakValueHashMap;
 import net.filebot.web.AudioTrack;
 import net.filebot.web.Episode;
 import net.filebot.web.EpisodeFormat;
@@ -78,8 +82,6 @@ public class MediaBindingBean {
 	private final Object infoObject;
 	private final File mediaFile;
 	private final Map<File, ?> context;
-
-	private MediaInfo mediaInfo;
 
 	public MediaBindingBean(Object infoObject, File mediaFile) {
 		this(infoObject, mediaFile, null);
@@ -1212,24 +1214,19 @@ public class MediaBindingBean {
 		return null;
 	}
 
-	private static final Map<File, MediaInfo> sharedMediaInfoObjects = synchronizedMap(new WeakValueHashMap<File, MediaInfo>(64));
+	private static final Cache<File, MediaInfo> mediaInfoCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 	private synchronized MediaInfo getMediaInfo() {
-		// lazy initialize
-		if (mediaInfo == null) {
-			// use inferred media file (e.g. actual movie file instead of subtitle file)
-			File inferredMediaFile = getInferredMediaFile();
+		// use inferred media file (e.g. actual movie file instead of subtitle file)
+		File inferredMediaFile = getInferredMediaFile();
 
-			mediaInfo = sharedMediaInfoObjects.computeIfAbsent(inferredMediaFile, f -> {
-				try {
-					return new MediaInfo().open(f);
-				} catch (IOException e) {
-					throw new MediaInfoException(e.getMessage());
-				}
+		try {
+			return mediaInfoCache.get(inferredMediaFile, () -> {
+				return new MediaInfo().open(inferredMediaFile);
 			});
+		} catch (ExecutionException e) {
+			throw new MediaInfoException(e.getCause().getMessage());
 		}
-
-		return mediaInfo;
 	}
 
 	private Integer identityIndexOf(Iterable<?> c, Object o) {
