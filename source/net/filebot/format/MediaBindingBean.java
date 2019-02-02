@@ -42,11 +42,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import net.filebot.ApplicationFolder;
-import net.filebot.Cache;
-import net.filebot.CacheType;
 import net.filebot.Language;
 import net.filebot.MediaTypes;
-import net.filebot.MetaAttributeView;
 import net.filebot.Resource;
 import net.filebot.Settings;
 import net.filebot.hash.HashType;
@@ -56,6 +53,7 @@ import net.filebot.media.LocalDatasource.PhotoFile;
 import net.filebot.media.MetaAttributes;
 import net.filebot.media.NamingStandard;
 import net.filebot.media.VideoFormat;
+import net.filebot.media.XattrChecksum;
 import net.filebot.mediainfo.MediaInfo;
 import net.filebot.mediainfo.MediaInfo.StreamKind;
 import net.filebot.mediainfo.MediaInfoException;
@@ -511,20 +509,8 @@ public class MediaBindingBean {
 			return checksum;
 		}
 
-		// try CRC32 xattr (as stored by verify script)
-		try {
-			MetaAttributeView xattr = new MetaAttributeView(inferredMediaFile);
-			checksum = xattr.get("CRC32");
-			if (checksum != null) {
-				return checksum;
-			}
-		} catch (Exception e) {
-			// ignore if xattr metadata is not supported for the given file
-		}
-
-		// calculate checksum from file
-		Cache cache = Cache.getCache("crc32", CacheType.Ephemeral);
-		return (String) cache.computeIfAbsent(inferredMediaFile, it -> crc32(inferredMediaFile));
+		// compute and store to xattr
+		return XattrChecksum.CRC32.computeIfAbsent(inferredMediaFile);
 	}
 
 	@Define("fn")
