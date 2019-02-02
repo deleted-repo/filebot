@@ -32,8 +32,10 @@
 		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
 		<dependency rev="4.2" org="org.imgscalr" name="imgscalr-lib" />
 
+
 		<!-- JavaFX -->
 		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
+
 
 		<!-- Apache Groovy -->
 		<dependency rev="2.5.5" org="org.codehaus.groovy" name="groovy" />
@@ -48,6 +50,7 @@
 		<dependency rev="2.5.5" org="org.codehaus.groovy" name="groovy-swing" />
 		<dependency rev="2.5.5" org="org.codehaus.groovy" name="groovy-groovydoc" />
 
+
 		<!-- Apache Ant -->
 		<dependency rev="1.10.5" org="org.apache.ant" name="ant" />
 		<dependency rev="1.10.5" org="org.apache.ant" name="ant-launcher" />
@@ -58,6 +61,7 @@
 		<dependency rev="2.4.0" org="org.apache.ivy" name="ivy" />
 		<dependency rev="1.6.1" org="com.sun.mail" name="javax.mail" />
 		<dependency rev="1.1.1" org="javax.activation" name="activation" />
+
 
 		<!-- Build Tools -->
 		<dependency rev="0.6" org="net.filebot" name="ant-spk" />
