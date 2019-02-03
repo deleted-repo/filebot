@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index 6581b002..4a92a73b 100644
+index 61f14b0f..a72f73ca 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -30,9 +30,9 @@ index 6581b002..4a92a73b 100644
  # Default Windows Java Options
 -windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" --add-modules ALL-MODULE-PATH -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
 +windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
+ windows.store.application.options: -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="%APPDATA%\\FileBot\\preferences.properties"
  windows.portable.application.options: -Dapplication.dir="%EXEDIR%\\data" -Duser.home="%EXEDIR%\\data" -Djava.io.tmpdir="%EXEDIR%\\data\\tmp" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="%EXEDIR%\\data\\prefs.properties"
  
- # Default Linux Java Options
 diff --git a/build.xml b/build.xml
 index c43400d1..ae4fd60d 100644
 --- a/build.xml
