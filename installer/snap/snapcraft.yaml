@@ -5,6 +5,7 @@ description: @{package.description}
 
 confinement: strict
 grade: stable
+base: core18
 
 architectures: [amd64]
 

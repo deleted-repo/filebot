@@ -600,9 +600,7 @@
 			<fileset dir="${dir.base}" includes="**/bin/**" />
 		</chmod>
 
-		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes">
-			<arg line="cleanbuild" />
-		</exec>
+		<exec executable="snapcraft" dir="${dir.staging}" failonerror="yes" />
 	</target>
 
 
