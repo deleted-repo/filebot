@@ -17,17 +17,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.ibm.icu.text.Transliterator;
@@ -48,7 +49,7 @@ public enum EpisodeMetrics implements SimilarityMetric {
 	// Match by season / episode numbers
 	SeasonEpisode(new SeasonEpisodeMetric(new SmartSeasonEpisodeMatcher(null, false)) {
 
-		private final Map<Object, Collection<SxE>> transformCache = synchronizedMap(new HashMap<Object, Collection<SxE>>(64, 4));
+		private final Cache<Object, Collection<SxE>> seasonEpisodeCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 		@Override
 		protected Collection<SxE> parse(Object object) {
@@ -62,7 +63,14 @@ public enum EpisodeMetrics implements SimilarityMetric {
 				return emptySet();
 			}
 
-			return transformCache.computeIfAbsent(object, super::parse);
+			try {
+				return seasonEpisodeCache.get(object, () -> {
+					Collection<SxE> sxe = super.parse(object);
+					return sxe == null ? emptySet() : sxe;
+				});
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 
 		private Set<SxE> parse(Episode e) {
@@ -92,7 +100,7 @@ public enum EpisodeMetrics implements SimilarityMetric {
 	// Match episode airdate
 	AirDate(new DateMetric(getDateMatcher()) {
 
-		private final Map<Object, SimpleDate> transformCache = synchronizedMap(new HashMap<Object, SimpleDate>(64, 4));
+		private final Cache<Object, Optional<SimpleDate>> airdateCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 		@Override
 		public SimpleDate parse(Object object) {
@@ -105,7 +113,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 				return null;
 			}
 
-			return transformCache.computeIfAbsent(object, super::parse);
+			try {
+				return airdateCache.get(object, () -> Optional.fromNullable(super.parse(object))).orNull();
+			} catch (ExecutionException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}),
 
@@ -705,27 +717,26 @@ public enum EpisodeMetrics implements SimilarityMetric {
 		return metric.getSimilarity(o1, o2);
 	}
 
-	private static final Cache<Object, String> transformCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+	private static final Cache<Object, String> normalizeObjectCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 	private static final Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
 
 	public static String normalizeObject(Object object) {
-		if (object == null) {
-			return "";
+		if (object != null) {
+			try {
+				return normalizeObjectCache.get(object, () -> {
+					// 1. convert to string
+					// 2. remove checksums, any [...] or (...)
+					// 3. remove obvious release info
+					// 4. apply transliterator
+					// 5. remove or normalize special characters
+					return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(object))))).toLowerCase();
+				});
+			} catch (ExecutionException e) {
+				debug.log(Level.SEVERE, e, e::toString);
+			}
 		}
-
-		try {
-			return transformCache.get(object, () -> {
-				// 1. convert to string
-				// 2. remove checksums, any [...] or (...)
-				// 3. remove obvious release info
-				// 4. apply transliterator
-				// 5. remove or normalize special characters
-				return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(object))))).toLowerCase();
-			});
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e.getCause());
-		}
+		return "";
 	}
 
 	private static String normalizeFileName(Object object) {
