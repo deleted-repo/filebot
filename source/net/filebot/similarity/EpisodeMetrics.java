@@ -17,20 +17,15 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.ibm.icu.text.Transliterator;
 
 import net.filebot.media.MediaCharacteristics;
@@ -44,12 +39,12 @@ import net.filebot.web.Movie;
 import net.filebot.web.SeriesInfo;
 import net.filebot.web.SimpleDate;
 
-public enum EpisodeMetrics implements SimilarityMetric {
+public class EpisodeMetrics {
 
 	// Match by season / episode numbers
-	SeasonEpisode(new SeasonEpisodeMetric(new SmartSeasonEpisodeMatcher(null, false)) {
+	public final SimilarityMetric SeasonEpisode = new SeasonEpisodeMetric(new SmartSeasonEpisodeMatcher(null, false)) {
 
-		private final Cache<Object, Collection<SxE>> seasonEpisodeCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+		private final Map<Object, Collection<SxE>> cache = synchronizedMap(new HashMap<Object, Collection<SxE>>(64, 4));
 
 		@Override
 		protected Collection<SxE> parse(Object object) {
@@ -63,14 +58,7 @@ public enum EpisodeMetrics implements SimilarityMetric {
 				return emptySet();
 			}
 
-			try {
-				return seasonEpisodeCache.get(object, () -> {
-					Collection<SxE> sxe = super.parse(object);
-					return sxe == null ? emptySet() : sxe;
-				});
-			} catch (ExecutionException e) {
-				throw new RuntimeException(e);
-			}
+			return cache.computeIfAbsent(object, super::parse);
 		}
 
 		private Set<SxE> parse(Episode e) {
@@ -95,12 +83,12 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			return sxe;
 		}
 
-	}),
+	};
 
 	// Match episode airdate
-	AirDate(new DateMetric(getDateMatcher()) {
+	public final SimilarityMetric AirDate = new DateMetric(getDateMatcher()) {
 
-		private final Cache<Object, Optional<SimpleDate>> airdateCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+		private final Map<Object, SimpleDate> cache = synchronizedMap(new HashMap<Object, SimpleDate>(64, 4));
 
 		@Override
 		public SimpleDate parse(Object object) {
@@ -113,16 +101,13 @@ public enum EpisodeMetrics implements SimilarityMetric {
 				return null;
 			}
 
-			try {
-				return airdateCache.get(object, () -> Optional.fromNullable(super.parse(object))).orNull();
-			} catch (ExecutionException e) {
-				throw new RuntimeException(e);
-			}
+			return cache.computeIfAbsent(object, super::parse);
 		}
-	}),
+
+	};
 
 	// Match by episode/movie title
-	Title(new SubstringMetric() {
+	public final SimilarityMetric Title = new SubstringMetric() {
 
 		@Override
 		protected String normalize(Object object) {
@@ -145,16 +130,17 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			String s = normalizeObject(object);
 			return s.length() >= 4 ? s : null; // only consider long enough strings to avoid false matches
 		}
-	}),
+
+	};
 
 	// Match by SxE and airdate
-	EpisodeIdentifier(new MetricCascade(SeasonEpisode, AirDate)),
+	public final SimilarityMetric EpisodeIdentifier = new MetricCascade(SeasonEpisode, AirDate);
 
 	// Advanced episode <-> file matching Lv1
-	EpisodeFunnel(new MetricCascade(SeasonEpisode, AirDate, Title)),
+	public final SimilarityMetric EpisodeFunnel = new MetricCascade(SeasonEpisode, AirDate, Title);
 
 	// Advanced episode <-> file matching Lv2
-	EpisodeBalancer(new SimilarityMetric() {
+	public final SimilarityMetric EpisodeBalancer = new SimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -183,10 +169,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			}
 			return o;
 		}
-	}),
+
+	};
 
 	// Match series title and episode title against folder structure and file name
-	SubstringFields(new SubstringMetric() {
+	public final SimilarityMetric SubstringFields = new SubstringMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -214,10 +201,10 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 		protected String[] normalize(Object[] objects) {
 			// normalize objects (and make sure to keep word boundaries)
-			return stream(objects).map(EpisodeMetrics::normalizeObject).toArray(String[]::new);
+			return stream(objects).map(EpisodeMetrics.this::normalizeObject).toArray(String[]::new);
 		}
 
-		protected static final int MAX_FIELDS = 5;
+		protected final int MAX_FIELDS = 5;
 
 		protected Object[] fields(Object object) {
 			if (object instanceof Episode) {
@@ -242,10 +229,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 			return new Object[] { object };
 		}
-	}),
+
+	};
 
 	// Match via common word sequence in episode name and file name
-	NameSubstringSequence(new SequenceMatchSimilarity() {
+	public final SimilarityMetric NameSubstringSequence = new SequenceMatchSimilarity() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -290,10 +278,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			}
 			return singletonList(object);
 		}
-	}),
+
+	};
 
 	// Match by generic name similarity (round rank)
-	Name(new NameSimilarityMetric() {
+	public final SimilarityMetric Name = new NameSimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -307,10 +296,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			// simplify file name, if possible
 			return normalizeObject(object);
 		}
-	}),
+
+	};
 
 	// Match by generic name similarity (absolute)
-	SeriesName(new NameSimilarityMetric() {
+	public final SimilarityMetric SeriesName = new NameSimilarityMetric() {
 
 		private final SeriesNameMatcher seriesNameMatcher = getSeriesNameMatcher(false);
 
@@ -338,7 +328,7 @@ public enum EpisodeMetrics implements SimilarityMetric {
 		}
 
 		protected String[] getNormalizedEffectiveIdentifiers(Object object) {
-			return getEffectiveIdentifiers(object).stream().map(EpisodeMetrics::normalizeObject).toArray(String[]::new);
+			return getEffectiveIdentifiers(object).stream().map(EpisodeMetrics.this::normalizeObject).toArray(String[]::new);
 		}
 
 		protected List<?> getEffectiveIdentifiers(Object object) {
@@ -360,12 +350,13 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 			return emptyList();
 		}
-	}),
 
-	SeriesNameBalancer(new MetricCascade(NameSubstringSequence, Name, SeriesName)),
+	};
+
+	public final SimilarityMetric SeriesNameBalancer = new MetricCascade(NameSubstringSequence, Name, SeriesName);
 
 	// Match by generic name similarity (absolute)
-	FilePath(new NameSimilarityMetric() {
+	public final SimilarityMetric FilePath = new NameSimilarityMetric() {
 
 		@Override
 		protected String normalize(Object object) {
@@ -374,9 +365,10 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			}
 			return normalizeObject(object.toString()); // simplify file name, if possible
 		}
-	}),
 
-	FilePathBalancer(new NameSimilarityMetric() {
+	};
+
+	public final SimilarityMetric FilePathBalancer = new NameSimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -397,9 +389,10 @@ public enum EpisodeMetrics implements SimilarityMetric {
 		protected String normalize(Object object) {
 			return object.toString();
 		}
-	}),
 
-	NumericSequence(new SequenceMatchSimilarity() {
+	};
+
+	public final SimilarityMetric NumericSequence = new SequenceMatchSimilarity() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -435,10 +428,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			List<Integer> numbers = matchIntegers(normalizeObject(object));
 			return join(numbers, " ");
 		}
-	}),
+
+	};
 
 	// Match by generic numeric similarity
-	Numeric(new NumericSimilarityMetric() {
+	public final SimilarityMetric Numeric = new NumericSimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -477,10 +471,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 			return new String[] { normalizeObject(object) };
 		}
-	}),
+
+	};
 
 	// Prioritize proper episodes over specials
-	SpecialNumber(new SimilarityMetric() {
+	public final SimilarityMetric SpecialNumber = new SimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -494,10 +489,11 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			}
 			return 0;
 		}
-	}),
+
+	};
 
 	// Match by file length (only works when matching torrents or files)
-	FileSize(new FileSizeMetric() {
+	public final SimilarityMetric FileSize = new FileSizeMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -510,26 +506,26 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			if (object instanceof FileInfo) {
 				return ((FileInfo) object).getLength();
 			}
-
 			return super.getLength(object);
 		}
-	}),
+
+	};
 
 	// Match by common words at the beginning of both files
-	FileName(new FileNameMetric() {
+	public final SimilarityMetric FileName = new FileNameMetric() {
 
 		@Override
 		protected String getFileName(Object object) {
 			if (object instanceof File || object instanceof FileInfo) {
 				return normalizeObject(object);
 			}
-
 			return null;
 		}
-	}),
+
+	};
 
 	// Match by file last modified and episode release dates
-	TimeStamp(new TimeStampMetric(10, ChronoUnit.YEARS) {
+	public final SimilarityMetric TimeStamp = new TimeStampMetric(10, ChronoUnit.YEARS) {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -582,9 +578,9 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 			return -1;
 		}
-	}),
+	};
 
-	SeriesRating(new SimilarityMetric() {
+	public final SimilarityMetric SeriesRating = new SimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -612,9 +608,9 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			}
 			return 0;
 		}
-	}),
+	};
 
-	VoteRate(new SimilarityMetric() {
+	public final SimilarityMetric VoteRate = new SimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -636,10 +632,10 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			}
 			return 0;
 		}
-	}),
+	};
 
 	// Match by (region) or (year) hints
-	RegionHint(new SimilarityMetric() {
+	public final SimilarityMetric RegionHint = new SimilarityMetric() {
 
 		private final Pattern hint = compile("[(](\\p{Alpha}+|\\p{Digit}+)[)]$");
 
@@ -679,10 +675,10 @@ public enum EpisodeMetrics implements SimilarityMetric {
 
 			return emptySet();
 		}
-	}),
+	};
 
 	// Match by stored MetaAttributes if possible
-	MetaAttributes(new CrossPropertyMetric() {
+	public final SimilarityMetric MetaAttributes = new CrossPropertyMetric() {
 
 		@Override
 		protected Map<String, Object> getProperties(Object object) {
@@ -703,43 +699,28 @@ public enum EpisodeMetrics implements SimilarityMetric {
 			return emptyMap();
 		}
 
-	});
+	};
 
-	// inner metric
-	private final SimilarityMetric metric;
+	protected final Map<Object, String> transformCache = synchronizedMap(new HashMap<Object, String>(64, 4));
 
-	private EpisodeMetrics(SimilarityMetric metric) {
-		this.metric = metric;
-	}
+	protected final Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
 
-	@Override
-	public float getSimilarity(Object o1, Object o2) {
-		return metric.getSimilarity(o1, o2);
-	}
-
-	private static final Cache<Object, String> normalizeObjectCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
-
-	private static final Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
-
-	public static String normalizeObject(Object object) {
-		if (object != null) {
-			try {
-				return normalizeObjectCache.get(object, () -> {
-					// 1. convert to string
-					// 2. remove checksums, any [...] or (...)
-					// 3. remove obvious release info
-					// 4. apply transliterator
-					// 5. remove or normalize special characters
-					return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(object))))).toLowerCase();
-				});
-			} catch (ExecutionException e) {
-				debug.log(Level.SEVERE, e, e::toString);
-			}
+	protected String normalizeObject(Object object) {
+		if (object == null) {
+			return "";
 		}
-		return "";
+
+		return transformCache.computeIfAbsent(object, o -> {
+			// 1. convert to string
+			// 2. remove checksums, any [...] or (...)
+			// 3. remove obvious release info
+			// 4. apply transliterator
+			// 5. remove or normalize special characters
+			return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(object))))).toLowerCase();
+		});
 	}
 
-	private static String normalizeFileName(Object object) {
+	protected String normalizeFileName(Object object) {
 		if (object instanceof File) {
 			return getName((File) object);
 		} else if (object instanceof FileInfo) {
@@ -748,7 +729,7 @@ public enum EpisodeMetrics implements SimilarityMetric {
 		return object.toString();
 	}
 
-	public static SimilarityMetric[] defaultSequence(boolean includeFileMetrics) {
+	public SimilarityMetric[] matchSequence() {
 		// 1 pass: divide by file length (only works for matching torrent entries or files)
 		// 2-3 pass: divide by title or season / episode numbers
 		// 4 pass: divide by folder / file name and show name / episode title
@@ -756,15 +737,23 @@ public enum EpisodeMetrics implements SimilarityMetric {
 		// 6 pass: divide by generic numeric similarity
 		// 7 pass: prefer episodes that were aired closer to the last modified date of the file
 		// 8 pass: resolve remaining collisions via absolute string similarity
-		if (includeFileMetrics) {
-			return new SimilarityMetric[] { FileSize, new MetricCascade(FileName, EpisodeFunnel), EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, FilePathBalancer, FilePath };
-		} else {
-			return new SimilarityMetric[] { EpisodeFunnel, EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, FilePathBalancer, FilePath };
-		}
+		return new SimilarityMetric[] { EpisodeFunnel, EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, FilePathBalancer, FilePath };
 	}
 
-	public static SimilarityMetric verificationMetric() {
+	public SimilarityMetric[] matchFileSequence() {
+		return new SimilarityMetric[] { FileSize, new MetricCascade(FileName, EpisodeFunnel), EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, FilePathBalancer, FilePath };
+	}
+
+	public SimilarityMetric numbers() {
+		return EpisodeIdentifier;
+	}
+
+	public SimilarityMetric verification() {
 		return new MetricCascade(FileName, SeasonEpisode, AirDate, Title, Name);
+	}
+
+	public SimilarityMetric sanity() {
+		return new MetricCascade(new MetricMin(FileSize, 0), FileName, EpisodeIdentifier);
 	}
 
 }

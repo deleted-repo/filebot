@@ -4,21 +4,14 @@ import static java.util.Collections.*;
 import static net.filebot.Logging.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.media.XattrMetaInfo.*;
-import static net.filebot.similarity.EpisodeMetrics.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 import net.filebot.media.MediaCharacteristics;
 import net.filebot.media.MediaCharacteristicsParser;
@@ -33,10 +26,10 @@ import net.filebot.similarity.SimilarityMetric;
 import net.filebot.web.OpenSubtitlesSubtitleDescriptor;
 import net.filebot.web.SubtitleDescriptor;
 
-public enum SubtitleMetrics implements SimilarityMetric {
+public class SubtitleMetrics extends EpisodeMetrics {
 
 	// subtitle verification metric specifically excluding SxE mismatches
-	AbsoluteSeasonEpisode(new SimilarityMetric() {
+	public final SimilarityMetric AbsoluteSeasonEpisode = new SimilarityMetric() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -46,9 +39,10 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			}
 			return f < 1 ? -1 : 1;
 		}
-	}),
 
-	DiskNumber(new NumericSimilarityMetric() {
+	};
+
+	public final SimilarityMetric DiskNumber = new NumericSimilarityMetric() {
 
 		private final Pattern CDNO = Pattern.compile("(?:CD|DISK)(\\d+)", Pattern.CASE_INSENSITIVE);
 
@@ -71,9 +65,10 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			}
 			return cd;
 		}
-	}),
 
-	NameSubstringSequenceExists(new SequenceMatchSimilarity() {
+	};
+
+	public final SimilarityMetric NameSubstringSequenceExists = new SequenceMatchSimilarity() {
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -106,7 +101,7 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			String[] names = new String[identifiers.size()];
 
 			for (int i = 0; i < names.length; i++) {
-				names[i] = EpisodeMetrics.normalizeObject(identifiers.get(i));
+				names[i] = normalizeObject(identifiers.get(i));
 			}
 
 			return names;
@@ -120,9 +115,10 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			}
 			return emptyList();
 		}
-	}),
 
-	OriginalFileName(new SequenceMatchSimilarity() {
+	};
+
+	public final SimilarityMetric OriginalFileName = new SequenceMatchSimilarity() {
 
 		@Override
 		protected float similarity(String match, String s1, String s2) {
@@ -144,9 +140,10 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			}
 			return super.normalize(object);
 		}
-	}),
 
-	VideoProperties(new CrossPropertyMetric() {
+	};
+
+	public final SimilarityMetric VideoProperties = new CrossPropertyMetric() {
 
 		private final String FPS = "FPS";
 		private final String SECONDS = "SECS";
@@ -186,43 +183,38 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			return emptyMap();
 		}
 
-		private final Cache<File, Map<String, Object>> videoPropertiesCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+		private final Map<File, Map<String, Object>> cache = synchronizedMap(new HashMap<File, Map<String, Object>>(64, 4));
 
 		private Map<String, Object> getVideoProperties(File file) {
-			try {
-				return videoPropertiesCache.get(file, () -> {
-					try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(file)) {
-						return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
-					} catch (Exception e) {
-						debug.warning(cause("Failed to read video properties", e));
-					}
-					return emptyMap();
-				});
-			} catch (ExecutionException e) {
-				debug.log(Level.SEVERE, e, e::toString);
-			}
-			return emptyMap();
+			return cache.computeIfAbsent(file, f -> {
+				try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
+					return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
+				} catch (Exception e) {
+					debug.warning(cause("Failed to read video properties", e));
+				}
+				return emptyMap();
+			});
 		}
-	});
-
-	// inner metric
-	private final SimilarityMetric metric;
-
-	private SubtitleMetrics(SimilarityMetric metric) {
-		this.metric = metric;
-	}
+	};
 
 	@Override
-	public float getSimilarity(Object o1, Object o2) {
-		return metric.getSimilarity(o1, o2);
-	}
-
-	public static SimilarityMetric[] defaultSequence() {
+	public SimilarityMetric[] matchSequence() {
 		return new SimilarityMetric[] { EpisodeFunnel, EpisodeBalancer, OriginalFileName, NameSubstringSequenceExists, new MetricAvg(NameSubstringSequenceExists, Name), Numeric, FileName, DiskNumber, VideoProperties, new NameSimilarityMetric() };
 	}
 
-	public static SimilarityMetric verificationMetric() {
+	@Override
+	public SimilarityMetric[] matchFileSequence() {
+		return matchSequence();
+	}
+
+	@Override
+	public SimilarityMetric verification() {
 		return new MetricCascade(AbsoluteSeasonEpisode, AirDate, new MetricAvg(NameSubstringSequenceExists, Name), getMovieMatchMetric(), OriginalFileName);
+	}
+
+	@Override
+	public SimilarityMetric sanity() {
+		return verification();
 	}
 
 }

@@ -196,7 +196,9 @@ public final class SubtitleUtilities {
 				}
 
 				// add other possible matches to the options
-				SimilarityMetric sanity = SubtitleMetrics.verificationMetric();
+				SubtitleMetrics metrics = new SubtitleMetrics();
+
+				SimilarityMetric sanity = metrics.verification();
 				float minMatchSimilarity = strict ? 0.9f : 0.6f;
 
 				// first match everything as best as possible, then filter possibly bad matches
@@ -219,7 +221,7 @@ public final class SubtitleUtilities {
 							continue;
 
 						// ignore if we're sure that SxE is a negative match
-						if ((isEpisode(it.getName(), true) || isEpisode(file.getPath(), true)) && EpisodeMetrics.EpisodeIdentifier.getSimilarity(file, it) < 1)
+						if ((isEpisode(it.getName(), true) || isEpisode(file.getPath(), true)) && metrics.numbers().getSimilarity(file, it) < 1)
 							continue;
 
 						// ignore if it's not similar enough
@@ -239,7 +241,7 @@ public final class SubtitleUtilities {
 		Map<File, SubtitleDescriptor> subtitleByVideo = new LinkedHashMap<File, SubtitleDescriptor>();
 
 		// optimize for generic media <-> subtitle matching
-		SimilarityMetric[] metrics = SubtitleMetrics.defaultSequence();
+		SimilarityMetric[] metrics = new SubtitleMetrics().matchSequence();
 
 		// first match everything as best as possible, then filter possibly bad matches
 		Matcher<File, SubtitleDescriptor> matcher = new Matcher<File, SubtitleDescriptor>(files, subtitles, false, metrics);
@@ -295,7 +297,7 @@ public final class SubtitleUtilities {
 
 		try {
 			// add other possible matches to the options
-			SimilarityMetric sanity = SubtitleMetrics.verificationMetric();
+			SimilarityMetric sanity = new SubtitleMetrics().verification();
 			float minMatchSimilarity = strict ? 0.8f : 0.2f;
 
 			// first match everything as best as possible, then filter possibly bad matches

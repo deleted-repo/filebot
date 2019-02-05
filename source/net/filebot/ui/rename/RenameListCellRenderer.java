@@ -1,6 +1,5 @@
 package net.filebot.ui.rename;
 
-import static net.filebot.similarity.EpisodeMetrics.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -21,10 +20,8 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 
 import net.filebot.ResourceManager;
+import net.filebot.similarity.EpisodeMetrics;
 import net.filebot.similarity.Match;
-import net.filebot.similarity.MetricCascade;
-import net.filebot.similarity.MetricMin;
-import net.filebot.similarity.SimilarityMetric;
 import net.filebot.ui.rename.RenameModel.FormattedFuture;
 import net.filebot.util.FileUtilities;
 import net.filebot.util.ui.DefaultFancyListCellRenderer;
@@ -196,13 +193,15 @@ class RenameListCellRenderer extends DefaultFancyListCellRenderer {
 			return 1; // assume match is ok
 		}
 
+		// check match probability by running a few metrics, such as checking if episode numbers / file size / etc match
+		EpisodeMetrics metrics = new EpisodeMetrics();
+
 		if (match.getValue() instanceof Episode) {
-			float f = verificationMetric().getSimilarity(match.getValue(), match.getCandidate());
+			float f = metrics.verification().getSimilarity(match.getValue(), match.getCandidate());
 			return (f + 1) / 2; // normalize -1..1 to 0..1
 		}
 
-		SimilarityMetric fsm = new MetricCascade(new MetricMin(FileSize, 0), FileName, EpisodeIdentifier);
-		float f = fsm.getSimilarity(match.getValue(), match.getCandidate());
+		float f = metrics.sanity().getSimilarity(match.getValue(), match.getCandidate());
 		if (f != 0) {
 			return (Math.max(f, 0)); // normalize -1..1 and boost by 0.25 (because file <-> file matches are not necessarily about Episodes)
 		}

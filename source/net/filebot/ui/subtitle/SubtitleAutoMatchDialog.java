@@ -923,6 +923,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 	protected static class SubtitleProviderBean extends SubtitleServiceBean {
 
 		private SubtitleProvider service;
+		private SubtitleMetrics metrics = new SubtitleMetrics();
 
 		public SubtitleProviderBean(SubtitleProvider service, SubtitleAutoMatchDialog inputProvider) {
 			super(service.getName(), service.getIcon(), service.getLink());
@@ -941,7 +942,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 
 		@Override
 		public float getMatchProbabilty(File videoFile, SubtitleDescriptor descriptor) {
-			return SubtitleMetrics.verificationMetric().getSimilarity(videoFile, descriptor);
+			return metrics.verification().getSimilarity(videoFile, descriptor);
 		}
 	}
 

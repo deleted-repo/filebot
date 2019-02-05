@@ -761,7 +761,7 @@ public class MediaDetection {
 	}
 
 	public static boolean isEpisodeNumberMatch(File f, Episode e) {
-		float similarity = EpisodeMetrics.EpisodeIdentifier.getSimilarity(f, e);
+		float similarity = new EpisodeMetrics().numbers().getSimilarity(f, e);
 		if (similarity >= 1) {
 			return true;
 		} else if (similarity >= 0.5 && e.getSeason() == null && e.getEpisode() != null && e.getSpecial() == null) {

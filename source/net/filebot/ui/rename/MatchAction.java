@@ -41,7 +41,7 @@ class MatchAction extends AbstractAction {
 
 		withWaitCursor(evt.getSource(), () -> {
 			try {
-				Matcher<Object, File> matcher = new Matcher<Object, File>(model.values(), model.candidates(), false, EpisodeMetrics.defaultSequence(true));
+				Matcher<Object, File> matcher = new Matcher<Object, File>(model.values(), model.candidates(), false, new EpisodeMetrics().matchFileSequence());
 				List<Match<Object, File>> matches = ProgressMonitor.runTask("Match", "Finding optimal alignment. This may take a while.", (message, progress, cancelled) -> {
 					message.accept(String.format("Checking %d combinations...", matcher.remainingCandidates().size() * matcher.remainingValues().size()));
 					return matcher.match();
