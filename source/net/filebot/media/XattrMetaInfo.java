@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import com.google.common.base.Optional;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
@@ -25,8 +26,8 @@ public class XattrMetaInfo {
 	private final boolean useExtendedFileAttributes;
 	private final boolean useCreationDate;
 
-	private final Cache<File, Object> xattrMetaInfoCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
-	private final Cache<File, Object> xattrOriginalNameCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
+	private final Cache<File, Optional<Object>> xattrMetaInfoCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
+	private final Cache<File, Optional<Object>> xattrOriginalNameCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
 
 	public XattrMetaInfo(boolean useExtendedFileAttributes, boolean useCreationDate) {
 		this.useExtendedFileAttributes = useExtendedFileAttributes;
@@ -63,14 +64,14 @@ public class XattrMetaInfo {
 		return (String) getXattrValue(xattrOriginalNameCache, file, MetaAttributes::getOriginalName);
 	}
 
-	private Object getXattrValue(Cache<File, Object> cache, File file, Function<MetaAttributes, Object> compute) {
+	private Object getXattrValue(Cache<File, Optional<Object>> cache, File file, Function<MetaAttributes, Object> compute) {
 		// try in-memory cache of previously stored xattr metadata
 		if (!useExtendedFileAttributes) {
 			return cache.getIfPresent(file);
 		}
 
 		try {
-			return cache.get(file, () -> compute.apply(xattr(file)));// read only
+			return cache.get(file, () -> Optional.fromNullable(compute.apply(xattr(file)))).orNull();// read only
 		} catch (ExecutionException e) {
 			debug.warning(cause("Failed to read xattr", e.getCause()));
 		}
@@ -117,7 +118,7 @@ public class XattrMetaInfo {
 		// store metadata object and original name as xattr
 		try {
 			if (isMetaInfo(model)) {
-				xattrMetaInfoCache.put(file, model);
+				xattrMetaInfoCache.put(file, Optional.of(model));
 
 				if (useExtendedFileAttributes) {
 					xattr.get().setObject(model);
@@ -125,7 +126,7 @@ public class XattrMetaInfo {
 			}
 
 			if (original != null && original.length() > 0 && getOriginalName(file) == null) {
-				xattrOriginalNameCache.put(file, original);
+				xattrOriginalNameCache.put(file, Optional.of(original));
 
 				if (useExtendedFileAttributes) {
 					xattr.get().setOriginalName(original);
