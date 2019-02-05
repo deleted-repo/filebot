@@ -2,12 +2,12 @@ package net.filebot.similarity;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
+import static net.filebot.Logging.*;
 import static net.filebot.web.EpisodeUtilities.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -15,7 +15,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.logging.Level;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import net.filebot.media.SmartSeasonEpisodeMatcher;
 import net.filebot.similarity.SeasonEpisodeMatcher.SxE;
@@ -85,23 +91,18 @@ public class EpisodeMatcher extends Matcher<File, Object> {
 	}
 
 	private final SeasonEpisodeMatcher seasonEpisodeMatcher = new SmartSeasonEpisodeMatcher(SeasonEpisodeMatcher.LENIENT_SANITY, false);
-	private final Map<File, Set<SxE>> transformCache = synchronizedMap(new HashMap<File, Set<SxE>>(64, 4));
+	private final Cache<File, Set<SxE>> parseEpisodeIdentiferCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 	private Set<SxE> parseEpisodeIdentifer(File file) {
-		Set<SxE> result = transformCache.get(file);
-		if (result != null) {
-			return result;
+		try {
+			return parseEpisodeIdentiferCache.get(file, () -> {
+				List<SxE> sxe = seasonEpisodeMatcher.match(file.getName());
+				return sxe == null ? emptySet() : new HashSet<SxE>(sxe);
+			});
+		} catch (ExecutionException e) {
+			debug.log(Level.SEVERE, e, e::toString);
 		}
-
-		List<SxE> sxe = seasonEpisodeMatcher.match(file.getName());
-		if (sxe != null) {
-			result = new HashSet<SxE>(sxe);
-		} else {
-			result = emptySet();
-		}
-
-		transformCache.put(file, result);
-		return result;
+		return emptySet();
 	}
 
 	private Set<Integer> normalizeIdentifierSet(Set<SxE> numbers) {
