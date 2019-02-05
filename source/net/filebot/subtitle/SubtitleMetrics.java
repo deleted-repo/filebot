@@ -11,9 +11,13 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import net.filebot.media.MediaCharacteristics;
 import net.filebot.media.MediaCharacteristicsParser;
@@ -176,22 +180,27 @@ public enum SubtitleMetrics implements SimilarityMetric {
 			try {
 				return getProperties(subtitle.getMovieFPS(), subtitle.getMovieTimeMS());
 			} catch (Exception e) {
-				debug.warning("Failed to read subtitle properties: " + e);
+				debug.warning(cause("Failed to read subtitle properties", e));
 			}
 			return emptyMap();
 		}
 
-		private final Map<File, Map<String, Object>> mediaInfoCache = synchronizedMap(new WeakHashMap<File, Map<String, Object>>(64));
+		private final Cache<File, Map<String, Object>> videoPropertiesCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 		private Map<String, Object> getVideoProperties(File file) {
-			return mediaInfoCache.computeIfAbsent(file, f -> {
-				try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
-					return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
-				} catch (Exception e) {
-					debug.warning("Failed to read video properties: " + e.getMessage());
-				}
-				return emptyMap();
-			});
+			try {
+				return videoPropertiesCache.get(file, () -> {
+					try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(file)) {
+						return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
+					} catch (Exception e) {
+						debug.warning(cause("Failed to read video properties", e));
+					}
+					return emptyMap();
+				});
+			} catch (ExecutionException e) {
+				debug.severe(cause("Failed to read subtitle properties", e));
+			}
+			return emptyMap();
 		}
 	});
 
