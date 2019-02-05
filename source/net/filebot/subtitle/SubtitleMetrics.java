@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -198,7 +199,7 @@ public enum SubtitleMetrics implements SimilarityMetric {
 					return emptyMap();
 				});
 			} catch (ExecutionException e) {
-				debug.severe(cause("Failed to read subtitle properties", e));
+				debug.log(Level.SEVERE, e, e::toString);
 			}
 			return emptyMap();
 		}
