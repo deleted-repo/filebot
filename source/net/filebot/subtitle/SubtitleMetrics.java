@@ -40,6 +40,10 @@ public class SubtitleMetrics extends EpisodeMetrics {
 			return f < 1 ? -1 : 1;
 		}
 
+		@Override
+		public String toString() {
+			return "AbsoluteSeasonEpisode";
+		}
 	};
 
 	public final SimilarityMetric DiskNumber = new NumericSimilarityMetric() {
@@ -66,6 +70,10 @@ public class SubtitleMetrics extends EpisodeMetrics {
 			return cd;
 		}
 
+		@Override
+		public String toString() {
+			return "DiskNumber";
+		}
 	};
 
 	public final SimilarityMetric NameSubstringSequenceExists = new SequenceMatchSimilarity() {
@@ -116,6 +124,10 @@ public class SubtitleMetrics extends EpisodeMetrics {
 			return emptyList();
 		}
 
+		@Override
+		public String toString() {
+			return "NameSubstringSequenceExists";
+		}
 	};
 
 	public final SimilarityMetric OriginalFileName = new SequenceMatchSimilarity() {
@@ -141,6 +153,10 @@ public class SubtitleMetrics extends EpisodeMetrics {
 			return super.normalize(object);
 		}
 
+		@Override
+		public String toString() {
+			return "OriginalFileName";
+		}
 	};
 
 	public final SimilarityMetric VideoProperties = new CrossPropertyMetric() {
@@ -194,6 +210,11 @@ public class SubtitleMetrics extends EpisodeMetrics {
 				}
 				return emptyMap();
 			});
+		}
+
+		@Override
+		public String toString() {
+			return "VideoProperties";
 		}
 	};
 

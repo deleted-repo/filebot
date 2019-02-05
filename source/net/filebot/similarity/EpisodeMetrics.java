@@ -87,6 +87,10 @@ public class EpisodeMetrics {
 			return sxe;
 		}
 
+		@Override
+		public String toString() {
+			return "SeasonEpisode";
+		}
 	};
 
 	// Match episode airdate
@@ -110,6 +114,10 @@ public class EpisodeMetrics {
 			}).orElse(null);
 		}
 
+		@Override
+		public String toString() {
+			return "AirDate";
+		}
 	};
 
 	// Match by episode/movie title
@@ -137,6 +145,10 @@ public class EpisodeMetrics {
 			return s.length() >= 4 ? s : null; // only consider long enough strings to avoid false matches
 		}
 
+		@Override
+		public String toString() {
+			return "Title";
+		}
 	};
 
 	// Match by SxE and airdate
@@ -176,6 +188,10 @@ public class EpisodeMetrics {
 			return o;
 		}
 
+		@Override
+		public String toString() {
+			return "EpisodeBalancer";
+		}
 	};
 
 	// Match series title and episode title against folder structure and file name
@@ -236,6 +252,10 @@ public class EpisodeMetrics {
 			return new Object[] { object };
 		}
 
+		@Override
+		public String toString() {
+			return "SubstringFields";
+		}
 	};
 
 	// Match via common word sequence in episode name and file name
@@ -285,6 +305,10 @@ public class EpisodeMetrics {
 			return singletonList(object);
 		}
 
+		@Override
+		public String toString() {
+			return "NameSubstringSequence";
+		}
 	};
 
 	// Match by generic name similarity (round rank)
@@ -303,6 +327,10 @@ public class EpisodeMetrics {
 			return normalizeObject(object);
 		}
 
+		@Override
+		public String toString() {
+			return "Name";
+		}
 	};
 
 	// Match by generic name similarity (absolute)
@@ -357,6 +385,10 @@ public class EpisodeMetrics {
 			return emptyList();
 		}
 
+		@Override
+		public String toString() {
+			return "SeriesName";
+		}
 	};
 
 	public final SimilarityMetric SeriesNameBalancer = new MetricCascade(NameSubstringSequence, Name, SeriesName);
@@ -372,6 +404,10 @@ public class EpisodeMetrics {
 			return normalizeObject(object.toString()); // simplify file name, if possible
 		}
 
+		@Override
+		public String toString() {
+			return "FilePath";
+		}
 	};
 
 	public final SimilarityMetric FilePathBalancer = new NameSimilarityMetric() {
@@ -396,6 +432,10 @@ public class EpisodeMetrics {
 			return object.toString();
 		}
 
+		@Override
+		public String toString() {
+			return "FilePathBalancer";
+		}
 	};
 
 	public final SimilarityMetric NumericSequence = new SequenceMatchSimilarity() {
@@ -435,6 +475,10 @@ public class EpisodeMetrics {
 			return join(numbers, " ");
 		}
 
+		@Override
+		public String toString() {
+			return "NumericSequence";
+		}
 	};
 
 	// Match by generic numeric similarity
@@ -478,6 +522,10 @@ public class EpisodeMetrics {
 			return new String[] { normalizeObject(object) };
 		}
 
+		@Override
+		public String toString() {
+			return "Numeric";
+		}
 	};
 
 	// Prioritize proper episodes over specials
@@ -496,6 +544,10 @@ public class EpisodeMetrics {
 			return 0;
 		}
 
+		@Override
+		public String toString() {
+			return "SpecialNumber";
+		}
 	};
 
 	// Match by file length (only works when matching torrents or files)
@@ -515,6 +567,10 @@ public class EpisodeMetrics {
 			return super.getLength(object);
 		}
 
+		@Override
+		public String toString() {
+			return "FileSize";
+		}
 	};
 
 	// Match by common words at the beginning of both files
@@ -528,6 +584,10 @@ public class EpisodeMetrics {
 			return null;
 		}
 
+		@Override
+		public String toString() {
+			return "FileName";
+		}
 	};
 
 	// Match by file last modified and episode release dates
@@ -584,6 +644,11 @@ public class EpisodeMetrics {
 
 			return -1;
 		}
+
+		@Override
+		public String toString() {
+			return "TimeStamp";
+		}
 	};
 
 	public final SimilarityMetric SeriesRating = new SimilarityMetric() {
@@ -614,6 +679,11 @@ public class EpisodeMetrics {
 			}
 			return 0;
 		}
+
+		@Override
+		public String toString() {
+			return "SeriesRating";
+		}
 	};
 
 	public final SimilarityMetric VoteRate = new SimilarityMetric() {
@@ -637,6 +707,11 @@ public class EpisodeMetrics {
 				}
 			}
 			return 0;
+		}
+
+		@Override
+		public String toString() {
+			return "VoteRate";
 		}
 	};
 
@@ -681,6 +756,11 @@ public class EpisodeMetrics {
 
 			return emptySet();
 		}
+
+		@Override
+		public String toString() {
+			return "RegionHint";
+		}
 	};
 
 	// Match by stored MetaAttributes if possible
@@ -705,6 +785,10 @@ public class EpisodeMetrics {
 			return emptyMap();
 		}
 
+		@Override
+		public String toString() {
+			return "MetaAttributes";
+		}
 	};
 
 	protected final Map<Object, String> transformCache = synchronizedMap(new HashMap<>(64, 4));
