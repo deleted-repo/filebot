@@ -2,12 +2,12 @@ package net.filebot.similarity;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
-import static net.filebot.Logging.*;
 import static net.filebot.web.EpisodeUtilities.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -15,13 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.logging.Level;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 
 import net.filebot.media.SmartSeasonEpisodeMatcher;
 import net.filebot.similarity.SeasonEpisodeMatcher.SxE;
@@ -91,18 +85,13 @@ public class EpisodeMatcher extends Matcher<File, Object> {
 	}
 
 	private final SeasonEpisodeMatcher seasonEpisodeMatcher = new SmartSeasonEpisodeMatcher(SeasonEpisodeMatcher.LENIENT_SANITY, false);
-	private final Cache<File, Set<SxE>> parseEpisodeIdentiferCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+	private final Map<File, Set<SxE>> cache = synchronizedMap(new HashMap<>(64, 4));
 
 	private Set<SxE> parseEpisodeIdentifer(File file) {
-		try {
-			return parseEpisodeIdentiferCache.get(file, () -> {
-				List<SxE> sxe = seasonEpisodeMatcher.match(file.getName());
-				return sxe == null ? emptySet() : new HashSet<SxE>(sxe);
-			});
-		} catch (ExecutionException e) {
-			debug.log(Level.SEVERE, e, e::toString);
-		}
-		return emptySet();
+		return cache.computeIfAbsent(file, f -> {
+			List<SxE> sxe = seasonEpisodeMatcher.match(f.getName());
+			return sxe == null ? emptySet() : new HashSet<SxE>(sxe);
+		});
 	}
 
 	private Set<Integer> normalizeIdentifierSet(Set<SxE> numbers) {

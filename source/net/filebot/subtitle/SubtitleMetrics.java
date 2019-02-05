@@ -183,7 +183,7 @@ public class SubtitleMetrics extends EpisodeMetrics {
 			return emptyMap();
 		}
 
-		private final Map<File, Map<String, Object>> cache = synchronizedMap(new HashMap<File, Map<String, Object>>(64, 4));
+		private final Map<File, Map<String, Object>> cache = synchronizedMap(new HashMap<>(64, 4));
 
 		private Map<String, Object> getVideoProperties(File file) {
 			return cache.computeIfAbsent(file, f -> {

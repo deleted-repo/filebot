@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,7 +45,7 @@ public class EpisodeMetrics {
 	// Match by season / episode numbers
 	public final SimilarityMetric SeasonEpisode = new SeasonEpisodeMetric(new SmartSeasonEpisodeMatcher(null, false)) {
 
-		private final Map<Object, Collection<SxE>> cache = synchronizedMap(new HashMap<Object, Collection<SxE>>(64, 4));
+		private final Map<Object, Collection<SxE>> cache = synchronizedMap(new HashMap<>(64, 4));
 
 		@Override
 		protected Collection<SxE> parse(Object object) {
@@ -58,7 +59,10 @@ public class EpisodeMetrics {
 				return emptySet();
 			}
 
-			return cache.computeIfAbsent(object, super::parse);
+			return cache.computeIfAbsent(object, o -> {
+				Collection<SxE> sxe = super.parse(o);
+				return sxe == null ? emptySet() : sxe;
+			});
 		}
 
 		private Set<SxE> parse(Episode e) {
@@ -88,7 +92,7 @@ public class EpisodeMetrics {
 	// Match episode airdate
 	public final SimilarityMetric AirDate = new DateMetric(getDateMatcher()) {
 
-		private final Map<Object, SimpleDate> cache = synchronizedMap(new HashMap<Object, SimpleDate>(64, 4));
+		private final Map<Object, Optional<SimpleDate>> cache = synchronizedMap(new HashMap<>(64, 4));
 
 		@Override
 		public SimpleDate parse(Object object) {
@@ -101,7 +105,9 @@ public class EpisodeMetrics {
 				return null;
 			}
 
-			return cache.computeIfAbsent(object, super::parse);
+			return cache.computeIfAbsent(object, o -> {
+				return Optional.ofNullable(super.parse(o));
+			}).orElse(null);
 		}
 
 	};
@@ -701,7 +707,7 @@ public class EpisodeMetrics {
 
 	};
 
-	protected final Map<Object, String> transformCache = synchronizedMap(new HashMap<Object, String>(64, 4));
+	protected final Map<Object, String> transformCache = synchronizedMap(new HashMap<>(64, 4));
 
 	protected final Transliterator transliterator = Transliterator.getInstance("Any-Latin;Latin-ASCII;[:Diacritic:]remove");
 
@@ -716,7 +722,7 @@ public class EpisodeMetrics {
 			// 3. remove obvious release info
 			// 4. apply transliterator
 			// 5. remove or normalize special characters
-			return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(object))))).toLowerCase();
+			return normalizePunctuation(transliterator.transform(stripFormatInfo(removeEmbeddedChecksum(normalizeFileName(o))))).toLowerCase();
 		});
 	}
 
