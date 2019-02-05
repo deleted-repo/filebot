@@ -136,7 +136,7 @@ public final class WebServices {
 		}
 
 		// local TheMovieDB search index
-		private final Map<Integer, Resource<LocalSearch<Movie>>> localIndexPerYear = synchronizedMap(new HashMap<>(64));
+		private final Map<Integer, Resource<LocalSearch<Movie>>> localIndexPerYear = synchronizedMap(new HashMap<>());
 
 		private LocalSearch<Movie> computeLocalIndex(int year) throws Exception {
 			if (year > 0) {
