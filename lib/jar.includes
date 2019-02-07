@@ -1,4 +1,5 @@
 ivy/jar/ehcache.jar
+ivy/jar/caffeine.jar
 ivy/jar/miglayout-core.jar
 ivy/jar/miglayout-swing.jar
 ivy/jar/glazedlists_java16.jar
