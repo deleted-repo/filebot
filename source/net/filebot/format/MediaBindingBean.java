@@ -36,15 +36,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import net.filebot.ApplicationFolder;
 import net.filebot.Language;
@@ -1214,19 +1213,19 @@ public class MediaBindingBean {
 		return null;
 	}
 
-	private static final Cache<File, MediaInfo> mediaInfoCache = CacheBuilder.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+	private static final Cache<File, MediaInfo> mediaInfoCache = Caffeine.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
 
 	private synchronized MediaInfo getMediaInfo() {
 		// use inferred media file (e.g. actual movie file instead of subtitle file)
 		File inferredMediaFile = getInferredMediaFile();
 
-		try {
-			return mediaInfoCache.get(inferredMediaFile, () -> {
-				return new MediaInfo().open(inferredMediaFile);
-			});
-		} catch (ExecutionException e) {
-			throw new MediaInfoException(e.getCause().getMessage());
-		}
+		return mediaInfoCache.get(inferredMediaFile, f -> {
+			try {
+				return new MediaInfo().open(f);
+			} catch (Exception e) {
+				throw new MediaInfoException(e.getMessage());
+			}
+		});
 	}
 
 	private Integer identityIndexOf(Iterable<?> c, Object o) {

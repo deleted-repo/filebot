@@ -8,6 +8,7 @@
 		<dependency rev="2.33" org="args4j" name="args4j" />
 		<dependency rev="2.10.5" org="net.sf.ehcache" name="ehcache" />
 		<dependency rev="27.0.1-jre" org="com.google.guava" name="guava" />
+		<dependency rev="2.6.2" org="com.github.ben-manes.caffeine" name="caffeine" />
 		<dependency rev="4.1.1" org="com.github.mpkorstanje" name="simmetrics-core" />
 		<dependency rev="61.1" org="com.ibm.icu" name="icu4j" />
 		<dependency rev="1.11.3" org="org.jsoup" name="jsoup" />

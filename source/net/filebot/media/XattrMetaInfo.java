@@ -5,13 +5,12 @@ import static net.filebot.Settings.*;
 
 import java.io.File;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import com.google.common.base.Optional;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 
 import net.filebot.Resource;
 import net.filebot.WebServices;
@@ -26,8 +25,8 @@ public class XattrMetaInfo {
 	private final boolean useExtendedFileAttributes;
 	private final boolean useCreationDate;
 
-	private final Cache<File, Optional<Object>> xattrMetaInfoCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
-	private final Cache<File, Optional<Object>> xattrOriginalNameCache = CacheBuilder.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
+	private final Cache<File, Optional<Object>> xattrMetaInfoCache = Caffeine.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
+	private final Cache<File, Optional<Object>> xattrOriginalNameCache = Caffeine.newBuilder().expireAfterAccess(24, TimeUnit.HOURS).build();
 
 	public XattrMetaInfo(boolean useExtendedFileAttributes, boolean useCreationDate) {
 		this.useExtendedFileAttributes = useExtendedFileAttributes;
@@ -70,13 +69,14 @@ public class XattrMetaInfo {
 			return cache.getIfPresent(file);
 		}
 
-		try {
-			return cache.get(file, () -> Optional.fromNullable(compute.apply(xattr(file)))).orNull();// read only
-		} catch (ExecutionException e) {
-			debug.warning(cause("Failed to read xattr", e.getCause()));
-		}
-
-		return null;
+		return cache.get(file, f -> {
+			try {
+				return Optional.ofNullable(compute.apply(xattr(f)));
+			} catch (Exception e) {
+				debug.warning(cause("Failed to read xattr", e));
+				return Optional.empty();
+			}
+		}).orElse(null);// read only
 	}
 
 	private File writable(File f) throws Exception {
