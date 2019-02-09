@@ -245,16 +245,6 @@ class RenameAction extends AbstractAction {
 	private ActionPopup createLicensePopup(String message, ActionEvent evt) {
 		ActionPopup actionPopup = new ActionPopup("License Required", ResourceManager.getIcon("file.lock"));
 
-		actionPopup.add(newAction("Select License File", ResourceManager.getIcon("license.import"), c -> {
-			withWaitCursor(evt.getSource(), () -> {
-				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", evt);
-				if (files.size() > 0) {
-					configureLicense(files.get(0));
-					return;
-				}
-			});
-		}));
-
 		actionPopup.add(newAction("Paste License Key", ResourceManager.getIcon("license.import"), c -> {
 			withWaitCursor(evt.getSource(), () -> {
 				try {
@@ -269,6 +259,16 @@ class RenameAction extends AbstractAction {
 				}
 
 				log.info("The clipboard does not contain a license key. Please select and copy your license key first.");
+			});
+		}));
+
+		actionPopup.add(newAction("Select License File", ResourceManager.getIcon("license.import"), c -> {
+			withWaitCursor(evt.getSource(), () -> {
+				List<File> files = UserFiles.FileChooser.AWT.showLoadDialogSelectFiles(false, false, null, MediaTypes.LICENSE_FILES, "Select License", evt);
+				if (files.size() > 0) {
+					configureLicense(files.get(0));
+					return;
+				}
 			});
 		}));
 
