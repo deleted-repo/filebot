@@ -224,10 +224,7 @@ public class ExpressionFormat extends Format {
 		return compilation;
 	}
 
-	private static ScriptEngine engine;
-	private static Map<String, CompiledScript> scriptletCache = new HashMap<String, CompiledScript>();
-
-	protected static ScriptEngine createScriptEngine() {
+	protected static Compilable createScriptEngine() {
 		CompilerConfiguration config = new CompilerConfiguration();
 
 		// include default functions
@@ -239,26 +236,29 @@ public class ExpressionFormat extends Format {
 		return new GroovyScriptEngineImpl(classLoader);
 	}
 
-	protected static synchronized ScriptEngine getGroovyScriptEngine() throws ScriptException {
-		if (engine == null) {
-			engine = createScriptEngine();
-		}
-		return engine;
-	}
+	private static Compilable engine;
+	private static Map<String, CompiledScript> scriptletCache = new HashMap<String, CompiledScript>();
 
-	protected static synchronized CompiledScript compileScriptlet(String expression) throws ScriptException {
+	protected static CompiledScript compileScriptlet(String expression) throws ScriptException {
 		// simple expressions like {n} don't need to be interpreted by the script engine
 		if (SourceVersion.isIdentifier(expression) && !SourceVersion.isKeyword(expression)) {
 			return new Variable(expression);
 		}
 
-		CompiledScript scriptlet = scriptletCache.get(expression);
-		if (scriptlet == null) {
-			Compilable engine = (Compilable) getGroovyScriptEngine();
-			scriptlet = engine.compile(expression);
-			scriptletCache.put(expression, scriptlet);
+		synchronized (scriptletCache) {
+			CompiledScript scriptlet = scriptletCache.get(expression);
+			if (scriptlet == null) {
+				// lazy initialize script engine
+				if (engine == null) {
+					engine = createScriptEngine();
+				}
+
+				// compile and cache script
+				scriptlet = engine.compile(expression);
+				scriptletCache.put(expression, scriptlet);
+			}
+			return scriptlet;
 		}
-		return scriptlet;
 	}
 
 	private static class Variable extends CompiledScript {
