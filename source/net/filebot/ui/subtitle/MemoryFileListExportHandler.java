@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ class MemoryFileListExportHandler implements TransferableExportHandler, Clipboar
 
 	@Override
 	public Transferable createTransferable(JComponent component) {
-		Map<String, ByteBuffer> vfs = new HashMap<String, ByteBuffer>();
+		Map<String, ByteBuffer> vfs = new LinkedHashMap<String, ByteBuffer>();
 
 		for (MemoryFile file : export(component)) {
 			vfs.put(file.getName(), file.getData());
