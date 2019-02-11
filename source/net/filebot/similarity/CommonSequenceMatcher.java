@@ -81,18 +81,12 @@ public class CommonSequenceMatcher {
 		return getCollationKeys(SPACE.split(sequence));
 	}
 
-	private final Map<String, CollationKey> collationKeyDictionary = synchronizedMap(new HashMap<String, CollationKey>(256));
+	private final Map<String, CollationKey> collationKeyDictionary = synchronizedMap(new HashMap<String, CollationKey>(64, 4));
 
 	protected CollationKey[] getCollationKeys(String[] words) {
-		CollationKey[] keys = new CollationKey[words.length];
-		for (int i = 0; i < keys.length; i++) {
-			keys[i] = collationKeyDictionary.get(words[i]);
-			if (keys[i] == null) {
-				keys[i] = collator.getCollationKey(words[i]);
-				collationKeyDictionary.put(words[i], keys[i]);
-			}
-		}
-		return keys;
+		return stream(words).map(w -> {
+			return collationKeyDictionary.computeIfAbsent(w, collator::getCollationKey);
+		}).toArray(CollationKey[]::new);
 	}
 
 	protected <E extends Comparable<E>> E[] firstCommonSequence(E[] seq1, E[] seq2, int maxStartIndex, boolean returnFirstMatch) {
