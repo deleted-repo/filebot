@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -143,7 +143,7 @@ public class License {
 	}
 
 	private static Map<String, String> getRequestParameters() {
-		Map<String, String> parameters = new HashMap<String, String>(2);
+		Map<String, String> parameters = new LinkedHashMap<String, String>(2);
 
 		// add standard HTTP headers
 		parameters.put("Date", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
