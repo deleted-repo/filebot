@@ -128,6 +128,14 @@ public class Cache {
 		}
 	}
 
+	public void clear() {
+		try {
+			cache.removeAll();
+		} catch (Exception e) {
+			debug.warning(format("Cache clear: %s => %s", cache.getName(), e));
+		}
+	}
+
 	@Override
 	public String toString() {
 		return cache.getName();

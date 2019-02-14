@@ -86,13 +86,13 @@ public class License {
 			}
 
 			// read and verify license file
-			return parseLicenseText(new String(Files.readAllBytes(file.toPath()), UTF_8));
+			return parseLicenseText(new String(Files.readAllBytes(file.toPath()), UTF_8), false);
 		} catch (Exception error) {
 			return new License(error);
 		}
 	}
 
-	public static License parseLicenseText(String psm) {
+	public static License parseLicenseText(String psm, boolean strict) {
 		try {
 			// verify and get clear signed content
 			Map<String, String> properties = getProperties(psm);
@@ -105,7 +105,7 @@ public class License {
 			checkExpirationDate(expires);
 
 			// verify license online
-			verifyLicense(id, psm);
+			verifyLicense(id, psm, strict);
 
 			return new License(product, id, expires);
 		} catch (Exception error) {
@@ -133,8 +133,13 @@ public class License {
 		}
 	}
 
-	private static void verifyLicense(String id, String psm) throws Exception {
+	private static void verifyLicense(String id, String psm, boolean strict) throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
+
+		if (strict) {
+			cache.clear();
+		}
+
 		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, psm.getBytes(UTF_8), "application/octet-stream", getRequestParameters())).expire(Cache.ONE_MONTH).get();
 
 		if (getInteger(json, "status") != 200) {
@@ -162,7 +167,7 @@ public class License {
 		// lock memoized resource while validating and setting a new license
 		synchronized (License.INSTANCE) {
 			// check if license file is valid and not expired
-			License license = parseLicenseText(psm).check();
+			License license = parseLicenseText(psm, true).check();
 
 			// write to default license file path
 			Files.write(License.FILE.get().toPath(), psm.getBytes(UTF_8));
