@@ -45,7 +45,6 @@ import com.optimaize.langdetect.profiles.LanguageProfile;
 import com.optimaize.langdetect.profiles.LanguageProfileReader;
 
 import net.filebot.Language;
-import net.filebot.similarity.EpisodeMetrics;
 import net.filebot.similarity.Match;
 import net.filebot.similarity.Matcher;
 import net.filebot.similarity.MetricAvg;
