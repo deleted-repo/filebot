@@ -136,11 +136,14 @@ public class License {
 	private static void verifyLicense(String id, String psm, boolean strict) throws Exception {
 		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
 
+		// force verify request
 		if (strict) {
 			cache.clear();
 		}
 
-		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> WebRequest.post(url, psm.getBytes(UTF_8), "application/octet-stream", getRequestParameters())).expire(Cache.ONE_MONTH).get();
+		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> {
+			return WebRequest.post(url, psm.getBytes(UTF_8), "application/octet-stream", getRequestParameters());
+		}).expire(Cache.ONE_MONTH).get();
 
 		if (getInteger(json, "status") != 200) {
 			throw new IllegalStateException(getString(json, "message"));
