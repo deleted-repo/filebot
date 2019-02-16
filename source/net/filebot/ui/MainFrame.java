@@ -196,6 +196,9 @@ public class MainFrame extends JFrame {
 			setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			setBorder(createEmptyBorder(4, 5, 4, 5));
 
+			// disable default copy & paste support
+			setTransferHandler(null);
+
 			// initialize "drag over" panel selection
 			new DropTarget(this, new DragDropListener());
 		}
