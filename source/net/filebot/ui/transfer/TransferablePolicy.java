@@ -29,7 +29,7 @@ public abstract class TransferablePolicy {
 			// just assume that the transferable will be accepted, accept will be called in importData again anyway
 			return true;
 		} catch (Exception e) {
-			debug.log(Level.WARNING, e.getMessage(), e);
+			debug.log(Level.FINEST, e, e::getMessage);
 			return false;
 		}
 	}
@@ -43,7 +43,7 @@ public abstract class TransferablePolicy {
 				return true;
 			}
 		} catch (Exception e) {
-			debug.log(Level.WARNING, e.getMessage(), e);
+			debug.log(Level.WARNING, e, e::getMessage);
 		}
 
 		// transferable was not accepted, or transfer failed
