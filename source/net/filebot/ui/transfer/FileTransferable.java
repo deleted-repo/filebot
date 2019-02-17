@@ -8,6 +8,7 @@ import static net.filebot.util.FileUtilities.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.InvalidDnDOperationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -88,6 +89,22 @@ public class FileTransferable implements Transferable {
 		return isFileListFlavor(flavor);
 	}
 
+	public static <T> T getTransferData(Transferable tr, DataFlavor flavor, Class<T> type) throws IOException, UnsupportedFlavorException {
+		Object transferData;
+		try {
+			transferData = tr.getTransferData(flavor);
+		} catch (IOException e) {
+			// java.io.IOException: Owner failed to convert data
+			throw new InvalidDnDOperationException(e.getMessage());
+		}
+
+		if (transferData != null && type.isInstance(transferData)) {
+			return type.cast(transferData);
+		}
+
+		return null;
+	}
+
 	public static List<File> getFilesFromTransferable(Transferable tr) throws IOException, UnsupportedFlavorException {
 		// On Linux, if a file is dragged from a smb share to into a java application (e.g. Ubuntu Files to FileBot)
 		// the application/x-java-file-list transfer data will be an empty list
@@ -96,10 +113,7 @@ public class FileTransferable implements Transferable {
 		if (useGVFS()) {
 			if (tr.isDataFlavorSupported(FileTransferable.uriListFlavor)) {
 				// file URI list flavor (Linux)
-
-				Readable transferData = (Readable) tr.getTransferData(FileTransferable.uriListFlavor);
-
-				try (Scanner scanner = new Scanner(transferData)) {
+				try (Scanner scanner = new Scanner(getTransferData(tr, FileTransferable.uriListFlavor, Readable.class))) {
 					List<File> files = new ArrayList<File>();
 
 					while (scanner.hasNextLine()) {
@@ -131,18 +145,16 @@ public class FileTransferable implements Transferable {
 		// Windows / Mac and default handling
 		if (tr.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 			// file list flavor
-			Object transferable = tr.getTransferData(DataFlavor.javaFileListFlavor);
+			List<File> files = getTransferData(tr, DataFlavor.javaFileListFlavor, List.class);
 
-			if (transferable instanceof List) {
-				List<File> files = (List<File>) transferable;
-
+			if (files != null) {
 				// Windows Explorer DnD / Selection Order is broken and will probably never be fixed,
 				// so we provide an override for users that want to enforce alphanumeric sort order of files dragged in
 				if (forceSortOrder) {
 					return files.stream().sorted(HUMAN_NAME_ORDER).collect(toList());
+				} else {
+					return files;
 				}
-
-				return files;
 			}
 
 			// on some platforms transferable data will not be available until the drop has been accepted
