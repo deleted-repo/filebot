@@ -89,7 +89,7 @@ public class FileTransferable implements Transferable {
 		return isFileListFlavor(flavor);
 	}
 
-	public static <T> T getTransferData(Transferable tr, DataFlavor flavor, Class<T> type) throws IOException, UnsupportedFlavorException {
+	public static <T> T getTransferData(Transferable tr, DataFlavor flavor, Class<T> type) throws IOException, UnsupportedFlavorException, InvalidDnDOperationException {
 		Object transferData;
 		try {
 			transferData = tr.getTransferData(flavor);

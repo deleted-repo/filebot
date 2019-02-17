@@ -27,7 +27,6 @@ public abstract class TransferablePolicy {
 			// *after* the drop has been accepted, but canImport is called before that
 
 			// just assume that the transferable will be accepted, accept will be called in importData again anyway
-			debug.log(Level.FINEST, e::toString);
 			return true;
 		} catch (Exception e) {
 			debug.log(Level.WARNING, e, e::getMessage);
