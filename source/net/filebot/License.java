@@ -149,6 +149,9 @@ public class License {
 			return WebRequest.post(url, psm.getBytes(UTF_8), "application/octet-stream", getRequestParameters());
 		}).expire(Cache.ONE_MONTH).get();
 
+		// flush all cache from memory to the disk store
+		cache.flush();
+
 		if (getInteger(json, "status") != 200) {
 			throw new IllegalStateException(getString(json, "message"));
 		}
