@@ -2,6 +2,7 @@ package net.filebot;
 
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.PGP.*;
@@ -142,6 +143,9 @@ public class License {
 		}
 
 		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> {
+			// log license activation requests
+			debug.warning(format("Activate License %s", id));
+
 			return WebRequest.post(url, psm.getBytes(UTF_8), "application/octet-stream", getRequestParameters());
 		}).expire(Cache.ONE_MONTH).get();
 
@@ -151,7 +155,7 @@ public class License {
 	}
 
 	private static Map<String, String> getRequestParameters() {
-		Map<String, String> parameters = new LinkedHashMap<String, String>(2);
+		Map<String, String> parameters = new LinkedHashMap<String, String>();
 
 		// add standard HTTP headers
 		parameters.put("Date", DateTimeFormatter.RFC_1123_DATE_TIME.format(ZonedDateTime.now()));
