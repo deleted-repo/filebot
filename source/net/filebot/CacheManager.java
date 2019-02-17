@@ -79,7 +79,7 @@ public class CacheManager {
 			FileLock lock = channel.tryLock();
 
 			if (lock != null) {
-				debug.config(format("Using persistent disk cache %s", cache));
+				debug.fine(format("Using persistent disk cache %s", cache));
 
 				int applicationRevision = getApplicationRevisionNumber();
 				int cacheRevision = 0;
@@ -93,7 +93,7 @@ public class CacheManager {
 				}
 
 				if (cacheRevision != applicationRevision && applicationRevision > 0 && !isNewCache) {
-					debug.config(format("Current application version (r%d) does not match cache version (r%d): reset cache", applicationRevision, cacheRevision));
+					debug.warning(format("Current application revision (r%d) does not match cache revision (r%d): reset cache", applicationRevision, cacheRevision));
 
 					// tag cache with new revision number
 					isNewCache = true;
