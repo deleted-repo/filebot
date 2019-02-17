@@ -89,22 +89,6 @@ public class FileTransferable implements Transferable {
 		return isFileListFlavor(flavor);
 	}
 
-	public static <T> T getTransferData(Transferable tr, DataFlavor flavor, Class<T> type) throws IOException, UnsupportedFlavorException, InvalidDnDOperationException {
-		Object transferData;
-		try {
-			transferData = tr.getTransferData(flavor);
-		} catch (IOException e) {
-			// java.io.IOException: Owner failed to convert data
-			throw new InvalidDnDOperationException(e.getMessage());
-		}
-
-		if (transferData != null && type.isInstance(transferData)) {
-			return type.cast(transferData);
-		}
-
-		return null;
-	}
-
 	public static List<File> getFilesFromTransferable(Transferable tr) throws IOException, UnsupportedFlavorException {
 		// On Linux, if a file is dragged from a smb share to into a java application (e.g. Ubuntu Files to FileBot)
 		// the application/x-java-file-list transfer data will be an empty list
@@ -163,6 +147,22 @@ public class FileTransferable implements Transferable {
 
 		// cannot get files from transferable
 		throw new UnsupportedFlavorException(DataFlavor.javaFileListFlavor);
+	}
+
+	private static <T> T getTransferData(Transferable tr, DataFlavor flavor, Class<T> type) throws IOException, UnsupportedFlavorException, InvalidDnDOperationException {
+		Object transferData;
+		try {
+			transferData = tr.getTransferData(flavor);
+		} catch (IOException e) {
+			// java.io.IOException: Owner failed to convert data
+			throw new InvalidDnDOperationException(e.getMessage());
+		}
+
+		if (transferData != null && type.isInstance(transferData)) {
+			return type.cast(transferData);
+		}
+
+		return null;
 	}
 
 }
