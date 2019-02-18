@@ -44,7 +44,7 @@ public class CacheManager {
 		return new Cache(manager.getCache(name), type);
 	}
 
-	public synchronized void flushAll() {
+	public void flushAll() {
 		for (String n : manager.getCacheNames()) {
 			try {
 				manager.getCache(n).flush();
@@ -54,11 +54,14 @@ public class CacheManager {
 		}
 	}
 
-	public synchronized void clearAll() {
-		manager.clearAll();
-
-		// clear all caches that have not been added yet
-		clearDiskStore(diskStore);
+	public void clearAll() {
+		for (String n : manager.getCacheNames()) {
+			try {
+				manager.getCache(n).removeAll();
+			} catch (Exception e) {
+				debug.warning(e::toString);
+			}
+		}
 	}
 
 	public synchronized void shutdown() {

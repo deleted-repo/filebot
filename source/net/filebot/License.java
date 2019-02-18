@@ -135,11 +135,11 @@ public class License {
 	}
 
 	private static void verifyLicense(String id, String psm, boolean strict) throws Exception {
-		Cache cache = CacheManager.getInstance().getCache("license", CacheType.Persistent);
+		Cache cache = Cache.getCache(getApplicationName(), CacheType.Monthly);
 
 		// force verify request
 		if (strict) {
-			cache.clear();
+			cache.remove(id);
 		}
 
 		Object json = cache.json(id, i -> new URL("https://license.filebot.net/verify/" + i)).fetch((url, modified) -> {

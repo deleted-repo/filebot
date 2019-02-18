@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 
+import net.filebot.CacheManager;
 import net.filebot.HistorySpooler;
 import net.filebot.LicenseError;
 import net.filebot.MediaTypes;
@@ -74,6 +75,9 @@ class RenameAction extends AbstractAction {
 
 		Window window = getWindow(evt.getSource());
 		withWaitCursor(window, () -> {
+			// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
+			CacheManager.getInstance().flushAll();
+
 			// prepare rename map (abort and notify the user if background computation is still in progress)
 			Map<File, File> renameMap = null;
 			try {

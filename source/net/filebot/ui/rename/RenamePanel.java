@@ -54,6 +54,7 @@ import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.ListSelection;
 import ca.odell.glazedlists.swing.DefaultEventSelectionModel;
 import net.filebot.ApplicationFolder;
+import net.filebot.CacheManager;
 import net.filebot.History;
 import net.filebot.HistorySpooler;
 import net.filebot.InvalidResponseException;
@@ -919,6 +920,9 @@ public class RenamePanel extends JComponent {
 				@Override
 				protected List<Match<File, ?>> doInBackground() throws Exception {
 					List<Match<File, ?>> matches = matcher.get().match(remainingFiles, strict, order, locale, autodetection, getWindow(RenamePanel.this));
+
+					// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
+					CacheManager.getInstance().flushAll();
 
 					// remove matched files
 					for (Match<File, ?> match : matches) {

@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import net.filebot.CacheManager;
 import net.filebot.HistorySpooler;
 import net.filebot.Language;
 import net.filebot.RenameAction;
@@ -576,6 +577,9 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	protected List<File> renameAll(Map<File, File> renameMap, RenameAction renameAction, ConflictAction conflictAction, List<Match<File, ?>> matches, ExecCommand exec) throws Exception {
+		// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
+		CacheManager.getInstance().flushAll();
+
 		if (renameMap.isEmpty()) {
 			throw new CmdlineException("Failed to identify or process any files");
 		}
@@ -736,6 +740,9 @@ public class CmdlineOperations implements CmdlineInterface {
 			} catch (Exception e) {
 				log.warning("Lookup by hash failed: " + e.getMessage());
 			}
+
+			// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
+			CacheManager.getInstance().flushAll();
 		}
 
 		for (SubtitleProvider service : getSubtitleProviders(language.getLocale())) {
@@ -752,6 +759,9 @@ public class CmdlineOperations implements CmdlineInterface {
 			} catch (Exception e) {
 				log.warning(format("Search by name failed: %s", e.getMessage()));
 			}
+
+			// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
+			CacheManager.getInstance().flushAll();
 		}
 
 		// no subtitles for remaining video files
