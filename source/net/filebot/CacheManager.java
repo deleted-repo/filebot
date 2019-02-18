@@ -44,6 +44,16 @@ public class CacheManager {
 		return new Cache(manager.getCache(name), type);
 	}
 
+	public synchronized void flushAll() {
+		for (String n : manager.getCacheNames()) {
+			try {
+				manager.getCache(n).flush();
+			} catch (Exception e) {
+				debug.warning(e::toString);
+			}
+		}
+	}
+
 	public synchronized void clearAll() {
 		manager.clearAll();
 
