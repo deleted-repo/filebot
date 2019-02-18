@@ -740,9 +740,6 @@ public class CmdlineOperations implements CmdlineInterface {
 			} catch (Exception e) {
 				log.warning("Lookup by hash failed: " + e.getMessage());
 			}
-
-			// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
-			CacheManager.getInstance().flushAll();
 		}
 
 		for (SubtitleProvider service : getSubtitleProviders(language.getLocale())) {
@@ -759,9 +756,6 @@ public class CmdlineOperations implements CmdlineInterface {
 			} catch (Exception e) {
 				log.warning(format("Search by name failed: %s", e.getMessage()));
 			}
-
-			// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
-			CacheManager.getInstance().flushAll();
 		}
 
 		// no subtitles for remaining video files
@@ -830,6 +824,9 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	private Map<File, File> downloadSubtitleBatch(Datasource service, Map<File, List<SubtitleDescriptor>> subtitles, SubtitleFormat outputFormat, Charset outputEncoding, SubtitleNaming naming) {
+		// flush all memory caches to disk (before starting any long running file system operations that might be cancelled by the user)
+		CacheManager.getInstance().flushAll();
+
 		Map<File, File> downloads = new LinkedHashMap<File, File>();
 
 		// fetch subtitle
