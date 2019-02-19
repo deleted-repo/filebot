@@ -129,10 +129,10 @@ index b8e7f8b2..005f702f 100644
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
-index bb8fa3b6..e43425ca 100644
+index 373a3b1c..d06a8521 100644
 --- a/ivy.xml
 +++ b/ivy.xml
-@@ -34,7 +34,7 @@
+@@ -36,7 +36,7 @@
  
  
  		<!-- JavaFX -->
@@ -262,6 +262,41 @@ index bb0f65de..25b687ab 100644
  		// if we can't reveal the file in folder, just reveal the parent folder
  		files.stream().map(it -> it.getParentFile()).distinct().forEach(it -> {
  			try {
+diff --git a/source/net/filebot/hash/HashType.java b/source/net/filebot/hash/HashType.java
+index 9ceea367..236b06f9 100644
+--- a/source/net/filebot/hash/HashType.java
++++ b/source/net/filebot/hash/HashType.java
+@@ -91,30 +91,6 @@ public enum HashType {
+ 		public String toString() {
+ 			return "SHA2";
+ 		}
+-	},
+-
+-	SHA3_384 {
+-
+-		@Override
+-		public Hash newHash() {
+-			return new MessageDigestHash("SHA3-384");
+-		}
+-
+-		@Override
+-		public VerificationFormat getFormat() {
+-			// e.g 1a02a7c1e9ac91346d08829d5037b240f42ded07 ?SHA3-384*folder/file.txt
+-			return new VerificationFormat("SHA3-384");
+-		}
+-
+-		@Override
+-		public ExtensionFileFilter getFilter() {
+-			return MediaTypes.getTypeFilter("verification/sha3sum");
+-		}
+-
+-		@Override
+-		public String toString() {
+-			return "SHA3";
+-		}
+ 	};
+ 
+ 	public abstract Hash newHash();
 diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
 index 269e1bbe..84c57d6a 100644
 --- a/source/net/filebot/mediainfo/MediaInfo.java
@@ -408,7 +443,7 @@ index 53eb62d9..ad02288e 100644
  
  	protected static List<String> decodeStringSequence(ByteBuffer bb) {
 diff --git a/source/net/filebot/ui/MainFrame.java b/source/net/filebot/ui/MainFrame.java
-index 9d1f086f..a271cc32 100644
+index 4dc2d284..8888751a 100644
 --- a/source/net/filebot/ui/MainFrame.java
 +++ b/source/net/filebot/ui/MainFrame.java
 @@ -12,7 +12,6 @@ import static net.filebot.Settings.*;
@@ -419,7 +454,7 @@ index 9d1f086f..a271cc32 100644
  import java.awt.Dialog.ModalExclusionType;
  import java.awt.Dimension;
  import java.awt.FlowLayout;
-@@ -220,11 +219,7 @@ public class MainFrame extends JFrame {
+@@ -223,11 +222,7 @@ public class MainFrame extends JFrame {
  					selectEnabled = true;
  
  					// bring window to front when drag-and-drop operation is in progress
