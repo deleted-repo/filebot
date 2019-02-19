@@ -17,6 +17,7 @@ ivy/jar/junrar.jar
 ivy/jar/jna.jar
 ivy/jar/jna-platform.jar
 ivy/jar/simmetrics-core.jar
+ivy/jar/bencode.jar
 ivy/jar/streamex.jar
 ivy/jar/icu4j.jar
 ivy/jar/language-detector.jar

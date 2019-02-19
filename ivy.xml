@@ -27,6 +27,7 @@
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding" />
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
 		<dependency rev="0.6" org="com.optimaize.languagedetector" name="language-detector" />
+		<dependency rev="1.2.1" org="com.dampcake" name="bencode" />
 		<dependency rev="0.6.7" org="one.util" name="streamex" />
 		<dependency rev="3.0.1" org="com.googlecode.lanterna" name="lanterna" />
 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />

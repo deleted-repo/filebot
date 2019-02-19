@@ -1,18 +1,16 @@
 package net.filebot.torrent;
 
-import static java.nio.charset.StandardCharsets.*;
 import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+
+import com.dampcake.bencode.Bencode;
+import com.dampcake.bencode.Type;
 
 import net.filebot.vfs.FileInfo;
 import net.filebot.vfs.SimpleFileInfo;
@@ -39,87 +37,62 @@ public class Torrent {
 	}
 
 	public Torrent(Map<?, ?> torrentMap) {
-		Charset charset = UTF_8;
-		encoding = decodeString(torrentMap.get("encoding"), charset);
+		createdBy = getString(torrentMap.get("created by"));
+		announce = getString(torrentMap.get("announce"));
+		comment = getString(torrentMap.get("comment"));
+		creationDate = getLong(torrentMap.get("creation date"));
 
-		try {
-			charset = Charset.forName(encoding);
-		} catch (IllegalArgumentException e) {
-			// invalid encoding, just keep using UTF-8
-		}
+		Map<?, ?> info = getMap(torrentMap.get("info"));
+		name = getString(info.get("name"));
+		pieceLength = getLong(info.get("piece length"));
 
-		createdBy = decodeString(torrentMap.get("created by"), charset);
-		announce = decodeString(torrentMap.get("announce"), charset);
-		comment = decodeString(torrentMap.get("comment"), charset);
-		creationDate = decodeLong(torrentMap.get("creation date"));
-
-		Map<?, ?> infoMap = (Map<?, ?>) torrentMap.get("info");
-
-		name = decodeString(infoMap.get("name"), charset);
-		pieceLength = (Long) infoMap.get("piece length");
-
-		if (infoMap.containsKey("files")) {
+		if (info.containsKey("files")) {
 			// torrent contains multiple entries
 			singleFileTorrent = false;
-
-			List<FileInfo> entries = new ArrayList<FileInfo>();
-
-			for (Object fileMapObject : (List<?>) infoMap.get("files")) {
-				Map<?, ?> fileMap = (Map<?, ?>) fileMapObject;
-				List<?> pathList = (List<?>) fileMap.get("path");
-
-				StringBuilder path = new StringBuilder(80);
-
-				Iterator<?> iterator = pathList.iterator();
-
-				while (iterator.hasNext()) {
-					// append path element
-					path.append(decodeString(iterator.next(), charset));
-
-					// append separator
-					if (iterator.hasNext()) {
-						path.append("/");
-					}
-				}
-
-				Long length = decodeLong(fileMap.get("length"));
-
-				entries.add(new SimpleFileInfo(path.toString(), length));
-			}
-
-			files = unmodifiableList(entries);
+			files = getList(info.get("files")).stream().map(this::getMap).map(f -> {
+				String path = getList(f.get("path")).stream().map(Object::toString).collect(joining("/"));
+				long length = getLong(f.get("length"));
+				return new SimpleFileInfo(path, length);
+			}).collect(toList());
 		} else {
-			// single file torrent
+			// torrent contains only a single entry
 			singleFileTorrent = true;
-
-			Long length = decodeLong(infoMap.get("length"));
-
-			files = singletonList(new SimpleFileInfo(name, length));
+			files = singletonList(new SimpleFileInfo(name, getLong(info.get("length"))));
 		}
 	}
 
 	private static Map<?, ?> decodeTorrent(File torrent) throws IOException {
-		InputStream in = new BufferedInputStream(new FileInputStream(torrent));
+		byte[] bytes = Files.readAllBytes(torrent.toPath());
 
-		try {
-			return BDecoder.decode(in);
-		} finally {
-			in.close();
+		return new Bencode().decode(bytes, Type.DICTIONARY);
+	}
+
+	private String getString(Object value) {
+		if (value instanceof CharSequence) {
+			return value.toString();
 		}
+		return "";
 	}
 
-	private String decodeString(Object byteArray, Charset charset) {
-		if (byteArray == null)
-			return null;
-
-		return new String((byte[]) byteArray, charset);
+	private long getLong(Object value) {
+		if (value instanceof Number) {
+			return ((Number) value).longValue();
+		}
+		return -1;
 	}
 
-	private Long decodeLong(Object number) {
-		if (number == null)
-			return null;
+	private Map<?, ?> getMap(Object value) {
+		if (value instanceof Map) {
+			return (Map) value;
+		}
+		return emptyMap();
+	}
 
-		return (Long) number;
+	private List<?> getList(Object value) {
+		if (value instanceof List) {
+			return (List) value;
+		}
+		return emptyList();
 	}
 
 	public String getAnnounce() {
@@ -143,7 +116,7 @@ public class Torrent {
 	}
 
 	public List<FileInfo> getFiles() {
-		return files;
+		return unmodifiableList(files);
 	}
 
 	public String getName() {
