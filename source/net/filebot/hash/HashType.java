@@ -91,7 +91,7 @@ public enum HashType {
 		public String toString() {
 			return "SHA2";
 		}
-	},
+	};
 
 	// SHA3_384 {
 	//
@@ -116,29 +116,6 @@ public enum HashType {
 	// return "SHA3";
 	// }
 	// },
-
-	ED2K {
-
-		@Override
-		public Hash newHash() {
-			return JacksumHash.newED2K();
-		}
-
-		@Override
-		public VerificationFormat getFormat() {
-			return new VerificationFormat();
-		}
-
-		@Override
-		public ExtensionFileFilter getFilter() {
-			return MediaTypes.getTypeFilter("verification/ed2k");
-		}
-
-		@Override
-		public String toString() {
-			return "ED2K";
-		}
-	};
 
 	public abstract Hash newHash();
 
