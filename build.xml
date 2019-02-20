@@ -245,10 +245,10 @@
 			<!-- fix permissions -->
 			<chmod perm="+x" verbose="yes">
 				<fileset dir="${dir.staging}/${application.name}.app">
-					<include name="**/MacOS/filebot.*" />
-					<include name="**/MacOS/fpcalc" />
-					<include name="**/lib/jspawnhelper" />
-					<include name="**/bin/*" />
+					<include name="**/*.launcher" />
+					<include name="**/*.sh" />
+					<include name="**/jspawnhelper" />
+					<include name="**/java" />
 				</fileset>
 			</chmod>
 		</sequential>
