@@ -26,6 +26,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -52,6 +54,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.Timer;
 import javax.swing.UIManager;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.text.JTextComponent;
@@ -410,6 +414,41 @@ public final class SwingUI {
 		}
 	}
 
+	public static class StandardFileAction extends AbstractAction {
+
+		public enum Verb {
+			OPEN, REVEAL, TRASH;
+		}
+
+		private File file;
+		private Verb verb;
+
+		public StandardFileAction(String label, File file, Verb verb) {
+			super(label);
+			this.file = file;
+			this.verb = verb;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent evt) {
+			try {
+				switch (verb) {
+				case OPEN:
+					Desktop.getDesktop().open(file);
+					break;
+				case REVEAL:
+					Desktop.getDesktop().browseFileDirectory(file);
+					break;
+				case TRASH:
+					Desktop.getDesktop().moveToTrash(file);
+					break;
+				}
+			} catch (Exception e) {
+				log.log(Level.SEVERE, e, cause(verb, e));
+			}
+		}
+	}
+
 	public static <T> T onSecondaryLoop(BackgroundSupplier<T> supplier) throws ExecutionException, InterruptedException {
 		// run spawn new EDT and block current EDT
 		SecondaryLoop secondaryLoop = Toolkit.getDefaultToolkit().getSystemEventQueue().createSecondaryLoop();
@@ -503,6 +542,32 @@ public final class SwingUI {
 
 		private void printException(Exception e) {
 			debug.log(Level.SEVERE, e, e::toString);
+		}
+	}
+
+	public static abstract class DynamicMenu extends JMenu implements MenuListener {
+
+		public DynamicMenu(String name) {
+			super(name);
+			addMenuListener(this);
+		}
+
+		protected abstract void populate();
+
+		@Override
+		public void menuSelected(MenuEvent e) {
+			removeAll();
+			populate();
+		}
+
+		@Override
+		public void menuDeselected(MenuEvent e) {
+
+		}
+
+		@Override
+		public void menuCanceled(MenuEvent e) {
+
 		}
 	}
 
