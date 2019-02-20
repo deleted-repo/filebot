@@ -238,7 +238,7 @@
 			</bundleapp>
 
 			<!-- include workflows -->
-			<copy todir="${dir.staging}/${application.name}.app/Contents/Resources/Workflows">
+			<copy todir="${dir.staging}/${application.name}.app/Contents/Workflows">
 				<fileset dir="${dir.installer}/workflows" />
 			</copy>
 
