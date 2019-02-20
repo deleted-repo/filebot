@@ -225,6 +225,7 @@
 
 				<!-- MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333) so we ignore arguments completely in this case -->
 				<option value="-Dapple.app.launcher=true" />
+				<option value="-Dapple.app.workflows=$APP_ROOT/Contents/Workflows" />
 
 				<!-- libjfxwebkit.dylib cannot be deployed on the MAS due to deprecated dependencies -->
 				<option value="-Dapplication.deployment=@{deployment}" />
@@ -426,12 +427,11 @@
 
 		<!-- strip bundle from unused resources -->
 		<delete verbose="yes" includeEmptyDirs="yes">
-			<fileset dir="${path.app}/Contents/Resources">
-				<include name="**.lproj/**" />
-				<exclude name="en.lproj/**" />
-			</fileset>
-			<fileset dir="${path.app}/Contents/PlugIns">
+			<fileset dir="${path.app}">
+				<include name="**/Workflows/**" />
 				<include name="**/bin/**" />
+				<include name="**/*.lproj/**" />
+				<exclude name="**/en.lproj/**" />
 			</fileset>
 		</delete>
 
