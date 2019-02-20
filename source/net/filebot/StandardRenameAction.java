@@ -1,8 +1,11 @@
 package net.filebot;
 
+import static java.nio.file.Files.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Logging.*;
 import static net.filebot.UserFiles.*;
+import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,15 +16,13 @@ import java.util.List;
 
 import com.sun.jna.Platform;
 
-import net.filebot.util.FileUtilities;
-
 public enum StandardRenameAction implements RenameAction {
 
 	MOVE {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			return FileUtilities.moveRename(from, to);
+			return moveRename(from, to);
 		}
 	},
 
@@ -29,7 +30,7 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			return FileUtilities.copyAs(from, to);
+			return copyAs(from, to);
 		}
 	},
 
@@ -37,12 +38,12 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = FileUtilities.resolveDestination(from, to);
+			File dest = resolveDestination(from, to);
 
 			// move file and the create a symlink to the new location via NIO.2
 			try {
-				Files.move(from.toPath(), dest.toPath());
-				FileUtilities.createRelativeSymlink(from, dest, true);
+				move(from.toPath(), dest.toPath());
+				createRelativeSymlink(from, dest, true);
 			} catch (LinkageError e) {
 				throw new Exception("Unsupported Operation: move, createSymbolicLink");
 			}
@@ -55,11 +56,11 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = FileUtilities.resolveDestination(from, to);
+			File dest = resolveDestination(from, to);
 
 			// create symlink via NIO.2
 			try {
-				return FileUtilities.createRelativeSymlink(dest, from, true);
+				return createRelativeSymlink(dest, from, true);
 			} catch (LinkageError e) {
 				throw new Exception("Unsupported Operation: createSymbolicLink");
 			}
@@ -70,11 +71,11 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = FileUtilities.resolveDestination(from, to);
+			File dest = resolveDestination(from, to);
 
 			// create hardlink via NIO.2
 			try {
-				return FileUtilities.createHardLinkStructure(dest, from);
+				return createHardLinkStructure(dest, from);
 			} catch (LinkageError e) {
 				throw new Exception("Unsupported Operation: createLink");
 			}
@@ -85,7 +86,7 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = FileUtilities.resolveDestination(from, to);
+			File dest = resolveDestination(from, to);
 
 			// clonefile or reflink requires filesystem that supports copy-on-write (e.g. apfs or btrfs)
 			ProcessBuilder process = new ProcessBuilder();
@@ -114,11 +115,24 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
+			// try to clone
+			if (Platform.isMac() || Platform.isLinux()) {
+				try {
+					CLONE.rename(from, to);
+				} catch (Exception e) {
+					debug.finest(format("[%s] %s", CLONE, e));
+				}
+			}
+
+			// try to hardlink
 			try {
 				return HARDLINK.rename(from, to);
 			} catch (Exception e) {
-				return COPY.rename(from, to);
+				debug.finest(format("[%s] %s", HARDLINK, e));
 			}
+
+			// copy if necessary
+			return COPY.rename(from, to);
 		}
 	},
 
@@ -126,7 +140,7 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws IOException {
-			return FileUtilities.resolve(from, to);
+			return resolve(from, to);
 		}
 
 		@Override
@@ -199,7 +213,7 @@ public enum StandardRenameAction implements RenameAction {
 
 		// reverse move
 		if (current.exists() && !original.exists()) {
-			return FileUtilities.moveRename(current, original);
+			return moveRename(current, original);
 		}
 
 		BasicFileAttributes currentAttr = Files.readAttributes(current.toPath(), BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
@@ -214,7 +228,7 @@ public enum StandardRenameAction implements RenameAction {
 		// reverse keeplink
 		if (!currentAttr.isSymbolicLink() && originalAttr.isSymbolicLink()) {
 			trash(original);
-			return FileUtilities.moveRename(current, original);
+			return moveRename(current, original);
 		}
 
 		// reverse copy / hardlink
@@ -226,7 +240,7 @@ public enum StandardRenameAction implements RenameAction {
 		// reverse folder copy
 		if (currentAttr.isDirectory() && originalAttr.isDirectory()) {
 			trash(original);
-			return FileUtilities.moveRename(current, original);
+			return moveRename(current, original);
 		}
 
 		throw new IllegalArgumentException(String.format("Cannot revert file: %s => %s", current, original));
