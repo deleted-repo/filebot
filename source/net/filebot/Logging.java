@@ -109,7 +109,7 @@ public final class Logging {
 		};
 	}
 
-	public static Supplier<String> cause(String m, Throwable t) {
+	public static Supplier<String> cause(Object m, Throwable t) {
 		return () -> getMessage(m, t);
 	}
 
@@ -121,7 +121,7 @@ public final class Logging {
 		return () -> getMessage(elements);
 	}
 
-	private static String getMessage(String m, Throwable t) {
+	private static String getMessage(Object m, Throwable t) {
 		// try to unravel stacked exceptions
 		if (t.getCause() != null && (t instanceof RuntimeException || t instanceof ExecutionException)) {
 			return getMessage(m, t.getCause());
