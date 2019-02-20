@@ -27,13 +27,9 @@ public class FileBotMenuBar {
 			help.add(createLink("Request Help", getApplicationProperty("link.help")));
 		}
 
-		help.addSeparator();
-
-		help.add(createLink("Contact us on Twitter", getApplicationProperty("link.twitter")));
-		help.add(createLink("Contact us on Facebook", getApplicationProperty("link.facebook")));
-
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.add(help);
+
 		return menuBar;
 	}
 
