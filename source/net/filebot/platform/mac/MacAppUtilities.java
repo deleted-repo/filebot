@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.UIManager;
 
@@ -109,6 +110,29 @@ public class MacAppUtilities {
 				openFileHandler.accept(files);
 			}
 		});
+
+		// add workflow service menu
+		initializeWorkflowServiceMenu(appMenuBar.getMenu(0));
+	}
+
+	public static void initializeWorkflowServiceMenu(JMenu menu) {
+		String root = System.getProperty("apple.app.workflows");
+		String home = System.getProperty("user.home");
+
+		if (root == null) {
+			return;
+		}
+
+		menu.addSeparator();
+
+		for (WorkflowType type : WorkflowType.values()) {
+			File templateFolder = new File(root, type.getFolderName());
+			File targetFolder = new File(home, type.getLibraryPath());
+
+			if (templateFolder.exists()) {
+				menu.add(new WorkflowMenu(type.getFolderName(), templateFolder, targetFolder));
+			}
+		}
 	}
 
 	public static boolean isLockedFolder(File folder) {

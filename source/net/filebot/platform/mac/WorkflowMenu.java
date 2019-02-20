@@ -29,17 +29,15 @@ public class WorkflowMenu extends DynamicMenu {
 
 	@Override
 	protected void populate() {
-		for (File workflow : templateFolder.listFiles(WORKFLOW)) {
-			if (isInstalled(workflow)) {
-				add(createUninstallMenu(workflow));
+		for (File template : templateFolder.listFiles(WORKFLOW)) {
+			File target = new File(targetFolder, template.getName());
+
+			if (target.exists()) {
+				add(createUninstallMenu(target));
 			} else {
-				add(createInstallMenu(workflow));
+				add(createInstallMenu(template));
 			}
 		}
-	}
-
-	protected boolean isInstalled(File workflow) {
-		return new File(targetFolder, workflow.getName()).exists();
 	}
 
 	protected JMenuItem createInstallMenu(File workflow) {
