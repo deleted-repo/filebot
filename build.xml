@@ -237,13 +237,18 @@
 				<options />
 			</bundleapp>
 
+			<!-- include workflows -->
+			<copy todir="${dir.staging}/${application.name}.app/Contents/Resources/Workflows">
+				<fileset dir="${dir.installer}/workflows" />
+			</copy>
+
 			<!-- fix permissions -->
 			<chmod perm="+x" verbose="yes">
-				<fileset dir="${dir.staging}">
-					<include name="*.app/**/MacOS/filebot.*" />
-					<include name="*.app/**/MacOS/fpcalc" />
-					<include name="*.app/**/lib/jspawnhelper" />
-					<include name="*.app/**/bin/*" />
+				<fileset dir="${dir.staging}/${application.name}.app">
+					<include name="**/MacOS/filebot.*" />
+					<include name="**/MacOS/fpcalc" />
+					<include name="**/lib/jspawnhelper" />
+					<include name="**/bin/*" />
 				</fileset>
 			</chmod>
 		</sequential>
