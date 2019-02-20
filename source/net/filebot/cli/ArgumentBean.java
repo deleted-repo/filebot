@@ -394,8 +394,17 @@ public class ArgumentBean {
 	}
 
 	public static ArgumentBean parse(String... args) throws CmdLineException {
-		// MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333) so we ignore arguments completely in this case
-		return Boolean.parseBoolean(System.getProperty("apple.app.launcher")) || args == null ? new ArgumentBean() : new ArgumentBean(args);
+		try {
+			return new ArgumentBean(args);
+		} catch (CmdLineException e) {
+			// MAS does not support or allow command-line applications and may run executables with strange arguments for no apparent reason (e.g. filebot.launcher -psn_0_774333) so we ignore arguments completely in this case
+			if (Boolean.parseBoolean(System.getProperty("apple.app.launcher"))) {
+				return new ArgumentBean();
+			}
+
+			// just throw exception as usual when called from command-line and display argument errors
+			throw e;
+		}
 	}
 
 }
