@@ -1,6 +1,5 @@
 package net.filebot;
 
-import static java.nio.file.Files.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
@@ -38,15 +37,11 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = resolveDestination(from, to);
+			// move file
+			File dest = MOVE.rename(from, to);
 
-			// move file and the create a symlink to the new location via NIO.2
-			try {
-				move(from.toPath(), dest.toPath());
-				createRelativeSymlink(from, dest, true);
-			} catch (LinkageError e) {
-				throw new Exception("Unsupported Operation: move, createSymbolicLink");
-			}
+			// symlink file back into the original location
+			SYMLINK.rename(dest, from);
 
 			return dest;
 		}
@@ -56,14 +51,7 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = resolveDestination(from, to);
-
-			// create symlink via NIO.2
-			try {
-				return createRelativeSymlink(dest, from, true);
-			} catch (LinkageError e) {
-				throw new Exception("Unsupported Operation: createSymbolicLink");
-			}
+			return createRelativeSymlink(resolveDestination(from, to), from, true);
 		}
 	},
 
@@ -71,14 +59,7 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			File dest = resolveDestination(from, to);
-
-			// create hardlink via NIO.2
-			try {
-				return createHardLinkStructure(dest, from);
-			} catch (LinkageError e) {
-				throw new Exception("Unsupported Operation: createLink");
-			}
+			return createHardLinkStructure(resolveDestination(from, to), from);
 		}
 	},
 
@@ -104,7 +85,7 @@ public enum StandardRenameAction implements RenameAction {
 
 			int exitCode = process.start().waitFor();
 			if (exitCode != 0) {
-				throw new IOException(String.format("%s failed with exit code %d", process.command(), exitCode));
+				throw new IOException(String.format("%s failed (%d)", process.command(), exitCode));
 			}
 
 			return dest;
@@ -120,7 +101,7 @@ public enum StandardRenameAction implements RenameAction {
 				try {
 					CLONE.rename(from, to);
 				} catch (Exception e) {
-					debug.finest(format("[%s] %s", CLONE, e));
+					debug.finest(cause(CLONE, e));
 				}
 			}
 
@@ -128,7 +109,7 @@ public enum StandardRenameAction implements RenameAction {
 			try {
 				return HARDLINK.rename(from, to);
 			} catch (Exception e) {
-				debug.finest(format("[%s] %s", HARDLINK, e));
+				debug.finest(cause(HARDLINK, e));
 			}
 
 			// copy if necessary
