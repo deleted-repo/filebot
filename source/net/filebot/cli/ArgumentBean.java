@@ -393,6 +393,11 @@ public class ArgumentBean {
 		return () -> new CmdlineException(message + ": " + value);
 	}
 
+	@Override
+	public String toString() {
+		return deepToString(args);
+	}
+
 	public static ArgumentBean parse(String... args) throws CmdLineException {
 		try {
 			return new ArgumentBean(args);
