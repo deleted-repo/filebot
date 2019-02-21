@@ -12,4 +12,6 @@ public class ExitCode {
 
 	public static final int DIE = 4;
 
+	public static final int NO_OPERATION = 10;
+
 }
