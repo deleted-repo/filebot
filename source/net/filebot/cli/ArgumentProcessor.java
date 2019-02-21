@@ -1,10 +1,10 @@
 package net.filebot.cli;
 
 import static java.nio.charset.StandardCharsets.*;
+import static net.filebot.ExitCode.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
-import static net.filebot.cli.ExitCode.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -75,6 +75,7 @@ public class ArgumentProcessor {
 			return d.getExitCode();
 		}
 
+		log.log(Level.SEVERE, e, e::getMessage);
 		return ERROR;
 	}
 

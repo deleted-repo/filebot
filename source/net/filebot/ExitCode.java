@@ -1,4 +1,4 @@
-package net.filebot.cli;
+package net.filebot;
 
 public class ExitCode {
 
@@ -12,6 +12,6 @@ public class ExitCode {
 
 	public static final int DIE = 4;
 
-	public static final int NO_OPERATION = 10;
+	public static final int NOOP = 100;
 
 }

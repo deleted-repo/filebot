@@ -40,6 +40,7 @@ import groovy.lang.Closure;
 import groovy.lang.MissingPropertyException;
 import groovy.lang.Script;
 import groovy.xml.MarkupBuilder;
+import net.filebot.ExitCode;
 import net.filebot.HistorySpooler;
 import net.filebot.RenameAction;
 import net.filebot.StandardRenameAction;
@@ -171,11 +172,11 @@ public abstract class ScriptShellBaseClass extends Script {
 	}
 
 	public void die(Object cause) throws Throwable {
-		die(ExitCode.DIE, cause);
+		die(cause, ExitCode.DIE);
 	}
 
-	public void die(int exitCode, Object... cause) throws Throwable {
-		throw new ScriptDeath(exitCode, getMessage(cause));
+	public void die(Object cause, int exitCode) throws Throwable {
+		throw new ScriptDeath(exitCode, String.valueOf(cause));
 	}
 
 	// define global variable: _args
