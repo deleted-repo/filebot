@@ -6,6 +6,8 @@ release
 cache
 ivy
 
+QuickLook
+
 *.txt
 *.psm
 
