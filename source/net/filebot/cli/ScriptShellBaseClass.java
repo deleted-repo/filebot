@@ -171,10 +171,11 @@ public abstract class ScriptShellBaseClass extends Script {
 	}
 
 	public void die(Object cause) throws Throwable {
-		if (cause instanceof Throwable) {
-			throw new ScriptDeath((Throwable) cause);
-		}
-		throw new ScriptDeath(String.valueOf(cause));
+		die(EXIT_CODE_DIE, cause);
+	}
+
+	public void die(int exitCode, Object... cause) throws Throwable {
+		throw new ScriptDeath(exitCode, getMessage(cause));
 	}
 
 	// define global variable: _args
@@ -332,8 +333,7 @@ public abstract class ScriptShellBaseClass extends Script {
 	}
 
 	/**
-	 * Retry given closure until it returns successfully (indefinitely if -1 is
-	 * passed as retry count)
+	 * Retry given closure until it returns successfully (indefinitely if -1 is passed as retry count)
 	 */
 	public Object retry(int retryCountLimit, int retryWaitTime, Closure<?> c) throws InterruptedException {
 		for (int i = 0; retryCountLimit < 0 || i <= retryCountLimit; i++) {
@@ -570,5 +570,7 @@ public abstract class ScriptShellBaseClass extends Script {
 		log.log(Level.CONFIG, format("Auto-Select [%s] from %s", options.iterator().next(), options));
 		return options.iterator().next();
 	}
+
+	public static final int EXIT_CODE_DIE = 4;
 
 }

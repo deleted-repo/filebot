@@ -121,7 +121,7 @@ public final class Logging {
 		return () -> getMessage(elements);
 	}
 
-	private static String getMessage(Object m, Throwable t) {
+	public static String getMessage(Object m, Throwable t) {
 		// try to unravel stacked exceptions
 		if (t.getCause() != null && (t instanceof RuntimeException || t instanceof ExecutionException)) {
 			return getMessage(m, t.getCause());
@@ -131,7 +131,7 @@ public final class Logging {
 		return getMessage(m, t.getClass().getSimpleName(), t.getMessage());
 	}
 
-	private static String getMessage(Object... elements) {
+	public static String getMessage(Object... elements) {
 		return stream(elements).filter(Objects::nonNull).map(Objects::toString).collect(joining(": "));
 	}
 
