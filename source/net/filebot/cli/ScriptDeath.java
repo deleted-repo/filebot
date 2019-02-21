@@ -14,4 +14,8 @@ public class ScriptDeath extends Throwable {
 		this.exitCode = exitCode;
 	}
 
+	public int getExitCode() {
+		return exitCode;
+	}
+
 }

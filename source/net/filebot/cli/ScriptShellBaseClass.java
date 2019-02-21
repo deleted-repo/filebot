@@ -171,7 +171,7 @@ public abstract class ScriptShellBaseClass extends Script {
 	}
 
 	public void die(Object cause) throws Throwable {
-		die(EXIT_CODE_DIE, cause);
+		die(ExitCode.DIE, cause);
 	}
 
 	public void die(int exitCode, Object... cause) throws Throwable {
@@ -570,7 +570,5 @@ public abstract class ScriptShellBaseClass extends Script {
 		log.log(Level.CONFIG, format("Auto-Select [%s] from %s", options.iterator().next(), options));
 		return options.iterator().next();
 	}
-
-	public static final int EXIT_CODE_DIE = 4;
 
 }

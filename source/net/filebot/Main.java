@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
+import static net.filebot.cli.ExitCode.*;
 import static net.filebot.ui.GettingStartedUtil.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.FileUtilities.getChildren;
@@ -63,12 +64,12 @@ public class Main {
 			// just print help message or version string and then exit
 			if (args.printHelp()) {
 				log.info(String.format("%s%n%n%s", getApplicationIdentifier(), args.usage()));
-				System.exit(0);
+				System.exit(SUCCESS);
 			}
 
 			if (args.printVersion()) {
 				log.info(String.join(" / ", getApplicationIdentifier(), getJavaRuntimeIdentifier(), getSystemIdentifier()));
-				System.exit(0);
+				System.exit(SUCCESS);
 			}
 
 			if (args.clearCache() || args.clearUserData()) {
@@ -86,7 +87,7 @@ public class Main {
 					// clear cache must be called manually
 					if (System.console() == null) {
 						log.severe("`filebot -clear-cache` must be called from an interactive console.");
-						System.exit(1);
+						System.exit(ERROR);
 					}
 
 					log.info("Clear cache");
@@ -97,7 +98,7 @@ public class Main {
 				}
 
 				// just clear cache and/or settings and then exit
-				System.exit(0);
+				System.exit(SUCCESS);
 			}
 
 			// make sure we can access application arguments at any time
@@ -121,7 +122,7 @@ public class Main {
 					String psm = args.getLicenseKey();
 					if (psm != null) {
 						configureLicense(psm);
-						System.exit(0);
+						System.exit(SUCCESS);
 					}
 				}
 
@@ -132,7 +133,7 @@ public class Main {
 			// just print help page if we can't run any command and also can't start the GUI
 			if (isHeadless()) {
 				log.info(String.format("%s / %s (headless)%n%n%s", getApplicationIdentifier(), getJavaRuntimeIdentifier(), args.usage()));
-				System.exit(1);
+				System.exit(ERROR);
 			}
 
 			// GUI mode => start user interface
@@ -160,11 +161,11 @@ public class Main {
 		} catch (CmdLineException e) {
 			// illegal arguments => print CLI error message
 			log.severe(e::getMessage);
-			System.exit(1);
+			System.exit(ERROR);
 		} catch (Throwable e) {
 			// unexpected error => dump stack
 			debug.log(Level.SEVERE, "Error during startup", e);
-			System.exit(1);
+			System.exit(ERROR);
 		}
 	}
 

@@ -4,6 +4,7 @@ import static java.nio.charset.StandardCharsets.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
+import static net.filebot.cli.ExitCode.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -37,9 +38,19 @@ public class ArgumentProcessor {
 
 			// script finished successfully
 			log.finest("Done ヾ(＠⌒ー⌒＠)ノ");
-			return 0;
-		} catch (LicenseError e) {
-			log.severe("License Error: " + e.getMessage());
+			return SUCCESS;
+		} catch (Throwable e) {
+			int exitCode = getExitCode(e);
+
+			// script failed with exception -> exit with non-zero exit code (and use positive code to avoid issues with launch4j launcher)
+			log.finest("Failure (°_°)");
+			return exitCode;
+		}
+	}
+
+	private int getExitCode(Throwable e) {
+		if (findCause(e, LicenseError.class) != null) {
+			log.severe(message("License Error", e.getMessage()));
 			if (LICENSE.isFile()) {
 				printStegosaurus("Please purchase a FileBot License:", getPurchaseURL());
 
@@ -50,20 +61,21 @@ public class ArgumentProcessor {
 					log.severe(format("FileBot requires a valid license. Please run `filebot --license *.psm` install your FileBot license."));
 				}
 			}
-			return 2;
-		} catch (Throwable e) {
-			if (findCause(e, CmdlineException.class) != null) {
-				log.log(Level.WARNING, findCause(e, CmdlineException.class).getMessage());
-			} else if (findCause(e, ScriptDeath.class) != null) {
-				log.log(Level.WARNING, findCause(e, ScriptDeath.class).getMessage());
-			} else {
-				log.log(Level.SEVERE, e.getMessage(), e);
-			}
-
-			// script failed with exception -> exit with non-zero exit code (and use positive code to avoid issues with launch4j launcher)
-			log.finest("Failure (°_°)");
-			return 1;
+			return BAD_LICENSE;
 		}
+
+		if (findCause(e, CmdlineException.class) != null) {
+			log.log(Level.WARNING, findCause(e, CmdlineException.class)::getMessage);
+			return FAILURE;
+		}
+
+		if (findCause(e, ScriptDeath.class) != null) {
+			ScriptDeath d = findCause(e, ScriptDeath.class);
+			log.log(Level.WARNING, d::getMessage);
+			return d.getExitCode();
+		}
+
+		return ERROR;
 	}
 
 	public int runCommand(CmdlineInterface cli, ArgumentBean args) throws Exception {
@@ -121,14 +133,14 @@ public class ArgumentProcessor {
 			}
 		}
 
-		return 0;
+		return SUCCESS;
 	}
 
 	private int print(Stream<?> values) {
 		return values.mapToInt(v -> {
 			System.out.println(v);
-			return 1;
-		}).sum() == 0 ? 1 : 0;
+			return ERROR;
+		}).sum() == SUCCESS ? ERROR : SUCCESS;
 	}
 
 	private void printStegosaurus(String line1, String line2) {
