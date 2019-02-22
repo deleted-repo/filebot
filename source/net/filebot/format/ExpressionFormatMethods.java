@@ -8,6 +8,7 @@ import static net.filebot.WebServices.*;
 import static net.filebot.format.ExpressionFormatFunctions.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.RegularExpressions.*;
+import static net.filebot.util.StringUtilities.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -225,6 +226,14 @@ public class ExpressionFormatMethods {
 
 	public static String sortName(String self, String replacement) {
 		return compile("^(The|A|An)\\s(.+)", CASE_INSENSITIVE | UNICODE_CHARACTER_CLASS).matcher(self).replaceFirst(replacement).trim();
+	}
+
+	public static String initialName(String self) {
+		String[] words = SPACE.split(self);
+		for (int i = 0; i < words.length - 1; i++) {
+			words[i] = words[i].charAt(0) + ".";
+		}
+		return join(words, " ");
 	}
 
 	public static String sortInitial(String self) {
