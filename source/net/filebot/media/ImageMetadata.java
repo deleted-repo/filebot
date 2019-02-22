@@ -2,11 +2,13 @@ package net.filebot.media;
 
 import static java.util.Arrays.*;
 import static net.filebot.Logging.*;
+import static net.filebot.Settings.*;
 import static net.filebot.util.JsonUtilities.*;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -109,8 +111,7 @@ public class ImageMetadata {
 		try {
 			// e.g. https://maps.googleapis.com/maps/api/geocode/json?latlng=40.7470444,-073.9411611
 			Cache cache = Cache.getCache("geocode", CacheType.Persistent);
-
-			Object json = cache.json(location.getLatitude() + "," + location.getLongitude(), p -> new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + p)).get();
+			Object json = cache.json(location.getLatitude() + "," + location.getLongitude(), this::getGeocodeRequest).get();
 
 			Map<AddressComponent, String> address = new EnumMap<AddressComponent, String>(AddressComponent.class);
 
@@ -133,6 +134,14 @@ public class ImageMetadata {
 		}
 
 		return null;
+	}
+
+	protected URL getGeocodeRequest(String position) throws MalformedURLException {
+		return new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position + "&key=" + getGeocodeKey());
+	}
+
+	protected String getGeocodeKey() {
+		return Optional.ofNullable(System.getenv("GEOCODE_APIKEY")).orElse(getApiKey("google.geocode"));
 	}
 
 	public enum AddressComponent {
