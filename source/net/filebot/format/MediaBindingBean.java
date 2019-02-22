@@ -413,7 +413,7 @@ public class MediaBindingBean {
 
 	@Define("aco")
 	public String getAudioChannelObjects() {
-		return getMediaInfo(StreamKind.Audio, "Codec_Profile").filter(Objects::nonNull).map(s -> {
+		return getMediaInfo(StreamKind.Audio, "Codec_Profile", "Format_Profile", "Format_Commercial").filter(Objects::nonNull).map(s -> {
 			return SLASH.splitAsStream(s).findFirst().orElse(null);
 		}).filter(Objects::nonNull).map(String::trim).filter(s -> s.length() > 0).findFirst().orElse(null);
 	}
