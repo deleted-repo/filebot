@@ -137,7 +137,7 @@ public class ImageMetadata {
 	}
 
 	protected URL getGeocodeRequest(String position) throws MalformedURLException {
-		return new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position + "&key=" + getGeocodeKey());
+		return new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position + "&sensor=false&key=" + getGeocodeKey());
 	}
 
 	protected String getGeocodeKey() {
