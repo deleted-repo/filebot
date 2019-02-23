@@ -1,6 +1,6 @@
 package net.filebot;
 
-public class ExitCode {
+public interface ExitCode {
 
 	public static final int SUCCESS = 0;
 
