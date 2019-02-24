@@ -1,9 +1,18 @@
 package net.filebot.ui;
 
 import static com.bulenkov.iconloader.util.ColorUtil.*;
+import static net.filebot.Logging.*;
 
 import java.awt.Color;
 import java.awt.LinearGradientPaint;
+import java.util.logging.Level;
+
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+
+import com.bulenkov.darcula.DarculaLaf;
 
 import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.notification.SeparatorBorder;
@@ -27,16 +36,78 @@ public class ThemeSupport {
 	}
 
 	public static Color getColor(int rgba) {
-		if (dark) {
-			return getDarkColor(new Color(rgba));
+		return theme.getColor(rgba);
+	}
+
+	private static Theme theme = Theme.System;
+
+	public static void setTheme(Theme t) {
+		theme = t;
+
+		try {
+			theme.setLookAndFeel();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e, message("Failed to set LaF", t));
 		}
-		return new Color(rgba);
 	}
 
-	public static Color getDarkColor(Color c) {
-		return isDark(c) ? c : shift(c, 0.2);
-	}
+	public enum Theme {
 
-	private static boolean dark = false;
+		System {
+
+			@Override
+			public void setLookAndFeel() throws Exception {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+		},
+
+		CrossPlatform {
+
+			@Override
+			public void setLookAndFeel() throws Exception {
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
+		},
+
+		Darcula {
+
+			@Override
+			public void setLookAndFeel() throws Exception {
+				UIManager.setLookAndFeel(new DarculaLaf());
+			}
+
+			@Override
+			public Color getColor(int rgba) {
+				return getDarkColor(new Color(rgba));
+			}
+
+			public Color getDarkColor(Color c) {
+				return isDark(c) ? c : shift(c, 0.2);
+			}
+		},
+
+		Nimbus {
+
+			@Override
+			public void setLookAndFeel() throws Exception {
+				UIManager.setLookAndFeel(new NimbusLookAndFeel());
+			}
+		},
+
+		Metal {
+
+			@Override
+			public void setLookAndFeel() throws Exception {
+				MetalLookAndFeel.setCurrentTheme(new OceanTheme());
+				UIManager.setLookAndFeel(new MetalLookAndFeel());
+			}
+		};
+
+		public Color getColor(int rgba) {
+			return new Color(rgba);
+		}
+
+		public abstract void setLookAndFeel() throws Exception;
+	}
 
 }

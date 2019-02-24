@@ -8,6 +8,7 @@ import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
 import static net.filebot.ui.GettingStartedUtil.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.FileUtilities.getChildren;
 import static net.filebot.util.XPathUtilities.*;
@@ -216,7 +217,7 @@ public class Main {
 
 	private static void startUserInterface(ArgumentBean args) {
 		// use native LaF an all platforms
-		setSystemLookAndFeel();
+		setTheme(Theme.System);
 
 		// start standard frame or single panel frame
 		PanelBuilder[] panels = args.getPanelBuilders();
