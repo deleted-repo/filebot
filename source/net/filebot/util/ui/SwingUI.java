@@ -75,6 +75,14 @@ public final class SwingUI {
 		}
 	}
 
+	public static void setDarculaLookAndFeel() {
+		try {
+			UIManager.setLookAndFeel("com.bulenkov.darcula.DarculaLaf");
+		} catch (Exception e) {
+			log.log(Level.SEVERE, "Failed to set Nimbus LaF", e);
+		}
+	}
+
 	public static void setSystemLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
