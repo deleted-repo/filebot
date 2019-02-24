@@ -4,7 +4,6 @@ import static javax.swing.BorderFactory.*;
 import static net.filebot.ui.ThemeSupport.*;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -30,7 +29,7 @@ public class HeaderPanel extends JComponent {
 		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		titleLabel.setVerticalAlignment(SwingConstants.CENTER);
 		titleLabel.setOpaque(false);
-		titleLabel.setForeground(new Color(0x101010));
+		titleLabel.setForeground(getLabelForeground());
 		titleLabel.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 24));
 
 		centerPanel.setBorder(createEmptyBorder());

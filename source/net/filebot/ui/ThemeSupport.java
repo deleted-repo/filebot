@@ -1,6 +1,6 @@
 package net.filebot.ui;
 
-import static com.bulenkov.iconloader.util.ColorUtil.*;
+import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 
 import java.awt.Color;
@@ -8,20 +8,57 @@ import java.awt.LinearGradientPaint;
 import java.util.logging.Level;
 
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.metal.OceanTheme;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 
 import com.bulenkov.darcula.DarculaLaf;
+import com.bulenkov.iconloader.util.ColorUtil;
 
+import net.filebot.util.SystemProperty;
 import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
 
 public class ThemeSupport {
 
+	private static Theme theme = SystemProperty.of("net.filebot.theme", Theme::valueOf, Theme.System).get();
+
+	public static Theme getTheme() {
+		return theme;
+	}
+
+	public static void setTheme() {
+		setTheme(theme);
+	}
+
+	public static void setTheme(Theme t) {
+		try {
+			theme = t;
+			theme.setLookAndFeel();
+		} catch (Exception e) {
+			log.log(Level.SEVERE, e, message("Failed to set LaF", t));
+		}
+	}
+
+	public static Color getColor(int rgba) {
+		return theme.getColor(rgba);
+	}
+
 	public static Color getPanelBackground() {
 		return getColor(0xFFFFFF);
+	}
+
+	public static Color getLabelForeground() {
+		return getColor(0x101010);
+	}
+
+	public static Color getHelpPanelBackground() {
+		return getColor(0xFFFFE1);
+	}
+
+	public static Border getHelpPanelBorder() {
+		return createLineBorder(getColor(0xACA899));
 	}
 
 	public static LinearGradientPaint getPanelBackgroundGradient(int x, int y, int w, int h) {
@@ -33,22 +70,6 @@ public class ThemeSupport {
 
 	public static SeparatorBorder getSeparatorBorder(Position position) {
 		return new SeparatorBorder(1, getColor(0xB4B4B4), getColor(0xACACAC), GradientStyle.LEFT_TO_RIGHT, position);
-	}
-
-	public static Color getColor(int rgba) {
-		return theme.getColor(rgba);
-	}
-
-	private static Theme theme = Theme.System;
-
-	public static void setTheme(Theme t) {
-		theme = t;
-
-		try {
-			theme.setLookAndFeel();
-		} catch (Exception e) {
-			log.log(Level.SEVERE, e, message("Failed to set LaF", t));
-		}
 	}
 
 	public enum Theme {
@@ -82,7 +103,12 @@ public class ThemeSupport {
 			}
 
 			public Color getDarkColor(Color c) {
-				return isDark(c) ? c : shift(c, 0.2);
+				return ColorUtil.shift(c, ColorUtil.isDark(c) ? 9 : 0.2);
+			}
+
+			@Override
+			public boolean isDark() {
+				return true;
 			}
 		},
 
@@ -98,13 +124,16 @@ public class ThemeSupport {
 
 			@Override
 			public void setLookAndFeel() throws Exception {
-				MetalLookAndFeel.setCurrentTheme(new OceanTheme());
 				UIManager.setLookAndFeel(new MetalLookAndFeel());
 			}
 		};
 
 		public Color getColor(int rgba) {
 			return new Color(rgba);
+		}
+
+		public boolean isDark() {
+			return false;
 		}
 
 		public abstract void setLookAndFeel() throws Exception;

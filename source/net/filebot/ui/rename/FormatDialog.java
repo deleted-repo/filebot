@@ -73,10 +73,8 @@ import net.filebot.platform.mac.MacAppUtilities;
 import net.filebot.util.DefaultThreadFactory;
 import net.filebot.util.PreferencesList;
 import net.filebot.util.PreferencesMap.PreferencesEntry;
-import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.LinkButton;
 import net.filebot.util.ui.ProgressIndicator;
-import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
 import net.filebot.web.AudioTrackFormat;
 import net.filebot.web.Datasource;
@@ -217,8 +215,12 @@ public class FormatDialog extends JDialog {
 		editorScrollPane.setHorizontalScrollBarPolicy(RTextScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		editorScrollPane.setViewportBorder(createEmptyBorder(7, 2, 7, 2));
 		editorScrollPane.setOpaque(true);
-		editorScrollPane.setBackground(new JTextField().getBackground());
-		editorScrollPane.setBorder(new JTextField().getBorder());
+
+		// ensure that the editor area looks like a simple text field
+		JTextField template = new JTextField();
+		editorScrollPane.setBorder(template.getBorder());
+		editorScrollPane.setBackground(template.getBackground());
+		editor.setBackground(template.getBackground());
 
 		content.add(editorScrollPane, "w 120px:min(pref, 420px), h pref, growx, wrap 4px, id editor");
 		content.add(createImageButton(changeSampleAction), "sg action, w 25!, h 19!, pos n editor.y2+2 editor.x2 n");
@@ -368,8 +370,8 @@ public class FormatDialog extends JDialog {
 
 	private JComponent createSyntaxPanel(Mode mode) {
 		JPanel panel = new JPanel(new MigLayout("fill, nogrid, novisualpadding", "[pref]", "[fill, min]"));
-		panel.setBorder(createLineBorder(new Color(0xACA899)));
-		panel.setBackground(new Color(0xFFFFE1));
+		panel.setBorder(getHelpPanelBorder());
+		panel.setBackground(getHelpPanelBackground());
 		panel.setOpaque(true);
 
 		panel.add(new LinkButton(newAction(ResourceBundle.getBundle(FormatDialog.class.getName()).getString(mode.key() + ".syntax"), evt -> {
@@ -381,9 +383,9 @@ public class FormatDialog extends JDialog {
 
 	private JComponent createExamplesPanel(Mode mode) {
 		JPanel panel = new JPanel(new MigLayout("fill, wrap 3"));
-
-		panel.setBorder(createLineBorder(new Color(0xACA899)));
-		panel.setBackground(new Color(0xFFFFE1));
+		panel.setBorder(getHelpPanelBorder());
+		panel.setBackground(getHelpPanelBackground());
+		panel.setOpaque(true);
 
 		for (String format : mode.getSampleExpressions()) {
 			LinkButton formatLink = new LinkButton(newAction(format, e -> setFormatCode(format)));
