@@ -51,7 +51,7 @@ import net.filebot.web.SortOrder;
 
 public class ArgumentBean {
 
-	@Option(name = "--mode", usage = "Open GUI in single panel mode / Enable CLI interactive mode", metaVar = "[Rename, Subtitles, SFV] or [interactive]")
+	@Option(name = "--mode", usage = "Enable CLI interactive mode", metaVar = "[interactive]")
 	public String mode = null;
 
 	@Option(name = "-rename", usage = "Rename media files")
