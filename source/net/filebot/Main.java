@@ -217,7 +217,7 @@ public class Main {
 
 	private static void startUserInterface(ArgumentBean args) {
 		// use native LaF an all platforms
-		setTheme(Theme.System);
+		setTheme();
 
 		// start standard frame or single panel frame
 		PanelBuilder[] panels = args.getPanelBuilders();
