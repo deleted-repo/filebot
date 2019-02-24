@@ -2,9 +2,11 @@ package net.filebot.ui.rename;
 
 import static java.awt.Font.*;
 import static net.filebot.Logging.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.Font;
+import java.io.InputStream;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -26,7 +28,7 @@ public class FormatExpressionTextArea extends RSyntaxTextArea {
 		super(syntaxDocument, "", 1, 80);
 
 		try {
-			Theme.load(FormatExpressionTextArea.class.getResourceAsStream("FormatExpressionTextArea.Theme.xml")).apply(this);
+			Theme.load(openTheme()).apply(this);
 		} catch (Exception e) {
 			debug.log(Level.WARNING, e, e::toString);
 		}
@@ -57,6 +59,14 @@ public class FormatExpressionTextArea extends RSyntaxTextArea {
 				getWindow(FormatExpressionTextArea.this).revalidate();
 			}
 		}));
+	}
+
+	protected InputStream openTheme() {
+		if (getTheme().isDark()) {
+			return FormatExpressionTextArea.class.getResourceAsStream("FormatExpressionTextArea.Theme.Dark.xml");
+		} else {
+			return FormatExpressionTextArea.class.getResourceAsStream("FormatExpressionTextArea.Theme.xml");
+		}
 	}
 
 	public void onChange(Consumer<DocumentEvent> handler) {
