@@ -5,6 +5,7 @@ import static java.util.Collections.*;
 import static java.util.regex.Pattern.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.similarity.Normalization.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -70,9 +71,8 @@ public class SubtitleViewer extends JFrame {
 		titleLabel.setFont(titleLabel.getFont().deriveFont(BOLD));
 
 		JPanel header = new JPanel(new MigLayout("insets dialog, nogrid, novisualpadding, fillx"));
-
-		header.setBackground(Color.white);
-		header.setBorder(new SeparatorBorder(1, new Color(0xB4B4B4), new Color(0xACACAC), GradientStyle.LEFT_TO_RIGHT, Position.BOTTOM));
+		header.setBackground(getPanelBackground());
+		header.setBorder(getSeparatorBorder(Position.BOTTOM));
 
 		header.add(titleLabel, "wrap, h pref!");
 		header.add(infoLabel, "gap indent*2, h pref!, wrap");

@@ -5,6 +5,7 @@ import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 import static net.filebot.UserFiles.*;
 import static net.filebot.platform.mac.MacAppUtilities.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -56,8 +57,6 @@ import net.filebot.ui.HeaderPanel;
 import net.filebot.ui.transfer.DefaultTransferHandler;
 import net.filebot.ui.transfer.FileTransferable;
 import net.filebot.ui.transfer.TransferablePolicy;
-import net.filebot.util.ui.GradientStyle;
-import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
 import net.miginfocom.swing.MigLayout;
 
@@ -184,7 +183,7 @@ public class DropToUnlock extends JList<File> {
 			h.getTitleLabel().setBorder(createEmptyBorder(0, 0, 0, 64));
 
 			JLabel help = new JLabel("<html>FileBot does not have permission to access the folder above. To allow FileBot access, drag and drop the folder from Finder onto the drop area above</b>. The permissions for this folder (and all the folders it contains) will be remembered and FileBot will not need to ask for it again.</html>");
-			help.setBorder(createCompoundBorder(new SeparatorBorder(1, new Color(0xB4B4B4), new Color(0xACACAC), GradientStyle.LEFT_TO_RIGHT, Position.TOP), createTitledBorder("About App Sandboxing")));
+			help.setBorder(createCompoundBorder(getSeparatorBorder(Position.TOP), createTitledBorder("About App Sandboxing")));
 
 			c.add(h, "wmin 150px, hmin 75px, growx, dock north");
 			c.add(d, "wmin 150px, hmin 150px, grow");

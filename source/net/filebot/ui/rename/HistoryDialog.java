@@ -10,6 +10,7 @@ import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 import static net.filebot.UserFiles.*;
 import static net.filebot.media.XattrMetaInfo.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.ui.SwingUI.*;
@@ -72,19 +73,17 @@ import javax.swing.table.TableRowSorter;
 import net.filebot.History;
 import net.filebot.History.Element;
 import net.filebot.History.Sequence;
-import net.filebot.platform.mac.MacAppUtilities;
 import net.filebot.HistorySpooler;
 import net.filebot.ResourceManager;
 import net.filebot.StandardRenameAction;
+import net.filebot.platform.mac.MacAppUtilities;
 import net.filebot.ui.transfer.FileExportHandler;
 import net.filebot.ui.transfer.FileTransferablePolicy;
 import net.filebot.ui.transfer.LoadAction;
 import net.filebot.ui.transfer.SaveAction;
 import net.filebot.ui.transfer.TransferablePolicy;
 import net.filebot.util.FileUtilities.ExtensionFileFilter;
-import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.LazyDocumentListener;
-import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
 import net.miginfocom.swing.MigLayout;
 
@@ -110,9 +109,8 @@ class HistoryDialog extends JDialog {
 		title.setFont(title.getFont().deriveFont(BOLD));
 
 		JPanel header = new JPanel(new MigLayout("insets dialog, nogrid, fillx"));
-
-		header.setBackground(Color.white);
-		header.setBorder(new SeparatorBorder(1, new Color(0xB4B4B4), new Color(0xACACAC), GradientStyle.LEFT_TO_RIGHT, Position.BOTTOM));
+		header.setBackground(getPanelBackground());
+		header.setBorder(getSeparatorBorder(Position.BOTTOM));
 
 		header.add(title, "wrap");
 		header.add(infoLabel, "gap indent*2, wrap");

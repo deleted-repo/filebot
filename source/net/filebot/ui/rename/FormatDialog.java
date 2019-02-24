@@ -8,6 +8,7 @@ import static javax.swing.BorderFactory.*;
 import static javax.swing.KeyStroke.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
@@ -197,9 +198,8 @@ public class FormatDialog extends JDialog {
 		title.setFont(title.getFont().deriveFont(BOLD));
 
 		JPanel header = new JPanel(new MigLayout("insets dialog, nogrid, novisualpadding"));
-
-		header.setBackground(Color.white);
-		header.setBorder(new SeparatorBorder(1, new Color(0xB4B4B4), new Color(0xACACAC), GradientStyle.LEFT_TO_RIGHT, Position.BOTTOM));
+		header.setBackground(getPanelBackground());
+		header.setBorder(getSeparatorBorder(Position.BOTTOM));
 
 		header.add(progressIndicator, "pos 1al 0al, hidemode 3");
 		header.add(title, "wmin 150px, wrap unrel:push");
