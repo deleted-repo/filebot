@@ -1,5 +1,6 @@
 package net.filebot.ui;
 
+import static java.util.Arrays.*;
 import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 
@@ -22,7 +23,7 @@ import net.filebot.util.ui.notification.SeparatorBorder.Position;
 
 public class ThemeSupport {
 
-	private static Theme theme = SystemProperty.of("net.filebot.theme", Theme::valueOf, Theme.System).get();
+	private static Theme theme = SystemProperty.of("net.filebot.theme", Theme::forName, Theme.System).get();
 
 	public static Theme getTheme() {
 		return theme;
@@ -137,6 +138,15 @@ public class ThemeSupport {
 		}
 
 		public abstract void setLookAndFeel() throws Exception;
+
+		public static Theme forName(String name) {
+			for (Theme t : values()) {
+				if (t.name().equalsIgnoreCase(name)) {
+					return t;
+				}
+			}
+			throw new IllegalArgumentException(String.format("%s not in %s", name, asList(values())));
+		}
 	}
 
 }
