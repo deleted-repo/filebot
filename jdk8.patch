@@ -1,8 +1,8 @@
 diff --git a/app.properties b/app.properties
-index 9c444690..45de34ba 100644
+index b1153365..116c9c5a 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -35,12 +35,12 @@ link.release.index: https://get.filebot.net/filebot
+@@ -40,12 +40,12 @@ link.release.index: https://get.filebot.net/filebot
  
  # Build
  main.class: net.filebot.Main
@@ -19,20 +19,43 @@ index 9c444690..45de34ba 100644
  
  # Package Information
  package.name: filebot
-@@ -78,11 +78,10 @@ msi.compression: high
- deb.application.action.import: filebot -script fn:amc --output "$HOME/Media" --action duplicate -non-strict --log-file "$HOME/Media/amc.log" --def excludeList="$HOME/Media/amc.excludes" unsorted=y music=y artwork=y
+@@ -88,35 +88,12 @@ java.application.options: -Dunixfs=false \
+                           -DuseCreationDate=false \
+                           -Djava.net.useSystemProxies=true \
+                           -Djna.nosys=true \
+-                          -Djna.nounpack=true \
+-                          --illegal-access=permit \
+-                          --add-opens=java.base/java.lang=ALL-UNNAMED \
+-                          --add-opens=java.base/java.lang.reflect=ALL-UNNAMED \
+-                          --add-opens=java.base/java.lang.invoke=ALL-UNNAMED \
+-                          --add-opens=java.base/java.util=ALL-UNNAMED \
+-                          --add-opens=java.base/java.util.function=ALL-UNNAMED \
+-                          --add-opens=java.base/java.util.regex=ALL-UNNAMED \
+-                          --add-opens=java.base/java.net=ALL-UNNAMED \
+-                          --add-opens=java.base/java.io=ALL-UNNAMED \
+-                          --add-opens=java.base/java.nio.file=ALL-UNNAMED \
+-                          --add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED \
+-                          --add-opens=java.base/java.nio.channels=ALL-UNNAMED \
+-                          --add-opens=java.base/java.nio.charset=ALL-UNNAMED \
+-                          --add-opens=java.base/java.time=ALL-UNNAMED \
+-                          --add-opens=java.base/java.time.chrono=ALL-UNNAMED \
+-                          --add-opens=java.base/java.util.concurrent=ALL-UNNAMED \
+-                          --add-opens=java.logging/java.util.logging=ALL-UNNAMED \
+-                          --add-opens=java.desktop/java.awt=ALL-UNNAMED \
+-                          --add-opens=java.desktop/sun.awt=ALL-UNNAMED \
+-                          --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED \
+-                          --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED
++                          -Djna.nounpack=true
  
- # Default Java Options
--java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true \
--                          --illegal-access=permit --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.function=ALL-UNNAMED --add-opens=java.base/java.util.regex=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.nio.file=ALL-UNNAMED --add-opens=java.base/java.nio.file.attribute=ALL-UNNAMED --add-opens=java.base/java.nio.channels=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.time=ALL-UNNAMED --add-opens=java.base/java.time.chrono=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.logging/java.util.logging=ALL-UNNAMED --add-opens=java.desktop/java.awt=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED
-+java.application.options: -Dunixfs=false -DuseExtendedFileAttributes=true -DuseCreationDate=false -Djava.net.useSystemProxies=true -Djna.nosys=true -Djna.nounpack=true
  
  # Default Windows Java Options
--windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" --add-modules ALL-MODULE-PATH -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
-+windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" -Djna.boot.library.path="%EXEDIR%\\lib" -Djna.library.path="%EXEDIR%\\lib" -Djava.library.path="%EXEDIR%\\lib"
- windows.store.application.options: -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="%APPDATA%\\FileBot\\settings.properties"
- windows.portable.application.options: -Dapplication.dir="%EXEDIR%\\data" -Duser.home="%EXEDIR%\\data" -Djava.io.tmpdir="%EXEDIR%\\data\\tmp" -Djava.util.prefs.PreferencesFactory=net.filebot.util.prefs.FilePreferencesFactory -Dnet.filebot.util.prefs.file="%EXEDIR%\\data\\settings.properties"
- 
+ windows.application.options: -Dapplication.dir="%APPDATA%\\FileBot" \
+                              -Djava.io.tmpdir="%APPDATA%\\FileBot\\tmp" \
+-                             --module-path "%EXEDIR%\\jre\\ext\\modules\\lib" \
+-                             --add-modules ALL-MODULE-PATH \
+                              -Dnet.filebot.AcoustID.fpcalc="%EXEDIR%\\lib\\fpcalc.exe" \
+                              -Djna.boot.library.path="%EXEDIR%\\lib" \
+                              -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
 index a5ec7942..91cbd8db 100644
 --- a/build.xml
@@ -142,7 +165,7 @@ index 373a3b1c..d06a8521 100644
  
  		<!-- Apache Groovy -->
 diff --git a/source/net/filebot/Logging.java b/source/net/filebot/Logging.java
-index 469a16d8..4d988296 100644
+index 3ddac29b..b89a26b5 100644
 --- a/source/net/filebot/Logging.java
 +++ b/source/net/filebot/Logging.java
 @@ -12,6 +12,7 @@ import java.io.PrintWriter;
@@ -372,10 +395,10 @@ index 269e1bbe..84c57d6a 100644
 -
  }
 diff --git a/source/net/filebot/platform/mac/DropToUnlock.java b/source/net/filebot/platform/mac/DropToUnlock.java
-index 6b482847..1d21eca0 100644
+index 21b83255..aec903d3 100644
 --- a/source/net/filebot/platform/mac/DropToUnlock.java
 +++ b/source/net/filebot/platform/mac/DropToUnlock.java
-@@ -12,7 +12,6 @@ import java.awt.BasicStroke;
+@@ -13,7 +13,6 @@ import java.awt.BasicStroke;
  import java.awt.Color;
  import java.awt.Component;
  import java.awt.Cursor;
@@ -383,7 +406,7 @@ index 6b482847..1d21eca0 100644
  import java.awt.Dialog.ModalExclusionType;
  import java.awt.Dimension;
  import java.awt.Font;
-@@ -163,7 +162,6 @@ public class DropToUnlock extends JList<File> {
+@@ -162,7 +161,6 @@ public class DropToUnlock extends JList<File> {
  					if (model.stream().allMatch(f -> !isLockedFolder(f))) {
  						dialogCancelled.set(false);
  						invokeLater(750, () -> dialog.setVisible(false)); // auto-close unlock dialog once all folders have been unlocked
@@ -486,10 +509,10 @@ index ffae21d8..414e9c0d 100644
  			Rectangle2D r = p1.createUnion(p2);
  			double w = r.getWidth() + 1;
 diff --git a/source/net/filebot/util/ui/SwingUI.java b/source/net/filebot/util/ui/SwingUI.java
-index ace025fc..34bde934 100644
+index 9bc7f6d8..8837848e 100644
 --- a/source/net/filebot/util/ui/SwingUI.java
 +++ b/source/net/filebot/util/ui/SwingUI.java
-@@ -437,11 +437,9 @@ public final class SwingUI {
+@@ -420,11 +420,9 @@ public final class SwingUI {
  					Desktop.getDesktop().open(file);
  					break;
  				case REVEAL:
