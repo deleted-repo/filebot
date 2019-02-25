@@ -96,6 +96,8 @@ public class ThemeSupport {
 			@Override
 			public void setLookAndFeel() throws Exception {
 				UIManager.setLookAndFeel(new DarculaLaf());
+				UIManager.put("List.selectionBackground", new Color(0x39698a));
+				UIManager.put("ComboBox.selectionBackground", new Color(0x39698a));
 			}
 
 			@Override
