@@ -30,6 +30,7 @@ import com.googlecode.lanterna.gui2.MultiWindowTextGUI;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.gui2.Panels;
 import com.googlecode.lanterna.gui2.Separator;
+import com.googlecode.lanterna.gui2.TextGUI;
 import com.googlecode.lanterna.gui2.Window.Hint;
 import com.googlecode.lanterna.gui2.dialogs.ListSelectDialogBuilder;
 import com.googlecode.lanterna.screen.Screen;
@@ -40,11 +41,13 @@ import com.googlecode.lanterna.terminal.swing.TerminalEmulatorAutoCloseTrigger;
 
 import net.filebot.RenameAction;
 import net.filebot.similarity.Match;
+import net.filebot.util.SystemProperty;
 import net.filebot.web.SearchResult;
 
 public class CmdlineOperationsTextUI extends CmdlineOperations {
 
-	public static final String DEFAULT_THEME = "businessmachine";
+	// use green matrix-style theme by default
+	private final Theme theme = SystemProperty.of("net.filebot.cli.theme", Theme::forName, Theme.BusinessMachine).get();
 
 	private Terminal terminal;
 	private Screen screen;
@@ -55,8 +58,7 @@ public class CmdlineOperationsTextUI extends CmdlineOperations {
 		screen = new TerminalScreen(terminal);
 		ui = new MultiWindowTextGUI(screen, new DefaultWindowManager(), new EmptySpace(TextColor.ANSI.DEFAULT));
 
-		// use green matrix-style theme
-		ui.setTheme(LanternaThemes.getRegisteredTheme(DEFAULT_THEME));
+		theme.setTheme(ui);
 	}
 
 	public synchronized <T> T onScreen(Supplier<T> dialog) throws Exception {
@@ -184,6 +186,24 @@ public class CmdlineOperationsTextUI extends CmdlineOperations {
 			return label;
 		}
 
+	}
+
+	public enum Theme {
+
+		Default, BigSnake, Blaster, BusinessMachine, Conqueror, Defrost;
+
+		public void setTheme(TextGUI ui) {
+			ui.setTheme(LanternaThemes.getRegisteredTheme(name().toLowerCase()));
+		}
+
+		public static Theme forName(String name) {
+			for (Theme t : values()) {
+				if (t.name().equalsIgnoreCase(name)) {
+					return t;
+				}
+			}
+			throw new IllegalArgumentException(String.format("%s not in %s", name, asList(values())));
+		}
 	}
 
 }
