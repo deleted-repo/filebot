@@ -366,6 +366,9 @@
 		<copy todir="${dir.staging}/base/lib">
 			<fileset dir="${dir.lib}/native/win32-${msi.package.platform}" />
 		</copy>
+		<copy todir="${dir.staging}/base/menu">
+			<fileset dir="${dir.installer}/msi/menu" />
+		</copy>
 
 		<exec executable="heat" dir="${dir.staging}" failonerror="true">
 			<arg line="dir base -v -srd -gg -dr ApplicationBase -cg ApplicationBase -template fragment -sreg -sfrag -scom -out base.wxs" />
