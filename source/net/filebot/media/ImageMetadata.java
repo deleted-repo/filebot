@@ -141,7 +141,7 @@ public class ImageMetadata {
 	}
 
 	protected String getGeocodeKey() {
-		return Optional.ofNullable(System.getenv("GEOCODE_APIKEY")).orElse(getApiKey("google.geocode"));
+		return System.getProperty("cloud.google.geocode", getApiKey("google.geocode"));
 	}
 
 	public enum AddressComponent {
