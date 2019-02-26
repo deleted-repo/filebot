@@ -433,13 +433,13 @@ public class ExpressionFormatMethods {
 	}
 
 	/**
-	 * Apply multiple replacements.
+	 * Apply replacement mappings.
 	 *
 	 * e.g. replace(ä:'ae', ö:'oe', ü:'ue')
 	 */
-	public static String replace(String self, Map<?, ?> replace) {
+	public static String replace(String self, Map<?, ?> replacer) {
 		// the first two parameters are required, the rest of the parameter sequence is optional
-		for (Entry<?, ?> it : replace.entrySet()) {
+		for (Entry<?, ?> it : replacer.entrySet()) {
 			if (it.getKey() instanceof Pattern) {
 				self = ((Pattern) it.getKey()).matcher(self).replaceAll(it.getValue().toString());
 			} else {
@@ -447,6 +447,22 @@ public class ExpressionFormatMethods {
 			}
 		}
 		return self;
+	}
+
+	/**
+	 * Find matching pattern and return mapped value.
+	 * 
+	 * e.g. az.match('[a-f]': '/volume1', '[g-x]': '/volume2') ?: '/volume3'
+	 */
+	public static Object match(String self, Map<?, ?> matcher) {
+		// the first two parameters are required, the rest of the parameter sequence is optional
+		for (Entry<?, ?> it : matcher.entrySet()) {
+			Pattern p = it.getKey() instanceof Pattern ? (Pattern) it.getKey() : Pattern.compile(it.getKey().toString(), CASE_INSENSITIVE | UNICODE_CHARACTER_CLASS | MULTILINE);
+			if (p.matcher(self).find()) {
+				return it.getValue();
+			}
+		}
+		return null;
 	}
 
 	public static String joining(Collection<?> self, String delimiter) throws Exception {
