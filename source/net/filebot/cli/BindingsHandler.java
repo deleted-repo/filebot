@@ -81,21 +81,7 @@ public class BindingsHandler extends MapOptionHandler {
 			return false;
 		}
 
-		for (int i = 0; i < n.length();) {
-			int c = n.codePointAt(i);
-
-			if (i == 0) {
-				if (!Character.isUnicodeIdentifierStart(c))
-					return false;
-			} else {
-				if (!Character.isUnicodeIdentifierPart(c))
-					return false;
-			}
-
-			i += Character.charCount(c);
-		}
-
-		return true;
+		return Character.isUnicodeIdentifierStart(n.codePointAt(0));
 	}
 
 	@Override
