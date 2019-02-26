@@ -3,7 +3,9 @@ package net.filebot.cli;
 import static java.awt.GraphicsEnvironment.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
+import static net.filebot.Settings.*;
 import static net.filebot.hash.VerificationUtilities.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.subtitle.SubtitleUtilities.*;
@@ -333,19 +335,24 @@ public class ArgumentBean {
 		}
 	}
 
-	public PanelBuilder[] getPanelBuilders() {
-		// default multi panel mode
+	public List<PanelBuilder> getPanelBuilders() {
 		if (mode == null) {
-			return PanelBuilder.defaultSequence();
+			// MAS does not allow subtitle applications
+			if (isMacSandbox()) {
+				return stream(PanelBuilder.defaultSequence()).filter(p -> !p.getName().equals("Subtitles")).collect(toList());
+			}
+
+			// default multi panel mode
+			return asList(PanelBuilder.defaultSequence());
 		}
 
 		// only selected panels
 		return optional(mode).map(m -> {
 			Pattern pattern = Pattern.compile(mode, Pattern.CASE_INSENSITIVE);
-			PanelBuilder[] panel = stream(PanelBuilder.defaultSequence()).filter(p -> pattern.matcher(p.getName()).matches()).toArray(PanelBuilder[]::new);
+			List<PanelBuilder> panel = stream(PanelBuilder.defaultSequence()).filter(p -> pattern.matcher(p.getName()).matches()).collect(toList());
 
 			// throw exception if illegal pattern was passed in
-			if (panel.length == 0) {
+			if (panel.isEmpty()) {
 				return null;
 			}
 

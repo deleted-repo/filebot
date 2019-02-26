@@ -2,7 +2,6 @@ package net.filebot.ui;
 
 import static java.awt.event.InputEvent.*;
 import static java.awt.event.KeyEvent.*;
-import static java.util.Arrays.*;
 import static java.util.Comparator.*;
 import static javax.swing.BorderFactory.*;
 import static javax.swing.KeyStroke.*;
@@ -23,6 +22,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.List;
 import java.util.logging.Level;
 
 import javax.swing.JComponent;
@@ -53,7 +53,7 @@ public class MainFrame extends JFrame {
 	private JList selectionList;
 	private HeaderPanel headerPanel;
 
-	public MainFrame(PanelBuilder[] panels) {
+	public MainFrame(List<PanelBuilder> panels) {
 		super(getWindowTitle());
 
 		selectionList = new PanelSelectionList(panels);
@@ -187,11 +187,11 @@ public class MainFrame extends JFrame {
 
 		private static final int SELECTDELAY_ON_DRAG_OVER = 300;
 
-		public PanelSelectionList(PanelBuilder[] builders) {
-			super(builders);
+		public PanelSelectionList(List<PanelBuilder> builders) {
+			super(builders.toArray(PanelBuilder[]::new));
 
 			setCellRenderer(new PanelCellRenderer());
-			setPrototypeCellValue(stream(builders).max(comparingInt(p -> p.getName().length())).get());
+			setPrototypeCellValue(builders.stream().max(comparingInt(p -> p.getName().length())).get());
 
 			setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			setBorder(createEmptyBorder(4, 5, 4, 5));
