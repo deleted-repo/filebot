@@ -188,7 +188,7 @@ public class MainFrame extends JFrame {
 		private static final int SELECTDELAY_ON_DRAG_OVER = 300;
 
 		public PanelSelectionList(List<PanelBuilder> builders) {
-			super(builders.toArray(PanelBuilder[]::new));
+			super(builders.toArray());
 
 			setCellRenderer(new PanelCellRenderer());
 			setPrototypeCellValue(builders.stream().max(comparingInt(p -> p.getName().length())).get());
