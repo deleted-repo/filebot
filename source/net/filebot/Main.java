@@ -1,7 +1,6 @@
 package net.filebot;
 
 import static java.awt.GraphicsEnvironment.*;
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.ExitCode.*;
 import static net.filebot.Logging.*;
@@ -16,6 +15,7 @@ import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.Dialog.ModalityType;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
@@ -26,6 +26,7 @@ import java.security.Policy;
 import java.security.ProtectionDomain;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
@@ -220,14 +221,9 @@ public class Main {
 		setTheme();
 
 		// start standard frame or single panel frame
-		PanelBuilder[] panels = args.getPanelBuilders();
+		List<PanelBuilder> panels = args.getPanelBuilders();
 
-		// MAS does not allow subtitle applications
-		if (isMacSandbox()) {
-			panels = stream(panels).filter(p -> !p.getName().equals("Subtitles")).toArray(PanelBuilder[]::new);
-		}
-
-		JFrame frame = panels.length > 1 ? new MainFrame(panels) : new SinglePanelFrame(panels[0]);
+		JFrame frame = panels.size() > 1 ? new MainFrame(panels) : new SinglePanelFrame(panels.get(0));
 		try {
 			restoreWindowBounds(frame, Settings.forPackage(MainFrame.class)); // restore previous size and location
 		} catch (Exception e) {
@@ -383,7 +379,7 @@ public class Main {
 			System.setSecurityManager(new SecurityManager());
 		} catch (Exception e) {
 			// security manager was probably set via system property
-			debug.log(Level.WARNING, e.getMessage(), e);
+			debug.log(Level.WARNING, e, e::getMessage);
 		}
 	}
 
@@ -395,6 +391,18 @@ public class Main {
 		System.setProperty("swing.crossplatformlaf", "javax.swing.plaf.nimbus.NimbusLookAndFeel");
 		System.setProperty("grape.root", ApplicationFolder.AppData.resolve("grape").getPath());
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
+
+		// set additional user-defined default system properties
+		File userDefinedSystemProperties = ApplicationFolder.AppData.resolve("system.properties");
+		if (userDefinedSystemProperties.isFile()) {
+			try (FileInputStream in = new FileInputStream(userDefinedSystemProperties)) {
+				Properties p = new Properties();
+				p.load(in);
+				p.forEach((k, v) -> System.setProperty(k.toString(), v.toString()));
+			} catch (Exception e) {
+				log.log(Level.WARNING, e, e::getMessage);
+			}
+		}
 
 		if (args.unixfs) {
 			System.setProperty("unixfs", "true");
