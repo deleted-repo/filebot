@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import javax.swing.JMenu;
@@ -116,10 +117,10 @@ public class MacAppUtilities {
 	}
 
 	public static void initializeWorkflowServiceMenu(JMenu menu) {
-		String root = System.getProperty("apple.app.workflows");
-		String home = System.getProperty("user.home");
+		File root = Optional.ofNullable(System.getProperty("apple.app.workflows")).map(File::new).orElse(null);
+		File home = new File(System.getProperty("user.home"));
 
-		if (root == null) {
+		if (root == null || !root.isDirectory()) {
 			return;
 		}
 
