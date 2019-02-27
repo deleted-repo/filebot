@@ -5,6 +5,7 @@ import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.UserFiles.*;
 import static net.filebot.media.XattrMetaInfo.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.ui.SwingUI.*;
@@ -122,7 +123,7 @@ class BindingDialog extends JDialog {
 		table.setAutoCreateRowSorter(true);
 		table.setAutoCreateColumnsFromModel(true);
 		table.setFillsViewportHeight(true);
-		table.setBackground(Color.white);
+		table.setBackground(getPanelBackground());
 
 		table.setDefaultRenderer(Future.class, new DefaultTableCellRenderer() {
 
@@ -264,8 +265,8 @@ class BindingDialog extends JDialog {
 					table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 					table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-					table.setBackground(Color.white);
-					table.setGridColor(new Color(0xEEEEEE));
+					table.setBackground(getPanelBackground());
+					table.setGridColor(getColor(0xEEEEEE));
 					table.setRowHeight(25);
 
 					// set media info exclude filter
