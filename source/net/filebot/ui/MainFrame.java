@@ -8,6 +8,7 @@ import static javax.swing.KeyStroke.*;
 import static javax.swing.ScrollPaneConstants.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.Color;
@@ -61,7 +62,7 @@ public class MainFrame extends JFrame {
 
 		JScrollPane selectionListScrollPane = new JScrollPane(selectionList, VERTICAL_SCROLLBAR_NEVER, HORIZONTAL_SCROLLBAR_NEVER);
 		selectionListScrollPane.setOpaque(false);
-		selectionListScrollPane.setBorder(createCompoundBorder(new ShadowBorder(), isMacApp() ? createLineBorder(new Color(0x809DB8), 1, false) : selectionListScrollPane.getBorder()));
+		selectionListScrollPane.setBorder(createCompoundBorder(new ShadowBorder(), isMacApp() ? createLineBorder(getColor(0x809DB8), 1, false) : selectionListScrollPane.getBorder()));
 
 		headerPanel.getTitleLabel().setBorder(createEmptyBorder(8, 90, 10, 0));
 
