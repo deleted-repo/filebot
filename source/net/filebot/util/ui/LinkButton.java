@@ -1,6 +1,7 @@
 package net.filebot.util.ui;
 
 import static net.filebot.Logging.*;
+import static net.filebot.ui.ThemeSupport.*;
 
 import java.awt.Color;
 import java.awt.Cursor;
@@ -20,7 +21,7 @@ import javax.swing.JButton;
 public class LinkButton extends JButton {
 
 	private Color color = getForeground();
-	private Color rolloverColor = new Color(0x3399FF);
+	private Color rolloverColor = getLinkColor();
 
 	public LinkButton(String text, String tooltip, Icon icon, URI uri) {
 		this(new OpenUriAction(text, tooltip, icon, uri));

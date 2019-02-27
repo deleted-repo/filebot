@@ -3,6 +3,7 @@ package net.filebot.util.ui;
 import static java.util.Collections.*;
 import static javax.swing.JOptionPane.*;
 import static net.filebot.Logging.*;
+import static net.filebot.Settings.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -62,7 +63,6 @@ import javax.swing.undo.UndoManager;
 
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
-import net.filebot.Settings;
 
 public final class SwingUI {
 
@@ -156,7 +156,7 @@ public final class SwingUI {
 		// fix Windows 10 button padding
 		button.setMaximumSize(new Dimension(36, 36));
 
-		if (Settings.isMacApp()) {
+		if (isMacApp()) {
 			button.setPreferredSize(new Dimension(28, 27));
 		} else {
 			button.setPreferredSize(new Dimension(26, 26));

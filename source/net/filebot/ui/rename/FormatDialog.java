@@ -223,9 +223,9 @@ public class FormatDialog extends JDialog {
 		editor.setBackground(template.getBackground());
 
 		content.add(editorScrollPane, "w 120px:min(pref, 420px), h pref, growx, wrap 4px, id editor");
-		content.add(createImageButton(changeSampleAction), "sg action, w 25!, h 19!, pos n editor.y2+2 editor.x2 n");
-		content.add(createImageButton(selectFolderAction), "sg action, w 25!, h 19!, pos n editor.y2+2 editor.x2-(27*1) n");
-		content.add(createImageButton(showRecentAction), "sg action, w 25!, h 19!, pos n editor.y2+2 editor.x2-(27*2) n");
+		content.add(createImageButton(changeSampleAction), "sg action, w 27!, h 24!, pos n editor.y2+2 editor.x2 n");
+		content.add(createImageButton(selectFolderAction), "sg action, w 27!, h 24!, pos n editor.y2+2 editor.x2-(27*1) n");
+		content.add(createImageButton(showRecentAction), "sg action, w 27!, h 24!, pos n editor.y2+2 editor.x2-(27*2) n");
 
 		content.add(help, "growx, wrap 25px:push");
 
