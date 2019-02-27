@@ -136,7 +136,7 @@ public class PresetEditor extends JDialog {
 		providerCombo.addItemListener((evt) -> updateComponentStates());
 		updateComponentStates();
 
-		setSize(730, 570);
+		setSize(730, 600);
 
 		// add helpful tooltips
 		filterEditor.setToolTipText(FILE_FILTER_TOOLTIP);

@@ -3,10 +3,10 @@ package net.filebot.ui.rename;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
@@ -67,7 +67,7 @@ class ConflictDialog extends JDialog {
 		table.addMouseListener(new OpenListener());
 
 		// force white background (e.g. GTK LaF default table background is gray)
-		setBackground(Color.WHITE);
+		setBackground(getPanelBackground());
 
 		JComponent c = (JComponent) getContentPane();
 		c.setLayout(new MigLayout("insets dialog, nogrid, fill", "", "[fill][pref!]"));

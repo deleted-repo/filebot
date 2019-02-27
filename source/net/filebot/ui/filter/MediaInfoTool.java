@@ -4,9 +4,9 @@ import static java.util.Collections.*;
 import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +42,8 @@ class MediaInfoTool extends Tool<TableModel> {
 		table.setCellSelectionEnabled(true);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		table.setBackground(Color.white);
-		table.setGridColor(new Color(0xEEEEEE));
+		table.setBackground(getPanelBackground());
+		table.setGridColor(getColor(0xEEEEEE));
 		table.setRowHeight(25);
 
 		JScrollPane scrollPane = new JScrollPane(table);

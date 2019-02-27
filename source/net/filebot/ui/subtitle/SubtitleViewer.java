@@ -44,9 +44,7 @@ import javax.swing.table.TableRowSorter;
 
 import net.filebot.ResourceManager;
 import net.filebot.subtitle.SubtitleElement;
-import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.LazyDocumentListener;
-import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
 import net.miginfocom.swing.MigLayout;
 

@@ -102,7 +102,7 @@ public class ThemeSupport {
 				UIManager.setLookAndFeel(new DarculaLaf());
 
 				Color selectionBackground = new Color(0x39698a);
-				Color componentBackground = new Color(0x313131);
+				Color componentBackground = new Color(0x3A3D3E);
 
 				UIManager.put("List.selectionBackground", selectionBackground);
 				UIManager.put("ComboBox.selectionBackground", selectionBackground);

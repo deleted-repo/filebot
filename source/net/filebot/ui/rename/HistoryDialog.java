@@ -15,7 +15,6 @@ import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Window;
@@ -286,7 +285,7 @@ class HistoryDialog extends JDialog {
 
 	private JTable createTable(TableModel model) {
 		JTable table = new JTable(model);
-		table.setBackground(Color.white);
+		table.setBackground(getPanelBackground());
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);
 

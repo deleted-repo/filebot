@@ -2,6 +2,7 @@ package net.filebot.ui.filter;
 
 import static net.filebot.Logging.*;
 import static net.filebot.UserFiles.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -56,8 +57,8 @@ class ExtractTool extends Tool<TableModel> {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		table.setBackground(Color.white);
-		table.setGridColor(new Color(0xEEEEEE));
+		table.setBackground(getPanelBackground());
+		table.setGridColor(getColor(0xEEEEEE));
 		table.setRowHeight(25);
 
 		JScrollPane tableScrollPane = new JScrollPane(table);

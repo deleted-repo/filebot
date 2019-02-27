@@ -1,8 +1,8 @@
 package net.filebot.ui.episodelist;
 
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.ui.episodelist.SeasonSpinnerModel.*;
 
-import java.awt.Color;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,6 +52,6 @@ class SeasonSpinnerEditor extends DefaultEditor {
 		}));
 
 		getTextField().setHorizontalAlignment(SwingConstants.RIGHT);
-		getTextField().setBackground(Color.white);
+		getTextField().setBackground(getPanelBackground());
 	}
 }

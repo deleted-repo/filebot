@@ -3,9 +3,9 @@ package net.filebot.ui.filter;
 import static javax.swing.BorderFactory.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.media.XattrMetaInfo.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +37,8 @@ class AttributeTool extends Tool<TableModel> {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
-		table.setBackground(Color.white);
-		table.setGridColor(new Color(0xEEEEEE));
+		table.setBackground(getPanelBackground());
+		table.setGridColor(getColor(0xEEEEEE));
 		table.setRowHeight(25);
 
 		JScrollPane scrollPane = new JScrollPane(table);
