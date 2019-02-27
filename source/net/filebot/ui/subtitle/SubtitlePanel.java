@@ -67,11 +67,11 @@ public class SubtitlePanel extends AbstractSearchPanel<SubtitleProvider, Subtitl
 
 		// add after text field
 		add(languageComboBox, "gap indent, sgy button", 1);
-		add(createImageButton(setUserAction), "w pref!, h 2+pref!, gap rel, sgy button", 2);
+		add(createImageButton(setUserAction), "gap rel, sgy button", 2);
 
 		// add at the top right corner
 		add(uploadDropTarget, "width 54px!, height 54px!, gap before unrel", 4);
-		add(downloadDropTarget, "width 54px!, height 54px!, gap before rel, gap after 10px", 5);
+		add(downloadDropTarget, "width 54px!, height 54px!, gap before 10px, gap after 10px", 5);
 	}
 
 	@Subscribe

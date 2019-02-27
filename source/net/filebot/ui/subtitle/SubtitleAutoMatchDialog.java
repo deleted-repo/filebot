@@ -5,6 +5,7 @@ import static javax.swing.JOptionPane.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 import static net.filebot.subtitle.SubtitleUtilities.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
@@ -125,7 +126,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 		table.setRowHeight(24);
 		table.setIntercellSpacing(new Dimension(5, 5));
 
-		table.setBackground(Color.white);
+		table.setBackground(getPanelBackground());
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);
 
@@ -359,7 +360,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 		private final JComboBox optionComboBox = new SimpleComboBox(ResourceManager.getIcon("action.select"));
 
 		public SubtitleMappingOptionRenderer() {
-			optionComboBox.setBackground(Color.white);
+			optionComboBox.setBackground(getPanelBackground());
 			optionComboBox.setRenderer(new SubtitleOptionRenderer(false));
 		}
 

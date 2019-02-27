@@ -29,8 +29,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import com.google.common.eventbus.Subscribe;
@@ -56,7 +54,7 @@ public class ListPanel extends JComponent {
 	public static final String DEFAULT_FILE_FORMAT = "{fn}";
 	public static final String DEFAULT_EPISODE_FORMAT = "{n} - {s00e00} - [{absolute}] - [{airdate}] - {t}";
 
-	private FormatExpressionTextArea editor = new FormatExpressionTextArea(new RSyntaxDocument(SyntaxConstants.SYNTAX_STYLE_GROOVY));
+	private FormatExpressionTextArea editor = new FormatExpressionTextArea();
 	private SpinnerNumberModel fromSpinnerModel = new SpinnerNumberModel(1, 0, Integer.MAX_VALUE, 1);
 	private SpinnerNumberModel toSpinnerModel = new SpinnerNumberModel(20, 0, Integer.MAX_VALUE, 1);
 

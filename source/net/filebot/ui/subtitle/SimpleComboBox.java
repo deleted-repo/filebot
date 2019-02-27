@@ -1,8 +1,8 @@
 package net.filebot.ui.subtitle;
 
 import static javax.swing.BorderFactory.*;
+import static net.filebot.ui.ThemeSupport.*;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 
 import javax.swing.Icon;
@@ -57,11 +57,11 @@ public class SimpleComboBox extends JComboBox {
 					super.configurePopup();
 
 					setOpaque(true);
-					list.setBackground(Color.white);
-					setBackground(Color.white);
+					setBackground(getPanelBackground());
+					list.setBackground(getBackground());
 
 					// use gray instead of black border for combobox popup
-					setBorder(createCompoundBorder(createLineBorder(Color.gray, 1), createEmptyBorder(1, 1, 1, 1)));
+					setBorder(createCompoundBorder(createLineBorder(getColor(0xEEEEEE), 1), createEmptyBorder(1, 1, 1, 1)));
 				}
 			};
 		}

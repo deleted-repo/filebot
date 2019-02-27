@@ -1,7 +1,8 @@
 
 package net.filebot.ui.subtitle;
 
-import java.awt.Color;
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.Insets;
 
 import javax.swing.Icon;
@@ -29,7 +30,7 @@ class SubtitlePackageCellRenderer extends AbstractFancyListCellRenderer {
 		add(languageLabel, "hidemode 3, w 85px!");
 		add(titleLabel);
 
-		setBorder(new CompoundBorder(new DashedSeparator(2, 4, Color.lightGray, Color.white), getBorder()));
+		setBorder(new CompoundBorder(new DashedSeparator(2, 4, getColor(0xEEEEEE), getPanelBackground()), getBorder()));
 	}
 
 	@Override

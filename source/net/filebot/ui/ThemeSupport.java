@@ -18,6 +18,7 @@ import com.bulenkov.iconloader.util.ColorUtil;
 
 import net.filebot.util.SystemProperty;
 import net.filebot.util.ui.GradientStyle;
+import net.filebot.util.ui.SelectionPainter;
 import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
 
@@ -107,6 +108,12 @@ public class ThemeSupport {
 				UIManager.put("List.selectionBackground", selectionBackground);
 				UIManager.put("ComboBox.selectionBackground", selectionBackground);
 				UIManager.put("Table.selectionBackground", selectionBackground);
+				UIManager.put("Menu.selectionBackground", selectionBackground);
+				UIManager.put("MenuItem.selectionBackground", selectionBackground);
+				UIManager.put("MenuItem.selectedBackgroundPainter", new SelectionPainter(selectionBackground));
+				UIManager.put("PopupMenu.selectionBackground", selectionBackground);
+				UIManager.put("Tree.selectionBackground", selectionBackground);
+				UIManager.put("Tree.selectionInactiveBackground", selectionBackground);
 				UIManager.put("Table.background", componentBackground);
 				UIManager.put("TabbedPane.selected", componentBackground);
 			}

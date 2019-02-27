@@ -1,8 +1,9 @@
 package net.filebot.ui;
 
 import static javax.swing.BorderFactory.*;
+import static net.filebot.Settings.*;
+import static net.filebot.ui.ThemeSupport.*;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -24,13 +25,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.plaf.basic.BasicButtonUI;
 import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 import javax.swing.text.JTextComponent;
 
 import net.filebot.ResourceManager;
-import net.filebot.Settings;
 import net.filebot.util.ui.SelectButton;
 import net.filebot.util.ui.SwingUI;
 import net.miginfocom.swing.MigLayout;
@@ -141,15 +142,20 @@ public class SelectButtonTextField<T> extends JComponent {
 		public void configureArrowButton() {
 			super.configureArrowButton();
 
-			arrowButton.setBackground(Color.white);
-			arrowButton.setOpaque(true);
+			arrowButton.setUI(new BasicButtonUI());
+			arrowButton.setBackground(getPanelBackground());
+			arrowButton.setOpaque(false);
 			arrowButton.setBorder(createEmptyBorder());
 			arrowButton.setContentAreaFilled(false);
 			arrowButton.setFocusPainted(false);
 			arrowButton.setFocusable(false);
 
+			if (getTheme().isDark()) {
+				arrowButton.setBorder(createEmptyBorder(0, 1, 0, 2));
+			}
+
 			// fix Aqua UI
-			if (Settings.isMacApp()) {
+			if (isMacApp()) {
 				arrowButton.setContentAreaFilled(true);
 			}
 		}

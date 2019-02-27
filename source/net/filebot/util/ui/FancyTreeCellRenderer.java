@@ -1,6 +1,7 @@
 
 package net.filebot.util.ui;
 
+import static net.filebot.ui.ThemeSupport.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -13,7 +14,6 @@ import javax.swing.Icon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-
 public class FancyTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private Color gradientBeginColor;
@@ -23,11 +23,9 @@ public class FancyTreeCellRenderer extends DefaultTreeCellRenderer {
 
 	private Color backgroundSelectionColor;
 
-
 	public FancyTreeCellRenderer() {
 		this(GradientStyle.TOP_TO_BOTTOM);
 	}
-
 
 	public FancyTreeCellRenderer(GradientStyle gradientStyle) {
 		this.gradientStyle = gradientStyle;
@@ -38,14 +36,13 @@ public class FancyTreeCellRenderer extends DefaultTreeCellRenderer {
 		setBackgroundSelectionColor(null);
 	}
 
-
 	@Override
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, false);
 
 		setIconTextGap(5);
 
-		if (selected) {
+		if (selected && !getTheme().isDark()) {
 			setPaintGradient(true);
 			setGradientBeginColor(backgroundSelectionColor.brighter());
 			setGradientEndColor(backgroundSelectionColor);
@@ -55,7 +52,6 @@ public class FancyTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		return this;
 	}
-
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -76,7 +72,6 @@ public class FancyTreeCellRenderer extends DefaultTreeCellRenderer {
 		super.paintComponent(g);
 	}
 
-
 	protected int getLabelStart() {
 		Icon icon = getIcon();
 
@@ -87,41 +82,33 @@ public class FancyTreeCellRenderer extends DefaultTreeCellRenderer {
 		return 0;
 	}
 
-
 	public Color getGradientBeginColor() {
 		return gradientBeginColor;
 	}
-
 
 	public void setGradientBeginColor(Color gradientBeginColor) {
 		this.gradientBeginColor = gradientBeginColor;
 	}
 
-
 	public boolean isPaintGradient() {
 		return paintGradient;
 	}
-
 
 	public void setPaintGradient(boolean gradientEnabled) {
 		this.paintGradient = gradientEnabled;
 	}
 
-
 	public Color getGradientEndColor() {
 		return gradientEndColor;
 	}
-
 
 	public void setGradientEndColor(Color gradientEndColor) {
 		this.gradientEndColor = gradientEndColor;
 	}
 
-
 	public GradientStyle getGradientStyle() {
 		return gradientStyle;
 	}
-
 
 	public void setGradientStyle(GradientStyle gradientStyle) {
 		this.gradientStyle = gradientStyle;

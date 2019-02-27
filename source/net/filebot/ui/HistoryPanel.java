@@ -1,6 +1,7 @@
 package net.filebot.ui;
 
-import java.awt.Color;
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.Font;
 import java.net.URI;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class HistoryPanel extends JPanel {
 	public HistoryPanel() {
 		super(new MigLayout("fillx, insets 10 30 10 50, wrap 3"));
 
-		setBackground(Color.WHITE);
+		setBackground(getPanelBackground());
 		setOpaque(true);
 
 		setupHeader();

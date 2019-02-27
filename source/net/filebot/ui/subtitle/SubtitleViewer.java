@@ -97,7 +97,7 @@ public class SubtitleViewer extends JFrame {
 
 	private JTable createTable(TableModel model) {
 		final JTable table = new JTable(model);
-		table.setBackground(Color.white);
+		table.setBackground(getPanelBackground());
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);
 		table.setRowHeight(18);

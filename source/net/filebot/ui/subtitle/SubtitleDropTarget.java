@@ -4,6 +4,7 @@ import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
 import static net.filebot.UserFiles.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.ui.transfer.FileTransferable.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
@@ -56,12 +57,16 @@ abstract class SubtitleDropTarget extends JButton {
 
 	public SubtitleDropTarget() {
 		setHorizontalAlignment(CENTER);
+		setHorizontalTextPosition(CENTER);
+		setVerticalAlignment(CENTER);
+		setVerticalTextPosition(TOP);
+		setIconTextGap(0);
 
 		setHideActionText(true);
 		setContentAreaFilled(false);
 		setFocusPainted(false);
 		setBorderPainted(false);
-		setBackground(Color.white);
+		setBackground(getPanelBackground());
 
 		// initialize with default mode
 		setDropAction(DropAction.Accept);
@@ -74,18 +79,14 @@ abstract class SubtitleDropTarget extends JButton {
 		new DropTarget(this, dropHandler);
 	}
 
-	private Color lineColor = new Color(0xD7D7D7);
+	private Color lineColor = getColor(0xD7D7D7);
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-		float w = getWidth();
-		float h = getHeight();
-		float d = Math.min(w, h) - 1f;
-
-		Shape shape = new Ellipse2D.Float((w - d) / 2, (h - d) / 2, d - 1, d - 1);
+		Shape shape = new Ellipse2D.Float(0, 0, getWidth() - 1, getHeight() - 1);
 
 		g2d.setColor(getBackground());
 		g2d.fill(shape);

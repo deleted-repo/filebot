@@ -1,6 +1,7 @@
 package net.filebot.util.ui;
 
 import static javax.swing.BorderFactory.*;
+import static net.filebot.ui.ThemeSupport.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -32,11 +33,11 @@ public class SelectButton<T> extends JButton {
 
 	public static final String SELECTED_VALUE = "selected value";
 
-	private final Color beginColor = new Color(0xF0EEE4);
-	private final Color endColor = new Color(0xE0DED4);
+	private final Color beginColor = getColor(0xF0EEE4);
+	private final Color endColor = getColor(0xE0DED4);
 
 	private final Color beginColorHover = beginColor;
-	private final Color endColorHover = new Color(0xD8D7CD);
+	private final Color endColorHover = getColor(0xD8D7CD);
 
 	private final SelectIcon selectIcon = new SelectIcon();
 
@@ -56,7 +57,7 @@ public class SelectButton<T> extends JButton {
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setVerticalAlignment(SwingConstants.CENTER);
 
-		setBorder(createLineBorder(new Color(0xA4A4A4), 1));
+		setBorder(createLineBorder(getColor(0xA4A4A4), 1));
 		setPreferredSize(new Dimension(32, 22));
 
 		addActionListener(new OpenPopupOnClick());

@@ -4,10 +4,10 @@ import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.media.MediaDetection.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -78,7 +78,7 @@ public class SubtitleUploadDialog extends JDialog {
 		table.setRowHeight(28);
 		table.setIntercellSpacing(new Dimension(5, 5));
 
-		table.setBackground(Color.white);
+		table.setBackground(getPanelBackground());
 		table.setAutoCreateRowSorter(true);
 		table.setFillsViewportHeight(true);
 
