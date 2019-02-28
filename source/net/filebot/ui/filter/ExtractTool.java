@@ -6,7 +6,6 @@ import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -34,11 +33,9 @@ import net.filebot.archive.Archive;
 import net.filebot.archive.FileMapper;
 import net.filebot.cli.ConflictAction;
 import net.filebot.util.FileUtilities;
-import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.LoadingOverlayPane;
 import net.filebot.util.ui.ProgressMonitor;
 import net.filebot.util.ui.ProgressMonitor.ProgressWorker;
-import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.vfs.FileInfo;
 import net.filebot.vfs.SimpleFileInfo;
 import net.miginfocom.swing.MigLayout;
@@ -62,7 +59,7 @@ class ExtractTool extends Tool<TableModel> {
 		table.setRowHeight(25);
 
 		JScrollPane tableScrollPane = new JScrollPane(table);
-		tableScrollPane.setBorder(new SeparatorBorder(2, new Color(0, 0, 0, 90), GradientStyle.TOP_TO_BOTTOM, SeparatorBorder.Position.BOTTOM));
+		tableScrollPane.setBorder(getHorizontalRule());
 
 		setLayout(new MigLayout("insets 0, nogrid, fill", "align center", "[fill][pref!]"));
 		add(new LoadingOverlayPane(tableScrollPane, this, "25px", "30px"), "grow, wrap");

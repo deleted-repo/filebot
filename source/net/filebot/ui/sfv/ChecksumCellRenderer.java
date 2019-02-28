@@ -1,9 +1,9 @@
 
 package net.filebot.ui.sfv;
 
-
 import static java.awt.Font.*;
-import static net.filebot.util.ui.SwingUI.*;
+import static net.filebot.ui.ThemeSupport.*;
+import static net.filebot.util.ExceptionUtilities.*;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -14,15 +14,11 @@ import javax.swing.SwingWorker;
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.filebot.util.ExceptionUtilities;
-
-
 public class ChecksumCellRenderer extends DefaultTableCellRenderer {
 
 	private final SwingWorkerCellRenderer progressRenderer = new SwingWorkerCellRenderer();
 
-	private final Color verificationForeground = new Color(0x009900);
-
+	private final Color verificationForeground = getVerificationColor();
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -52,16 +48,15 @@ public class ChecksumCellRenderer extends DefaultTableCellRenderer {
 		if (pendingWorker) {
 			setText("Pending...");
 		} else if (value == null && !isSelected) {
-			setBackground(derive(table.getGridColor(), 0.1f));
+			setBackground(withAlpha(table.getGridColor(), 0.1f));
 		} else if (value instanceof FileNotFoundException) {
 			setText("File not found");
 		} else if (value instanceof Throwable) {
-			setText(ExceptionUtilities.getRootCauseMessage((Throwable) value));
+			setText(getRootCauseMessage((Throwable) value));
 		}
 
 		return this;
 	}
-
 
 	private boolean isVerificationColumn(JTable table, int column) {
 		ChecksumTableModel model = (ChecksumTableModel) table.getModel();

@@ -1,7 +1,7 @@
 package net.filebot.ui.rename;
 
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
-import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -137,7 +137,7 @@ class RenameListCellRenderer extends DefaultFancyListCellRenderer {
 
 			if (renameModel.hasComplement(index)) {
 				setOpaque(true); // enable paint background
-				setBackground(derive(warningGradientBeginColor, (1 - matchProbablity) * 0.5f)); // alpha indicates match probability
+				setBackground(withAlpha(warningGradientBeginColor, (1 - matchProbablity) * 0.5f)); // alpha indicates match probability
 
 				if (matchProbablity < 1) {
 					if (isSelected) {

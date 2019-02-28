@@ -1,7 +1,6 @@
 
 package net.filebot.util.ui;
 
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -11,20 +10,11 @@ import java.awt.RenderingHints;
 
 import javax.swing.border.AbstractBorder;
 
-
 public class RoundBorder extends AbstractBorder {
 
 	private final Color color;
 	private final Insets insets;
 	private final int arc;
-
-
-	public RoundBorder() {
-		this.color = new Color(0xACACAC);
-		this.arc = 12;
-		this.insets = new Insets(1, 1, 1, 1);
-	}
-
 
 	public RoundBorder(Color color, int arc, Insets insets) {
 		this.color = color;
@@ -32,12 +22,10 @@ public class RoundBorder extends AbstractBorder {
 		this.insets = insets;
 	}
 
-
 	@Override
 	public boolean isBorderOpaque() {
 		return false;
 	}
-
 
 	@Override
 	public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
@@ -53,12 +41,10 @@ public class RoundBorder extends AbstractBorder {
 		g2d.dispose();
 	}
 
-
 	@Override
 	public Insets getBorderInsets(Component c) {
 		return new Insets(insets.top, insets.left, insets.bottom, insets.right);
 	}
-
 
 	@Override
 	public Insets getBorderInsets(Component c, Insets insets) {

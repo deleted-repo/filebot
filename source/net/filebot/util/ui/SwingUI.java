@@ -126,10 +126,6 @@ public final class SwingUI {
 		return s;
 	}
 
-	public static Color derive(Color color, float alpha) {
-		return new Color(((int) ((alpha * 255)) << 24) | (color.getRGB() & 0x00FFFFFF), true);
-	}
-
 	public static String toHex(Color c) {
 		return c == null ? "inherit" : String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue());
 	}

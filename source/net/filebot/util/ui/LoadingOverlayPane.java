@@ -1,6 +1,8 @@
 
 package net.filebot.util.ui;
 
+import static net.filebot.ui.ThemeSupport.*;
+
 import javax.swing.JComponent;
 
 import net.miginfocom.swing.MigLayout;
@@ -22,7 +24,7 @@ public class LoadingOverlayPane extends JComponent {
 	public LoadingOverlayPane(JComponent component, JComponent propertyChangeSource, String offsetX, String offsetY) {
 		setLayout(new MigLayout("insets 0, fill"));
 
-		animationComponent = new ProgressIndicator();
+		animationComponent = getProgressIndicator();
 		animationComponent.setVisible(false);
 
 		add(animationComponent, String.format("pos n %s 100%%-%s n", offsetY != null ? offsetY : "8px", offsetX != null ? offsetX : "20px"));

@@ -69,7 +69,6 @@ import net.filebot.util.ui.AbstractBean;
 import net.filebot.util.ui.DashedSeparator;
 import net.filebot.util.ui.EmptySelectionModel;
 import net.filebot.util.ui.LinkButton;
-import net.filebot.util.ui.RoundBorder;
 import net.filebot.vfs.MemoryFile;
 import net.filebot.web.SubtitleDescriptor;
 import net.filebot.web.SubtitleProvider;
@@ -80,6 +79,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 
 	private static final Color hashMatchColor = new Color(0xFAFAD2); // LightGoldenRodYellow
 	private static final Color nameMatchColor = new Color(0xFFEBCD); // BlanchedAlmond
+
 	private final JPanel hashMatcherServicePanel = createServicePanel(hashMatchColor);
 	private final JPanel nameMatcherServicePanel = createServicePanel(nameMatchColor);
 
@@ -112,7 +112,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 
 	protected JPanel createServicePanel(Color color) {
 		JPanel panel = new JPanel(new MigLayout("hidemode 3, novisualpadding"));
-		panel.setBorder(new RoundBorder());
+		panel.setBorder(getRoundBorder());
 		panel.setOpaque(false);
 		panel.setBackground(color);
 		panel.setVisible(false);
@@ -452,7 +452,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 					}
 					if (f < 0.9f) {
 						setOpaque(true);
-						setBackground(derive(Color.RED, (1 - f) * 0.5f));
+						setBackground(withAlpha(Color.RED, (1 - f) * 0.5f));
 					}
 				}
 			}

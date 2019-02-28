@@ -5,6 +5,7 @@ import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
 
 import java.awt.Color;
+import java.awt.Insets;
 import java.awt.LinearGradientPaint;
 import java.util.logging.Level;
 
@@ -18,6 +19,8 @@ import com.bulenkov.iconloader.util.ColorUtil;
 
 import net.filebot.util.SystemProperty;
 import net.filebot.util.ui.GradientStyle;
+import net.filebot.util.ui.ProgressIndicator;
+import net.filebot.util.ui.RoundBorder;
 import net.filebot.util.ui.SelectionPainter;
 import net.filebot.util.ui.notification.SeparatorBorder;
 import net.filebot.util.ui.notification.SeparatorBorder.Position;
@@ -67,6 +70,22 @@ public class ThemeSupport {
 		return theme.getLinkSelectionForeground();
 	}
 
+	public static Color getActiveColor() {
+		return new Color(0x6495ED);// CornflowerBlue
+	}
+
+	public static Color getPassiveColor() {
+		return Color.gray;
+	}
+
+	public static Color getVerificationColor() {
+		return new Color(0x009900);
+	}
+
+	public static Color getPanelSelectionBorderColor() {
+		return new Color(0x163264);
+	}
+
 	public static LinearGradientPaint getPanelBackgroundGradient(int x, int y, int w, int h) {
 		float[] gradientFractions = { 0.0f, 0.5f, 1.0f };
 		Color[] gradientColors = { getColor(0xF6F6F6), getColor(0xF8F8F8), getColor(0xF3F3F3) };
@@ -74,8 +93,24 @@ public class ThemeSupport {
 		return new LinearGradientPaint(x, y, w, h, gradientFractions, gradientColors);
 	}
 
-	public static SeparatorBorder getSeparatorBorder(Position position) {
+	public static Border getRoundBorder() {
+		return new RoundBorder(getColor(0xACACAC), 12, new Insets(1, 1, 1, 1));
+	}
+
+	public static Border getSeparatorBorder(Position position) {
 		return new SeparatorBorder(1, getColor(0xB4B4B4), getColor(0xACACAC), GradientStyle.LEFT_TO_RIGHT, position);
+	}
+
+	public static Border getHorizontalRule() {
+		return new SeparatorBorder(2, new Color(0, 0, 0, 90), GradientStyle.TOP_TO_BOTTOM, SeparatorBorder.Position.BOTTOM);
+	}
+
+	public static ProgressIndicator getProgressIndicator() {
+		return new ProgressIndicator(Color.orange, withAlpha(getColor(0x000000), 0.25f));
+	}
+
+	public static Color withAlpha(Color color, float alpha) {
+		return new Color(((int) ((alpha * 255)) << 24) | (color.getRGB() & 0x00FFFFFF), true);
 	}
 
 	public enum Theme {
@@ -154,8 +189,8 @@ public class ThemeSupport {
 			}
 		};
 
-		public Color getColor(int rgba) {
-			return new Color(rgba);
+		public Color getColor(int rgb) {
+			return new Color(rgb);
 		}
 
 		public boolean isDark() {

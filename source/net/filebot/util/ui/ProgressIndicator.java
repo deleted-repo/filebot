@@ -1,7 +1,6 @@
 
 package net.filebot.util.ui;
 
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -20,7 +19,6 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 
-
 public class ProgressIndicator extends JComponent {
 
 	private float radius = 4.0f;
@@ -28,9 +26,6 @@ public class ProgressIndicator extends JComponent {
 
 	private float strokeWidth = 2f;
 	private Stroke stroke = new BasicStroke(strokeWidth, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND);
-
-	private Color progressShapeColor = Color.orange;
-	private Color backgroundShapeColor = new Color(0f, 0f, 0f, 0.25f);
 
 	private final Rectangle2D frame = new Rectangle2D.Double();
 	private final Ellipse2D circle = new Ellipse2D.Double();
@@ -41,8 +36,13 @@ public class ProgressIndicator extends JComponent {
 
 	private Timer updateTimer;
 
+	private final Color progressShapeColor;
+	private final Color backgroundShapeColor;
 
-	public ProgressIndicator() {
+	public ProgressIndicator(Color progressShapeColor, Color backgroundShapeColor) {
+		this.progressShapeColor = progressShapeColor;
+		this.backgroundShapeColor = backgroundShapeColor;
+
 		setPreferredSize(baseSize);
 
 		addComponentListener(new ComponentAdapter() {
@@ -52,7 +52,6 @@ public class ProgressIndicator extends JComponent {
 				startAnimation();
 			}
 
-
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				stopAnimation();
@@ -60,13 +59,11 @@ public class ProgressIndicator extends JComponent {
 		});
 	}
 
-
 	public void animateOnce() {
 		if ((alpha += (speed / 1000)) >= 1) {
 			alpha -= Math.floor(alpha);
 		}
 	}
-
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -82,7 +79,6 @@ public class ProgressIndicator extends JComponent {
 
 		paintShapes(g2d);
 	}
-
 
 	private void paintShapes(Graphics2D g2d) {
 		circle.setFrame(frame);
@@ -110,11 +106,9 @@ public class ProgressIndicator extends JComponent {
 		}
 	}
 
-
 	private double getTheta(double value, double max) {
 		return (value / max) * 2 * Math.PI;
 	}
-
 
 	public void startAnimation() {
 		if (updateTimer == null) {
@@ -131,7 +125,6 @@ public class ProgressIndicator extends JComponent {
 		}
 	}
 
-
 	public void stopAnimation() {
 		if (updateTimer != null) {
 			updateTimer.stop();
@@ -139,16 +132,13 @@ public class ProgressIndicator extends JComponent {
 		}
 	}
 
-
 	public void setShapeCount(int indeterminateShapeCount) {
 		this.shapeCount = indeterminateShapeCount;
 	}
 
-
 	public void setSpeed(double speed) {
 		this.speed = speed;
 	}
-
 
 	public double getSpeed() {
 		return speed;

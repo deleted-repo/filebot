@@ -1,9 +1,9 @@
 package net.filebot.ui.filter;
 
 import static java.util.Collections.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.FileUtilities.*;
 
-import java.awt.Color;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,7 @@ import javax.swing.tree.TreeNode;
 
 import net.filebot.ui.filter.FileTree.FolderNode;
 import net.filebot.ui.transfer.DefaultTransferHandler;
-import net.filebot.util.ui.GradientStyle;
 import net.filebot.util.ui.LoadingOverlayPane;
-import net.filebot.util.ui.notification.SeparatorBorder;
 import net.miginfocom.swing.MigLayout;
 
 class SplitTool extends Tool<TreeModel> {
@@ -34,7 +32,7 @@ class SplitTool extends Tool<TreeModel> {
 		super("Parts");
 
 		JScrollPane treeScrollPane = new JScrollPane(tree);
-		treeScrollPane.setBorder(new SeparatorBorder(2, new Color(0, 0, 0, 90), GradientStyle.TOP_TO_BOTTOM, SeparatorBorder.Position.BOTTOM));
+		treeScrollPane.setBorder(getHorizontalRule());
 
 		JSpinner spinner = new JSpinner(spinnerModel);
 		spinner.setEditor(new JSpinner.NumberEditor(spinner, "#"));

@@ -10,7 +10,6 @@ import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -145,7 +144,7 @@ class BindingDialog extends JDialog {
 
 					// highlight cell
 					if (!isSelected) {
-						setForeground(new Color(0x6495ED)); // CornflowerBlue
+						setForeground(getActiveColor());
 					}
 				} catch (Exception e) {
 					// could not evaluate expression
@@ -153,7 +152,7 @@ class BindingDialog extends JDialog {
 
 					// highlight cell
 					if (!isSelected) {
-						setForeground(Color.gray);
+						setForeground(getPassiveColor());
 					}
 				}
 

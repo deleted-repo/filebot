@@ -101,7 +101,7 @@ public class FormatDialog extends JDialog {
 	private JLabel status = new JLabel();
 
 	private FormatExpressionTextArea editor = new FormatExpressionTextArea();
-	private ProgressIndicator progressIndicator = new ProgressIndicator();
+	private ProgressIndicator progressIndicator = getProgressIndicator();
 
 	private JLabel title = new JLabel();
 	private JPanel help = new JPanel(new MigLayout("insets 0, nogrid, novisualpadding, fillx"));

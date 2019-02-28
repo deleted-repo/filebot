@@ -1,6 +1,7 @@
 
 package net.filebot.ui;
 
+import static net.filebot.ui.ThemeSupport.*;
 
 import java.awt.Dimension;
 
@@ -16,16 +17,14 @@ import net.filebot.util.ui.ProgressIndicator;
 import net.filebot.util.ui.SwingUI;
 import net.miginfocom.swing.MigLayout;
 
-
 public class FileBotTabComponent extends JComponent {
 
-	private ProgressIndicator progressIndicator = new ProgressIndicator();
+	private ProgressIndicator progressIndicator = getProgressIndicator();
 	private JLabel textLabel = new JLabel();
 	private JLabel iconLabel = new JLabel();
 	private AbstractButton closeButton = createCloseButton();
 
 	private boolean loading = false;
-
 
 	public FileBotTabComponent() {
 		iconLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -42,44 +41,36 @@ public class FileBotTabComponent extends JComponent {
 		add(closeButton, "gap unrel:push, hidemode 3, align center 45%");
 	}
 
-
 	public void setLoading(boolean loading) {
 		this.loading = loading;
 		progressIndicator.setVisible(loading);
 		iconLabel.setVisible(!loading);
 	}
 
-
 	public boolean isLoading() {
 		return loading;
 	}
-
 
 	public void setIcon(Icon icon) {
 		iconLabel.setIcon(icon);
 		progressIndicator.setPreferredSize(icon != null ? SwingUI.getDimension(icon) : progressIndicator.getMinimumSize());
 	}
 
-
 	public Icon getIcon() {
 		return iconLabel.getIcon();
 	}
-
 
 	public void setText(String text) {
 		textLabel.setText(text);
 	}
 
-
 	public String getText() {
 		return textLabel.getText();
 	}
 
-
 	public AbstractButton getCloseButton() {
 		return closeButton;
 	}
-
 
 	protected AbstractButton createCloseButton() {
 		Icon icon = ResourceManager.getIcon("tab.close");

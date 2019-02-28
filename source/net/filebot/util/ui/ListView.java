@@ -1,6 +1,8 @@
 
 package net.filebot.util.ui;
 
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -69,7 +71,7 @@ public class ListView extends JList {
 	}
 
 	protected void paintBlockSelection(Graphics2D g2d, Rectangle selection) {
-		g2d.setPaint(SwingUI.derive(getSelectionBackground(), 0.3f));
+		g2d.setPaint(withAlpha(getSelectionBackground(), 0.3f));
 		g2d.fill(selection);
 
 		g2d.setPaint(getSelectionBackground());
