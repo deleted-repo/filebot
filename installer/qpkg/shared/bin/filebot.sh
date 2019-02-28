@@ -20,16 +20,18 @@ export PATH="$PATH:$PACKAGE_LIBRARY_PATH"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
-# choose archive extractor / media characteristics parser
-ARCHIVE_EXTRACTOR="ShellExecutables"
+# use ffprobe executable
 MEDIA_PARSER="ffprobe"
-
-# choose ffprobe executable
 FFPROBE="/mnt/ext/opt/medialibrary/bin/ffprobe"
+
+# use 7z and unrar executables
+ARCHIVE_EXTRACTOR="ShellExecutables"
+P7ZIP="/usr/local/sbin/7z"
+UNRAR="/usr/local/sbin/unrar"
 
 # select application data folder
 APP_DATA="$QPKG_ROOT/data/$USER"
 LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH"
 
 # start filebot
-java -Dapplication.deployment=qpkg -Dnet.filebot.license="$QPKG_ROOT/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.archive.extractor="$ARCHIVE_EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"
+java -Dapplication.deployment=qpkg -Dnet.filebot.license="$QPKG_ROOT/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.archive.extractor="$ARCHIVE_EXTRACTOR" -Dnet.filebot.archive.7z="$P7ZIP" -Dnet.filebot.archive.unrar="$UNRAR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"
