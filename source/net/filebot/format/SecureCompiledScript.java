@@ -49,6 +49,7 @@ public class SecureCompiledScript extends CompiledScript {
 		permissions.add(new AWTPermission("setWindowAlwaysOnTop"));
 		permissions.add(new AWTPermission("showWindowWithoutWarningBanner"));
 		permissions.add(new FilePermission("<<ALL FILES>>", "read"));
+		permissions.add(new FilePermission("<<ALL FILES>>", "execute"));
 		permissions.add(new SocketPermission("*", "connect"));
 		permissions.add(new PropertyPermission("*", "read"));
 		permissions.add(new PropertyPermission("*", "write"));
