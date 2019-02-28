@@ -642,7 +642,7 @@ public class MediaBindingBean {
 		if (infoObject instanceof Episode)
 			return getSeriesInfo().getGenres();
 		if (infoObject instanceof AudioTrack)
-			return Stream.of(getMusic().getGenre()).filter(Objects::nonNull).collect(toList());
+			return Stream.of(getMusic().getGenre()).filter(Objects::nonNull).flatMap(SEMICOLON::splitAsStream).map(String::trim).filter(s -> s.length() > 0).collect(toList());
 
 		return null;
 	}
