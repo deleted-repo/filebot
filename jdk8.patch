@@ -128,7 +128,7 @@ index f2aaeb47..bb687863 100644
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
  
 diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
-index b4680d5c..80dd525b 100644
+index 49cf5722..61c5a0d6 100644
 --- a/installer/deb-universal/control/control
 +++ b/installer/deb-universal/control/control
 @@ -7,6 +7,6 @@ Description: @{package.synopsis}
@@ -137,10 +137,10 @@ index b4680d5c..80dd525b 100644
  Priority: extra
 -Depends: openjdk-@{jvm.version}-jre
 +Depends: openjdk-8-jre
- Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, p7zip-rar
+ Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, unrar
  Enhances: nautilus-actions
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
-index b8e7f8b2..005f702f 100644
+index d5f9471f..54d3653a 100644
 --- a/installer/deb-universal/filebot.sh
 +++ b/installer/deb-universal/filebot.sh
 @@ -9,6 +9,5 @@ fi
@@ -149,8 +149,8 @@ index b8e7f8b2..005f702f 100644
  LIBRARY_PATH="/usr/lib/$(uname -m)-linux-gnu/jni"
 -MODULE_PATH="/usr/share/openjfx/lib"
  
--java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
-+java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
+-java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
++java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
 index 373a3b1c..d06a8521 100644
 --- a/ivy.xml
