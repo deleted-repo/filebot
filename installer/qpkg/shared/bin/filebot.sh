@@ -21,7 +21,7 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 
 # choose archive extractor / media characteristics parser
-ARCHIVE_EXTRACTOR="ApacheVFS"
+ARCHIVE_EXTRACTOR="ShellExecutables"
 MEDIA_PARSER="ffprobe"
 
 # choose ffprobe executable
@@ -32,4 +32,4 @@ APP_DATA="$QPKG_ROOT/data/$USER"
 LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH"
 
 # start filebot
-java -Dapplication.deployment=qpkg -Dnet.filebot.license="$QPKG_ROOT/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.Archive.extractor="$ARCHIVE_EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"
+java -Dapplication.deployment=qpkg -Dnet.filebot.license="$QPKG_ROOT/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.archive.extractor="$ARCHIVE_EXTRACTOR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"

@@ -56,7 +56,7 @@ parts:
       - libmediainfo0v5
       - libchromaprint-tools
       - p7zip-full
-      - p7zip-rar
+      - unrar
       - xdg-utils
     after:
       - desktop-gtk2

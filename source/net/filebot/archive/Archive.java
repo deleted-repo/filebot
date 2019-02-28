@@ -24,19 +24,19 @@ import net.sf.sevenzipjbinding.ArchiveFormat;
 public class Archive implements Closeable {
 
 	public static Extractor getExtractor() {
-		return SystemProperty.of("net.filebot.Archive.extractor", Extractor::valueOf, Extractor.SevenZipNativeBindings).get();
+		return SystemProperty.of("net.filebot.archive.extractor", Extractor::valueOf, Extractor.SevenZipNativeBindings).get();
 	}
 
 	public static enum Extractor {
 
-		SevenZipNativeBindings, SevenZipExecutable, ApacheVFS;
+		SevenZipNativeBindings, ShellExecutables, ApacheVFS;
 
 		public ArchiveExtractor newInstance(File archive) throws Exception {
 			switch (this) {
 			case SevenZipNativeBindings:
 				return new SevenZipNativeBindings(archive);
-			case SevenZipExecutable:
-				return new SevenZipExecutable(archive);
+			case ShellExecutables:
+				return new ShellExecutables(archive);
 			default:
 				return new ApacheVFS(archive);
 			}
@@ -45,7 +45,7 @@ public class Archive implements Closeable {
 		public String[] getSupportedTypes() {
 			switch (this) {
 			case SevenZipNativeBindings:
-			case SevenZipExecutable:
+			case ShellExecutables:
 				return stream(ArchiveFormat.values()).map(ArchiveFormat::getMethodName).toArray(String[]::new);
 			default:
 				try {

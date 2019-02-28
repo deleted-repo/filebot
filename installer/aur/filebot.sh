@@ -11,4 +11,4 @@ fi
 APP_DATA="$HOME/.config/filebot"
 LIBRARY_PATH="$FILEBOT_HOME/lib/$(uname -m)"
 
-$JAVA_HOME/bin/java -Dapplication.deployment=aur -Dapplication.update=skip -Dnet.filebot.Archive.extractor=SevenZipExecutable @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
+$JAVA_HOME/bin/java -Dapplication.deployment=aur -Dapplication.update=skip -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
