@@ -236,7 +236,7 @@ public class SelectButton<T> extends JButton {
 				icon.paintIcon(c, g2d, 4, 3);
 			}
 
-			g2d.setPaint(Color.BLACK);
+			g2d.setPaint(Color.black);
 			g2d.fill(arrow);
 		}
 

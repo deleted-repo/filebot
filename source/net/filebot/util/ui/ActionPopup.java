@@ -1,6 +1,7 @@
 package net.filebot.util.ui;
 
-import java.awt.Color;
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.event.ActionListener;
 
 import javax.swing.Action;
@@ -33,7 +34,7 @@ public class ActionPopup extends JPopupMenu {
 		actionPanel.setOpaque(false);
 
 		statusLabel.setFont(statusLabel.getFont().deriveFont(10f));
-		statusLabel.setForeground(Color.GRAY);
+		statusLabel.setForeground(getPassiveColor());
 
 		setLayout(new MigLayout("nogrid, fill, insets 0"));
 

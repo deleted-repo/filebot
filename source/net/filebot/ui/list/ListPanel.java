@@ -3,10 +3,10 @@ package net.filebot.ui.list;
 import static java.util.stream.Collectors.*;
 import static javax.swing.BorderFactory.*;
 import static net.filebot.Settings.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -134,7 +134,7 @@ public class ListPanel extends JComponent {
 
 		Border defaultBorder = new JTextField().getBorder();
 		Border okBorder = createCompoundBorder(defaultBorder, createEmptyBorder(2, 2, 2, 2));
-		Border errorBorder = createCompoundBorder(createLineBorder(Color.RED, 1), createCompoundBorder(defaultBorder, createEmptyBorder(1, 1, 1, 1)));
+		Border errorBorder = createCompoundBorder(createLineBorder(getErrorColor(), 1), createCompoundBorder(defaultBorder, createEmptyBorder(1, 1, 1, 1)));
 
 		editorScrollPane.setBorder(okBorder);
 

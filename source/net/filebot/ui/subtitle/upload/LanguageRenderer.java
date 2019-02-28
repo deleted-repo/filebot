@@ -1,6 +1,7 @@
 package net.filebot.ui.subtitle.upload;
 
-import java.awt.Color;
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.Component;
 
 import javax.swing.DefaultListCellRenderer;
@@ -29,7 +30,7 @@ class LanguageRenderer implements TableCellRenderer, ListCellRenderer {
 		} else {
 			c.setText("<Click to select language>");
 			c.setIcon(null);
-			c.setForeground(Color.LIGHT_GRAY);
+			c.setForeground(getPassiveColor());
 		}
 		return c;
 	}

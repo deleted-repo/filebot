@@ -59,11 +59,15 @@ public class ThemeSupport {
 	}
 
 	public static Color getHelpPanelBackground() {
-		return getColor(0xFFFFE1);
+		return theme.isDark() ? new Color(0x313131) : new Color(0xFFFFE1);
 	}
 
 	public static Border getHelpPanelBorder() {
 		return createLineBorder(getColor(0xACA899));
+	}
+
+	public static Color getErrorColor() {
+		return Color.red;
 	}
 
 	public static Color getLinkColor() {
@@ -71,11 +75,11 @@ public class ThemeSupport {
 	}
 
 	public static Color getActiveColor() {
-		return new Color(0x6495ED);// CornflowerBlue
+		return new Color(0x6495ED);// Cornflower Blue
 	}
 
 	public static Color getPassiveColor() {
-		return Color.gray;
+		return Color.lightGray;
 	}
 
 	public static Color getVerificationColor() {

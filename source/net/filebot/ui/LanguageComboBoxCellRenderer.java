@@ -1,6 +1,7 @@
 package net.filebot.ui;
 
-import java.awt.Color;
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.Component;
 
 import javax.swing.JLabel;
@@ -47,7 +48,7 @@ public class LanguageComboBoxCellRenderer implements ListCellRenderer {
 
 		if (index == 0 || index == model.favorites().size()) {
 			// add separator border
-			c.setBorder(new CompoundBorder(new DashedSeparator(10, 4, Color.lightGray, list.getBackground()), c.getBorder()));
+			c.setBorder(new CompoundBorder(new DashedSeparator(10, 4, getPassiveColor(), list.getBackground()), c.getBorder()));
 		}
 
 		return c;

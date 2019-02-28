@@ -39,7 +39,7 @@ public class ChecksumCellRenderer extends DefaultTableCellRenderer {
 
 		// if row state is ERROR and if we are not selected use text color RED,
 		// else use default table colors
-		setForeground(isSelected ? table.getSelectionForeground() : isError ? Color.RED : isVerificationColumn(table, column) ? verificationForeground : table.getForeground());
+		setForeground(isSelected ? table.getSelectionForeground() : isError ? getErrorColor() : isVerificationColumn(table, column) ? verificationForeground : table.getForeground());
 		setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
 
 		// use BOLD font on ERROR

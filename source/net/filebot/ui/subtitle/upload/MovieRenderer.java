@@ -1,6 +1,7 @@
 package net.filebot.ui.subtitle.upload;
 
-import java.awt.Color;
+import static net.filebot.ui.ThemeSupport.*;
+
 import java.awt.Component;
 
 import javax.swing.Icon;
@@ -31,7 +32,7 @@ class MovieRenderer extends DefaultTableCellRenderer {
 			setText("<Click to select movie / series>");
 			setToolTipText(null);
 			setIcon(null);
-			setForeground(Color.LIGHT_GRAY);
+			setForeground(getPassiveColor());
 		}
 
 		return this;

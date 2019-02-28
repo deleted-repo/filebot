@@ -384,12 +384,12 @@ class SubtitleAutoMatchDialog extends JDialog {
 					// no subtitles found
 					setText("No subtitles found");
 					setIcon(null);
-					setForeground(Color.gray);
+					setForeground(getPassiveColor());
 				} else {
 					// no subtitles found
 					setText("No subtitles selected");
 					setIcon(null);
-					setForeground(Color.gray);
+					setForeground(getPassiveColor());
 				}
 			} else if (subtitleBean.getState() == StateValue.PENDING) {
 				// download in the queue
@@ -429,7 +429,7 @@ class SubtitleAutoMatchDialog extends JDialog {
 			SubtitleDescriptorBean subtitleBean = (SubtitleDescriptorBean) value;
 
 			if (isEditor && index == list.getModel().getSize() - 2) {
-				setBorder(new CompoundBorder(new DashedSeparator(10, 4, Color.lightGray, list.getBackground()), getBorder())); // this element is always the last one
+				setBorder(new CompoundBorder(new DashedSeparator(10, 4, getPassiveColor(), list.getBackground()), getBorder())); // this element is always the last one
 			}
 
 			if (value == null) {

@@ -1,11 +1,11 @@
 
 package net.filebot.ui.sfv;
 
-import static java.awt.Color.*;
 import static java.awt.Cursor.*;
 import static java.awt.Font.*;
 import static java.awt.RenderingHints.*;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -30,7 +30,7 @@ public class ChecksumButton extends JToggleButton {
 		setMinimumSize(getPreferredSize());
 		setMaximumSize(getPreferredSize());
 
-		setForeground(WHITE);
+		setForeground(Color.white);
 		setFont(new Font(DIALOG, PLAIN, 11));
 
 		// as image button

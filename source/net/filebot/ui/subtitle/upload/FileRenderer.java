@@ -1,8 +1,8 @@
 package net.filebot.ui.subtitle.upload;
 
 import static net.filebot.MediaTypes.*;
+import static net.filebot.ui.ThemeSupport.*;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 
@@ -31,7 +31,7 @@ class FileRenderer extends DefaultTableCellRenderer {
 			setText("<Click to select video file>");
 			setToolTipText(null);
 			setIcon(null);
-			setForeground(Color.LIGHT_GRAY);
+			setForeground(getPassiveColor());
 		}
 
 		return this;

@@ -13,7 +13,6 @@ import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.ui.SwingUI.*;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -539,7 +538,7 @@ public class FormatDialog extends JDialog {
 			status.setVisible(true);
 
 			preview.setVisible(false);
-			editor.setForeground(Color.red);
+			editor.setForeground(getErrorColor());
 		}
 	}
 

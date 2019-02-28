@@ -59,7 +59,7 @@ public class SubtitleViewer extends JFrame {
 	private final JTextField filterEditor = createFilterEditor();
 
 	private Color defaultFilterForeground = filterEditor.getForeground();
-	private Color disabledFilterForeground = Color.lightGray;
+	private Color disabledFilterForeground = getPassiveColor();
 
 	public SubtitleViewer(String title) {
 		super(title);
