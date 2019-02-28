@@ -57,7 +57,7 @@ index b1153365..116c9c5a 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index a5ec7942..91cbd8db 100644
+index f2aaeb47..bb687863 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -118,7 +118,7 @@ index a5ec7942..91cbd8db 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -576,7 +568,7 @@
+@@ -579,7 +571,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
@@ -415,7 +415,7 @@ index 21b83255..aec903d3 100644
  						model.stream().filter(f -> isLockedFolder(f)).findFirst().ifPresent(f -> {
  							invokeLater(250, () -> {
 diff --git a/source/net/filebot/platform/mac/MacAppUtilities.java b/source/net/filebot/platform/mac/MacAppUtilities.java
-index 71ac7462..9f099afd 100644
+index b2883e29..55576632 100644
 --- a/source/net/filebot/platform/mac/MacAppUtilities.java
 +++ b/source/net/filebot/platform/mac/MacAppUtilities.java
 @@ -7,7 +7,6 @@ import java.awt.EventQueue;
@@ -426,7 +426,7 @@ index 71ac7462..9f099afd 100644
  import java.io.File;
  import java.util.ArrayList;
  import java.util.Collection;
-@@ -97,20 +96,6 @@ public class MacAppUtilities {
+@@ -98,20 +97,6 @@ public class MacAppUtilities {
  		// improved UI defaults
  		UIManager.put("TitledBorder.border", UIManager.getBorder("InsetBorder.aquaVariant"));
  
@@ -461,18 +461,10 @@ index 53eb62d9..ad02288e 100644
  
  	protected static List<String> decodeStringSequence(ByteBuffer bb) {
 diff --git a/source/net/filebot/ui/MainFrame.java b/source/net/filebot/ui/MainFrame.java
-index 4dc2d284..8888751a 100644
+index 4e1e33f5..3a9b9779 100644
 --- a/source/net/filebot/ui/MainFrame.java
 +++ b/source/net/filebot/ui/MainFrame.java
-@@ -12,7 +12,6 @@ import static net.filebot.Settings.*;
- import static net.filebot.util.ui.SwingUI.*;
- 
- import java.awt.Color;
--import java.awt.Desktop;
- import java.awt.Dialog.ModalExclusionType;
- import java.awt.Dimension;
- import java.awt.FlowLayout;
-@@ -223,11 +222,7 @@ public class MainFrame extends JFrame {
+@@ -223,11 +223,7 @@ public class MainFrame extends JFrame {
  					selectEnabled = true;
  
  					// bring window to front when drag-and-drop operation is in progress
@@ -509,10 +501,10 @@ index ffae21d8..414e9c0d 100644
  			Rectangle2D r = p1.createUnion(p2);
  			double w = r.getWidth() + 1;
 diff --git a/source/net/filebot/util/ui/SwingUI.java b/source/net/filebot/util/ui/SwingUI.java
-index 9bc7f6d8..8837848e 100644
+index 951b97f0..0e4a7abc 100644
 --- a/source/net/filebot/util/ui/SwingUI.java
 +++ b/source/net/filebot/util/ui/SwingUI.java
-@@ -420,11 +420,9 @@ public final class SwingUI {
+@@ -416,11 +416,9 @@ public final class SwingUI {
  					Desktop.getDesktop().open(file);
  					break;
  				case REVEAL:
