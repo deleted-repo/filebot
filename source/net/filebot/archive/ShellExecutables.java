@@ -101,14 +101,14 @@ public class ShellExecutables implements ArchiveExtractor {
 
 			@Override
 			public void extract(File archive, File outputFolder) throws IOException {
-				String[] command = { getCommand(), "x", "-y", "-aos", archive.getPath(), "-o" + outputFolder.getPath() };
+				String[] command = { getCommand(), "x", "-y", "-o" + outputFolder.getPath(), archive.getPath() };
 
 				execute(command);
 			}
 
 			@Override
 			public void extract(File archive, File outputFolder, FileFilter filter) throws IOException {
-				String[] command = { getCommand(), "x", "-y", "-aos", archive.getPath(), "-o" + outputFolder.getPath() };
+				String[] command = { getCommand(), "x", "-y", "-o" + outputFolder.getPath(), archive.getPath() };
 				String[] selection = listFiles(archive).stream().filter(f -> filter.accept(f.toFile())).map(FileInfo::getPath).toArray(String[]::new);
 
 				execute(command, selection);
