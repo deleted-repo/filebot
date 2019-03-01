@@ -11,10 +11,8 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import net.filebot.util.ByteBufferOutputStream;
 import net.filebot.util.FileUtilities.ExtensionFileFilter;
@@ -31,8 +29,8 @@ public class ShellExecutables implements ArchiveExtractor {
 			throw new FileNotFoundException(archive.getPath());
 		}
 
-		this.command = getCommand(archive);
-		this.archive = archive;
+		this.archive = archive.getCanonicalFile();
+		this.command = getCommand(this.archive);
 	}
 
 	@Override
@@ -42,16 +40,20 @@ public class ShellExecutables implements ArchiveExtractor {
 
 	@Override
 	public void extract(File outputFolder) throws IOException {
-		command.extract(archive, outputFolder);
+		command.extract(archive, outputFolder.getCanonicalFile());
 	}
 
 	@Override
 	public void extract(File outputFolder, FileFilter filter) throws IOException {
-		command.extract(archive, outputFolder, filter);
+		command.extract(archive, outputFolder.getCanonicalFile(), filter);
 	}
 
 	protected static Command getCommand(File archive) {
 		return RAR_FILES.accept(archive) ? Command.unrar : Command.p7zip;
+	}
+
+	protected static CharSequence execute(String[]... command) throws IOException {
+		return execute(stream(command).flatMap(a -> stream(a)).toArray(String[]::new));
 	}
 
 	protected static CharSequence execute(String... command) throws IOException {
@@ -88,64 +90,35 @@ public class ShellExecutables implements ArchiveExtractor {
 
 			@Override
 			public List<FileInfo> listFiles(File archive) throws IOException {
-				CharSequence output = execute(getCommand(), "l", "-slt", "-y", archive.getPath());
+				CharSequence output = execute(getCommand(), "l", "-y", archive.getPath());
 
-				List<FileInfo> paths = new ArrayList<FileInfo>();
-
-				String path = null;
-				long size = -1;
-
-				for (String line : NEWLINE.split(output)) {
-					int split = line.indexOf(" = ");
-
-					// ignore empty lines
-					if (split < 0) {
-						continue;
-					}
-
-					String key = line.substring(0, split);
-					String value = line.substring(split + 3, line.length());
-
-					// ignore empty lines
-					if (key.isEmpty() || value.isEmpty()) {
-						continue;
-					}
-
-					if ("Path".equals(key)) {
-						path = value;
-					} else if ("Size".equals(key)) {
-						size = Long.parseLong(value);
-					}
-
-					if (path != null && size >= 0) {
-						paths.add(new SimpleFileInfo(path, size));
-
-						path = null;
-						size = -1;
-					}
-				}
-
-				return paths;
+				return NEWLINE.splitAsStream(output).map(String::trim).map(l -> SPACE.split(l, 6)).filter(r -> {
+					return r.length == 6 && !r[5].isEmpty() && NON_DIGIT.matcher(r[2]).matches() && DIGIT.matcher(r[3]).matches();
+				}).map(r -> {
+					return new SimpleFileInfo(r[5], Long.parseLong(r[3]));
+				}).collect(toList());
 			}
 
 			@Override
 			public void extract(File archive, File outputFolder) throws IOException {
-				execute(getCommand(), "x", "-y", "-aos", archive.getPath(), "-o" + outputFolder.getCanonicalPath());
+				String[] command = { getCommand(), "x", "-y", "-aos", archive.getPath(), "-o" + outputFolder.getPath() };
+
+				execute(command);
 			}
 
 			@Override
 			public void extract(File archive, File outputFolder, FileFilter filter) throws IOException {
-				Stream<String> command = Stream.of(getCommand(), "x", "-y", "-aos", archive.getPath(), "-o" + outputFolder.getCanonicalPath());
-				Stream<String> selection = listFiles(archive).stream().filter(f -> filter.accept(f.toFile())).map(FileInfo::getPath);
+				String[] command = { getCommand(), "x", "-y", "-aos", archive.getPath(), "-o" + outputFolder.getPath() };
+				String[] selection = listFiles(archive).stream().filter(f -> filter.accept(f.toFile())).map(FileInfo::getPath).toArray(String[]::new);
 
-				execute(Stream.concat(command, selection).toArray(String[]::new));
+				execute(command, selection);
 			}
 
 			@Override
 			public String version() throws IOException {
 				CharSequence output = execute(getCommand());
 
-				return NEWLINE.splitAsStream(output).map(String::trim).filter(s -> s.startsWith("p7zip")).findFirst().get();
+				return NEWLINE.splitAsStream(output).map(String::trim).filter(s -> s.startsWith("p7zip")).findFirst().orElse(null);
 			}
 		},
 
@@ -161,7 +134,7 @@ public class ShellExecutables implements ArchiveExtractor {
 				CharSequence output = execute(getCommand(), "l", "-y", archive.getPath());
 
 				return NEWLINE.splitAsStream(output).map(String::trim).map(l -> SPACE.split(l, 5)).filter(r -> {
-					return r.length == 5 && r[4].length() > 0 && DIGIT.matcher(r[1]).matches();
+					return r.length == 5 && r[4].length() > 0 && NON_DIGIT.matcher(r[0]).matches() && DIGIT.matcher(r[1]).matches();
 				}).map(r -> {
 					return new SimpleFileInfo(r[4], Long.parseLong(r[1]));
 				}).collect(toList());
@@ -169,23 +142,25 @@ public class ShellExecutables implements ArchiveExtractor {
 
 			@Override
 			public void extract(File archive, File outputFolder) throws IOException {
-				execute(getCommand(), "x", "-y", archive.getPath(), outputFolder.getCanonicalPath());
+				String[] command = { getCommand(), "x", "-y", archive.getPath(), outputFolder.getPath() };
+
+				execute(command);
 			}
 
 			@Override
 			public void extract(File archive, File outputFolder, FileFilter filter) throws IOException {
-				Stream<String> command = Stream.of(getCommand(), "x", "-y", archive.getPath());
-				Stream<String> selection = listFiles(archive).stream().filter(f -> filter.accept(f.toFile())).map(FileInfo::getPath);
-				Stream<String> output = Stream.of(outputFolder.getCanonicalPath());
+				String[] command = { getCommand(), "x", "-y", archive.getPath() };
+				String[] selection = listFiles(archive).stream().filter(f -> filter.accept(f.toFile())).map(FileInfo::getPath).toArray(String[]::new);
+				String[] output = { outputFolder.getPath() };
 
-				execute(Stream.concat(command, Stream.concat(selection, output)).toArray(String[]::new));
+				execute(command, selection, output);
 			}
 
 			@Override
 			public String version() throws IOException {
 				CharSequence output = execute(getCommand());
 
-				return Pattern.compile("\\n|\\s\\s+").splitAsStream(output).map(String::trim).filter(s -> s.length() > 0).findFirst().get();
+				return Pattern.compile("\\n+|\\s\\s+").splitAsStream(output).map(String::trim).filter(s -> !s.isEmpty()).findFirst().orElse(null);
 			}
 		};
 
