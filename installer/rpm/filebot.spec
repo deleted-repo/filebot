@@ -2,6 +2,7 @@ Name:           @{package.name}
 Version:        @{application.version}
 Release:        universal
 Summary:        @{package.synopsis}
+License:        Proprietary
 
 BuildArch:      noarch
 
