@@ -662,6 +662,37 @@
 	</target>
 
 
+	<target name="rpm" depends="revision" description="Build RPM package">
+		<property name="dir.staging" location="${dir.dist}/rpm" />
+
+		<copy-replace todir="${dir.staging}">
+			<fileset dir="${dir.installer}/rpm" />
+		</copy-replace>
+
+		<copy todir="${dir.staging}/usr/share/filebot/jar">
+			<fileset dir="${dir.dist}/lib" includes="*.jar" />
+		</copy>
+
+		<!-- use Debian package structure -->
+		<copy-replace todir="${dir.staging}/usr/share">
+			<fileset dir="${dir.installer}/deb/share" />
+		</copy-replace>
+		<copy todir="${dir.staging}/usr/share/icons/hicolor/scalable/apps">
+			<fileset dir="${dir.installer}/icons" includes="filebot.svg" />
+		</copy>
+
+		<!-- fix execute permissions -->
+		<chmod verbose="yes" perm="+x">
+			<fileset dir="${dir.staging}" includes="**/*.sh" />
+		</chmod>
+
+		<exec executable="docker" failonerror="yes">
+			<arg line="run -v ${dir.staging}:/src -v ${dir.staging}/build:/rpm --rm rednoah/rpm-build -bb filebot.spec" />
+		</exec>
+		<copy file="${dir.staging}/build/${package.name}_${application.version}-universal.rpm" tofile="${dir.dist}/${release}.rpm" />
+	</target>
+
+
 
 	<target name="spk" depends="revision" description="Build Synology NAS package">
 		<property name="dir.staging" location="${dir.dist}/spk" />
@@ -710,7 +741,7 @@
 	</target>
 
 
-	<target name="qpkg" depends="revision" description="Build QNAP NAS Package">
+	<target name="qpkg" depends="revision" description="Build QNAP NAS package">
 		<property name="dir.staging" location="${dir.dist}/qpkg" />
 		<property name="dir.base" location="${dir.dist}/qpkg/shared" />
 
