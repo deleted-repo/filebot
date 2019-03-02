@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 FILEBOT_HOME="/usr/share/filebot"
 
 if [ -z "$HOME" ]; then
