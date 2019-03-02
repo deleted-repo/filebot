@@ -668,7 +668,6 @@
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/rpm" />
 		</copy-replace>
-
 		<copy todir="${dir.staging}/usr/share/filebot/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
 		</copy>
@@ -689,7 +688,7 @@
 		<exec executable="docker" failonerror="yes">
 			<arg line="run -v ${dir.staging}:/src -v ${dir.staging}/build:/rpm --rm rednoah/rpm-build -bb filebot.spec" />
 		</exec>
-		<move file="${dir.staging}/build/RPMS/noarch/${package.name}-${application.version}-universal.noarch.rpm" tofile="${dir.dist}/${release}.rpm" />
+		<copy file="${dir.staging}/build/RPMS/noarch/${package.name}-${application.version}-universal.noarch.rpm" tofile="${dir.dist}/${release}.rpm" />
 	</target>
 
 
