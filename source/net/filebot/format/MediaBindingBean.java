@@ -834,6 +834,11 @@ public class MediaBindingBean {
 		return String.format("%.1f Mbps", getOverallBitRate() / 1e6f);
 	}
 
+	@Define("fps")
+	public Number getFrameRate() {
+		return new BigDecimal(getMediaInfo(StreamKind.Video, 0, "FrameRate"));
+	}
+
 	@Define("khz")
 	public String getSamplingRate() {
 		return getMediaInfo(StreamKind.Audio, 0, "SamplingRate/String");
