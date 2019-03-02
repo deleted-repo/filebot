@@ -10,7 +10,6 @@ Requires:       java-1.8.0-openjdk
 Requires:       java-1.8.0-openjdk-openjfx
 Requires:       jna
 Requires:       libmediainfo
-Requires:       libchromaprint
 Requires:       p7zip
 Requires:       p7zip-plugins
 
