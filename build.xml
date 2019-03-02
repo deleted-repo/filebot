@@ -834,6 +834,7 @@
 			<include name="*.zip" />
 			<include name="*.pkg" />
 			<include name="*.deb" />
+			<include name="*.rpm" />
 			<include name="*.tar.xz" />
 			<include name="*.spk" />
 			<include name="*.qpkg" />
