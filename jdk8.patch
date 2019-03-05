@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index b1153365..116c9c5a 100644
+index c338d106..b61fc331 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -40,12 +40,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -57,7 +57,7 @@ index b1153365..116c9c5a 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index f2aaeb47..bb687863 100644
+index de3c2b0e..35eb3bf2 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -140,14 +140,14 @@ index 49cf5722..61c5a0d6 100644
  Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, unrar
  Enhances: nautilus-actions
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
-index d5f9471f..54d3653a 100644
+index 0d724f94..d6b4f47f 100644
 --- a/installer/deb-universal/filebot.sh
 +++ b/installer/deb-universal/filebot.sh
-@@ -9,6 +9,5 @@ fi
- # select application data folder
- APP_DATA="$HOME/.filebot"
- LIBRARY_PATH="/usr/lib/$(uname -m)-linux-gnu/jni"
--MODULE_PATH="/usr/share/openjfx/lib"
+@@ -11,6 +11,5 @@ APP_DATA="$HOME/.filebot"
+ 
+ # select libjnidispatch.system.so from $(uname -m)-linux-gnu folder
+ LIBRARY_PATH=/usr/lib/*-linux-gnu*/jni
+-MODULE_PATH=/usr/share/openjfx/lib
  
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
