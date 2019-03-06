@@ -140,13 +140,13 @@ index 49cf5722..61c5a0d6 100644
  Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, unrar
  Enhances: nautilus-actions
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
-index 0d724f94..d6b4f47f 100644
+index 41e87444..05422081 100644
 --- a/installer/deb-universal/filebot.sh
 +++ b/installer/deb-universal/filebot.sh
 @@ -11,6 +11,5 @@ APP_DATA="$HOME/.filebot"
  
  # select libjnidispatch.system.so from $(uname -m)-linux-gnu folder
- LIBRARY_PATH=/usr/lib/*-linux-gnu*/jni
+ LIBRARY_PATH=$(echo /usr/lib/*-linux-gnu*/jni | tr ' ' ':')
 -MODULE_PATH=/usr/share/openjfx/lib
  
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
