@@ -10,7 +10,6 @@ fi
 APP_DATA="$HOME/.filebot"
 
 # select libjnidispatch.system.so from $(uname -m)-linux-gnu folder
-LIBRARY_PATH=/usr/lib/*-linux-gnu*/jni
-MODULE_PATH=/usr/share/openjfx/lib
+LIBRARY_PATH=$(echo /usr/lib/*-linux-gnu*/jni | tr ' ' ':')
 
-java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
+java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
