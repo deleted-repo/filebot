@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index c338d106..b61fc331 100644
+index f545ea20..9580b5c4 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -40,12 +40,12 @@ link.release.index: https://get.filebot.net/filebot
@@ -57,7 +57,7 @@ index c338d106..b61fc331 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index de3c2b0e..35eb3bf2 100644
+index c6a43441..00554ec2 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -125,10 +125,10 @@ index de3c2b0e..35eb3bf2 100644
 -		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_universal.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 +		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_universal-jdk8.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
- 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
+ 			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
 diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
-index 49cf5722..61c5a0d6 100644
+index df921f9b..7b3eb47a 100644
 --- a/installer/deb-universal/control/control
 +++ b/installer/deb-universal/control/control
 @@ -7,6 +7,6 @@ Description: @{package.synopsis}
@@ -137,7 +137,7 @@ index 49cf5722..61c5a0d6 100644
  Priority: extra
 -Depends: openjdk-@{jvm.version}-jre
 +Depends: openjdk-8-jre
- Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, unrar
+ Recommends: openjfx, libjna-java, mediainfo, libchromaprint-tools, p7zip-full, unrar
  Enhances: nautilus-actions
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
 index 41e87444..05422081 100644
