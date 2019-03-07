@@ -33,12 +33,26 @@ import net.filebot.ResourceManager;
 
 public class TheTVDBClient extends AbstractEpisodeListProvider implements ArtworkProvider {
 
+	private static URL getEndpoint() {
+		try {
+			return new URL(System.getProperty("net.filebot.TheTVDB.url", "https://api.thetvdb.com/"));
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 	private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
-	private String apikey;
+	private final URL api;
+	private final String apikey;
+
+	public TheTVDBClient(URL api, String apikey) {
+		this.api = api;
+		this.apikey = apikey;
+	}
 
 	public TheTVDBClient(String apikey) {
-		this.apikey = apikey;
+		this(getEndpoint(), apikey);
 	}
 
 	@Override
@@ -68,7 +82,7 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 	}
 
 	protected URL getEndpoint(String path) throws Exception {
-		return new URL("https://api.thetvdb.com/" + path);
+		return new URL(api, path);
 	}
 
 	private Map<String, String> getRequestHeader(Locale locale) {
