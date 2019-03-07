@@ -37,18 +37,33 @@ import net.filebot.ResourceManager;
 
 public class TMDbClient implements MovieIdentificationService, ArtworkProvider {
 
+	private static URL getEndpoint() {
+		try {
+			return new URL(System.getProperty("net.filebot.TheMovieDB.url", "https://api.themoviedb.org/3/"));
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
+	private static boolean isAdultEnabled() {
+		return Boolean.parseBoolean(System.getProperty("net.filebot.TheMovieDB.adult"));
+	}
+
 	// X-RateLimit: 40 requests per 10 seconds => https://developers.themoviedb.org/3/getting-started/request-rate-limiting
 	private static final FloodLimit REQUEST_LIMIT = new FloodLimit(35, 10, TimeUnit.SECONDS);
 
-	private final String host = "api.themoviedb.org";
-	private final String version = "3";
+	private final URL api;
+	private final String apikey;
+	private final boolean adult;
 
-	private String apikey;
-	private boolean adult;
-
-	public TMDbClient(String apikey, boolean adult) {
+	public TMDbClient(URL api, String apikey, boolean adult) {
+		this.api = api;
 		this.apikey = apikey;
 		this.adult = adult;
+	}
+
+	public TMDbClient(String apikey) {
+		this(getEndpoint(), apikey, isAdultEnabled());
 	}
 
 	@Override
@@ -381,18 +396,17 @@ public class TMDbClient implements MovieIdentificationService, ArtworkProvider {
 		return json;
 	}
 
-	protected URL getResource(String path, String language) throws Exception {
-		StringBuilder file = new StringBuilder();
-		file.append('/').append(version);
-		file.append('/').append(path);
-		file.append(path.lastIndexOf('?') < 0 ? '?' : '&');
+	protected URL getResource(String resource, String language) throws Exception {
+		StringBuilder path = new StringBuilder();
+		path.append(resource);
+		path.append(resource.lastIndexOf('?') < 0 ? '?' : '&');
 
 		if (language != null) {
-			file.append("language=").append(language).append('&');
+			path.append("language=").append(language).append('&');
 		}
-		file.append("api_key=").append(apikey);
+		path.append("api_key=").append(apikey);
 
-		return new URL("https", host, file.toString());
+		return new URL(api, path.toString());
 	}
 
 	protected String getLanguageCode(Locale locale) {

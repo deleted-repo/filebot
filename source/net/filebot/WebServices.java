@@ -53,7 +53,7 @@ public final class WebServices {
 
 	// movie sources
 	public static final OMDbClient OMDb = new OMDbClient(getApiKey("omdb"));
-	public static final TMDbClient TheMovieDB = new TMDbClientWithLocalSearch(getApiKey("themoviedb"), Boolean.parseBoolean(System.getProperty("net.filebot.WebServices.TheMovieDB.adult")));
+	public static final TMDbClient TheMovieDB = new TMDbClientWithLocalSearch(getApiKey("themoviedb"));
 
 	// episode sources
 	public static final TVMazeClient TVmaze = new TVMazeClient();
@@ -131,8 +131,8 @@ public final class WebServices {
 
 	public static class TMDbClientWithLocalSearch extends TMDbClient {
 
-		public TMDbClientWithLocalSearch(String apikey, boolean adult) {
-			super(apikey, adult);
+		public TMDbClientWithLocalSearch(String apikey) {
+			super(apikey);
 		}
 
 		// local TheMovieDB search index
