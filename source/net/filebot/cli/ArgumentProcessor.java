@@ -37,15 +37,16 @@ public class ArgumentProcessor {
 			runScript(cli, args);
 
 			// script finished successfully
-			log.finest("Done ヾ(＠⌒ー⌒＠)ノ");
-			return SUCCESS;
+			return finish(SUCCESS);
 		} catch (Throwable e) {
-			int exitCode = getExitCode(e);
-
 			// script failed with exception -> exit with non-zero exit code (and use positive code to avoid issues with launch4j launcher)
-			log.finest("Failure (°_°)");
-			return exitCode;
+			return finish(getExitCode(e));
 		}
+	}
+
+	private int finish(int code) {
+		log.finest(format("%s %s", getErrorMessage(code), getErrorKaomoji(code)));
+		return code;
 	}
 
 	private int getExitCode(Throwable e) {
