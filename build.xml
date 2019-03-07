@@ -669,7 +669,7 @@
 			<fileset dir="${dir.installer}/rpm" />
 		</copy-replace>
 		<copy todir="${dir.staging}/usr/share/filebot/jar">
-			<fileset dir="${dir.dist}/lib" includes="*.jar" />
+			<fileset dir="${dir.dist}/lib" includes="*.jar" excludes="${deb.jna.depends}" />
 		</copy>
 
 		<!-- use Debian package structure -->
