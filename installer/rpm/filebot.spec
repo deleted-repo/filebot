@@ -1,6 +1,6 @@
 Name:           @{package.name}
 Version:        @{application.version}
-Release:        universal
+Release:        universal-jdk8
 Summary:        @{package.synopsis}
 License:        Proprietary
 
