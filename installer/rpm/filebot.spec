@@ -9,7 +9,7 @@ BuildArch:      noarch
 Requires:       java-1.8.0-openjdk
 Requires:       java-1.8.0-openjdk-openjfx
 Requires:       jna
-Requires:       libmediainfo
+Requires:       mediainfo
 Requires:       p7zip
 Requires:       p7zip-plugins
 
@@ -28,8 +28,9 @@ cp -rvf %{src}/usr %{buildroot}
 
 %post
 ln -sf /usr/share/filebot/bin/filebot.sh /usr/bin/filebot
+ln -sf /usr/lib/java/jna.jar /usr/share/filebot/jar/jna.jar
 
 
-%postun
+%preun
 rm -f /usr/bin/filebot
-
+rm -f /usr/share/filebot/jar/jna.jar
