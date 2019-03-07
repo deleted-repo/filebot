@@ -572,8 +572,8 @@
 		<property name="dir.staging" location="${dir.dist}/deb-universal" />
 
 		<!-- use Debian package structure -->
-		<copy-replace todir="${dir.staging}">
-			<fileset dir="${dir.installer}/deb" />
+		<copy-replace todir="${dir.staging}/share">
+			<fileset dir="${dir.installer}/deb/share" />
 		</copy-replace>
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/deb-universal" />
@@ -581,7 +581,7 @@
 
 		<jdeb destfile="${dir.dist}/${application.name}_${application.version}_universal.deb" control="${dir.staging}/control" compression="${tar.compression}" verbose="true">
 			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
-			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" />
+			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
 
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
 			<tarfileset prefix="/usr/share" dir="${dir.staging}/share" />

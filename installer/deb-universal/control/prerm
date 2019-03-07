@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# unlink filebot command
+rm -f /usr/bin/filebot
+
+# unlink system JNA library
+rm -f /usr/share/filebot/jar/jna.jar

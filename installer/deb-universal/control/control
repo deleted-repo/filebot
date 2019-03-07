@@ -8,5 +8,5 @@ Homepage: @{package.homepage}
 Section: utils
 Priority: extra
 Depends: openjdk-@{jvm.version}-jre
-Recommends: openjfx, libjna-jni, libmediainfo0v5, libchromaprint-tools, p7zip-full, unrar
+Recommends: openjfx, libjna-java, mediainfo, libchromaprint-tools, p7zip-full, unrar
 Enhances: nautilus-actions
