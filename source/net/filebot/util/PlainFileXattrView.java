@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.DosFileAttributeView;
 import java.util.List;
 
@@ -15,11 +16,23 @@ public class PlainFileXattrView implements XattrView {
 
 	private static final String XATTR_FOLDER = System.getProperty("net.filebot.xattr.store", ".xattr");
 
+	private static Path getXattrFolder(Path f) {
+		Path xattrFolder = Paths.get(XATTR_FOLDER);
+
+		// absolute xattr folder
+		if (xattrFolder.isAbsolute()) {
+			return xattrFolder;
+		}
+
+		// xattr folder folder relative to the given file
+		return f.getParent().resolve(xattrFolder);
+	}
+
 	private final Path root;
 	private final Path node;
 
 	public PlainFileXattrView(Path path) throws IOException {
-		root = path.getParent().resolve(XATTR_FOLDER);
+		root = getXattrFolder(path);
 		node = root.resolve(path.getFileName());
 	}
 
