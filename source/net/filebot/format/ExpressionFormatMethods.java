@@ -150,6 +150,10 @@ public class ExpressionFormatMethods {
 		});
 	}
 
+	public static String replaceAll(String self, String pattern) {
+		return compile(pattern).matcher(self).replaceAll("");
+	}
+
 	public static String removeAll(String self, String pattern) {
 		return compile(pattern, CASE_INSENSITIVE | UNICODE_CHARACTER_CLASS | MULTILINE).matcher(self).replaceAll("").trim();
 	}
