@@ -688,7 +688,7 @@
 		<exec executable="docker" failonerror="yes">
 			<arg line="run -v ${dir.staging}:/src -v ${dir.staging}/build:/rpm --rm rednoah/rpm-build -bb filebot.spec" />
 		</exec>
-		<copy file="${dir.staging}/build/RPMS/noarch/${package.name}-${application.version}-universal-jdk8.noarch.rpm" tofile="${dir.dist}/${release}_universal-jdk8.rpm" />
+		<copy file="${dir.staging}/build/RPMS/noarch/${package.name}-${application.version}-universal.jdk8.noarch.rpm" tofile="${dir.dist}/${release}_universal-jdk8.rpm" />
 	</target>
 
 
