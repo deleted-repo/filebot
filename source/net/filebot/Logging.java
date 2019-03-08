@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.channels.FileChannel;
 import java.nio.file.StandardOpenOption;
 import java.time.ZoneId;
@@ -123,7 +124,7 @@ public final class Logging {
 
 	public static String getMessage(Object m, Throwable t) {
 		// try to unravel stacked exceptions
-		if (t.getCause() != null && (t instanceof RuntimeException || t instanceof ExecutionException)) {
+		if (t.getCause() != null && (t instanceof RuntimeException || t instanceof ExecutionException || t instanceof InvocationTargetException)) {
 			return getMessage(m, t.getCause());
 		}
 
