@@ -181,7 +181,7 @@ public class License {
 			File file = License.FILE.get();
 
 			// write to default license file path
-			log.finest(format("Write [%s] to [%s]", license, file));
+			log.config(format("Write [%s] to [%s]", license, file));
 			Files.write(file.toPath(), psm.getBytes(UTF_8));
 
 			// clear memoized instance and reload on next access
