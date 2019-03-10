@@ -178,9 +178,11 @@ public class License {
 		synchronized (License.INSTANCE) {
 			// check if license file is valid and not expired
 			License license = parseLicenseText(psm, true).check();
+			File file = License.FILE.get();
 
 			// write to default license file path
-			Files.write(License.FILE.get().toPath(), psm.getBytes(UTF_8));
+			log.finest(format("Write [%s] to [%s]", license, file));
+			Files.write(file.toPath(), psm.getBytes(UTF_8));
 
 			// clear memoized instance and reload on next access
 			License.INSTANCE.clear();
