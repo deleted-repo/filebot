@@ -1090,7 +1090,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	public Stream<String> getMediaInfo(Collection<File> files, FileFilter filter, ExpressionFormat format) throws Exception {
 		// use default expression format if not set
 		if (format == null) {
-			return getMediaInfo(files, filter, new ExpressionFormat("{fn} [{resolution} {vc} {channels} {ac} {hours}]"));
+			return getMediaInfo(files, filter, new ExpressionFormat("{fn} [{resolution} {vc} {channels} {ac} {hours} {mbps}]"));
 		}
 
 		return files.stream().filter(filter::accept).map(f -> {
