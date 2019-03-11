@@ -999,6 +999,24 @@
 	</target>
 
 
+	<target name="docs">
+		<path id="jar.classpath">
+			<fileset dir="${dir.dist}/lib">
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${jfx.path}">
+				<include name="*.jar" />
+			</fileset>
+		</path>
+
+		<javadoc destdir="${dir.dist}/docs/api" windowtitle="${application.name} ${application.version}" linksource="yes" public="yes" encoding="UTF-8">
+			<fileset dir="${dir.source}" includesfile="${dir.lib}/doc.includes" />
+			<classpath refid="jar.classpath" />
+			<link href="https://docs.oracle.com/en/java/javase/11/docs/api/" />
+		</javadoc>
+	</target>
+
+
 	<target name="eclipse-properties-builder">
 		<copy-replace todir="bin">
 			<fileset dir="source" includes="**/*.properties" />
