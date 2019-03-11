@@ -33,6 +33,8 @@ import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -429,6 +431,14 @@ public final class FileUtilities {
 				return false;
 		}
 		return true;
+	}
+
+	public static boolean lastModifiedWithin(File f, Duration d) throws IOException {
+		Instant now = Instant.now();
+		Instant lastModifiedTime = Files.getLastModifiedTime(f.toPath()).toInstant();
+		Duration age = Duration.between(lastModifiedTime, now);
+
+		return d.compareTo(age) > 0;
 	}
 
 	public static List<File> sortByUniquePath(Collection<File> files) {

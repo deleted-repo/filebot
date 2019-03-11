@@ -24,6 +24,7 @@ import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
 import java.security.ProtectionDomain;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -81,7 +82,7 @@ public class Main {
 					Settings.forPackage(Main.class).clear();
 
 					// restore preferences on start if empty (TODO: remove after a few releases)
-					ApplicationFolder.AppData.resolve("preferences.backup.xml").delete();
+					getPreferencesBackupFile().delete();
 				}
 
 				// clear caches
@@ -143,7 +144,7 @@ public class Main {
 				// restore preferences on start if empty (TODO: remove after a few releases)
 				try {
 					if (Preferences.userNodeForPackage(Main.class).keys().length == 0) {
-						File f = ApplicationFolder.AppData.resolve("preferences.backup.xml");
+						File f = getPreferencesBackupFile();
 						if (f.exists()) {
 							log.fine("Restore user preferences: " + f);
 							Settings.restore(f);
@@ -242,7 +243,15 @@ public class Main {
 			}
 
 			// restore preferences on start if empty (TODO: remove after a few releases)
-			Settings.store(ApplicationFolder.AppData.resolve("preferences.backup.xml"));
+			try {
+				File f = getPreferencesBackupFile();
+				if (!f.exists() || !lastModifiedWithin(f, Duration.ofDays(90))) {
+					log.fine("Store user preferences: " + f);
+					Settings.store(f);
+				}
+			} catch (Exception e) {
+				debug.log(Level.WARNING, "Failed to store preferences", e);
+			}
 
 			System.exit(0);
 		}));
@@ -269,6 +278,10 @@ public class Main {
 		// start application
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
+	}
+
+	private static File getPreferencesBackupFile() {
+		return ApplicationFolder.AppData.resolve("preferences.backup.xml");
 	}
 
 	/**
