@@ -31,7 +31,7 @@ public class MetricCascade implements SimilarityMetric {
 
 	@Override
 	public String toString() {
-		return stream(cascade).map(Object::toString).collect(joining(", ", "MetricCascade (", ")"));
+		return stream(cascade).map(Object::toString).collect(joining(", ", "MetricCascade(", ")"));
 	}
 
 }
