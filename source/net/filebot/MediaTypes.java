@@ -31,10 +31,6 @@ public class MediaTypes {
 		return types;
 	}
 
-	public static void main(String[] args) {
-		System.out.println(MediaTypes.types);
-	}
-
 	public static String getMediaType(String extension) {
 		for (Entry<String, ExtensionFileFilter> it : types.entrySet()) {
 			if (it.getValue().acceptExtension(extension)) {
