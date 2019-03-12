@@ -72,7 +72,7 @@ public class ShellExecutables implements ArchiveExtractor {
 			if (returnCode == 0) {
 				return output;
 			} else {
-				throw new IOException(String.format("%s failed with exit code %d: %s", asList(command), returnCode, SPACE.matcher(output).replaceAll(" ").trim()));
+				throw new IOException(String.format("%s failed with exit code %d: %s", asList(command), returnCode, output.trim()));
 			}
 		} catch (InterruptedException e) {
 			throw new IOException(String.format("%s timed out", asList(command)), e);
