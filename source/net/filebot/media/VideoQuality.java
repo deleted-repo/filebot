@@ -4,7 +4,6 @@ import static java.util.Comparator.*;
 import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.media.MediaDetection.*;
-import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.StringUtilities.*;
 
@@ -32,7 +31,7 @@ public class VideoQuality implements Comparator<File> {
 	private final Pattern repack = releaseInfo.getRepackPattern();
 
 	private int getRepack(File f) {
-		return find(f.getName(), repack) || find(xattr.getOriginalName(f), repack) ? 1 : 0;
+		return find(f.getName(), repack) ? 1 : 0;
 	}
 
 	private int getResolution(File f) {
@@ -43,7 +42,7 @@ public class VideoQuality implements Comparator<File> {
 			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 				return mi.getWidth() * mi.getHeight();
 			} catch (Exception e) {
-				debug.warning("Failed to read video resolution: " + e.getMessage());
+				debug.warning(message("Failed to read video resolution", e.getMessage()));
 			}
 		}
 
