@@ -999,7 +999,7 @@
 	</target>
 
 
-	<target name="docs">
+	<target name="docs" depends="revision">
 		<path id="jar.classpath">
 			<fileset dir="${dir.dist}/lib">
 				<include name="*.jar" />
@@ -1012,7 +1012,11 @@
 		<javadoc destdir="${dir.dist}/docs/api" windowtitle="${application.name} ${application.version}" linksource="yes" public="yes" encoding="UTF-8">
 			<fileset dir="${dir.source}" includesfile="${dir.lib}/doc.includes" />
 			<classpath refid="jar.classpath" />
+			<doctitle>${application.name} ${application.version}</doctitle>
+			<header>${application.name} ${application.version} (r${revision})</header>
+			<bottom>&lt;i&gt;Copyright © ${tstamp.year} ${package.company}. All Rights Reserved.&lt;/i&gt;</bottom>
 			<link href="https://docs.oracle.com/en/java/javase/11/docs/api/" />
+			<link href="http://docs.groovy-lang.org/latest/html/api/" />
 		</javadoc>
 	</target>
 
