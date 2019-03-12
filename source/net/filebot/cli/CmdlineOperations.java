@@ -1167,6 +1167,8 @@ public class CmdlineOperations implements CmdlineInterface {
 				}
 
 				log.info(format("Read archive [%s] and extract to [%s]", file.getName(), outputFolder));
+
+				createFolders(outputFolder);
 				FileMapper outputMapper = new FileMapper(outputFolder);
 
 				List<FileInfo> outputMapping = new ArrayList<FileInfo>();
