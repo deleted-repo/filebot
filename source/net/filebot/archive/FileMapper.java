@@ -1,6 +1,7 @@
 package net.filebot.archive;
 
 import static java.util.stream.Collectors.*;
+import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -40,9 +41,7 @@ public class FileMapper implements ExtractOutProvider {
 		File outputFolder = outputFile.getParentFile();
 
 		// create parent folder if necessary
-		if (!outputFolder.isDirectory() && !outputFolder.mkdirs()) {
-			throw new IOException("Failed to create folder: " + outputFolder);
-		}
+		createFolders(outputFolder);
 
 		return new FileOutputStream(outputFile);
 	}
