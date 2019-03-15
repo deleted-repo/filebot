@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import net.filebot.similarity.NameSimilarityMetric;
+import net.filebot.similarity.SeasonEpisodeMatcher.SxE;
 import net.filebot.util.FastFile;
 import net.filebot.web.Episode;
 import net.filebot.web.Movie;
@@ -108,7 +109,7 @@ public class AutoDetection {
 	}
 
 	public boolean isAnime(File f) {
-		if (parseEpisodeNumber(f.getName(), false) == null) {
+		if (!findEpisodeNumbers(f.getName(), false)) {
 			return false;
 		}
 
@@ -127,6 +128,20 @@ public class AutoDetection {
 
 		Object metaInfo = xattr.getMetaInfo(f);
 		return metaInfo instanceof Episode && AniDB.getIdentifier().equals(((Episode) metaInfo).getSeriesInfo().getDatabase());
+	}
+
+	private boolean findEpisodeNumbers(String s, boolean strict) {
+		List<SxE> matches = parseEpisodeNumber(s, strict);
+
+		if (matches == null || matches.isEmpty()) {
+			return false;
+		}
+
+		if (strict) {
+			return !matches.isEmpty();
+		}
+
+		return matches.stream().anyMatch(m -> m.season < 19 || m.season > 20) || findEpisodeNumbers(s, true);
 	}
 
 	public boolean anyMatch(File file, Pattern pattern) {
@@ -311,20 +326,20 @@ public class AutoDetection {
 
 		public boolean containsMovieYear() {
 			return m.getYear() >= 1950 && listPathTail(f, 3, true).stream().anyMatch(it -> {
-				return after(it.getName(), mym).map(amy -> parseEpisodeNumber(amy, false) == null).orElse(false);
+				return after(it.getName(), mym).map(amy -> !findEpisodeNumbers(amy, false)).orElse(false);
 			});
 		}
 
 		public boolean containsMovieNameYear() {
 			return find(mn, snm) && Stream.of(dn, fn).anyMatch(it -> {
 				return after(it, YEAR).map(ay -> {
-					return parseEpisodeNumber(ay, false) == null;
+					return !findEpisodeNumbers(ay, false);
 				}).orElse(false);
 			});
 		}
 
 		public boolean containsEpisodeNumbers() {
-			return parseEpisodeNumber(fn, true) != null || parseDate(fn) != null;
+			return findEpisodeNumbers(fn, true) || parseDate(fn) != null;
 		}
 
 		public boolean commonNumberPattern() {
@@ -341,7 +356,7 @@ public class AutoDetection {
 
 		public boolean episodeNumbers() {
 			String n = stripReleaseInfo(asn, false);
-			if (parseEpisodeNumber(n, false) != null || find(n, NUMBER_PAIR)) {
+			if (findEpisodeNumbers(n, false) || find(n, NUMBER_PAIR)) {
 				return Stream.of(dn, fn).anyMatch(it -> find(it, snm) && !matchMovie(it));
 			}
 			return false;
@@ -361,7 +376,7 @@ public class AutoDetection {
 		}
 
 		public boolean containsMovieName() {
-			return fn.contains(mn) && parseEpisodeNumber(after(fn, mnm).orElse(fn), false) == null;
+			return fn.contains(mn) && !findEpisodeNumbers(after(fn, mnm).orElse(fn), false);
 		}
 
 		public boolean similarNameYear() {
