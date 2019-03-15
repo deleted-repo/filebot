@@ -178,6 +178,10 @@ public class MediaInfo implements MediaCharacteristics {
 		return Integer.parseInt(get(StreamKind.Video, 0, "Height"));
 	}
 
+	public Double getBitRate() {
+		return Double.parseDouble(get(StreamKind.General, 0, "OverallBitRate"));
+	}
+
 	@Override
 	public Float getFrameRate() {
 		return Float.parseFloat(get(StreamKind.Video, 0, "FrameRate"));

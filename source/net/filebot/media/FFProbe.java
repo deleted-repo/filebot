@@ -93,6 +93,11 @@ public class FFProbe implements MediaCharacteristics {
 	}
 
 	@Override
+	public Double getBitRate() {
+		return Double.parseDouble(getFormat().get("bit_rate").toString());
+	}
+
+	@Override
 	public Float getFrameRate() {
 		return find("video", "avg_frame_rate").map(fps -> {
 			switch (fps) {

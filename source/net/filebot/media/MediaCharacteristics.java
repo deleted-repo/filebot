@@ -19,6 +19,8 @@ public interface MediaCharacteristics extends AutoCloseable {
 
 	Integer getHeight();
 
+	Double getBitRate();
+
 	Float getFrameRate();
 
 	String getTitle();
