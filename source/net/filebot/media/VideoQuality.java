@@ -21,7 +21,7 @@ public class VideoQuality implements Comparator<File> {
 		return DESCENDING_ORDER.compare(f1, f2) < 0;
 	}
 
-	private final Comparator<File> chain = comparingInt(this::getRepack).thenComparingInt(this::getResolution).thenComparingLong(File::length);
+	private final Comparator<File> chain = comparingInt(this::getRepack).thenComparingDouble(this::getScore).thenComparingLong(File::length);
 
 	@Override
 	public int compare(File f1, File f2) {
@@ -34,15 +34,15 @@ public class VideoQuality implements Comparator<File> {
 		return find(f.getName(), repack) ? 1 : 0;
 	}
 
-	private int getResolution(File f) {
+	private double getScore(File f) {
 		// use primary video file when checking video resolution of subtitle files or disk folders
 		f = new MediaBindingBean(f, f).getInferredMediaFile();
 
 		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
 			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
-				return mi.getWidth() * mi.getHeight();
+				return mi.getWidth() * mi.getHeight() * mi.getBitRate();
 			} catch (Exception e) {
-				debug.warning(message("Failed to read video resolution", e.getMessage()));
+				debug.warning(message("Failed to read video resolution or bitrate", e));
 			}
 		}
 
