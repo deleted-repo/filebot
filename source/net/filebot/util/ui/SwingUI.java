@@ -2,6 +2,7 @@ package net.filebot.util.ui;
 
 import static java.util.Collections.*;
 import static javax.swing.JOptionPane.*;
+import static net.filebot.Execute.*;
 import static net.filebot.Logging.*;
 import static net.filebot.Settings.*;
 
@@ -72,8 +73,7 @@ public final class SwingUI {
 				Desktop.getDesktop().browse(URI.create(uri));
 			} else {
 				// JDK BUG: Desktop.browse() doesn't work in snap environment but xdg-open works just fine
-				ProcessBuilder p = new ProcessBuilder("xdg-open", uri);
-				p.inheritIO().start();
+				system("xdg-open", uri);
 			}
 		} catch (Exception e) {
 			log.log(Level.SEVERE, "Failed to open URI: " + uri, e);

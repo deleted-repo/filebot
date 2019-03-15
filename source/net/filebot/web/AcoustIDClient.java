@@ -1,6 +1,7 @@
 package net.filebot.web;
 
 import static java.nio.charset.StandardCharsets.*;
+import static net.filebot.Execute.*;
 import static net.filebot.Logging.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
@@ -8,8 +9,6 @@ import static net.filebot.web.WebRequest.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.ProcessBuilder.Redirect;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Collection;
@@ -194,17 +193,16 @@ public class AcoustIDClient implements MusicIdentificationService {
 	}
 
 	public Map<ChromaprintField, String> fpcalc(File file) throws IOException, InterruptedException {
-		Map<ChromaprintField, String> output = new EnumMap<ChromaprintField, String>(ChromaprintField.class);
+		Map<ChromaprintField, String> fields = new EnumMap<ChromaprintField, String>(ChromaprintField.class);
 
-		ProcessBuilder command = new ProcessBuilder(getChromaprintCommand(), file.getCanonicalPath());
-		Process process = command.redirectError(Redirect.INHERIT).start();
+		CharSequence output = execute(getChromaprintCommand(), file.getCanonicalPath());
 
-		try (Scanner scanner = new Scanner(new InputStreamReader(process.getInputStream(), UTF_8))) {
+		try (Scanner scanner = new Scanner(output.toString())) {
 			while (scanner.hasNextLine()) {
 				String[] value = EQUALS.split(scanner.nextLine(), 2);
 				if (value.length == 2) {
 					try {
-						output.put(ChromaprintField.valueOf(value[0]), value[1]);
+						fields.put(ChromaprintField.valueOf(value[0]), value[1]);
 					} catch (Exception e) {
 						debug.warning(e::toString);
 					}
@@ -212,7 +210,7 @@ public class AcoustIDClient implements MusicIdentificationService {
 			}
 		}
 
-		return output;
+		return fields;
 	}
 
 	private static class MostFieldsNotNull implements Comparator<Object> {

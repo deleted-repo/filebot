@@ -57,6 +57,10 @@ public class Execute {
 		}
 	}
 
+	public static void system(String... command) throws IOException {
+		system(asList(command), null);
+	}
+
 	public static void system(String[] command, File directory) throws IOException {
 		system(asList(command), directory);
 	}

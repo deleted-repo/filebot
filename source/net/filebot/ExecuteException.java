@@ -13,7 +13,7 @@ public class ExecuteException extends IOException {
 	}
 
 	public ExecuteException(List<String> command, int exitCode) {
-		this(String.format("%s failed with exit code %d", command, exitCode), exitCode);
+		this(String.format("%s failed (%d)", command, exitCode), exitCode);
 	}
 
 	public int getExitCode() {

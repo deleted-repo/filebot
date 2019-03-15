@@ -2,6 +2,7 @@ package net.filebot;
 
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Execute.*;
 import static net.filebot.Logging.*;
 import static net.filebot.UserFiles.*;
 import static net.filebot.util.FileUtilities.*;
@@ -70,22 +71,12 @@ public enum StandardRenameAction implements RenameAction {
 			File dest = resolveDestination(from, to);
 
 			// clonefile or reflink requires filesystem that supports copy-on-write (e.g. apfs or btrfs)
-			ProcessBuilder process = new ProcessBuilder();
-
 			if (Platform.isMac()) {
 				// -c copy files using clonefile
-				process.command("cp", "-c", "-f", from.getPath(), dest.getPath());
+				system("cp", "-c", "-f", from.getPath(), dest.getPath());
 			} else {
 				// --reflink copy files using reflink
-				process.command("cp", "--reflink", "--force", from.isDirectory() ? "--recursive" : "--no-target-directory", from.getPath(), dest.getPath());
-			}
-
-			process.directory(from.getParentFile());
-			process.inheritIO();
-
-			int exitCode = process.start().waitFor();
-			if (exitCode != 0) {
-				throw new IOException(String.format("%s failed (%d)", process.command(), exitCode));
+				system("cp", "--reflink", "--force", from.isDirectory() ? "--recursive" : "--no-target-directory", from.getPath(), dest.getPath());
 			}
 
 			return dest;
