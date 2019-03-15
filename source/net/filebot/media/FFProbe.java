@@ -3,10 +3,10 @@ package net.filebot.media;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Execute.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -25,23 +25,12 @@ public class FFProbe implements MediaCharacteristics {
 	}
 
 	protected Map<String, Object> parse(File file) throws IOException, InterruptedException {
-		ProcessBuilder processBuilder = new ProcessBuilder(getFFProbeCommand(), "-show_streams", "-show_format", "-print_format", "json", "-v", "error", file.getCanonicalPath());
+		String[] command = { getFFProbeCommand(), "-show_streams", "-show_format", "-print_format", "json", "-v", "error", file.getCanonicalPath() };
 
-		processBuilder.directory(file.getParentFile());
-		processBuilder.redirectError(Redirect.INHERIT);
-
-		Process process = processBuilder.start();
+		CharSequence output = execute(command, file.getParentFile());
 
 		// parse process standard output
-		Map<String, Object> json = (Map) JsonReader.jsonToJava(process.getInputStream(), singletonMap(JsonReader.USE_MAPS, true));
-
-		int exitCode = process.waitFor();
-		if (exitCode != 0) {
-			throw new IOException(String.format("%s failed with exit code %d", processBuilder.command(), exitCode));
-		}
-
-		// group video / audio / subtitle streams together
-		return json;
+		return (Map) JsonReader.jsonToJava(output.toString(), singletonMap(JsonReader.USE_MAPS, true));
 	}
 
 	private Map<String, Object> json;

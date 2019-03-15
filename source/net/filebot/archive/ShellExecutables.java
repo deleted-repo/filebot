@@ -1,20 +1,16 @@
 package net.filebot.archive;
 
-import static java.nio.charset.StandardCharsets.*;
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
-import static net.filebot.Logging.*;
+import static net.filebot.Execute.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.filebot.util.ByteBufferOutputStream;
 import net.filebot.util.FileUtilities.ExtensionFileFilter;
 import net.filebot.vfs.FileInfo;
 import net.filebot.vfs.SimpleFileInfo;
@@ -48,35 +44,8 @@ public class ShellExecutables implements ArchiveExtractor {
 		command.extract(archive, outputFolder.getCanonicalFile(), filter);
 	}
 
-	protected static Command getCommand(File archive) {
+	protected Command getCommand(File archive) {
 		return RAR_FILES.accept(archive) ? Command.unrar : Command.p7zip;
-	}
-
-	protected static CharSequence execute(String[]... command) throws IOException {
-		return execute(stream(command).flatMap(a -> stream(a)).toArray(String[]::new));
-	}
-
-	protected static CharSequence execute(String... command) throws IOException {
-		Process process = new ProcessBuilder(command).redirectError(Redirect.INHERIT).start();
-
-		try (ByteBufferOutputStream bb = new ByteBufferOutputStream(8 * 1024)) {
-			bb.transferFully(process.getInputStream());
-
-			int returnCode = process.waitFor();
-			String output = UTF_8.decode(bb.getByteBuffer()).toString();
-
-			// DEBUG
-			debug.fine(format("Execute: %s", asList(command)));
-			debug.finest(output);
-
-			if (returnCode == 0) {
-				return output;
-			} else {
-				throw new IOException(String.format("%s failed with exit code %d: %s", asList(command), returnCode, output.trim()));
-			}
-		} catch (InterruptedException e) {
-			throw new IOException(String.format("%s timed out", asList(command)), e);
-		}
 	}
 
 	public enum Command {

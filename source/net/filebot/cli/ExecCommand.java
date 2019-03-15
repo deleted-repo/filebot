@@ -1,6 +1,7 @@
 package net.filebot.cli;
 
 import static java.util.stream.Collectors.*;
+import static net.filebot.Execute.*;
 import static net.filebot.Logging.*;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class ExecCommand {
 		this.directory = directory;
 	}
 
-	public void execute(MediaBindingBean... group) throws IOException, InterruptedException {
+	public void execute(MediaBindingBean... group) throws IOException {
 		if (parallel) {
 			executeParallel(group);
 		} else {
@@ -36,7 +37,7 @@ public class ExecCommand {
 		}
 	}
 
-	private void executeSequence(MediaBindingBean... group) throws IOException, InterruptedException {
+	private void executeSequence(MediaBindingBean... group) throws IOException {
 		// collect unique commands
 		List<List<String>> commands = Stream.of(group).map(v -> {
 			return template.stream().map(t -> getArgumentValue(t, v)).filter(Objects::nonNull).collect(toList());
@@ -44,18 +45,18 @@ public class ExecCommand {
 
 		// execute unique commands
 		for (List<String> command : commands) {
-			execute(command);
+			system(command, directory);
 		}
 	}
 
-	private void executeParallel(MediaBindingBean... group) throws IOException, InterruptedException {
+	private void executeParallel(MediaBindingBean... group) throws IOException {
 		// collect single command
 		List<String> command = template.stream().flatMap(t -> {
 			return Stream.of(group).map(v -> getArgumentValue(t, v)).filter(Objects::nonNull).distinct();
 		}).collect(toList());
 
 		// execute single command
-		execute(command);
+		system(command, directory);
 	}
 
 	private String getArgumentValue(ExpressionFormat template, MediaBindingBean variables) {
@@ -65,19 +66,6 @@ public class ExecCommand {
 			debug.warning(cause(template.getExpression(), e));
 		}
 		return null;
-	}
-
-	private void execute(List<String> command) throws IOException, InterruptedException {
-		ProcessBuilder process = new ProcessBuilder(command);
-		process.directory(directory);
-		process.inheritIO();
-
-		debug.finest(format("Execute %s", command));
-
-		int exitCode = process.start().waitFor();
-		if (exitCode != 0) {
-			throw new IOException(String.format("%s failed with exit code %d", command, exitCode));
-		}
 	}
 
 	public static ExecCommand parse(List<String> args, File directory) throws ScriptException {
