@@ -20,8 +20,12 @@ import com.cedarsoftware.util.io.JsonWriter;
 
 public class FFProbe implements MediaCharacteristics {
 
-	protected String getFFProbeCommand() {
+	public String getFFProbeCommand() {
 		return System.getProperty("net.filebot.media.ffprobe", "ffprobe");
+	}
+
+	public String version() throws IOException {
+		return execute(getFFProbeCommand(), "-show_program_version", "-hide_banner").toString();
 	}
 
 	protected Map<String, Object> parse(File file) throws IOException, InterruptedException {

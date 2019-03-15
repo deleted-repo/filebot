@@ -192,6 +192,10 @@ public class AcoustIDClient implements MusicIdentificationService {
 		return System.getProperty("net.filebot.AcoustID.fpcalc", "fpcalc");
 	}
 
+	public String version() throws IOException {
+		return execute(getChromaprintCommand(), "-version").toString();
+	}
+
 	public Map<ChromaprintField, String> fpcalc(File file) throws IOException, InterruptedException {
 		Map<ChromaprintField, String> fields = new EnumMap<ChromaprintField, String>(ChromaprintField.class);
 
