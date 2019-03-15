@@ -392,7 +392,7 @@ public class AutoDetection {
 		}
 
 		public boolean aliasNameMatch() {
-			return m.getEffectiveNamesWithoutYear().stream().map(this::normalize).anyMatch(fn::contains);
+			return m.getEffectiveNamesWithoutYear().stream().map(this::normalize).filter(s -> s.length() >= 5).anyMatch(fn::contains);
 		}
 
 	}
