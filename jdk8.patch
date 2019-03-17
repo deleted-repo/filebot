@@ -57,7 +57,7 @@ index f545ea20..9580b5c4 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index 6fe8c659..26cc46af 100644
+index fb39e039..a6aa5209 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -112,19 +112,13 @@
@@ -128,16 +128,16 @@ index 6fe8c659..26cc46af 100644
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
 diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
-index df921f9b..7b3eb47a 100644
+index 29e9f0d8..de9da74d 100644
 --- a/installer/deb-universal/control/control
 +++ b/installer/deb-universal/control/control
 @@ -7,6 +7,6 @@ Description: @{package.synopsis}
  Homepage: @{package.homepage}
  Section: utils
  Priority: extra
--Depends: openjdk-@{jvm.version}-jre
-+Depends: openjdk-8-jre
- Recommends: openjfx, libjna-java, mediainfo, libchromaprint-tools, p7zip-full, unrar
+-Depends: openjdk-@{jvm.version}-jre, libjna-java
++Depends: openjdk-8-jre, libjna-java
+ Recommends: openjfx, mediainfo, libchromaprint-tools, p7zip-full, unrar
  Enhances: nautilus-actions
 diff --git a/installer/deb-universal/filebot.sh b/installer/deb-universal/filebot.sh
 index 41e87444..05422081 100644
@@ -321,7 +321,7 @@ index 9ceea367..236b06f9 100644
  
  	public abstract Hash newHash();
 diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
-index 269e1bbe..84c57d6a 100644
+index ad5bbcfc..7c984c54 100644
 --- a/source/net/filebot/mediainfo/MediaInfo.java
 +++ b/source/net/filebot/mediainfo/MediaInfo.java
 @@ -8,7 +8,6 @@ import static net.filebot.util.RegularExpressions.*;
@@ -345,7 +345,7 @@ index 269e1bbe..84c57d6a 100644
  		} catch (LinkageError e) {
  			throw new MediaInfoException(e);
  		}
-@@ -247,7 +244,22 @@ public class MediaInfo implements MediaCharacteristics {
+@@ -256,7 +253,22 @@ public class MediaInfo implements MediaCharacteristics {
  
  	@Override
  	public synchronized void close() {
@@ -369,7 +369,7 @@ index 269e1bbe..84c57d6a 100644
  	}
  
  	public enum StreamKind {
-@@ -332,24 +344,4 @@ public class MediaInfo implements MediaCharacteristics {
+@@ -341,24 +353,4 @@ public class MediaInfo implements MediaCharacteristics {
  		}
  	}
  
@@ -501,7 +501,7 @@ index ffae21d8..414e9c0d 100644
  			Rectangle2D r = p1.createUnion(p2);
  			double w = r.getWidth() + 1;
 diff --git a/source/net/filebot/util/ui/SwingUI.java b/source/net/filebot/util/ui/SwingUI.java
-index 951b97f0..0e4a7abc 100644
+index 9b40aeac..acb210fe 100644
 --- a/source/net/filebot/util/ui/SwingUI.java
 +++ b/source/net/filebot/util/ui/SwingUI.java
 @@ -416,11 +416,9 @@ public final class SwingUI {
