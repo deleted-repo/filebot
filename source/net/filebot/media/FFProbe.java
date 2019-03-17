@@ -70,6 +70,11 @@ public class FFProbe implements MediaCharacteristics {
 	}
 
 	@Override
+	public String getSubtitleLanguage() {
+		return getString("subtitle", "tags", "language");
+	}
+
+	@Override
 	public Duration getDuration() {
 		long d = (long) Double.parseDouble(getFormat().get("duration").toString()) * 1000;
 		return Duration.ofMillis(d);
@@ -133,7 +138,7 @@ public class FFProbe implements MediaCharacteristics {
 	}
 
 	protected String getString(String streamKind, String objectKey, String valueKey) {
-		return stream(streamKind, objectKey).map(t -> ((Map) t).get(valueKey)).map(Objects::toString).collect(joining(" "));
+		return stream(streamKind, objectKey).map(t -> ((Map) t).get(valueKey)).map(Objects::toString).collect(joining(" / "));
 	}
 
 	protected Stream<Object> stream(String streamKind, String property) {

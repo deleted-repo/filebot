@@ -13,6 +13,8 @@ public interface MediaCharacteristics extends AutoCloseable {
 
 	String getSubtitleCodec();
 
+	String getSubtitleLanguage();
+
 	Duration getDuration();
 
 	Integer getWidth();

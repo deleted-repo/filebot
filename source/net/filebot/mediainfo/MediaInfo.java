@@ -144,22 +144,27 @@ public class MediaInfo implements MediaCharacteristics {
 
 	@Override
 	public String getVideoCodec() {
-		return get(StreamKind.Video, 0, "CodecID");
+		return get(StreamKind.General, 0, "Video_Codec_List");
 	}
 
 	@Override
 	public String getAudioCodec() {
-		return get(StreamKind.Audio, 0, "CodecID");
+		return get(StreamKind.General, 0, "Audio_Codec_List");
 	}
 
 	@Override
 	public String getAudioLanguage() {
-		return get(StreamKind.General, 0, "AudioLanguageList");
+		return get(StreamKind.General, 0, "Audio_Language_List");
 	}
 
 	@Override
 	public String getSubtitleCodec() {
-		return get(StreamKind.General, 0, "TextCodecList");
+		return get(StreamKind.General, 0, "Text_Codec_List");
+	}
+
+	@Override
+	public String getSubtitleLanguage() {
+		return get(StreamKind.General, 0, "Text_Language_List");
 	}
 
 	@Override
