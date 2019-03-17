@@ -25,7 +25,7 @@ public class FFProbe implements MediaCharacteristics {
 	}
 
 	public String version() throws IOException {
-		return execute(getFFProbeCommand(), "-show_program_version", "-hide_banner").toString();
+		return execute(getFFProbeCommand(), "-show_program_version", "-hide_banner").toString().trim();
 	}
 
 	protected Map<String, Object> parse(File file) throws IOException, InterruptedException {

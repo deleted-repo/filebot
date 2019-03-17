@@ -193,7 +193,7 @@ public class AcoustIDClient implements MusicIdentificationService {
 	}
 
 	public String version() throws IOException {
-		return execute(getChromaprintCommand(), "-version").toString();
+		return execute(getChromaprintCommand(), "-version").toString().trim();
 	}
 
 	public Map<ChromaprintField, String> fpcalc(File file) throws IOException, InterruptedException {
