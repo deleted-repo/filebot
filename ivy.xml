@@ -10,7 +10,7 @@
 		<dependency rev="27.0.1-jre" org="com.google.guava" name="guava" />
 		<dependency rev="2.6.2" org="com.github.ben-manes.caffeine" name="caffeine" />
 		<dependency rev="4.1.1" org="com.github.mpkorstanje" name="simmetrics-core" />
-		<dependency rev="61.1" org="com.ibm.icu" name="icu4j" />
+		<dependency rev="64.1" org="com.ibm.icu" name="icu4j" />
 		<dependency rev="1.11.3" org="org.jsoup" name="jsoup" />
 		<dependency rev="1.8" org="org.tukaani" name="xz" />
 		<dependency rev="2.3.0" org="javax.xml.bind" name="jaxb-api" />
@@ -22,7 +22,7 @@
 		<dependency rev="5.2" org="com.miglayout" name="miglayout-swing" />
 		<dependency rev="2.2" org="org.apache.commons" name="commons-vfs2" />
 		<dependency rev="3.1.0" org="com.github.junrar" name="junrar" />
-		<dependency rev="3.0.0" org="com.fifesoft" name="rsyntaxtextarea" />
+		<dependency rev="3.0.2" org="com.fifesoft" name="rsyntaxtextarea" />
 		<dependency rev="3.0.0" org="com.fifesoft" name="autocomplete" />
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding" />
 		<dependency rev="9.20-2.00beta" org="net.sf.sevenzipjbinding" name="sevenzipjbinding-all-platforms" />
@@ -31,7 +31,7 @@
 		<dependency rev="0.6.7" org="one.util" name="streamex" />
 		<dependency rev="3.0.1" org="com.googlecode.lanterna" name="lanterna" />
 		<dependency rev="2.11.0" org="com.drewnoakes" name="metadata-extractor" />
-		<dependency rev="1.59" org="org.bouncycastle" name="bcprov-jdk15on" />
+		<dependency rev="1.61" org="org.bouncycastle" name="bcprov-jdk15on" />
 		<dependency rev="4.2" org="org.imgscalr" name="imgscalr-lib" />
 
 
