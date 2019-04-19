@@ -245,7 +245,7 @@ public class Main {
 			// restore preferences on start if empty (TODO: remove after a few releases)
 			try {
 				File f = getPreferencesBackupFile();
-				if (!f.exists() || !lastModifiedWithin(f, Duration.ofDays(90))) {
+				if (!f.exists() || !lastModifiedWithin(f, Duration.ofDays(30))) {
 					log.fine("Store user preferences: " + f);
 					Settings.store(f);
 				}
