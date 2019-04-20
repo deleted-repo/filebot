@@ -22,7 +22,7 @@ public class ExecutableRenameAction implements RenameAction {
 
 		system(command, directory);
 
-		return null;
+		return to.exists() ? to : null;
 	}
 
 	private String getRelativePath(File dir, File f) {
