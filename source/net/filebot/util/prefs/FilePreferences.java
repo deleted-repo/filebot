@@ -45,12 +45,12 @@ public class FilePreferences extends AbstractPreferences {
 
 	@Override
 	protected String[] keysSpi() throws BackingStoreException {
-		return store.getKeys(getNodeKey());
+		return store.getKeys(getNodeKey()).toArray(new String[0]);
 	}
 
 	@Override
 	protected String[] childrenNamesSpi() throws BackingStoreException {
-		return store.getChildren(getNodeKey());
+		return store.getChildren(getNodeKey()).toArray(new String[0]);
 	}
 
 	@Override

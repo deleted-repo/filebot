@@ -1,6 +1,7 @@
 package net.filebot.util.prefs;
 
 import static java.nio.charset.StandardCharsets.*;
+import static java.util.Collections.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -12,6 +13,7 @@ import java.nio.channels.FileLock;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -22,6 +24,7 @@ import java.util.stream.IntStream;
 public class PropertyFileBackingStore {
 
 	private static final char nodeSeparatorChar = '/';
+	private static final char nodeSeparatorEscapeChar = '\\';
 	private static final Pattern nodeSeparatorPattern = Pattern.compile(String.valueOf(nodeSeparatorChar), Pattern.LITERAL);
 
 	private Path store;
@@ -31,6 +34,14 @@ public class PropertyFileBackingStore {
 
 	public PropertyFileBackingStore(Path store) {
 		this.store = store;
+	}
+
+	public String escapeKey(String key) {
+		return key.replace(nodeSeparatorChar, nodeSeparatorEscapeChar);
+	}
+
+	public String unescapeKey(String key) {
+		return key.replace(nodeSeparatorEscapeChar, nodeSeparatorChar);
 	}
 
 	private Map<String, String> newKeyValueMap(String node) {
@@ -63,15 +74,15 @@ public class PropertyFileBackingStore {
 		nodes.remove(node);
 	}
 
-	public synchronized String[] getKeys(String node) {
+	public synchronized Collection<String> getKeys(String node) {
 		Map<String, String> values = nodes.get(node);
 		if (values != null) {
-			return values.keySet().toArray(new String[0]);
+			return values.keySet();
 		}
-		return new String[0];
+		return emptySet();
 	}
 
-	public synchronized String[] getChildren(String node) {
+	public synchronized Collection<String> getChildren(String node) {
 		HashSet<String> keys = new HashSet<String>();
 		String[] path = node.isEmpty() ? new String[0] : nodeSeparatorPattern.split(node);
 
@@ -85,7 +96,7 @@ public class PropertyFileBackingStore {
 			}
 		}
 
-		return keys.toArray(new String[0]);
+		return keys;
 
 	}
 
@@ -94,7 +105,7 @@ public class PropertyFileBackingStore {
 
 		nodes.forEach((node, values) -> {
 			values.forEach((key, value) -> {
-				props.put(node + nodeSeparatorChar + key, value);
+				props.put(node + nodeSeparatorChar + escapeKey(key), value);
 			});
 		});
 
@@ -130,7 +141,7 @@ public class PropertyFileBackingStore {
 			int s = propertyKey.lastIndexOf(nodeSeparatorChar);
 
 			String node = propertyKey.substring(0, s);
-			String key = propertyKey.substring(s + 1);
+			String key = unescapeKey(propertyKey.substring(s + 1));
 
 			n.computeIfAbsent(node, this::newKeyValueMap).put(key, v.toString());
 		});
