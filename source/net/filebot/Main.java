@@ -80,8 +80,6 @@ public class Main {
 				if (args.clearUserData()) {
 					log.info("Reset preferences");
 					Settings.forPackage(Main.class).clear();
-
-					// restore preferences on start if empty (TODO: remove after a few releases)
 					getPreferencesBackupFile().delete();
 				}
 
@@ -141,21 +139,6 @@ public class Main {
 
 			// GUI mode => start user interface
 			SwingUtilities.invokeLater(() -> {
-				// restore preferences on start if empty (TODO: remove after a few releases)
-				try {
-					if (Preferences.userNodeForPackage(Main.class).keys().length == 0) {
-						File f = getPreferencesBackupFile();
-						if (f.exists()) {
-							log.fine("Restore user preferences: " + f);
-							Settings.restore(f);
-						} else {
-							log.fine("No user preferences found: " + f);
-						}
-					}
-				} catch (Exception e) {
-					debug.log(Level.WARNING, "Failed to restore preferences", e);
-				}
-
 				startUserInterface(args);
 
 				// run background tasks
@@ -189,6 +172,21 @@ public class Main {
 			} catch (Throwable e) {
 				debug.log(Level.WARNING, e, e::getMessage);
 			}
+		}
+
+		// restore preferences from backup if necessary
+		try {
+			if (Preferences.userNodeForPackage(Main.class).keys().length == 0) {
+				File f = getPreferencesBackupFile();
+				if (f.exists()) {
+					log.fine("Restore user preferences: " + f);
+					Settings.restore(f);
+				} else {
+					log.fine("No user preferences found: " + f);
+				}
+			}
+		} catch (Exception e) {
+			debug.log(Level.WARNING, "Failed to restore preferences", e);
 		}
 
 		// JavaFX is used for ProgressMonitor and GettingStartedDialog
