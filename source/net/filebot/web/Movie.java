@@ -38,6 +38,14 @@ public class Movie extends SearchResult {
 		this.language = locale == null ? null : locale.getLanguage();
 	}
 
+	public Movie(Movie movie) {
+		super(movie.id, movie.name, movie.aliasNames);
+		this.year = movie.year;
+		this.imdbId = movie.imdbId;
+		this.tmdbId = movie.tmdbId;
+		this.language = movie.language;
+	}
+
 	public int getYear() {
 		return year;
 	}

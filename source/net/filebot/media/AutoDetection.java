@@ -439,7 +439,7 @@ public class AutoDetection {
 		}
 
 		public Group movie(List<Movie> movies) {
-			put(Type.Movie, movies == null || movies.isEmpty() ? null : movies.get(0));
+			put(Type.Movie, movies == null || movies.isEmpty() ? null : new Movie(movies.get(0))); // group by Movie (rather than MoviePart)
 			return this;
 		}
 
