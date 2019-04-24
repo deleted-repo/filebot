@@ -649,6 +649,33 @@ public class ExpressionFormatMethods {
 		return null;
 	}
 
+	/**
+	 * DSL utilities
+	 */
+	public static File plus(File self, String path) {
+		return new File(self.getPath().concat(path));
+	}
+
+	public static File div(File self, String path) {
+		return new File(self, path);
+	}
+
+	public static File div(String self, String path) {
+		return new File(self, path);
+	}
+
+	public static File div(File self, File path) {
+		return new File(self, path.getPath());
+	}
+
+	public static File div(String self, File path) {
+		return new File(self, path.getPath());
+	}
+
+	public static String negative(String self) {
+		return '-' + self;
+	}
+
 	private ExpressionFormatMethods() {
 		throw new UnsupportedOperationException();
 	}

@@ -47,30 +47,6 @@ import net.filebot.web.WebRequest;
 
 public class ScriptShellMethods {
 
-	public static File plus(File self, String path) {
-		return new File(self.getPath().concat(path));
-	}
-
-	public static File div(File self, String path) {
-		return new File(self, path);
-	}
-
-	public static File div(String self, String path) {
-		return new File(self, path);
-	}
-
-	public static File div(File self, File path) {
-		return new File(self, path.getPath());
-	}
-
-	public static File div(String self, File path) {
-		return new File(self, path.getPath());
-	}
-
-	public static String negative(String self) {
-		return '-' + self;
-	}
-
 	public static String getAt(File self, int index) {
 		return FileUtilities.listPath(self).get(index).getName();
 	}
