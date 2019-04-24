@@ -676,6 +676,11 @@ public class ExpressionFormatMethods {
 		return '-' + self;
 	}
 
+	public static String plus(String self, Closure closure) {
+		Object value = call(closure);
+		return value == null ? self : self + value;
+	}
+
 	private ExpressionFormatMethods() {
 		throw new UnsupportedOperationException();
 	}
