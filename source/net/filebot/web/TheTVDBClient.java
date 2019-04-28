@@ -142,14 +142,21 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 			// e.g. aliases, banner, firstAired, id, network, overview, seriesName, status
 			int id = getInteger(it, "id");
 			String seriesName = getString(it, "seriesName");
-			String[] aliasNames = stream(getArray(it, "aliases")).toArray(String[]::new);
 
 			if (seriesName == null || seriesName.startsWith("**") || seriesName.endsWith("**")) {
 				debug.warning(format("Ignore invalid series: %s [%d]", seriesName, id));
 				return null;
 			}
 
-			return new SearchResult(id, seriesName, aliasNames);
+			String[] aliasNames = stream(getArray(it, "aliases")).toArray(String[]::new);
+			String slug = getString(it, "slug");
+			String network = getString(it, "network");
+			String status = getString(it, "status");
+			SimpleDate firstAired = getStringValue(it, "firstAired", SimpleDate::parse);
+			String overview = getString(it, "overview");
+			URL banner = getStringValue(it, "banner", this::resolveImage);
+
+			return new TheTVDBSearchResult(id, seriesName, aliasNames, slug, firstAired, overview, network, status, banner);
 		}).filter(Objects::nonNull).collect(toList());
 	}
 
