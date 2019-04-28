@@ -44,6 +44,7 @@ import net.filebot.web.TMDbClient;
 import net.filebot.web.TMDbTVClient;
 import net.filebot.web.TVMazeClient;
 import net.filebot.web.TheTVDBClient;
+import net.filebot.web.TheTVDBSearchResult;
 import net.filebot.web.VideoHashSubtitleService;
 
 /**
@@ -199,12 +200,19 @@ public final class WebServices {
 		// local TheTVDB search index
 		private final Resource<LocalSearch<SearchResult>> localIndex = Resource.lazy(() -> new LocalSearch<SearchResult>(releaseInfo.getTheTVDBIndex(), SearchResult::getEffectiveNames));
 
-		private SearchResult merge(SearchResult prime, List<SearchResult> group) {
+		private SearchResult merge(List<SearchResult> group) {
+			SearchResult prime = group.get(0);
+
 			int id = prime.getId();
 			String name = prime.getName();
-
 			String[] aliasNames = group.stream().flatMap(it -> stream(it.getAliasNames())).filter(n -> !n.equals(name)).distinct().toArray(String[]::new);
-			return new SearchResult(id, name, aliasNames);
+
+			if (prime instanceof TheTVDBSearchResult) {
+				TheTVDBSearchResult r = (TheTVDBSearchResult) prime;
+				return new TheTVDBSearchResult(id, name, aliasNames, r.getSlug(), r.getFirstAired(), r.getOverview(), r.getNetwork(), r.getStatus());
+			} else {
+				return new SearchResult(id, name, aliasNames);
+			}
 		}
 
 		@Override
@@ -214,7 +222,7 @@ public final class WebServices {
 			Future<List<SearchResult>> localSearch = requestThreadPool.submit(() -> localIndex.get().search(query));
 
 			// combine alias names into a single search results, and keep API search name as primary name
-			Map<Integer, SearchResult> results = Stream.of(apiSearch.get(), localSearch.get()).flatMap(List::stream).collect(groupingBy(SearchResult::getId, LinkedHashMap::new, collectingAndThen(toList(), group -> merge(group.get(0), group))));
+			Map<Integer, SearchResult> results = Stream.of(apiSearch.get(), localSearch.get()).flatMap(List::stream).collect(groupingBy(SearchResult::getId, LinkedHashMap::new, collectingAndThen(toList(), this::merge)));
 
 			return sortBySimilarity(results.values(), singleton(query), getSeriesMatchMetric());
 		}

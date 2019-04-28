@@ -1,7 +1,5 @@
 package net.filebot.web;
 
-import java.net.URL;
-
 public class TheTVDBSearchResult extends SearchResult {
 
 	protected String slug;
@@ -9,16 +7,14 @@ public class TheTVDBSearchResult extends SearchResult {
 	protected String overview;
 	protected String network;
 	protected String status;
-	protected URL banner;
 
-	public TheTVDBSearchResult(int id, String name, String[] aliasNames, String slug, SimpleDate firstAired, String overview, String network, String status, URL banner) {
+	public TheTVDBSearchResult(int id, String name, String[] aliasNames, String slug, SimpleDate firstAired, String overview, String network, String status) {
 		super(id, name, aliasNames);
 		this.slug = slug;
 		this.firstAired = firstAired;
 		this.overview = overview;
 		this.network = network;
 		this.status = status;
-		this.banner = banner;
 	}
 
 	public String getSlug() {
@@ -39,10 +35,6 @@ public class TheTVDBSearchResult extends SearchResult {
 
 	public String getStatus() {
 		return status;
-	}
-
-	public URL getBanner() {
-		return banner;
 	}
 
 }

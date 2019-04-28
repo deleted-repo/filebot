@@ -27,6 +27,7 @@ import javax.swing.SwingUtilities;
 import net.filebot.ResourceManager;
 import net.filebot.util.ui.DefaultFancyListCellRenderer;
 import net.filebot.web.SearchResult;
+import net.filebot.web.TheTVDBSearchResult;
 import net.miginfocom.swing.MigLayout;
 
 public class SelectDialog<T> extends JDialog {
@@ -113,16 +114,32 @@ public class SelectDialog<T> extends JDialog {
 
 	protected String getTooltipText(SearchResult item) {
 		StringBuilder html = new StringBuilder(64);
-		html.append("<html><b>").append(escapeHTML(item.toString())).append("</b><br>");
+		html.append("<html><h3>").append(escapeHTML(item.toString())).append("</h3>");
+
 		String[] names = item.getAliasNames();
 		if (names.length > 0) {
-			html.append("<br>AKA:<br>");
-			for (String n : names) {
-				html.append("• ").append(escapeHTML(n)).append("<br>");
-			}
+			appendTooltipParagraph(html, "AKA", String.join(" | ", names));
 		}
-		html.append("<br>ID: <br>• ").append(Integer.toString(item.getId())).append("</html>");
-		return html.toString();
+
+		if (item instanceof TheTVDBSearchResult) {
+			TheTVDBSearchResult r = (TheTVDBSearchResult) item;
+
+			appendTooltipParagraph(html, "First Aired", r.getFirstAired());
+			appendTooltipParagraph(html, "Network", r.getNetwork());
+			appendTooltipParagraph(html, "Status", r.getStatus());
+			appendTooltipParagraph(html, "Overview", r.getOverview());
+		}
+
+		appendTooltipParagraph(html, "ID", item.getId());
+
+		return html.append("</html>").toString();
+	}
+
+	private StringBuilder appendTooltipParagraph(StringBuilder html, String label, Object value) {
+		if (value != null) {
+			html.append("<p style='width:250px; margin:3px'><b>").append(label).append(":</b> ").append(escapeHTML(value.toString())).append("</p>");
+		}
+		return html;
 	}
 
 	public JLabel getMessageLabel() {

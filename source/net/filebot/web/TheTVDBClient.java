@@ -154,9 +154,8 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 			String status = getString(it, "status");
 			SimpleDate firstAired = getStringValue(it, "firstAired", SimpleDate::parse);
 			String overview = getString(it, "overview");
-			URL banner = getStringValue(it, "banner", this::resolveImage);
 
-			return new TheTVDBSearchResult(id, seriesName, aliasNames, slug, firstAired, overview, network, status, banner);
+			return new TheTVDBSearchResult(id, seriesName, aliasNames, slug, firstAired, overview, network, status);
 		}).filter(Objects::nonNull).collect(toList());
 	}
 
