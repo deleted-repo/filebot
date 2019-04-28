@@ -1,6 +1,8 @@
 package net.filebot.web;
 
-public class TheTVDBSearchResult extends SearchResult {
+import java.io.Serializable;
+
+public class TheTVDBSearchResult extends SearchResult implements Serializable {
 
 	protected String slug;
 	protected SimpleDate firstAired;
@@ -35,6 +37,11 @@ public class TheTVDBSearchResult extends SearchResult {
 
 	public String getStatus() {
 		return status;
+	}
+
+	@Override
+	public SearchResult clone() {
+		return new TheTVDBSearchResult(id, name, aliasNames, slug, firstAired, overview, network, status);
 	}
 
 }
