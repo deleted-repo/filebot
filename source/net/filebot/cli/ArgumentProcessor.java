@@ -139,10 +139,10 @@ public class ArgumentProcessor {
 	}
 
 	private int print(Stream<?> values) {
-		return values.mapToInt(v -> {
+		return values.map(v -> {
 			System.out.println(v);
-			return 1;
-		}).sum() == 0 ? ERROR : SUCCESS;
+			return v;
+		}).count() > 0 ? SUCCESS : ERROR;
 	}
 
 	private void printStegosaurus(String line1, String line2) {
