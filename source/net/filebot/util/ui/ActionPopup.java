@@ -1,8 +1,12 @@
 package net.filebot.util.ui;
 
+import static javax.swing.SwingUtilities.*;
+import static net.filebot.Logging.*;
 import static net.filebot.ui.ThemeSupport.*;
 
+import java.awt.Component;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -46,6 +50,18 @@ public class ActionPopup extends JPopupMenu {
 
 		// make it look better (e.g. window shadows) by forcing heavy-weight windows
 		setLightWeightPopupEnabled(false);
+	}
+
+	@Override
+	public void show(Component invoker, int x, int y) {
+		super.show(invoker, x, y);
+
+		// make sure that the popup window displays above the task bar
+		try {
+			getWindowAncestor(this).setAlwaysOnTop(true);
+		} catch (Exception e) {
+			debug.log(Level.WARNING, e, e::getMessage);
+		}
 	}
 
 	protected JLabel createLabel(String text) {
