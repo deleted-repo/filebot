@@ -46,6 +46,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
 import net.filebot.ApplicationFolder;
+import net.filebot.HistorySpooler;
 import net.filebot.Language;
 import net.filebot.MediaTypes;
 import net.filebot.Resource;
@@ -486,6 +487,18 @@ public class MediaBindingBean {
 		String name = xattr.getOriginalName(getMediaFile());
 
 		return name != null ? getNameWithoutExtension(name) : null;
+	}
+
+	@Define("history")
+	public File getOriginalFilePath() throws Exception {
+		// check in-memory history first
+		Optional<File> path = HistorySpooler.getInstance().getSessionHistory().getOriginalPath(getMediaFile()).findFirst();
+		if (path.isPresent()) {
+			return path.get();
+		}
+
+		// check persistent history file as well
+		return HistorySpooler.getInstance().getCompleteHistory().getOriginalPath(getMediaFile()).findFirst().orElse(null);
 	}
 
 	@Define("xattr")

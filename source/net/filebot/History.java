@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -181,7 +182,7 @@ public class History {
 
 	public Map<File, File> getRenameMap() {
 		Map<File, File> map = new LinkedHashMap<File, File>();
-		for (History.Sequence seq : this.sequences()) {
+		for (History.Sequence seq : sequences) {
 			for (History.Element elem : seq.elements()) {
 				File to = new File(elem.to());
 				if (!to.isAbsolute()) {
@@ -192,6 +193,16 @@ public class History {
 			}
 		}
 		return map;
+	}
+
+	public Stream<File> getOriginalPath(File destination) {
+		return sequences.stream().flatMap(s -> s.elements().stream()).filter(e -> {
+			File to = new File(e.to());
+			if (!to.isAbsolute()) {
+				to = new File(e.dir(), e.to());
+			}
+			return destination.equals(to);
+		}).map(e -> new File(e.dir(), e.from()));
 	}
 
 	public static void exportHistory(History history, OutputStream output) {
