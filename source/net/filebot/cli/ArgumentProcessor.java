@@ -141,8 +141,8 @@ public class ArgumentProcessor {
 	private int print(Stream<?> values) {
 		return values.mapToInt(v -> {
 			System.out.println(v);
-			return ERROR;
-		}).sum() == SUCCESS ? ERROR : SUCCESS;
+			return 1;
+		}).sum() == 0 ? ERROR : SUCCESS;
 	}
 
 	private void printStegosaurus(String line1, String line2) {
