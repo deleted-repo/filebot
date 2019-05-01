@@ -27,7 +27,6 @@ void createThumbnail(original, thumb) {
 		thumb.dir.mkdirs()
 	}
 	execute '/usr/local/bin/convert', original, '-strip', '-thumbnail', '48x48>', 'PNG8:' + thumb
-	ls thumb
 }
 
 
@@ -44,7 +43,6 @@ void createIndexFile(db) {
 
 
 
-
 void build(ids, section, db, query) {
 	ids.each{ id ->
 		log.info "[$id]"
@@ -52,13 +50,14 @@ void build(ids, section, db, query) {
 		def original = getOriginalPath(section, id)
 		def thumb = getThumbnailPath(section, id)
 
-		if (thumb.exists()) {
+		if (thumb.exists() || original.length() == 0 && original.exists()) {
 			return
 		}
 
 		def artwork = db.getArtwork id, query, Locale.ENGLISH
 		if (!artwork) {
-			return
+			original.createNewFile()
+			ls original
 		}
 
 		if (!original.exists()) {
@@ -76,8 +75,9 @@ void build(ids, section, db, query) {
 			ls original
 		}
 
-		if (original.exists() && !thumb.exists()) {
+		if (original.length() > 0 && !thumb.exists()) {
 			createThumbnail(original, thumb)
+			ls thumb
 		}
 	}
 
