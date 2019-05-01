@@ -18,25 +18,42 @@ void ls(f) {
 def tvdbEntries = MediaDetection.seriesIndex.object as Set
 
 
-def index = tvdbEntries.collect{ it.id }.toSorted().join('\n').saveAs thumbs.resolve('index.txt')
-execute '/usr/local/bin/xz', index, '--force'
+def index = []
 
 
 tvdbEntries.each{
 	println "[$it.id] $it.name"
+
+	def original = originals.resolve "${it.id}.jpg"
+	def thumb = thumbs.resolve "${it.id}.png"
+
+	if (original.exists() && thumb.exists()) {
+		index << it
+		return
+	}
+
 	def artwork = TheTVDB.getArtwork it.id, 'poster', Locale.ENGLISH
-	if (artwork) {
-		def original = originals.resolve "${it.id}.jpg"
-		def thumb = thumbs.resolve "${it.id}.png"
+	if (!artwork) {
+		sleep 1000
+		return
+	}
 
-		if (!original.exists()) {
-			artwork[0].url.saveAs original
-			ls original
-		}
+	if (!original.exists()) {
+		sleep 2000
+		artwork[0].url.saveAs original
+		ls original
+	}
 
+	if (!thumb.exists()) {
 		execute '/usr/local/bin/convert', original, '-strip', '-thumbnail', '48x48>', 'PNG8:' + thumb
 		ls thumb
-
-		sleep 2000
 	}
+
+	index << it
 }
+
+
+def indexFile = index.toSorted().join('\n').saveAs thumbs.resolve('index.txt')
+execute '/usr/local/bin/xz', indexFile, '--force'
+
+println "Index: ${index.size()}"
