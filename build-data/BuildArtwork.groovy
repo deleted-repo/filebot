@@ -11,7 +11,11 @@ thumbs.mkdirs()
 
 
 void ls(f) {
-	println "${f} (${byteCountToDisplaySize(f.length())})"
+	if (f.exists()) {
+		log.info "$f (${byteCountToDisplaySize(f.length())})"
+	} else {
+		log.warning "[FILE NOT FOUND] $f"
+	}
 }
 
 
@@ -22,34 +26,43 @@ def index = []
 
 
 tvdbEntries.each{
-	println "[$it.id] $it.name"
+	log.info "[$it.id] $it.name"
 
 	def original = originals.resolve "${it.id}.jpg"
 	def thumb = thumbs.resolve "${it.id}.png"
 
-	if (original.exists() && thumb.exists()) {
+	if (thumb.exists()) {
 		index << it
 		return
 	}
 
 	def artwork = TheTVDB.getArtwork it.id, 'poster', Locale.ENGLISH
 	if (!artwork) {
-		sleep 1000
 		return
 	}
 
 	if (!original.exists()) {
 		sleep 2000
-		artwork[0].url.saveAs original
+		artwork.findResult{ a ->
+			try {
+				log.fine "Fetch $a"
+				return a.url.saveAs(original)
+			} catch (Exception e) {
+				printException(e)
+			}
+		}
 		ls original
 	}
 
-	if (!thumb.exists()) {
+	if (original.exists() && !thumb.exists()) {
 		execute '/usr/local/bin/convert', original, '-strip', '-thumbnail', '48x48>', 'PNG8:' + thumb
 		ls thumb
 	}
 
-	index << it
+	if (thumb.exists()) {
+		index << it
+		return
+	}
 }
 
 
