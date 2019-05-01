@@ -317,6 +317,10 @@ public abstract class ScriptShellBaseClass extends Script {
 		}
 
 		ProcessBuilder process = new ProcessBuilder(cmd.collect(toList())).inheritIO();
+
+		// DEBUG
+		debug.finest(format("Execute %s", process.command()));
+
 		return process.start().waitFor();
 	}
 
