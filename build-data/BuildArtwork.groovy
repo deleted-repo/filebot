@@ -42,7 +42,6 @@ tvdbEntries.each{
 	}
 
 	if (!original.exists()) {
-		sleep 2000
 		artwork.findResult{ a ->
 			return retry(2, 60000) {
 				try {
