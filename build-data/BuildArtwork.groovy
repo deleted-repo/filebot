@@ -44,11 +44,14 @@ tvdbEntries.each{
 	if (!original.exists()) {
 		sleep 2000
 		artwork.findResult{ a ->
-			try {
-				log.fine "Fetch $a"
-				return a.url.saveAs(original)
-			} catch (Exception e) {
-				printException(e)
+			return retry(2, 60000) {
+				try {
+					log.fine "Fetch $a"
+					return a.url.saveAs(original)
+				} catch (FileNotFoundException e) {
+					log.warning "[FILE NOT FOUND] $e"
+					return null
+				}
 			}
 		}
 		ls original
