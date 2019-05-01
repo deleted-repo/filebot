@@ -41,6 +41,14 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 		}
 	}
 
+	private static URL getBannerMirror() {
+		try {
+			return new URL(System.getProperty("net.filebot.TheTVDB.banner.url", "https://www.thetvdb.com/banners/"));
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 	private static final Locale DEFAULT_LOCALE = Locale.ENGLISH;
 
 	private final URL api;
@@ -335,7 +343,7 @@ public class TheTVDBClient extends AbstractEpisodeListProvider implements Artwor
 
 		// TheTVDB API v2 does not have a dedicated banner mirror
 		try {
-			return new URL("https://thetvdb.com/banners/" + path);
+			return new URL(getBannerMirror(), path);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(path, e);
 		}
