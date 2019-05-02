@@ -45,12 +45,11 @@ void createIndexFile(db) {
 
 void build(ids, section, db, query) {
 	ids.each{ id ->
-		log.info "[$id]"
-
 		def original = getOriginalPath(section, id)
 		def thumb = getThumbnailPath(section, id)
 
 		if (thumb.exists() || original.length() == 0 && original.exists()) {
+			log.finest "[SKIP] $id"
 			return
 		}
 
