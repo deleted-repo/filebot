@@ -13,8 +13,8 @@ FileBot 4.8.5
 * Added `{kodi}` binding (i.e. Kodi naming standard)
 * Added `{ci}` binding (i.e. movie collection index)
 * Match `{source}`, `{group}`, `{tags}` and `{s3d}` from `{media.title}`
-* Move to Trash action in Filter tools (e.g. batch delete clutter files)
-* Paste License Key button to simplify license activation for users who can't receive email attachments (i.e. some email providers block `*.psm` attachments)
+* *Move to Trash* action in Filter tools (e.g. batch delete clutter files)
+* *Paste License Key* button to simplify license activation for users who can't receive email attachments (i.e. some email providers block `*.psm` attachments)
 * Built-in Automator Workflows for macOS (i.e. easily create Quick Actions and Folder actions)
 * Fix UI deadlock issues on Linux
 * Fix drag-n-drop issues on Linux / KDE / Dolphin
