@@ -73,6 +73,7 @@ void build(ids, section, db, query) {
 				}
 			}
 			ls original
+			sleep 2000
 		}
 
 		if (original.length() > 0 && !thumb.exists()) {
