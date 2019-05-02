@@ -87,5 +87,5 @@ void build(ids, section, db, query) {
 
 
 
-build(MediaDetection.seriesIndex.object.id as Set, 'thetvdb', TheTVDB, 'poster')
-build(MediaDetection.movieIndex.object.tmdbId as Set, 'themoviedb', TheMovieDB, 'posters')
+build(MediaDetection.seriesIndex.object.id as HashSet, 'thetvdb', TheTVDB, 'poster')
+build(MediaDetection.movieIndex.object.tmdbId as HashSet, 'themoviedb', TheMovieDB, 'posters')
