@@ -351,7 +351,10 @@ pack(osdb_out, osdb*.join('\t'))
 // ------------------------------ BUILD ANIDB INDEX ------------------------------ //
 
 
-def anidb = new AnidbClient('filebot', 6).getAnimeTitles() as List
+def ac = new AnidbClient('filebot', 6)
+ac.getCache('root').put('anime-titles.dat.gz', dir_data.resolve('anidb.txt').bytes)
+
+def anidb = ac.animeTitles as List
 def animeExcludes = [] as Set
 
 // exclude anime movies from anime index
