@@ -23,9 +23,7 @@ File getThumbnailPath(db, id) {
 
 
 void createThumbnail(original, thumb) {
-	if (!thumb.dir.exists()) {
-		thumb.dir.mkdirs()
-	}
+	thumb.dir.mkdirs()
 	execute '/usr/local/bin/convert', original, '-strip', '-thumbnail', '48x48>', 'PNG8:' + thumb
 }
 
@@ -53,7 +51,15 @@ void build(ids, section, db, query) {
 			return
 		}
 
-		def artwork = db.getArtwork id, query, Locale.ENGLISH
+		def artwork = retry(2, 60000) {
+			try {
+				return db.getArtwork(id, query, Locale.ENGLISH)
+			} catch (FileNotFoundException e) {
+				log.warning "[ARTWORK NOT FOUND] $e"
+				return null
+			}
+		}
+
 		if (!artwork) {
 			original.createNewFile()
 			ls original
@@ -66,7 +72,7 @@ void build(ids, section, db, query) {
 						log.fine "Fetch $a"
 						return a.url.saveAs(original)
 					} catch (FileNotFoundException e) {
-						log.warning "[FILE NOT FOUND] $e"
+						log.warning "[IMAGE NOT FOUND] $e"
 						return null
 					}
 				}
