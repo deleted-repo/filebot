@@ -30,7 +30,7 @@ void createThumbnail(original, thumb) {
 
 void createIndexFile(db) {
 	def indexFile = _args.outputPath.resolve("images/${db}/thumb/poster/index.txt")
-	def index = indexFile.dir.listFiles{ it.image }.collect{ it.getNameWithoutExtension() }.toSorted()
+	def index = indexFile.dir.listFiles{ it.image }.collect{ it.nameWithoutExtension as int }.toSorted()
 
 	index.join('\n').saveAs(indexFile)
 	execute '/usr/local/bin/xz', indexFile, '--force'
