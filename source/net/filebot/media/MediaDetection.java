@@ -1279,7 +1279,7 @@ public class MediaDetection {
 
 	public static List<Integer> grepImdbId(CharSequence text) {
 		// scan for imdb id patterns like tt1234567
-		Pattern imdbId = Pattern.compile("(?<!\\p{Alnum})tt(\\d{7})(?!\\p{Alnum})", Pattern.CASE_INSENSITIVE);
+		Pattern imdbId = Pattern.compile("(?<!\\p{Alnum})tt(\\d{7,8})(?!\\p{Alnum})", Pattern.CASE_INSENSITIVE);
 		return streamMatches(text, imdbId, m -> m.group(1)).map(Integer::parseInt).collect(toList());
 	}
 

@@ -56,7 +56,7 @@ public class OMDbClient implements MovieIdentificationService {
 	}
 
 	protected int getImdbId(String link) {
-		Matcher matcher = Pattern.compile("tt(\\d{7})").matcher(link);
+		Matcher matcher = Pattern.compile("tt(\\d{7,8})").matcher(link);
 
 		if (matcher.find()) {
 			return Integer.parseInt(matcher.group(1));
