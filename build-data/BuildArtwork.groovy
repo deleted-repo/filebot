@@ -28,16 +28,11 @@ void createThumbnail(original, thumb) {
 }
 
 
-void createIndexFile(db) {
-	def indexFile = _args.outputPath.resolve("images/${db}/thumb/poster/index.txt")
-	def index = indexFile.dir.listFiles{ it.image }.collect{ it.nameWithoutExtension as int }.toSorted()
-
-	index.join('\n').saveAs(indexFile)
-	execute '/usr/local/bin/xz', indexFile, '--force'
-
-	println "Index: ${index.size()}"
-	indexFile.dir.listFiles{ !it.image }.each{ ls it }
+void printIndex(db) {
+	def files = getThumbnailPath(db, 0).dir.listFiles()
+	log.info "[INDEX] $db ${files.size()} (${byteCountToDisplaySize(files*.length().sum())})"
 }
+
 
 
 
@@ -60,11 +55,6 @@ void build(ids, section, db, query) {
 			}
 		}
 
-		if (!artwork) {
-			original.createNewFile()
-			ls original
-		}
-
 		if (!original.exists()) {
 			artwork.findResult{ a ->
 				return retry(2, 60000) {
@@ -77,6 +67,12 @@ void build(ids, section, db, query) {
 					}
 				}
 			}
+
+			// create empty placeholder if there is no artwork
+			if (!original.exists()) {
+				original.createNewFile()
+			}
+
 			ls original
 		}
 
@@ -86,7 +82,7 @@ void build(ids, section, db, query) {
 		}
 	}
 
-	createIndexFile(section)
+	printIndex(section)
 }
 
 
