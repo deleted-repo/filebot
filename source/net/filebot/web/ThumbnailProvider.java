@@ -50,7 +50,7 @@ public enum ThumbnailProvider {
 	}
 
 	// per instance cache
-	private final Cache cache = Cache.getCache("thumbnail_" + ordinal(), CacheType.Persistent);
+	private final Cache cache = Cache.getCache("thumbnail_" + ordinal(), CacheType.Monthly);
 
 	// shared instance for all thumbnail requests
 	private static final HttpClient http = HttpClient.newHttpClient();
