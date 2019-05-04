@@ -4,6 +4,7 @@ import static java.util.Collections.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 import static javax.swing.BorderFactory.*;
+import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
 import static net.filebot.Settings.*;
 import static net.filebot.WebServices.*;
@@ -31,6 +32,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
@@ -38,9 +40,6 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-
-import com.bulenkov.iconloader.util.CenteredIcon;
-import com.bulenkov.iconloader.util.EmptyIcon;
 
 import net.filebot.Cache;
 import net.filebot.Cache.TypedCache;
@@ -302,17 +301,18 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 
 				Map<SearchResult, Icon> icons = new HashMap<>(ids.length);
 				for (int i = 0; i < ids.length; i++) {
-					if (thumbnails[i].length > 0) {
-						icons.put(options.get(i), new CenteredIcon(new ImageIcon(thumbnails[i]), 48, 48, false));
+					if (thumbnails[i] != null && thumbnails[i].length > 0) {
+						icons.put(options.get(i), new ImageIcon(thumbnails[i]));
 					} else {
-						icons.put(options.get(i), new EmptyIcon(48, 48));
+						icons.put(options.get(i), BlankThumbnail.BLANK_POSTER);
 					}
 				}
+
 				if (icons.size() > 0) {
 					return icons;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				debug.log(Level.SEVERE, e, e::toString);
 			}
 		}
 		return null;
