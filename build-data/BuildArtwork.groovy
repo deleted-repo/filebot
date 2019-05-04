@@ -24,7 +24,7 @@ File getThumbnailPath(db, id) {
 
 void createThumbnail(original, thumb) {
 	thumb.dir.mkdirs()
-	execute '/usr/local/bin/convert', original, '-strip', '-thumbnail', '48x48>', 'PNG8:' + thumb
+	execute 'convert', original, '-strip', '-thumbnail', '48x48>', 'PNG8:' + thumb
 }
 
 
