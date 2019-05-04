@@ -28,9 +28,15 @@ void createThumbnail(original, thumb) {
 }
 
 
-void printIndex(db) {
-	def files = getThumbnailPath(db, 0).dir.listFiles()
-	log.info "[INDEX] $db ${files.size()} (${byteCountToDisplaySize(files*.length().sum())})"
+void createIndexFile(db) {
+	def indexFile = _args.outputPath.resolve("images/${db}/thumb/poster/index.txt")
+	def index = indexFile.dir.listFiles{ it.image }.collect{ it.nameWithoutExtension as int }.toSorted()
+
+	index.join('\n').saveAs(indexFile)
+	execute '/usr/local/bin/xz', indexFile, '--force', '--keep'
+
+	println "Index: ${index.size()}"
+	indexFile.dir.listFiles{ !it.image }.each{ ls it }
 }
 
 
@@ -88,7 +94,7 @@ void build(ids, section, db, query) {
 		}
 	}
 
-	printIndex(section)
+	createIndexFile(db)
 }
 
 
