@@ -46,7 +46,7 @@ void build(ids, section, db, query) {
 			return
 		}
 
-		if (original.length() == 0 && original.exists() && System.currentTimeMillis() - original.lastModified() < 90 * 24 * 60 * 60 * 1000) {
+		if (original.length() == 0 && original.exists() && System.currentTimeMillis() - original.lastModified() > 90 * 24 * 60 * 60 * 1000) {
 			log.finest "[SKIP] $id"
 			return
 		}
