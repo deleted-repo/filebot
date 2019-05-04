@@ -33,7 +33,7 @@ void createIndexFile(db) {
 	def index = indexFile.dir.listFiles{ it.image }.collect{ it.nameWithoutExtension as int }.toSorted()
 
 	index.join('\n').saveAs(indexFile)
-	execute '/usr/local/bin/xz', indexFile, '--force', '--keep'
+	execute 'xz', indexFile, '--force', '--keep'
 
 	println "Index: ${index.size()}"
 	indexFile.dir.listFiles{ !it.image }.each{ ls it }
