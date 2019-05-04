@@ -94,7 +94,7 @@ void build(ids, section, db, query) {
 		}
 	}
 
-	createIndexFile(db)
+	createIndexFile(section)
 }
 
 
