@@ -24,7 +24,7 @@ File getThumbnailPath(db, id) {
 
 void createThumbnail(original, thumb) {
 	thumb.dir.mkdirs()
-	execute 'convert', original, '-thumbnail', '48x48', '-gravity', 'center', '-background', 'transparent', '-extent', '48x48', 'PNG8:' + thumb
+	execute 'convert', '-strip', original, '-thumbnail', '48x48', '-gravity', 'center', '-background', 'transparent', '-extent', '48x48', 'PNG8:' + thumb
 }
 
 
