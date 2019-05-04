@@ -51,17 +51,17 @@ void build(ids, section, db, query) {
 			return
 		}
 
-		def artwork = retry(2, 60000) {
-			try {
-				return db.getArtwork(id, query, Locale.ENGLISH)
-			} catch (FileNotFoundException e) {
-				log.warning "[ARTWORK NOT FOUND] $e"
-				return null
+		if (original.length() == 0 || !original.exists()) {
+			def artwork = retry(2, 60000) {
+				try {
+					return db.getArtwork(id, query, Locale.ENGLISH)
+				} catch (FileNotFoundException e) {
+					log.warning "[ARTWORK NOT FOUND] $e"
+					return null
+				}
 			}
-		}
 
-		if (!original.exists()) {
-			artwork.findResult{ a ->
+			artwork?.findResult{ a ->
 				return retry(2, 60000) {
 					try {
 						log.fine "Fetch $a"
@@ -74,8 +74,9 @@ void build(ids, section, db, query) {
 			}
 
 			// create empty placeholder if there is no artwork
-			if (!original.exists()) {
+			if (original.length() == 0 || !original.exists()) {
 				original.createNewFile()
+				original.setLastModified(System.currentTimeMillis())
 			}
 
 			ls original
