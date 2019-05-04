@@ -17,11 +17,13 @@ public enum ThumbnailProvider {
 
 	TheTVDB, TheMovieDB;
 
-	public URI getThumbnailURL(int id) {
-		return URI.create("https://api.filebot.net/images/" + name().toLowerCase() + "/thumb/poster/" + id + ".png");
+	public String getThumbnailResource(int id) {
+		return "https://api.filebot.net/images/" + name().toLowerCase() + "/thumb/poster/" + id + ".png";
 	}
 
 	public synchronized byte[][] getThumbnails(int[] ids) throws Exception {
+		HttpClient http = HttpClient.newHttpClient();
+
 		CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
 		byte[][] response = new byte[ids.length][];
 
@@ -32,8 +34,9 @@ public enum ThumbnailProvider {
 
 		for (int i = 0; i < response.length; i++) {
 			if (response[i] == null) {
-				HttpRequest r = HttpRequest.newBuilder(getThumbnailURL(ids[i])).build();
+				HttpRequest r = HttpRequest.newBuilder(URI.create(getThumbnailResource(ids[i]))).build();
 				request[i] = http.sendAsync(r, BodyHandlers.ofByteArray());
+
 				debug.fine(format("Fetch resource: %s", r.uri()));
 			}
 		}
@@ -46,7 +49,9 @@ public enum ThumbnailProvider {
 				} else {
 					response[i] = new byte[0];
 				}
+
 				cache.put(ids[i], response[i]);
+
 				debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
 			}
 		}
@@ -56,8 +61,5 @@ public enum ThumbnailProvider {
 
 	// per instance cache
 	private final Cache cache = Cache.getCache("thumbnail_" + ordinal(), CacheType.Monthly);
-
-	// shared instance for all thumbnail requests
-	private static final HttpClient http = HttpClient.newHttpClient();
 
 }
