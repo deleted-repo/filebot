@@ -39,43 +39,41 @@ public enum ThumbnailProvider {
 
 	private final Resource<Set<Integer>> index = Resource.lazy(this::getIndex);
 
-	public synchronized byte[][] getThumbnails(int[] ids) throws Exception {
-		CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
-		byte[][] response = new byte[ids.length][];
+	public byte[][] getThumbnails(int[] ids) throws Exception {
+		synchronized (index) {
+			CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
+			byte[][] response = new byte[ids.length][];
 
-		// check cache
-		for (int i = 0; i < response.length; i++) {
-			response[i] = (byte[]) cache.get(ids[i]);
-		}
-
-		// create if necessary
-		Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
-
-		for (int i = 0; i < response.length; i++) {
-			if (response[i] == null && index.get().contains(ids[i])) {
-				HttpRequest r = HttpRequest.newBuilder(URI.create(getResourceLocation(ids[i] + ".png"))).build();
-				request[i] = http.get().sendAsync(r, BodyHandlers.ofByteArray());
-
-				debug.fine(format("Fetch resource: %s", r.uri()));
+			// check cache
+			for (int i = 0; i < response.length; i++) {
+				response[i] = (byte[]) cache.get(ids[i]);
 			}
-		}
 
-		for (int i = 0; i < response.length; i++) {
-			if (request[i] != null) {
-				HttpResponse<byte[]> r = request[i].get();
-				if (r.statusCode() == 200) {
-					response[i] = r.body();
-				} else {
-					response[i] = new byte[0];
+			// create if necessary
+			Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
+
+			for (int i = 0; i < response.length; i++) {
+				if (response[i] == null && index.get().contains(ids[i])) {
+					HttpRequest r = HttpRequest.newBuilder(URI.create(getResourceLocation(ids[i] + ".png"))).build();
+					request[i] = http.get().sendAsync(r, BodyHandlers.ofByteArray());
+
+					debug.fine(format("Request %s", r.uri()));
 				}
-
-				cache.put(ids[i], response[i]);
-
-				debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
 			}
-		}
 
-		return response;
+			for (int i = 0; i < response.length; i++) {
+				if (request[i] != null) {
+					HttpResponse<byte[]> r = request[i].get();
+
+					response[i] = r.statusCode() == 200 ? r.body() : new byte[0];
+					cache.put(ids[i], response[i]);
+
+					debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
+				}
+			}
+
+			return response;
+		}
 	}
 
 	// per instance cache
