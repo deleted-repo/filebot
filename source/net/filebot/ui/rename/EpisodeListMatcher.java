@@ -39,6 +39,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import com.bulenkov.iconloader.util.CenteredIcon;
+import com.bulenkov.iconloader.util.EmptyIcon;
+
 import net.filebot.Cache;
 import net.filebot.Cache.TypedCache;
 import net.filebot.CacheType;
@@ -300,7 +303,9 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 				Map<SearchResult, Icon> icons = new HashMap<>(ids.length);
 				for (int i = 0; i < ids.length; i++) {
 					if (thumbnails[i].length > 0) {
-						icons.put(options.get(i), new ImageIcon(thumbnails[i]));
+						icons.put(options.get(i), new CenteredIcon(new ImageIcon(thumbnails[i]), 48, 48, false));
+					} else {
+						icons.put(options.get(i), new EmptyIcon(48, 48));
 					}
 				}
 				if (icons.size() > 0) {
