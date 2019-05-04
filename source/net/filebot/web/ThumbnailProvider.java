@@ -23,24 +23,26 @@ public enum ThumbnailProvider {
 		byte[][] response = new byte[ids.length][];
 
 		// check cache
-		for (int i = 0; i < request.length; i++) {
+		for (int i = 0; i < response.length; i++) {
 			response[i] = (byte[]) cache.get(ids[i]);
 		}
 
-		for (int i = 0; i < request.length; i++) {
+		for (int i = 0; i < response.length; i++) {
 			if (response[i] == null) {
 				HttpRequest r = HttpRequest.newBuilder(getThumbnailURL(ids[i])).build();
 				request[i] = http.sendAsync(r, BodyHandlers.ofByteArray());
 			}
 		}
 
-		for (int i = 0; i < request.length; i++) {
-			if (response[i] == null) {
+		for (int i = 0; i < response.length; i++) {
+			if (request[i] != null) {
 				HttpResponse<byte[]> r = request[i].get();
 				if (r.statusCode() == 200) {
 					response[i] = r.body();
-					cache.put(ids[i], response[i]);
+				} else {
+					response[i] = new byte[0];
 				}
+				cache.put(ids[i], response[i]);
 			}
 		}
 
