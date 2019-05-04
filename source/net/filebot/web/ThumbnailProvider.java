@@ -1,5 +1,8 @@
 package net.filebot.web;
 
+import static net.filebot.Logging.*;
+import static net.filebot.util.FileUtilities.*;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -18,7 +21,7 @@ public enum ThumbnailProvider {
 		return URI.create("https://api.filebot.net/images/" + name().toLowerCase() + "/thumb/poster/" + id + ".png");
 	}
 
-	public byte[][] getThumbnails(int[] ids) throws Exception {
+	public synchronized byte[][] getThumbnails(int[] ids) throws Exception {
 		CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
 		byte[][] response = new byte[ids.length][];
 
@@ -31,6 +34,7 @@ public enum ThumbnailProvider {
 			if (response[i] == null) {
 				HttpRequest r = HttpRequest.newBuilder(getThumbnailURL(ids[i])).build();
 				request[i] = http.sendAsync(r, BodyHandlers.ofByteArray());
+				debug.fine(format("Fetch resource: %s", r.uri()));
 			}
 		}
 
@@ -43,6 +47,7 @@ public enum ThumbnailProvider {
 					response[i] = new byte[0];
 				}
 				cache.put(ids[i], response[i]);
+				debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
 			}
 		}
 
