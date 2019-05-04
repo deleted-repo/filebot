@@ -18,6 +18,7 @@ import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -34,6 +35,8 @@ import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import net.filebot.Cache;
@@ -46,6 +49,8 @@ import net.filebot.web.Episode;
 import net.filebot.web.EpisodeListProvider;
 import net.filebot.web.SearchResult;
 import net.filebot.web.SortOrder;
+import net.filebot.web.TheTVDBClient;
+import net.filebot.web.ThumbnailProvider;
 
 class EpisodeListMatcher implements AutoCompleteMatcher {
 
@@ -228,13 +233,16 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 			return probableMatches.get(0);
 		}
 
+		// prepare thumbnail images
+		Map<SearchResult, Icon> thumbnails = getThumbnails(options);
+
 		// show selection dialog on EDT
 		Callable<SearchResult> showSelectDialog = () -> {
 			JLabel header = new JLabel(getQueryInputMessage("Failed to identify some of the following files:", null, getFilesForQuery(files, query)));
 			header.setBorder(createCompoundBorder(createTitledBorder(""), createEmptyBorder(3, 3, 3, 3)));
 
 			// multiple results have been found, user must select one
-			SelectDialog<SearchResult> selectDialog = new SelectDialog<SearchResult>(parent, options, true, false, header.getText().isEmpty() ? null : header);
+			SelectDialog<SearchResult> selectDialog = new SelectDialog<SearchResult>(parent, options, thumbnails, true, false, header.getText().isEmpty() ? null : header);
 			selectDialog.setTitle(provider.getName());
 			selectDialog.getMessageLabel().setText("<html>Select best match for \"<b>" + escapeHTML(query) + "</b>\":</html>");
 			selectDialog.getCancelAction().putValue(Action.NAME, "Skip");
@@ -281,6 +289,28 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 			selectionMemory.put(query, userSelection);
 			return userSelection;
 		}
+	}
+
+	protected Map<SearchResult, Icon> getThumbnails(List<SearchResult> options) {
+		if (provider instanceof TheTVDBClient) {
+			try {
+				int[] ids = options.stream().mapToInt(SearchResult::getId).toArray();
+				byte[][] thumbnails = ThumbnailProvider.TheTVDB.getThumbnails(ids);
+
+				Map<SearchResult, Icon> icons = new HashMap<>(ids.length);
+				for (int i = 0; i < ids.length; i++) {
+					if (thumbnails[i].length > 0) {
+						icons.put(options.get(i), new ImageIcon(thumbnails[i]));
+					}
+				}
+				if (icons.size() > 0) {
+					return icons;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 
 	protected Collection<File> getFilesForQuery(Collection<File> files, String query) {

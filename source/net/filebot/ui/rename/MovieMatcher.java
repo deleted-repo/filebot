@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import java.util.prefs.Preferences;
 
 import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 
 import net.filebot.similarity.Match;
@@ -337,6 +338,9 @@ class MovieMatcher implements AutoCompleteMatcher {
 			return null;
 		}
 
+		// prepare thumbnail images
+		Map<Movie, Icon> thumbnails = null;
+
 		// show selection dialog on EDT
 		Callable<Movie> showSelectDialog = () -> {
 			String query = fileQuery.length() >= 2 || folderQuery.length() <= 2 ? fileQuery : folderQuery;
@@ -344,7 +348,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 			header.setBorder(createCompoundBorder(createTitledBorder(""), createEmptyBorder(3, 3, 3, 3)));
 
 			// multiple results have been found, user must select one
-			SelectDialog<Movie> selectDialog = new SelectDialog<Movie>(parent, options, true, false, header);
+			SelectDialog<Movie> selectDialog = new SelectDialog<Movie>(parent, options, thumbnails, true, false, header);
 
 			selectDialog.setTitle(service.getName());
 			selectDialog.getMessageLabel().setText("<html>Select best match for \"<b>" + escapeHTML(query) + "</b>\":</html>");
