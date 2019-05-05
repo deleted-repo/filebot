@@ -22,6 +22,8 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
+import javax.swing.Icon;
+
 import net.filebot.media.LocalDatasource;
 import net.filebot.similarity.MetricAvg;
 import net.filebot.web.AcoustIDClient;
@@ -45,6 +47,7 @@ import net.filebot.web.TMDbTVClient;
 import net.filebot.web.TVMazeClient;
 import net.filebot.web.TheTVDBClient;
 import net.filebot.web.TheTVDBSearchResult;
+import net.filebot.web.ThumbnailProvider;
 import net.filebot.web.VideoHashSubtitleService;
 
 /**
@@ -130,7 +133,7 @@ public final class WebServices {
 
 	public static final ExecutorService requestThreadPool = Executors.newCachedThreadPool();
 
-	public static class TMDbClientWithLocalSearch extends TMDbClient {
+	public static class TMDbClientWithLocalSearch extends TMDbClient implements ThumbnailProvider {
 
 		public TMDbClientWithLocalSearch(String apikey) {
 			super(apikey);
@@ -189,9 +192,13 @@ public final class WebServices {
 			return new ArrayList<>(movies);
 		}
 
+		@Override
+		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys) throws Exception {
+			return ThumbnailServices.TheMovieDB.getThumbnails(keys);
+		}
 	}
 
-	public static class TheTVDBClientWithLocalSearch extends TheTVDBClient {
+	public static class TheTVDBClientWithLocalSearch extends TheTVDBClient implements ThumbnailProvider {
 
 		public TheTVDBClientWithLocalSearch(String apikey) {
 			super(apikey);
@@ -225,6 +232,11 @@ public final class WebServices {
 			Map<Integer, SearchResult> results = Stream.of(apiSearch.get(), localSearch.get()).flatMap(List::stream).collect(groupingBy(SearchResult::getId, LinkedHashMap::new, collectingAndThen(toList(), this::merge)));
 
 			return sortBySimilarity(results.values(), singleton(query), getSeriesMatchMetric());
+		}
+
+		@Override
+		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys) throws Exception {
+			return ThumbnailServices.TheTVDB.getThumbnails(keys);
 		}
 	}
 

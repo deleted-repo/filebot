@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.io.File;
 import java.util.Collection;
-import java.util.Map;
+import java.util.function.Function;
 import java.util.prefs.Preferences;
 
 import javax.swing.Action;
@@ -40,18 +40,18 @@ public class SelectDialog<T> extends JDialog {
 	private JList<T> list;
 	private String command = null;
 
-	private Map<T, Icon> icons;
+	private Function<T, Icon> icon;
 
 	public SelectDialog(Component parent, Collection<? extends T> options) {
 		this(parent, options, null, false, false, null);
 	}
 
-	public SelectDialog(Component parent, Collection<? extends T> options, Map<T, Icon> icons, boolean autoRepeatEnabled, boolean autoRepeatSelected, JComponent header) {
+	public SelectDialog(Component parent, Collection<? extends T> options, Function<T, Icon> icon, boolean autoRepeatEnabled, boolean autoRepeatSelected, JComponent header) {
 		super(getWindow(parent), "Select", ModalityType.DOCUMENT_MODAL);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
 		// enable icons
-		this.icons = icons;
+		this.icon = icon;
 
 		// initialize list
 		list = new JList(options.toArray());
@@ -117,8 +117,8 @@ public class SelectDialog<T> extends JDialog {
 			render.setToolTipText(null);
 		}
 
-		if (icons != null) {
-			render.setIcon(icons.get(value));
+		if (icon != null) {
+			render.setIcon(icon.apply((T) value));
 		}
 	}
 

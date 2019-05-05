@@ -2,10 +2,9 @@ package net.filebot.ui.rename;
 
 import static net.filebot.ui.ThemeSupport.*;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
 
 import javax.swing.Icon;
 
@@ -16,13 +15,13 @@ public class BlankThumbnail implements Icon {
 	private int width;
 	private int height;
 
-	private Paint fill;
-	private Paint draw;
+	private Color fill;
+	private Color draw;
 
 	private float squeezeX;
 	private float squeezeY;
 
-	public BlankThumbnail(int width, int height, Paint fill, Paint draw, float squeezeX, float squeezeY) {
+	public BlankThumbnail(int width, int height, Color fill, Color draw, float squeezeX, float squeezeY) {
 		this.width = width;
 		this.height = height;
 		this.fill = fill;
@@ -33,18 +32,16 @@ public class BlankThumbnail implements Icon {
 
 	@Override
 	public void paintIcon(Component c, Graphics g, int x, int y) {
-		Graphics2D g2d = (Graphics2D) g;
-
 		int w = (int) (width * squeezeX);
 		int h = (int) (height * squeezeY);
 		x = (int) (x + (width - w) / 2);
 		y = (int) (y + (width - h) / 2);
 
-		g2d.setPaint(fill);
-		g2d.fillRect(x, y, w, h);
+		g.setColor(fill);
+		g.fillRect(x, y, w, h);
 
-		g2d.setPaint(draw);
-		g2d.drawRect(x, y, w, h);
+		g.setColor(draw);
+		g.drawRect(x, y, w, h);
 	}
 
 	@Override

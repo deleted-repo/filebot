@@ -34,6 +34,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.prefs.Preferences;
 
@@ -49,7 +50,9 @@ import net.filebot.util.FileUtilities.ParentFilter;
 import net.filebot.web.Movie;
 import net.filebot.web.MovieIdentificationService;
 import net.filebot.web.MoviePart;
+import net.filebot.web.SearchResult;
 import net.filebot.web.SortOrder;
+import net.filebot.web.ThumbnailProvider;
 
 class MovieMatcher implements AutoCompleteMatcher {
 
@@ -219,7 +222,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 		return matches;
 	}
 
-	protected Movie grabMovieName(File movieFile, Collection<Movie> options, boolean strict, Locale locale, boolean autodetect, Component parent) throws Exception {
+	protected Movie grabMovieName(File movieFile, List<Movie> options, boolean strict, Locale locale, boolean autodetect, Component parent) throws Exception {
 		// allow manual user input
 		synchronized (selectionMemory) {
 			if (!strict && (!autodetect || options.isEmpty()) && !(autodetect && autoSelectionMode.size() > 0)) {
@@ -280,7 +283,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 		return name;
 	}
 
-	protected Movie selectMovie(File movieFile, boolean strict, String userQuery, Collection<Movie> options, Component parent) throws Exception {
+	protected Movie selectMovie(File movieFile, boolean strict, String userQuery, List<Movie> options, Component parent) throws Exception {
 		// just auto-pick singleton results
 		if (options.size() == 1) {
 			return options.iterator().next();
@@ -339,7 +342,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 		}
 
 		// prepare thumbnail images
-		Map<Movie, Icon> thumbnails = null;
+		Function<Movie, Icon> thumbnail = thumbnail(options);
 
 		// show selection dialog on EDT
 		Callable<Movie> showSelectDialog = () -> {
@@ -348,7 +351,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 			header.setBorder(createCompoundBorder(createTitledBorder(""), createEmptyBorder(3, 3, 3, 3)));
 
 			// multiple results have been found, user must select one
-			SelectDialog<Movie> selectDialog = new SelectDialog<Movie>(parent, options, thumbnails, true, false, header);
+			SelectDialog<Movie> selectDialog = new SelectDialog<Movie>(parent, options, thumbnail, true, false, header);
 
 			selectDialog.setTitle(service.getName());
 			selectDialog.getMessageLabel().setText("<html>Select best match for \"<b>" + escapeHTML(query) + "</b>\":</html>");
@@ -402,6 +405,20 @@ class MovieMatcher implements AutoCompleteMatcher {
 
 	private enum AutoSelection {
 		First, Skip;
+	}
+
+	protected Function<Movie, Icon> thumbnail(List<Movie> options) {
+		if (service instanceof ThumbnailProvider) {
+			try {
+				Map<SearchResult, Icon> thumbnails = ((ThumbnailProvider) service).getThumbnails((List) options);
+				if (thumbnails.size() > 0) {
+					return key -> thumbnails.getOrDefault(key, BlankThumbnail.BLANK_POSTER);
+				}
+			} catch (Exception e) {
+				debug.log(Level.SEVERE, e, e::toString);
+			}
+		}
+		return null;
 	}
 
 	public List<Match<File, ?>> justFetchMovieInfo(Locale locale, Component parent) throws Exception {
