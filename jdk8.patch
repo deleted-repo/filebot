@@ -222,7 +222,7 @@ index 7e393cac..5eb3dadd 100644
  			throw new RuntimeException(e);
  		}
 diff --git a/source/net/filebot/ThumbnailServices.java b/source/net/filebot/ThumbnailServices.java
-index f08a3a3e..730cd700 100644
+index 515f71f2..1aab0ffd 100644
 --- a/source/net/filebot/ThumbnailServices.java
 +++ b/source/net/filebot/ThumbnailServices.java
 @@ -7,10 +7,6 @@ import static net.filebot.util.RegularExpressions.*;
@@ -236,18 +236,15 @@ index f08a3a3e..730cd700 100644
  import java.nio.ByteBuffer;
  import java.util.HashMap;
  import java.util.List;
-@@ -53,37 +49,8 @@ public enum ThumbnailServices implements ThumbnailProvider {
- 		byte[][] response = new byte[ids.length][];
- 
+@@ -55,34 +51,7 @@ public enum ThumbnailServices implements ThumbnailProvider {
  		synchronized (index) {
--			// check cache
+ 			// check cache
  			for (int i = 0; i < response.length; i++) {
 -				response[i] = (byte[]) cache.get(ids[i]);
 -			}
 -
 -			// create if necessary
 -			CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
--			Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
 -
 -			for (int i = 0; i < response.length; i++) {
 -				if (response[i] == null && index.get().contains(ids[i])) {
@@ -275,6 +272,14 @@ index f08a3a3e..730cd700 100644
  			}
  
  			return response;
+@@ -108,7 +77,4 @@ public enum ThumbnailServices implements ThumbnailProvider {
+ 		return icons;
+ 	}
+ 
+-	// shared HTTP Client instance for all thumbnail requests
+-	private static final Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
+-
+ }
 diff --git a/source/net/filebot/UserFiles.java b/source/net/filebot/UserFiles.java
 index bb0f65de..25b687ab 100644
 --- a/source/net/filebot/UserFiles.java
