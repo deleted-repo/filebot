@@ -222,17 +222,12 @@ index 7e393cac..5eb3dadd 100644
  			throw new RuntimeException(e);
  		}
 diff --git a/source/net/filebot/ThumbnailServices.java b/source/net/filebot/ThumbnailServices.java
-index 0889de46..790b6586 100644
+index f08a3a3e..730cd700 100644
 --- a/source/net/filebot/ThumbnailServices.java
 +++ b/source/net/filebot/ThumbnailServices.java
-@@ -3,21 +3,14 @@ package net.filebot;
- import static java.nio.charset.StandardCharsets.*;
- import static java.util.stream.Collectors.*;
- import static net.filebot.Logging.*;
--import static net.filebot.util.FileUtilities.*;
- import static net.filebot.util.RegularExpressions.*;
+@@ -7,10 +7,6 @@ import static net.filebot.util.RegularExpressions.*;
  
--import java.net.URI;
+ import java.net.URI;
  import java.net.URL;
 -import java.net.http.HttpClient;
 -import java.net.http.HttpRequest;
@@ -241,13 +236,7 @@ index 0889de46..790b6586 100644
  import java.nio.ByteBuffer;
  import java.util.HashMap;
  import java.util.List;
- import java.util.Map;
- import java.util.Set;
--import java.util.concurrent.CompletableFuture;
- import java.util.logging.Level;
- 
- import javax.swing.Icon;
-@@ -54,37 +47,8 @@ public enum ThumbnailServices implements ThumbnailProvider {
+@@ -53,37 +49,8 @@ public enum ThumbnailServices implements ThumbnailProvider {
  		byte[][] response = new byte[ids.length][];
  
  		synchronized (index) {
@@ -277,7 +266,7 @@ index 0889de46..790b6586 100644
 -						response[i] = r.statusCode() == 200 ? r.body() : new byte[0];
 -						cache.put(ids[i], response[i]);
 -
--						debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
+-						debug.finest(format("Received %,d bytes (%d %s)", r.body().length, r.statusCode(), r.uri()));
 -					} catch (Exception e) {
 -						debug.warning(e::toString);
 -					}
