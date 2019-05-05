@@ -3,7 +3,6 @@ package net.filebot;
 import static java.nio.charset.StandardCharsets.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
-import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.net.URI;
@@ -80,7 +79,7 @@ public enum ThumbnailServices implements ThumbnailProvider {
 						response[i] = r.statusCode() == 200 ? r.body() : new byte[0];
 						cache.put(ids[i], response[i]);
 
-						debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
+						debug.finest(format("Received %,d bytes (%d %s)", r.body().length, r.statusCode(), r.uri()));
 					} catch (Exception e) {
 						debug.warning(e::toString);
 					}
