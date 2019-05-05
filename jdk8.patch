@@ -152,7 +152,7 @@ index 41e87444..05422081 100644
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
-index 373a3b1c..d06a8521 100644
+index 3e17ccb1..3352856c 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -36,7 +36,7 @@
@@ -221,6 +221,71 @@ index 7e393cac..5eb3dadd 100644
  		} catch (Exception e) {
  			throw new RuntimeException(e);
  		}
+diff --git a/source/net/filebot/ThumbnailServices.java b/source/net/filebot/ThumbnailServices.java
+index 0889de46..790b6586 100644
+--- a/source/net/filebot/ThumbnailServices.java
++++ b/source/net/filebot/ThumbnailServices.java
+@@ -3,21 +3,14 @@ package net.filebot;
+ import static java.nio.charset.StandardCharsets.*;
+ import static java.util.stream.Collectors.*;
+ import static net.filebot.Logging.*;
+-import static net.filebot.util.FileUtilities.*;
+ import static net.filebot.util.RegularExpressions.*;
+ 
+-import java.net.URI;
+ import java.net.URL;
+-import java.net.http.HttpClient;
+-import java.net.http.HttpRequest;
+-import java.net.http.HttpResponse;
+-import java.net.http.HttpResponse.BodyHandlers;
+ import java.nio.ByteBuffer;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+-import java.util.concurrent.CompletableFuture;
+ import java.util.logging.Level;
+ 
+ import javax.swing.Icon;
+@@ -54,37 +47,8 @@ public enum ThumbnailServices implements ThumbnailProvider {
+ 		byte[][] response = new byte[ids.length][];
+ 
+ 		synchronized (index) {
+-			// check cache
+ 			for (int i = 0; i < response.length; i++) {
+-				response[i] = (byte[]) cache.get(ids[i]);
+-			}
+-
+-			// create if necessary
+-			CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
+-			Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
+-
+-			for (int i = 0; i < response.length; i++) {
+-				if (response[i] == null && index.get().contains(ids[i])) {
+-					URI r = URI.create(getResource(ids[i] + ".png"));
+-					request[i] = http.get().sendAsync(HttpRequest.newBuilder(r).build(), BodyHandlers.ofByteArray());
+-
+-					debug.fine(format("Request %s", r));
+-				}
+-			}
+-
+-			for (int i = 0; i < response.length; i++) {
+-				if (request[i] != null) {
+-					try {
+-						HttpResponse<byte[]> r = request[i].get();
+-
+-						response[i] = r.statusCode() == 200 ? r.body() : new byte[0];
+-						cache.put(ids[i], response[i]);
+-
+-						debug.finest(format("Received %s (%s)", formatSize(response[i].length), r.uri()));
+-					} catch (Exception e) {
+-						debug.warning(e::toString);
+-					}
+-				}
++				response[i] = cache.bytes(ids[i], k -> new URL(getResource(ids[k] + ".png"))).expire(Cache.ONE_MONTH).get();
+ 			}
+ 
+ 			return response;
 diff --git a/source/net/filebot/UserFiles.java b/source/net/filebot/UserFiles.java
 index bb0f65de..25b687ab 100644
 --- a/source/net/filebot/UserFiles.java
