@@ -60,7 +60,6 @@ public enum ThumbnailServices implements ThumbnailProvider {
 
 			// create if necessary
 			CompletableFuture<HttpResponse<byte[]>>[] request = new CompletableFuture[ids.length];
-			Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
 
 			for (int i = 0; i < response.length; i++) {
 				if (response[i] == null && index.get().contains(ids[i])) {
@@ -108,5 +107,8 @@ public enum ThumbnailServices implements ThumbnailProvider {
 
 		return icons;
 	}
+
+	// shared HTTP Client instance for all thumbnail requests
+	private static final Resource<HttpClient> http = Resource.lazy(HttpClient::newHttpClient);
 
 }
