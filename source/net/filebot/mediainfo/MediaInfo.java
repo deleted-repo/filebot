@@ -42,7 +42,7 @@ public class MediaInfo implements MediaCharacteristics {
 	}
 
 	public synchronized MediaInfo open(File file) throws IOException, IllegalArgumentException {
-		if (!file.isFile() || file.length() < 64 * 1024) {
+		if (!file.isFile()) {
 			throw new IllegalArgumentException("Invalid media file: " + file);
 		}
 
