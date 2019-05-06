@@ -398,16 +398,16 @@ public class MediaBindingBean {
 
 	@Define("channels")
 	public String getAudioChannelPositions() {
-		String channels = getMediaInfo(StreamKind.Audio, 0, "ChannelPositions/String2", "Channel(s)_Original", "Channel(s)");
-
 		// e.g. ChannelPositions/String2: 3/2/2.1 / 3/2/0.1 (one audio stream may contain multiple multi-channel streams)
-		double d = tokenize(channels).mapToDouble(s -> {
-			try {
-				return tokenize(s, SLASH).mapToDouble(Double::parseDouble).reduce(0, (a, b) -> a + b);
-			} catch (NumberFormatException e) {
-				return 0;
-			}
-		}).filter(it -> it > 0).max().getAsDouble();
+		double d = getMediaInfo(StreamKind.Audio, "ChannelPositions/String2", "Channel(s)_Original", "Channel(s)").map(channels -> {
+			return tokenize(channels).mapToDouble(s -> {
+				try {
+					return tokenize(s, SLASH).mapToDouble(Double::parseDouble).reduce(0, (a, b) -> a + b);
+				} catch (NumberFormatException e) {
+					return 0;
+				}
+			}).max().orElse(0);
+		}).filter(i -> i > 0).findFirst().get();
 
 		return BigDecimal.valueOf(d).setScale(1, RoundingMode.HALF_UP).toPlainString();
 	}
