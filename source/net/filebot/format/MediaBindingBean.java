@@ -387,10 +387,10 @@ public class MediaBindingBean {
 
 	@Define("af")
 	public String getAudioChannels() {
-		String channels = getMediaInfo(StreamKind.Audio, 0, "Channel(s)_Original", "Channel(s)");
-
-		// e.g. 15 objects / 6 channels
-		int ch = tokenize(channels, SLASH).map(s -> matchInteger(s)).filter(Objects::nonNull).min(Integer::compare).get();
+		int ch = getMediaInfo(StreamKind.Audio, "Channel(s)_Original", "Channel(s)").map(channels -> {
+			// e.g. 15 objects / 6 channels
+			return tokenize(channels, SLASH).map(s -> matchInteger(s)).filter(Objects::nonNull).min(Integer::compare).orElse(null);
+		}).filter(Objects::nonNull).findFirst().get();
 
 		// get first number, e.g. 6ch
 		return ch + "ch";
@@ -414,7 +414,7 @@ public class MediaBindingBean {
 
 	@Define("aco")
 	public String getAudioChannelObjects() {
-		return getMediaInfo(StreamKind.Audio, "Codec_Profile", "Format_Profile", "Format_Commercial").filter(Objects::nonNull).map(s -> {
+		return getMediaInfo(StreamKind.Audio, "Codec_Profile", "Format_Profile", "Format_Commercial").map(s -> {
 			return SLASH.splitAsStream(s).findFirst().orElse(null);
 		}).filter(Objects::nonNull).map(String::trim).filter(s -> s.length() > 0).findFirst().orElse(null);
 	}
@@ -1272,7 +1272,7 @@ public class MediaBindingBean {
 			return stream(keys).map(key -> {
 				return getMediaInfo().get(streamKind, streamNumber, key);
 			}).filter(s -> s.length() > 0).findFirst().orElse(null);
-		});
+		}).filter(Objects::nonNull);
 	}
 
 	private AssociativeScriptObject createBindingObject(Object info) {
