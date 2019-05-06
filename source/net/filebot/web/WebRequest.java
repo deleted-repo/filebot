@@ -235,14 +235,11 @@ public final class WebRequest {
 		StringBuilder sb = new StringBuilder();
 
 		for (Entry<String, ?> entry : parameters.entrySet()) {
-			if (sb.length() > 0) {
-				sb.append("&");
-			}
-
-			sb.append(entry.getKey());
 			if (entry.getValue() != null) {
-				sb.append("=");
-				sb.append(encode(entry.getValue().toString(), unicode));
+				if (sb.length() > 0) {
+					sb.append("&");
+				}
+				sb.append(entry.getKey()).append("=").append(encode(entry.getValue().toString(), unicode));
 			}
 		}
 
