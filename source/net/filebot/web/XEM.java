@@ -17,12 +17,22 @@ import net.filebot.CacheType;
 
 public class XEM {
 
+	public Object[] getAll(Integer id, String origin) throws Exception {
+		Map<String, Object> parameters = new LinkedHashMap<>(2);
+		parameters.put("id", id);
+		parameters.put("origin", origin);
+
+		Object response = request("all?" + encodeParameters(parameters, true));
+
+		return getArray(response, "data");
+	}
+
 	public List<SearchResult> getAllNames(String origin) throws Exception {
 		return getAllNames(origin, null, null, true);
 	}
 
 	public List<SearchResult> getAllNames(String origin, String season, String language, boolean defaultNames) throws Exception {
-		Map<String, String> parameters = new LinkedHashMap<>(4);
+		Map<String, Object> parameters = new LinkedHashMap<>(4);
 		parameters.put("origin", origin);
 		parameters.put("season", season);
 		parameters.put("language", language);
@@ -59,6 +69,11 @@ public class XEM {
 	public static void main(String[] args) throws Exception {
 		XEM xem = new XEM();
 		System.out.println(xem.getAllNames("tvdb"));
+
+		for (Object i : xem.getAll(13033, "anidb")) {
+			System.out.println(i);
+		}
+
 		System.exit(0);
 	}
 
