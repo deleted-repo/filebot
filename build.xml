@@ -111,15 +111,22 @@
 	<macrodef name="get-windows-jre" description="Fetch and unpack JRE bundle (64-bit Windows)">
 		<attribute name="dest" />
 		<sequential>
-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
 				<arg line="get-java get jdk x86_64" />
+			</exec>
+			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
+				<arg line="get jdk x86_64" />
 			</exec>
 			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</unzip>
-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+
+			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
 				<arg line="get-java get jfx x86_64" />
+			</exec>
+			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
+				<arg line="get jfx x86_64" />
 			</exec>
 			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
 				<patternset refid="pattern.jre" />
