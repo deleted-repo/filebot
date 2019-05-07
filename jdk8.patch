@@ -1,15 +1,9 @@
 diff --git a/app.properties b/app.properties
-index f545ea20..9580b5c4 100644
+index a7e4681b..f5f36591 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -40,12 +40,12 @@ link.release.index: https://get.filebot.net/filebot
- 
- # Build
- main.class: net.filebot.Main
--jre.version: 11.0.2
--jfx.version: 11.0.2
-+jre.major: 8
-+jre.build: 201
+@@ -48,8 +48,8 @@ jre.major: 8
+ jre.build: 201
  
  # Minimum System Version
 -jvm.version: 11
@@ -19,7 +13,7 @@ index f545ea20..9580b5c4 100644
  
  # Package Information
  package.name: filebot
-@@ -88,35 +88,12 @@ java.application.options: -Dunixfs=false \
+@@ -92,35 +92,12 @@ java.application.options: -Dunixfs=false \
                            -DuseCreationDate=false \
                            -Djava.net.useSystemProxies=true \
                            -Djna.nosys=true \
@@ -57,24 +51,33 @@ index f545ea20..9580b5c4 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index fb39e039..a6aa5209 100644
+index b3d1de50..a6aa5209 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -112,19 +112,13 @@
+@@ -111,27 +111,14 @@
+ 	<macrodef name="get-windows-jre" description="Fetch and unpack JRE bundle (64-bit Windows)">
  		<attribute name="dest" />
  		<sequential>
- 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
 -				<arg line="get-java get jdk x86_64" />
++			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
 +				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
 +				<arg line="get-java" />
  			</exec>
+-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
+-				<arg line="get jdk x86_64 Windows" />
+-			</exec>
 -			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
 -			</unzip>
--			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
+-
+-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
 -				<arg line="get-java get jfx x86_64" />
+-			</exec>
+-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
+-				<arg line="get jfx x86_64 Windows" />
 -			</exec>
 -			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
 -				<patternset refid="pattern.jre" />
@@ -84,7 +87,7 @@ index fb39e039..a6aa5209 100644
  		</sequential>
  	</macrodef>
  
-@@ -278,10 +272,8 @@
+@@ -285,10 +272,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -96,7 +99,7 @@ index fb39e039..a6aa5209 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -312,7 +304,7 @@
+@@ -319,7 +304,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -105,7 +108,7 @@ index fb39e039..a6aa5209 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -351,9 +343,9 @@
+@@ -358,9 +343,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -118,7 +121,7 @@ index fb39e039..a6aa5209 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -579,7 +571,7 @@
+@@ -586,7 +571,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
@@ -380,7 +383,7 @@ index 9ceea367..236b06f9 100644
  
  	public abstract Hash newHash();
 diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
-index ad5bbcfc..7c984c54 100644
+index 14b078e5..a0f944b1 100644
 --- a/source/net/filebot/mediainfo/MediaInfo.java
 +++ b/source/net/filebot/mediainfo/MediaInfo.java
 @@ -8,7 +8,6 @@ import static net.filebot.util.RegularExpressions.*;
