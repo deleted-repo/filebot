@@ -115,7 +115,7 @@
 				<arg line="get-java get jdk x86_64" />
 			</exec>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
-				<arg line="get jdk x86_64" />
+				<arg line="get jdk x86_64 Windows" />
 			</exec>
 			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
 				<patternset refid="pattern.jre" />
@@ -126,7 +126,7 @@
 				<arg line="get-java get jfx x86_64" />
 			</exec>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
-				<arg line="get jfx x86_64" />
+				<arg line="get jfx x86_64 Windows" />
 			</exec>
 			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
 				<patternset refid="pattern.jre" />
