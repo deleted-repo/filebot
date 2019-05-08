@@ -10,7 +10,7 @@ import javax.swing.Icon;
 
 public class BlankThumbnail implements Icon {
 
-	public static final BlankThumbnail BLANK_POSTER = new BlankThumbnail(48, 48, getColor(0xF8F8FF), getPanelSelectionBorderColor(), 0.68f, 1f);
+	public static final BlankThumbnail BLANK_POSTER = new BlankThumbnail(48, 48, getBlankBackgroundColor(), getPanelSelectionBorderColor(), 0.68f, 1f);
 
 	private int width;
 	private int height;

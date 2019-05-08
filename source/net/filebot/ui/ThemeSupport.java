@@ -87,7 +87,11 @@ public class ThemeSupport {
 	}
 
 	public static Color getPanelSelectionBorderColor() {
-		return new Color(0x163264);
+		return theme.isDark() ? new Color(0x191c26) : new Color(0x163264);
+	}
+
+	public static Color getBlankBackgroundColor() {
+		return getColor(0xF8F8FF);
 	}
 
 	public static LinearGradientPaint getPanelBackgroundGradient(int x, int y, int w, int h) {
@@ -110,7 +114,7 @@ public class ThemeSupport {
 	}
 
 	public static ProgressIndicator getProgressIndicator() {
-		return new ProgressIndicator(Color.orange, withAlpha(getColor(0x000000), 0.25f));
+		return new ProgressIndicator(Color.orange, withAlpha(getLabelForeground(), 0.25f));
 	}
 
 	public static Color withAlpha(Color color, float alpha) {
