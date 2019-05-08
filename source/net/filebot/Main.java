@@ -403,6 +403,11 @@ public class Main {
 		System.setProperty("grape.root", ApplicationFolder.AppData.resolve("grape").getPath());
 		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
 
+		// enable dark mode by default if dark mode is set system-wide
+		if (Boolean.parseBoolean(System.getProperty("DarkMode"))) {
+			System.setProperty("net.filebot.theme", "Darcula");
+		}
+
 		// set additional user-defined default system properties
 		File userDefinedSystemProperties = ApplicationFolder.AppData.resolve("system.properties");
 		if (userDefinedSystemProperties.isFile()) {
