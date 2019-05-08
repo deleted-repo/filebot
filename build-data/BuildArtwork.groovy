@@ -43,6 +43,8 @@ void createIndexFile(db) {
 
 
 void build(ids, section, db, query) {
+	def files = []
+
 	ids.each{ id ->
 		def original = getOriginalPath(section, id)
 		def thumb = getThumbnailPath(section, id)
@@ -90,11 +92,15 @@ void build(ids, section, db, query) {
 
 		if (original.length() > 0 && !thumb.exists()) {
 			createThumbnail(original, thumb)
+			files << thumb
+
 			ls thumb
 		}
 	}
 
-	createIndexFile(section)
+	if (files) {
+		createIndexFile(section)
+	}
 }
 
 
