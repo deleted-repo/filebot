@@ -6,12 +6,12 @@ License:        Proprietary
 
 BuildArch:      noarch
 
-Requires:       java-1.8.0-openjdk
-Requires:       java-1.8.0-openjdk-openjfx
-Requires:       jna
-Requires:       mediainfo
-Requires:       p7zip
-Requires:       p7zip-plugins
+Recommends:     java-1.8.0-openjdk
+Recommends:     java-1.8.0-openjdk-openjfx
+Recommends:     jna
+Recommends:     mediainfo
+Recommends:     p7zip
+Recommends:     p7zip-plugins
 
 
 %description
