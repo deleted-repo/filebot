@@ -51,7 +51,7 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index b3d1de50..01c35160 100644
+index b3d1de50..60cddb7e 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,27 +111,14 @@
@@ -68,9 +68,8 @@ index b3d1de50..01c35160 100644
 -				<arg line="get jdk x86_64 Windows" />
 -			</exec>
 -			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
-+			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
- 				<patternset refid="pattern.jre" />
- 				<cutdirsmapper dirs="1" />
+-				<patternset refid="pattern.jre" />
+-				<cutdirsmapper dirs="1" />
 -			</unzip>
 -
 -			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
@@ -80,8 +79,9 @@ index b3d1de50..01c35160 100644
 -				<arg line="get jfx x86_64 Windows" />
 -			</exec>
 -			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
--				<patternset refid="pattern.jre" />
--				<cutdirsmapper dirs="1" />
++			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
+ 				<patternset refid="pattern.jre" />
+ 				<cutdirsmapper dirs="1" />
 -			</unzip>
 +			</untar>
  		</sequential>
@@ -141,6 +141,16 @@ index b3d1de50..01c35160 100644
  			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
  
  			<!-- include native libraries for all supported platforms -->
+@@ -636,9 +621,6 @@
+ 			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
+ 			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
+ 			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
+-
+-			<!-- include maintainer public key -->
+-			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.gpg" />
+ 		</tar>
+ 	</target>
+ 
 diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
 index 29e9f0d8..de9da74d 100644
 --- a/installer/deb-universal/control/control
