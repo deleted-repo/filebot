@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index a7e4681b..f5f36591 100644
+index 1a3274f6..48abb46e 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -48,8 +48,8 @@ jre.major: 8
@@ -51,7 +51,7 @@ index a7e4681b..f5f36591 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index b3d1de50..a6aa5209 100644
+index b3d1de50..01c35160 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,27 +111,14 @@
@@ -130,6 +130,17 @@ index b3d1de50..a6aa5209 100644
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
+@@ -626,8 +611,8 @@
+ 			<fileset dir="${dir.installer}/tar" includes="*.sh" />
+ 		</copy-replace>
+ 
+-		<tar destfile="${dir.dist}/${release}-portable.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
+-			<tarfileset dir="${dir.staging}" includes="*.sh" filemode="755" />
++		<tar destfile="${dir.dist}/${release}-portable-jdk8.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
++			<tarfileset dir="${dir.staging}" includes="filebot.sh" filemode="755" />
+ 			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
+ 
+ 			<!-- include native libraries for all supported platforms -->
 diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
 index 29e9f0d8..de9da74d 100644
 --- a/installer/deb-universal/control/control
