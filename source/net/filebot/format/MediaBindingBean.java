@@ -1142,7 +1142,11 @@ public class MediaBindingBean {
 
 		if (file.isDirectory()) {
 			// just select the first video file in the folder as media sample
-			List<File> videos = listFiles(file, VIDEO_FILES, CASE_INSENSITIVE_PATH_ORDER);
+			List<File> videos = getChildren(file, VIDEO_FILES, HUMAN_NAME_ORDER);
+			if (videos.isEmpty()) {
+				// check for indirect descendant video files as well
+				videos = listFiles(file, VIDEO_FILES, HUMAN_NAME_ORDER);
+			}
 			if (videos.size() > 0) {
 				return videos.get(0);
 			}
