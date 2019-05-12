@@ -264,11 +264,6 @@
 
 
 	<target name="jar" depends="revision">
-		<!-- static resources -->
-		<jar destfile="${dir.dist}/lib/${package.name}-resources.jar" index="yes" indexMetaInf="yes" compress="no">
-			<fileset dir="${dir.source}" includes="**/*.png" />
-		</jar>
-
 		<!-- select jar dependencies -->
 		<fileset id="jar.classpath" dir="${dir.lib}" includesfile="${dir.lib}/jar.includes" />
 
@@ -295,7 +290,6 @@
 		<copy todir="${dir.build}" includeemptydirs="no">
 			<fileset dir="${dir.source}">
 				<exclude name="**/*.java" />
-				<exclude name="**/*.png" />
 				<exclude name="**/*.properties" />
 			</fileset>
 		</copy>
@@ -305,7 +299,7 @@
 			<fileset dir="${dir.source}" includes="**/*.properties" />
 		</copy-replace>
 
-		<jar destfile="${dir.dist}/lib/${package.name}.jar" index="yes" indexMetaInf="yes" compress="no">
+		<jar destfile="${dir.dist}/lib/${package.name}.jar" compress="no">
 			<fileset dir="${dir.build}" />
 			<manifest>
 				<attribute name="Main-Class" value="${main.class}" />

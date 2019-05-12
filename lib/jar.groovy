@@ -3,7 +3,7 @@ def destfile = { r ->
 }
 
 project.references.'jar.classpath'.each { r ->
-	ant.jar(destfile: destfile(r), index: 'yes', indexMetaInf: 'yes', compress: 'no') {
+	ant.jar(destfile: destfile(r), compress: 'no') {
 		zipfileset(src: r) {
 			exclude(name: 'META-INF/MANIFEST.MF')
 			exclude(name: 'META-INF/INDEX.LIST')
