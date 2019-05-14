@@ -16,8 +16,13 @@ interface MediaInfoLibrary extends Library {
 
 	// libmediainfo for linux depends on libzen, so we need to load dependencies first, because we know where our native libs are (e.g. Java Web Start Cache).
 	// if we do not, the system will look for dependencies, but only in the library path
+
+	// Ensure JNA 4.x compatibility (i.e. use JNA package on Linux)
+	@SuppressWarnings("deprecation")
 	Library LIB_ZEN = Platform.isLinux() ? (Library) Native.loadLibrary("zen", Library.class) : null;
 
+	// Ensure JNA 4.x compatibility (i.e. use JNA package on Linux)
+	@SuppressWarnings("deprecation")
 	MediaInfoLibrary INSTANCE = (MediaInfoLibrary) Native.loadLibrary("mediainfo", MediaInfoLibrary.class, singletonMap(OPTION_FUNCTION_MAPPER, new FunctionMapper() {
 
 		@Override

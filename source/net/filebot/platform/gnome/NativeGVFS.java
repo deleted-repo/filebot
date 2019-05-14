@@ -8,6 +8,8 @@ import com.sun.jna.Pointer;
 
 public class NativeGVFS implements GVFS {
 
+	// Ensure JNA 4.x compatibility (i.e. use JNA package on Linux)
+	@SuppressWarnings("deprecation")
 	private static final LibGIO lib_gio = (LibGIO) Native.loadLibrary("gio-2.0", LibGIO.class);
 	private static final Pointer gvfs = lib_gio.g_vfs_get_default();
 
