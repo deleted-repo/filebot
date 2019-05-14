@@ -51,7 +51,7 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index b3d1de50..60cddb7e 100644
+index fe13baca..cf5239c3 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,27 +111,14 @@
@@ -87,7 +87,7 @@ index b3d1de50..60cddb7e 100644
  		</sequential>
  	</macrodef>
  
-@@ -285,10 +272,8 @@
+@@ -280,10 +267,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -99,7 +99,7 @@ index b3d1de50..60cddb7e 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -319,7 +304,7 @@
+@@ -313,7 +298,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -108,7 +108,7 @@ index b3d1de50..60cddb7e 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -358,9 +343,9 @@
+@@ -352,9 +337,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -121,7 +121,7 @@ index b3d1de50..60cddb7e 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -586,7 +571,7 @@
+@@ -580,7 +565,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
@@ -130,7 +130,7 @@ index b3d1de50..60cddb7e 100644
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
-@@ -626,8 +611,8 @@
+@@ -620,8 +605,8 @@
  			<fileset dir="${dir.installer}/tar" includes="*.sh" />
  		</copy-replace>
  
@@ -141,7 +141,7 @@ index b3d1de50..60cddb7e 100644
  			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
  
  			<!-- include native libraries for all supported platforms -->
-@@ -636,9 +621,6 @@
+@@ -630,9 +615,6 @@
  			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
  			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
  			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
@@ -176,14 +176,14 @@ index 41e87444..05422081 100644
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 diff --git a/ivy.xml b/ivy.xml
-index 3e17ccb1..3352856c 100644
+index 758e4c01..646be80a 100644
 --- a/ivy.xml
 +++ b/ivy.xml
 @@ -36,7 +36,7 @@
  
  
  		<!-- JavaFX -->
--		<dependency rev="9.0.0" org="org.controlsfx" name="controlsfx" />
+-		<dependency rev="11.0.0" org="org.controlsfx" name="controlsfx" />
 +		<dependency rev="8.40.14" org="org.controlsfx" name="controlsfx" />
  
  
