@@ -2,6 +2,8 @@ package net.filebot.ui.filter;
 
 import static java.util.Collections.*;
 import static javax.swing.BorderFactory.*;
+import static net.filebot.MediaTypes.*;
+import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
@@ -20,8 +22,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import net.filebot.MediaTypes;
-import net.filebot.media.MediaDetection;
 import net.filebot.ui.filter.FileTree.FolderNode;
 import net.filebot.ui.transfer.DefaultTransferHandler;
 import net.filebot.util.ui.LoadingOverlayPane;
@@ -85,16 +85,16 @@ class TypeTool extends Tool<TreeModel> {
 
 	public Map<String, FileFilter> getMetaTypes() {
 		Map<String, FileFilter> types = new LinkedHashMap<String, FileFilter>();
-		types.put("Movie", f -> MediaDetection.isMovie(f, true));
-		types.put("Episode", f -> MediaDetection.isEpisode(f, true));
-		types.put("Disk Folder", MediaDetection.getDiskFolderFilter());
-		types.put("Video", MediaTypes.VIDEO_FILES);
-		types.put("Subtitle", MediaTypes.SUBTITLE_FILES);
-		types.put("Audio", MediaTypes.AUDIO_FILES);
-		types.put("Archive", MediaTypes.ARCHIVE_FILES);
-		types.put("Verification", MediaTypes.VERIFICATION_FILES);
-		types.put("Extras", MediaDetection.getClutterFileFilter());
-		types.put("Clutter", MediaDetection.getClutterTypeFilter());
+		types.put("Movie", f -> VIDEO_FILES.accept(f) && isMovie(f, true));
+		types.put("Episode", f -> VIDEO_FILES.accept(f) && isEpisode(f, true));
+		types.put("Disk Folder", getDiskFolderFilter());
+		types.put("Video", VIDEO_FILES);
+		types.put("Subtitle", SUBTITLE_FILES);
+		types.put("Audio", AUDIO_FILES);
+		types.put("Archive", ARCHIVE_FILES);
+		types.put("Verification", VERIFICATION_FILES);
+		types.put("Extras", getClutterFileFilter());
+		types.put("Clutter", getClutterTypeFilter());
 		return types;
 	}
 
