@@ -715,10 +715,17 @@ public class MediaBindingBean {
 
 	@Define("ci")
 	public Integer getCollectionIndex() throws Exception {
-		if (infoObject instanceof Movie && getMovie().getTmdbId() > 0)
-			return TheMovieDB.getCollection(getMovie().getTmdbId(), Locale.US).indexOf(getMovie()) + 1;
+		return ExpressionFormatMethods.getCollection(getMovie()).indexOf(getMovie()) + 1;
+	}
 
-		return null;
+	@Define("cy")
+	public List<Integer> getCollectionYears() throws Exception {
+		List<Integer> years = ExpressionFormatMethods.getCollection(getMovie()).stream().map(Movie::getYear).sorted().distinct().collect(toList());
+		if (years.size() > 1) {
+			return asList(years.get(0), years.get(years.size() - 1));
+		} else {
+			return years;
+		}
 	}
 
 	@Define("info")

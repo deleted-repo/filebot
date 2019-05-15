@@ -649,6 +649,13 @@ public class ExpressionFormatMethods {
 		return null;
 	}
 
+	public static List<Movie> getCollection(Movie self) throws Exception {
+		if (self.getTmdbId() > 0) {
+			return TheMovieDB.getCollection(self.getTmdbId(), Locale.US);
+		}
+		return null;
+	}
+
 	/**
 	 * DSL utilities
 	 */
