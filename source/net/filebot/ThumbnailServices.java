@@ -43,7 +43,7 @@ public enum ThumbnailServices implements ThumbnailProvider {
 	}
 
 	protected String getThumbnailResource(int id, ResolutionVariant variant) {
-		return variant == ResolutionVariant.NORMAL ? id + ".png" : id + "@2x.png";
+		return getResource(variant == ResolutionVariant.NORMAL ? id + ".png" : id + "@2x.png");
 	}
 
 	protected Cache getCache(ResolutionVariant variant) {
