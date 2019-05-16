@@ -64,17 +64,12 @@ public final class ResourceManager {
 				image.add(ImageIO.read(r));
 			}
 
-			// Windows 10: use @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
-			if (PRIMARY_SCALE_FACTOR != 1 && PRIMARY_SCALE_FACTOR != 2) {
-				BufferedImage hidpi = image.get(image.size() - 1);
-				if (PRIMARY_SCALE_FACTOR < 2) {
-					image.add(1, scale(PRIMARY_SCALE_FACTOR, hidpi));
-				} else {
-					image.add(scale(PRIMARY_SCALE_FACTOR, hidpi));
-				}
+			// Windows 10: use down-scaled @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
+			if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() >= 2) {
+				image.add(1, scale(PRIMARY_SCALE_FACTOR / 2, image.get(1)));
 			}
 
-			return new BaseMultiResolutionImage(image.toArray(new Image[0]));
+			return new BaseMultiResolutionImage(image.toArray(Image[]::new));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -90,7 +85,7 @@ public final class ResourceManager {
 
 	public static final double PRIMARY_SCALE_FACTOR = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getDefaultTransform().getScaleX();
 
-	private static BufferedImage scale(double scale, BufferedImage image) {
+	public static BufferedImage scale(double scale, BufferedImage image) {
 		int w = (int) (scale * image.getWidth());
 		int h = (int) (scale * image.getHeight());
 		return Scalr.resize(image, Method.ULTRA_QUALITY, Mode.FIT_TO_WIDTH, w, h, Scalr.OP_ANTIALIAS);
