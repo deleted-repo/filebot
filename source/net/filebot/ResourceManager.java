@@ -52,6 +52,14 @@ public final class ResourceManager {
 		return getIcon("flags/" + languageCode);
 	}
 
+	private static URL[] getMultiResolutionImageResource(String name) {
+		return Stream.of(name, name + "@2x").map(ResourceManager::getImageResource).filter(Objects::nonNull).toArray(URL[]::new);
+	}
+
+	private static URL getImageResource(String name) {
+		return ResourceManager.class.getResource("resources/" + name + ".png");
+	}
+
 	private static Image getMultiResolutionImage(URL[] resource) {
 		try {
 			// Load multi-resolution images only if necessary
@@ -65,7 +73,7 @@ public final class ResourceManager {
 			}
 
 			// Windows 10: use down-scaled @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
-			if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() >= 2) {
+			if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() > 1) {
 				image.add(1, scale(PRIMARY_SCALE_FACTOR / 2, image.get(1)));
 			}
 
@@ -75,17 +83,30 @@ public final class ResourceManager {
 		}
 	}
 
-	private static URL[] getMultiResolutionImageResource(String name) {
-		return Stream.of(name, name + "@2x").map(ResourceManager::getImageResource).filter(Objects::nonNull).toArray(URL[]::new);
-	}
+	public static Image getMultiResolutionImageIcon(BufferedImage baseImage, double baseScale) {
+		if (PRIMARY_SCALE_FACTOR == 1 && baseScale == 1) {
+			return baseImage;
+		}
 
-	private static URL getImageResource(String name) {
-		return ResourceManager.class.getResource("resources/" + name + ".png");
+		List<BufferedImage> image = new ArrayList<BufferedImage>(3);
+		image.add(baseImage);
+
+		// use down-scaled @2x image as @1x base image
+		if (baseScale > 1) {
+			image.add(0, scale(1 / baseScale, baseImage));
+		}
+
+		// Windows 10: use down-scaled @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
+		if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() > 1) {
+			image.add(1, scale(PRIMARY_SCALE_FACTOR / baseScale, image.get(1)));
+		}
+
+		return new BaseMultiResolutionImage(image.toArray(Image[]::new));
 	}
 
 	public static final double PRIMARY_SCALE_FACTOR = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getDefaultTransform().getScaleX();
 
-	public static BufferedImage scale(double scale, BufferedImage image) {
+	private static BufferedImage scale(double scale, BufferedImage image) {
 		int w = (int) (scale * image.getWidth());
 		int h = (int) (scale * image.getHeight());
 		return Scalr.resize(image, Method.ULTRA_QUALITY, Mode.FIT_TO_WIDTH, w, h, Scalr.OP_ANTIALIAS);

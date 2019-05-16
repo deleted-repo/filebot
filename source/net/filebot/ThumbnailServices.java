@@ -6,8 +6,6 @@ import static net.filebot.Logging.*;
 import static net.filebot.ResourceManager.*;
 import static net.filebot.util.RegularExpressions.*;
 
-import java.awt.Image;
-import java.awt.image.BaseMultiResolutionImage;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
@@ -17,7 +15,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +112,7 @@ public enum ThumbnailServices implements ThumbnailProvider {
 		for (int i = 0; i < thumbnails.length; i++) {
 			if (thumbnails[i] != null && thumbnails[i].length > 0) {
 				try {
-					icons.put(keys.get(i), getScaledIcon(thumbnails[i], variant));
+					icons.put(keys.get(i), getIcon(thumbnails[i], variant));
 				} catch (Exception e) {
 					debug.log(Level.SEVERE, e, e::toString);
 				}
@@ -125,29 +122,11 @@ public enum ThumbnailServices implements ThumbnailProvider {
 		return icons;
 	}
 
-	protected Icon getScaledIcon(byte[] bytes, ResolutionVariant variant) throws Exception {
-		// Load multi-resolution images only if necessary
-		if (PRIMARY_SCALE_FACTOR == 1 && variant == ResolutionVariant.NORMAL) {
-			return new ImageIcon(bytes);
-		}
-
+	protected Icon getIcon(byte[] bytes, ResolutionVariant variant) throws Exception {
 		BufferedImage baseImage = ImageIO.read(new ByteArrayInputStream(bytes));
 		double baseScale = variant.scaleFactor;
 
-		List<BufferedImage> image = new ArrayList<BufferedImage>(3);
-		image.add(baseImage);
-
-		// use down-scaled @2x image as @1x base image
-		if (baseScale > 1) {
-			image.add(0, scale(1 / baseScale, baseImage));
-		}
-
-		// Windows 10: use down-scaled @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
-		if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() >= 2) {
-			image.add(1, scale(PRIMARY_SCALE_FACTOR / 2, image.get(1)));
-		}
-
-		return new ImageIcon(new BaseMultiResolutionImage(image.toArray(Image[]::new)));
+		return new ImageIcon(getMultiResolutionImageIcon(baseImage, baseScale));
 	}
 
 	public enum ResolutionVariant {
