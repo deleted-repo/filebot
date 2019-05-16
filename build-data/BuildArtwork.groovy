@@ -40,7 +40,7 @@ void createThumbnail(original, thumb, scale) {
 
 void createIndexFile(db) {
 	def indexFile = _args.outputPath.resolve("images/${db}/thumb/poster/index.txt")
-	def index = indexFile.dir.listFiles{ it.name =~ /\d+/ }.collect{ it.nameWithoutExtension as int }.toSorted()
+	def index = indexFile.dir.listFiles()*.getNameWithoutExtension().findAll{ it ==~ /\d+/ }*.toInteger() as TreeSet
 
 	index.join('\n').saveAs(indexFile)
 	execute 'xz', indexFile, '--force', '--keep'
