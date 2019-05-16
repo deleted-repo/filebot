@@ -49,10 +49,10 @@ public enum ThumbnailServices implements ThumbnailProvider {
 
 	protected Set<Integer> getIndex() throws Exception {
 		Cache cache = getCache(ResolutionVariant.NORMAL);
-		byte[] bytes = cache.bytes("index.txt.xz", n -> new URL(getResource(n)), XZInputStream::new).expire(Cache.ONE_MONTH).get();
+		byte[] bytes = cache.bytes(0, n -> new URL(getResource("index.txt.xz")), XZInputStream::new).expire(Cache.ONE_MONTH).get();
 
 		// all data files are UTF-8 encoded XZ compressed text files
-		return NEWLINE.splitAsStream(UTF_8.decode(ByteBuffer.wrap(bytes))).filter(s -> s.length() > 0).map(Integer::parseInt).collect(toSet());
+		return NEWLINE.splitAsStream(UTF_8.decode(ByteBuffer.wrap(bytes))).map(Integer::parseInt).collect(toSet());
 	}
 
 	private final Resource<Set<Integer>> index = Resource.lazy(this::getIndex);
