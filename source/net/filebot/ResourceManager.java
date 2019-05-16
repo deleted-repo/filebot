@@ -3,8 +3,8 @@ package net.filebot;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BaseMultiResolutionImage;
 import java.awt.image.BufferedImage;
 import java.net.URL;
@@ -22,8 +22,6 @@ import javax.swing.ImageIcon;
 import org.imgscalr.Scalr;
 import org.imgscalr.Scalr.Method;
 import org.imgscalr.Scalr.Mode;
-
-import net.filebot.util.SystemProperty;
 
 public final class ResourceManager {
 
@@ -56,6 +54,11 @@ public final class ResourceManager {
 
 	private static Image getMultiResolutionImage(URL[] resource) {
 		try {
+			// Load multi-resolution images only if necessary
+			if (PRIMARY_SCALE_FACTOR == 1) {
+				return ImageIO.read(resource[0]);
+			}
+
 			List<BufferedImage> image = new ArrayList<BufferedImage>(resource.length);
 			for (URL r : resource) {
 				image.add(ImageIO.read(r));
@@ -85,9 +88,9 @@ public final class ResourceManager {
 		return ResourceManager.class.getResource("resources/" + name + ".png");
 	}
 
-	private static final float PRIMARY_SCALE_FACTOR = SystemProperty.of("sun.java2d.uiScale", Float::parseFloat, Toolkit.getDefaultToolkit().getScreenResolution() / 96f).get();
+	public static final double PRIMARY_SCALE_FACTOR = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getDefaultTransform().getScaleX();
 
-	private static BufferedImage scale(float scale, BufferedImage image) {
+	private static BufferedImage scale(double scale, BufferedImage image) {
 		int w = (int) (scale * image.getWidth());
 		int h = (int) (scale * image.getHeight());
 		return Scalr.resize(image, Method.ULTRA_QUALITY, Mode.FIT_TO_WIDTH, w, h, Scalr.OP_ANTIALIAS);
