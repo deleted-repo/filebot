@@ -53,6 +53,7 @@ import net.filebot.web.MoviePart;
 import net.filebot.web.SearchResult;
 import net.filebot.web.SortOrder;
 import net.filebot.web.ThumbnailProvider;
+import net.filebot.web.ThumbnailProvider.ResolutionVariant;
 
 class MovieMatcher implements AutoCompleteMatcher {
 
@@ -342,7 +343,7 @@ class MovieMatcher implements AutoCompleteMatcher {
 		}
 
 		// prepare thumbnail images
-		Function<Movie, Icon> thumbnail = thumbnail(options);
+		Function<Movie, Icon> thumbnail = thumbnail(options, parent);
 
 		// show selection dialog on EDT
 		Callable<Movie> showSelectDialog = () -> {
@@ -407,10 +408,10 @@ class MovieMatcher implements AutoCompleteMatcher {
 		First, Skip;
 	}
 
-	protected Function<Movie, Icon> thumbnail(List<Movie> options) {
+	protected Function<Movie, Icon> thumbnail(List<Movie> options, Component parent) {
 		if (service instanceof ThumbnailProvider) {
 			try {
-				Map<SearchResult, Icon> thumbnails = ((ThumbnailProvider) service).getThumbnails((List) options);
+				Map<SearchResult, Icon> thumbnails = ((ThumbnailProvider) service).getThumbnails((List) options, ResolutionVariant.fromScaleFactor(parent));
 				if (thumbnails.size() > 0) {
 					return key -> thumbnails.getOrDefault(key, BlankThumbnail.BLANK_POSTER);
 				}

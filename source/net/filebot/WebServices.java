@@ -193,8 +193,8 @@ public final class WebServices {
 		}
 
 		@Override
-		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys) throws Exception {
-			return ThumbnailServices.TheMovieDB.getThumbnails(keys);
+		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys, ResolutionVariant variant) throws Exception {
+			return ThumbnailServices.TheMovieDB.getThumbnails(keys, variant);
 		}
 	}
 
@@ -235,8 +235,8 @@ public final class WebServices {
 		}
 
 		@Override
-		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys) throws Exception {
-			return ThumbnailServices.TheTVDB.getThumbnails(keys);
+		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys, ResolutionVariant variant) throws Exception {
+			return ThumbnailServices.TheTVDB.getThumbnails(keys, variant);
 		}
 	}
 

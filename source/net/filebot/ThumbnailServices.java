@@ -40,7 +40,12 @@ public enum ThumbnailServices implements ThumbnailProvider {
 	}
 
 	protected String getThumbnailResource(int id, ResolutionVariant variant) {
-		return getResource(variant == ResolutionVariant.NORMAL ? id + ".png" : id + "@2x.png");
+		switch (variant) {
+		case NORMAL:
+			return getResource(id + ".png");
+		default:
+			return getResource(id + "@2x.png");
+		}
 	}
 
 	protected Cache getCache(ResolutionVariant variant) {
@@ -102,9 +107,7 @@ public enum ThumbnailServices implements ThumbnailProvider {
 	}
 
 	@Override
-	public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys) throws Exception {
-		ResolutionVariant variant = PRIMARY_SCALE_FACTOR > 1 ? ResolutionVariant.RETINA : ResolutionVariant.NORMAL;
-
+	public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys, ResolutionVariant variant) throws Exception {
 		int[] ids = keys.stream().mapToInt(SearchResult::getId).toArray();
 		byte[][] thumbnails = getThumbnails(ids, variant);
 
@@ -126,18 +129,7 @@ public enum ThumbnailServices implements ThumbnailProvider {
 		BufferedImage baseImage = ImageIO.read(new ByteArrayInputStream(bytes));
 		double baseScale = variant.scaleFactor;
 
-		return new ImageIcon(getMultiResolutionImageIcon(baseImage, baseScale));
-	}
-
-	public enum ResolutionVariant {
-
-		NORMAL(1), RETINA(2);
-
-		public final int scaleFactor;
-
-		private ResolutionVariant(int scaleFactor) {
-			this.scaleFactor = scaleFactor;
-		}
+		return new ImageIcon(getMultiResolutionImage(baseImage, baseScale));
 	}
 
 }

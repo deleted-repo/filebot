@@ -51,6 +51,7 @@ import net.filebot.web.EpisodeListProvider;
 import net.filebot.web.SearchResult;
 import net.filebot.web.SortOrder;
 import net.filebot.web.ThumbnailProvider;
+import net.filebot.web.ThumbnailProvider.ResolutionVariant;
 
 class EpisodeListMatcher implements AutoCompleteMatcher {
 
@@ -234,7 +235,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 		}
 
 		// prepare thumbnail images
-		Function<SearchResult, Icon> thumbnail = thumbnail(options);
+		Function<SearchResult, Icon> thumbnail = thumbnail(options, parent);
 
 		// show selection dialog on EDT
 		Callable<SearchResult> showSelectDialog = () -> {
@@ -291,10 +292,10 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 		}
 	}
 
-	protected Function<SearchResult, Icon> thumbnail(List<SearchResult> options) {
+	protected Function<SearchResult, Icon> thumbnail(List<SearchResult> options, Component parent) {
 		if (provider instanceof ThumbnailProvider) {
 			try {
-				Map<SearchResult, Icon> thumbnails = ((ThumbnailProvider) provider).getThumbnails(options);
+				Map<SearchResult, Icon> thumbnails = ((ThumbnailProvider) provider).getThumbnails(options, ResolutionVariant.fromScaleFactor(parent));
 				if (thumbnails.size() > 0) {
 					return key -> thumbnails.getOrDefault(key, BlankThumbnail.BLANK_POSTER);
 				}

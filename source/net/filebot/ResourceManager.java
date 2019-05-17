@@ -85,7 +85,7 @@ public final class ResourceManager {
 		}
 	}
 
-	public static Image getMultiResolutionImageIcon(BufferedImage baseImage, double baseScale) {
+	public static Image getMultiResolutionImage(BufferedImage baseImage, double baseScale) {
 		if (PRIMARY_SCALE_FACTOR == 1 && baseScale == 1) {
 			return baseImage;
 		}
@@ -108,7 +108,7 @@ public final class ResourceManager {
 		return new BaseMultiResolutionImage(image.toArray(Image[]::new));
 	}
 
-	public static final double PRIMARY_SCALE_FACTOR = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getDefaultTransform().getScaleX();
+	private static final double PRIMARY_SCALE_FACTOR = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getDefaultTransform().getScaleX();
 
 	private static BufferedImage scale(double scale, BufferedImage image) {
 		int w = (int) (scale * image.getWidth());
