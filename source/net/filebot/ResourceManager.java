@@ -75,6 +75,8 @@ public final class ResourceManager {
 			// Windows 10: use down-scaled @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
 			if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() > 1) {
 				image.add(1, scale(PRIMARY_SCALE_FACTOR / 2, image.get(1)));
+			} else if (PRIMARY_SCALE_FACTOR > 2) {
+				image.add(scale(PRIMARY_SCALE_FACTOR / 2, image.get(1)));
 			}
 
 			return new BaseMultiResolutionImage(image.toArray(Image[]::new));
@@ -97,8 +99,10 @@ public final class ResourceManager {
 		}
 
 		// Windows 10: use down-scaled @2x image for non-integer scale factors 1.25 / 1.5 / 1.75
-		if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < 2 && image.size() > 1) {
-			image.add(1, scale(PRIMARY_SCALE_FACTOR / baseScale, image.get(1)));
+		if (PRIMARY_SCALE_FACTOR > 1 && PRIMARY_SCALE_FACTOR < baseScale) {
+			image.add(1, scale(PRIMARY_SCALE_FACTOR / baseScale, baseImage));
+		} else if (PRIMARY_SCALE_FACTOR > baseScale) {
+			image.add(scale(PRIMARY_SCALE_FACTOR / baseScale, baseImage));
 		}
 
 		return new BaseMultiResolutionImage(image.toArray(Image[]::new));
