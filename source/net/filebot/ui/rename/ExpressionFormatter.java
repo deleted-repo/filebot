@@ -18,7 +18,7 @@ import net.filebot.similarity.Match;
 
 class ExpressionFormatter implements MatchFormatter {
 
-	private final String expression;
+	private String expression;
 	private ExpressionFileFormat format;
 
 	private Format preview;
@@ -41,6 +41,13 @@ class ExpressionFormatter implements MatchFormatter {
 		this.format = format;
 	}
 
+	public synchronized ExpressionFileFormat getFormat() throws ScriptException {
+		if (format == null) {
+			format = new ExpressionFileFormat(expression);
+		}
+		return format;
+	}
+
 	public Class<?> getTargetClass() {
 		return target;
 	}
@@ -57,15 +64,12 @@ class ExpressionFormatter implements MatchFormatter {
 	}
 
 	@Override
-	public synchronized String format(Match<?, ?> match, boolean extension, Map<?, ?> context) throws ScriptException {
-		// lazy initialize script engine
-		if (format == null) {
-			format = new ExpressionFileFormat(expression);
-		}
-
+	public String format(Match<?, ?> match, boolean extension, Map<?, ?> context) throws ScriptException {
 		// evaluate the expression using the given bindings
 		Object bindingBean = new MediaBindingBean(match.getValue(), (File) match.getCandidate(), (Map) context);
-		String destination = format.format(bindingBean);
+
+		// lazy initialize script engine
+		String destination = getFormat().format(bindingBean);
 
 		return getPath((File) match.getCandidate(), destination);
 	}
