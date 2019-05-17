@@ -1,6 +1,7 @@
 package net.filebot.ui.rename;
 
 import static java.util.Collections.*;
+import static net.filebot.Settings.*;
 import static net.filebot.util.ExceptionUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -16,8 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -162,7 +162,7 @@ public class RenameModel extends MatchModel<Object, File> {
 
 		private final List<FormattedFuture> futures = new ArrayList<FormattedFuture>();
 
-		private final Executor backgroundFormatter = new ThreadPoolExecutor(0, 1, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+		private final Executor backgroundFormatter = Executors.newFixedThreadPool(getPreferredParallelism());
 
 		public FormattedFutureEventList(EventList<Object> source) {
 			super(source);

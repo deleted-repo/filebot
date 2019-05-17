@@ -22,6 +22,7 @@ import net.filebot.UserFiles.FileChooser;
 import net.filebot.cli.ArgumentBean;
 import net.filebot.util.PreferencesList;
 import net.filebot.util.PreferencesMap;
+import net.filebot.util.SystemProperty;
 import net.filebot.util.PreferencesMap.JsonAdapter;
 import net.filebot.util.PreferencesMap.PreferencesEntry;
 import net.filebot.util.PreferencesMap.StringAdapter;
@@ -129,16 +130,11 @@ public final class Settings {
 	}
 
 	public static int getPreferredThreadPoolSize() {
-		try {
-			String threadPool = System.getProperty("threadPool");
-			if (threadPool != null) {
-				return Integer.parseInt(threadPool);
-			}
-		} catch (Exception e) {
-			debug.log(Level.WARNING, e.getMessage(), e);
-		}
+		return SystemProperty.of("threadPool", Integer::parseInt, Runtime.getRuntime().availableProcessors()).get();
+	}
 
-		return Runtime.getRuntime().availableProcessors();
+	public static int getPreferredParallelism() {
+		return SystemProperty.of("parallelism", Integer::parseInt, 1).get();
 	}
 
 	public static LicenseModel getLicenseModel() {
