@@ -1242,7 +1242,7 @@ public class MediaBindingBean {
 		return null;
 	}
 
-	private static final Cache<File, MediaInfo> mediaInfoCache = Caffeine.newBuilder().expireAfterAccess(5, TimeUnit.MINUTES).build();
+	private static final Cache<File, MediaInfo> mediaInfoCache = Caffeine.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
 
 	private synchronized MediaInfo getMediaInfo() {
 		// use inferred media file (e.g. actual movie file instead of subtitle file)
