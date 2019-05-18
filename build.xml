@@ -406,7 +406,7 @@
 			<fileset dir="${dir.installer}/zip" includes="*.ini" />
 		</copy-replace>
 
-		<zip destfile="${dir.dist}/${release}-portable.zip" encoding="utf-8">
+		<zip destfile="${dir.dist}/${release}-portable.zip" encoding="utf-8" compress="yes" level="9">
 			<zipfileset dir="${dir.staging}" />
 			<zipfileset prefix="jar" dir="${dir.dist}/lib" />
 			<zipfileset prefix="lib" dir="${dir.lib}/native/win32-x64" />
