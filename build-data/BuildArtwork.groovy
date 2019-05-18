@@ -55,7 +55,7 @@ void build(ids, section, db, query) {
 	def files = []
 
 	ids.each{ id ->
-		scaleFactor.each { scale ->
+		scaleFactor.each{ scale ->
 			def original = getOriginalPath(section, id)
 			def thumb = getThumbnailPath(section, id, scale)
 
