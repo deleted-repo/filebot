@@ -101,7 +101,7 @@ public class JsonUtilities {
 		String value = getString(node, key);
 		if (value != null) {
 			try {
-				return converter.apply(getString(node, key));
+				return converter.apply(value);
 			} catch (Exception e) {
 				debug.warning(format("Bad %s value: %s => %s", key, value, e));
 			}
