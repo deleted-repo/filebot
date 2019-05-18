@@ -66,7 +66,7 @@ public class Manami implements Datasource {
 	}
 
 	public Optional<URI> getPicture(String uri) throws Exception {
-		return getRecord(uri).map(r -> getStringValue(r, "picture", URI::create));
+		return getRecord(uri).map(r -> getStringValue(r, "picture", URI::create)).filter(r -> r.getPath().endsWith(".jpg"));
 	}
 
 	public Set<Integer> getDeadEntries(Source source) throws Exception {
