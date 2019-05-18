@@ -219,7 +219,6 @@ public class AnidbClient extends AbstractEpisodeListProvider implements ArtworkP
 			URL url = new URL("https://img7.anidb.net/pics/anime/" + picture);
 			artwork.add(new Artwork(Stream.of("picture"), url, null, null));
 		}
-
 		return artwork;
 	}
 
