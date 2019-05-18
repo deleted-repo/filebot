@@ -40,7 +40,6 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import net.filebot.CacheManager;
-import net.filebot.ExitCode;
 import net.filebot.HistorySpooler;
 import net.filebot.Language;
 import net.filebot.RenameAction;
