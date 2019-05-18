@@ -662,10 +662,8 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// execute command
 		if (exec != null) {
-			exec.execute(renameLog.values().stream().map(f -> new MediaBindingBean(xattr.getMetaInfo(f), f))).forEach(exitCode -> {
-				if (exitCode != ExitCode.SUCCESS) {
-					log.warning(format("[EXECUTE] Failure (%d)", exitCode));
-				}
+			exec.execute(renameLog.values().stream().map(f -> new MediaBindingBean(xattr.getMetaInfo(f), f))).forEach(r -> {
+				// consume stream and ignore exit codes
 			});
 		}
 

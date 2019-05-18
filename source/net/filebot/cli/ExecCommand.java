@@ -67,6 +67,7 @@ public class ExecCommand {
 			system(command, directory);
 			return ExitCode.SUCCESS;
 		} catch (ExecuteException e) {
+			log.warning(e::getMessage);
 			return e.getExitCode();
 		} catch (Exception e) {
 			log.warning(e::getMessage);
