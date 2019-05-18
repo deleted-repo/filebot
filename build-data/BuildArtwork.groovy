@@ -82,6 +82,7 @@ void build(ids, section, db, query) {
 
 				artwork?.findResult{ a ->
 					return retry(2, 60000) {
+						sleep(2000)
 						try {
 							log.fine "Fetch $a"
 							return a.url.saveAs(original)
@@ -118,5 +119,6 @@ void build(ids, section, db, query) {
 
 
 
+build(MediaDetection.animeIndex.object.id as HashSet, 'anidb', AniDB, 'poster')
 build(MediaDetection.seriesIndex.object.id as HashSet, 'thetvdb', TheTVDB, 'poster')
 build(MediaDetection.movieIndex.object.tmdbId as HashSet, 'themoviedb', TheMovieDB, 'posters')
