@@ -1,6 +1,7 @@
 package net.filebot.web;
 
 import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
 import static net.filebot.util.JsonUtilities.*;
 
@@ -8,6 +9,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.swing.Icon;
@@ -46,10 +48,15 @@ public class Manami implements Datasource {
 		return request("anime-offline-database.json");
 	}
 
-	private final Resource<Object> db = Resource.lazy(this::getDatabase);
+	protected Object getDeadEntries() throws Exception {
+		return request("dead-entries.json");
+	}
+
+	protected final Resource<Object> database = Resource.lazy(this::getDatabase);
+	protected final Resource<Object> deadEntries = Resource.lazy(this::getDeadEntries);
 
 	public Stream<Map<?, ?>> getRecords() throws Exception {
-		return streamJsonObjects(db.get(), "data");
+		return streamJsonObjects(database.get(), "data");
 	}
 
 	public Optional<Map<?, ?>> getRecord(String uri) throws Exception {
@@ -60,6 +67,10 @@ public class Manami implements Datasource {
 
 	public Optional<URI> getPicture(String uri) throws Exception {
 		return getRecord(uri).map(r -> getStringValue(r, "picture", URI::create));
+	}
+
+	public Set<Integer> getDeadEntries(Source source) throws Exception {
+		return stream(getArray(deadEntries.get(), source.getIdentifier())).map(Object::toString).map(Integer::parseInt).collect(toSet());
 	}
 
 	public enum Source {
@@ -74,6 +85,9 @@ public class Manami implements Datasource {
 			return null;
 		}
 
+		public String getIdentifier() {
+			return name().toLowerCase();
+		}
 	}
 
 }
