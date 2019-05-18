@@ -22,10 +22,9 @@ File getOriginalPath(db, id) {
 
 
 File getThumbnailPath(db, id, scale) {
-	def n = id as String
-	if (scale != 1) {
-		n += '@' + scale + 'x'
-	}
+	// e.g. 42.png or 42@2x.png
+	def n = scale == 1 ? id : id + '@' + scale + 'x'
+
 	return _args.outputPath.resolve("images/${db}/thumb/poster/${n}.png")
 }
 
@@ -61,12 +60,12 @@ void build(ids, section, db, query) {
 			def thumb = getThumbnailPath(section, id, scale)
 
 			if (thumb.exists()) {
-				log.finest "[SKIP] $id"
+				log.finest "[SKIP] $id @ $scale"
 				return
 			}
 
 			if (original.length() == 0 && original.exists() && System.currentTimeMillis() - original.lastModified() > 90 * 24 * 60 * 60 * 1000) {
-				log.finest "[SKIP] $id"
+				log.finest "[SKIP] $id @ $scale"
 				return
 			}
 
