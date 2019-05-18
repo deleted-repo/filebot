@@ -97,7 +97,7 @@ public class ArgumentProcessor {
 			ExecCommand exec = args.getExecCommand();
 			if (exec != null) {
 				// execute command for each file
-				return cli.execute(args.getFiles(true), args.getFileFilter(), exec) ? 0 : 1;
+				return cli.execute(args.getFiles(true), args.getFileFilter(), args.getExpressionFormat(), exec).allMatch(i -> i == SUCCESS) ? SUCCESS : ERROR;
 			} else {
 				// print media info
 				return print(cli.getMediaInfo(args.getFiles(true), args.getFileFilter(), args.getExpressionFormat()));
@@ -106,7 +106,7 @@ public class ArgumentProcessor {
 
 		// revert files
 		if (args.revert) {
-			return cli.revert(args.getFiles(false), args.getFileFilter(), args.getRenameAction()).isEmpty() ? 1 : 0;
+			return cli.revert(args.getFiles(false), args.getFileFilter(), args.getRenameAction()).isEmpty() ? ERROR : SUCCESS;
 		}
 
 		// file operations

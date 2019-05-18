@@ -5,14 +5,16 @@ import static net.filebot.Execute.*;
 import static net.filebot.Logging.*;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.script.ScriptException;
 
+import net.filebot.ExecuteException;
+import net.filebot.ExitCode;
 import net.filebot.format.ExpressionFormat;
 import net.filebot.format.MediaBindingBean;
 
@@ -29,34 +31,47 @@ public class ExecCommand {
 		this.directory = directory;
 	}
 
-	public void execute(MediaBindingBean... group) throws IOException {
+	public IntStream execute(Stream<MediaBindingBean> group) {
 		if (parallel) {
-			executeParallel(group);
+			return executeParallel(group);
 		} else {
-			executeSequence(group);
+			return executeSequence(group);
 		}
 	}
 
-	private void executeSequence(MediaBindingBean... group) throws IOException {
-		// collect unique commands
-		List<List<String>> commands = Stream.of(group).map(v -> {
+	private IntStream executeSequence(Stream<MediaBindingBean> group) {
+		return group.map(v -> {
 			return template.stream().map(t -> getArgumentValue(t, v)).filter(Objects::nonNull).collect(toList());
-		}).distinct().collect(toList());
-
-		// execute unique commands
-		for (List<String> command : commands) {
-			system(command, directory);
-		}
+		}).distinct().mapToInt(this::execute);
 	}
 
-	private void executeParallel(MediaBindingBean... group) throws IOException {
+	private IntStream executeParallel(Stream<MediaBindingBean> group) {
+		// collect all bindings and combine them into a single command
+		List<MediaBindingBean> bindings = group.collect(toList());
+
+		if (bindings.isEmpty()) {
+			return IntStream.empty();
+		}
+
 		// collect single command
 		List<String> command = template.stream().flatMap(t -> {
-			return Stream.of(group).map(v -> getArgumentValue(t, v)).filter(Objects::nonNull).distinct();
+			return bindings.stream().map(v -> getArgumentValue(t, v)).filter(Objects::nonNull).distinct();
 		}).collect(toList());
 
 		// execute single command
-		system(command, directory);
+		return Stream.of(command).mapToInt(this::execute);
+	}
+
+	private int execute(List<String> command) {
+		try {
+			system(command, directory);
+			return ExitCode.SUCCESS;
+		} catch (ExecuteException e) {
+			return e.getExitCode();
+		} catch (Exception e) {
+			log.warning(e::getMessage);
+			return ExitCode.ERROR;
+		}
 	}
 
 	private String getArgumentValue(ExpressionFormat template, MediaBindingBean variables) {

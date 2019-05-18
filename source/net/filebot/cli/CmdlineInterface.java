@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import net.filebot.Language;
@@ -43,7 +44,7 @@ public interface CmdlineInterface {
 
 	Stream<String> getMediaInfo(Collection<File> files, FileFilter filter, ExpressionFormat format) throws Exception;
 
-	boolean execute(Collection<File> files, FileFilter filter, ExecCommand exec) throws Exception;
+	IntStream execute(Collection<File> files, FileFilter filter, ExpressionFormat format, ExecCommand exec) throws Exception;
 
 	List<File> extract(Collection<File> files, File output, ConflictAction conflict, FileFilter filter, boolean forceExtractAll) throws Exception;
 

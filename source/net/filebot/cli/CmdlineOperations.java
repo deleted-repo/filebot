@@ -40,6 +40,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import net.filebot.CacheManager;
+import net.filebot.ExitCode;
 import net.filebot.HistorySpooler;
 import net.filebot.Language;
 import net.filebot.RenameAction;
@@ -661,11 +662,11 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// execute command
 		if (exec != null) {
-			try {
-				execute(renameLog.values(), Objects::nonNull, exec); // destination files may include null values
-			} catch (Exception e) {
-				log.warning(message("Execute", e.getMessage()));
-			}
+			exec.execute(renameLog.values().stream().map(f -> new MediaBindingBean(xattr.getMetaInfo(f), f))).forEach(exitCode -> {
+				if (exitCode != ExitCode.SUCCESS) {
+					log.warning(format("[EXECUTE] Failure (%d)", exitCode));
+				}
+			});
 		}
 
 		return new ArrayList<File>(renameLog.values());
@@ -1104,22 +1105,19 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	@Override
-	public boolean execute(Collection<File> files, FileFilter filter, ExecCommand exec) throws Exception {
-		// collect files
-		List<File> f = filter(files, filter);
-
-		if (f.isEmpty()) {
-			return false;
-		}
-
-		// collect object metadata
-		List<Object> m = f.stream().map(xattr::getMetaInfo).collect(toList());
-
-		// build and execute commands
-		MediaBindingBean[] group = IntStream.range(0, f.size()).mapToObj(i -> new MediaBindingBean(m.get(i), f.get(i), new EntryList<File, Object>(f, m))).toArray(MediaBindingBean[]::new);
-		exec.execute(group);
-
-		return true;
+	public IntStream execute(Collection<File> files, FileFilter filter, ExpressionFormat format, ExecCommand exec) {
+		// filter / map / execute
+		return exec.execute(files.stream().filter(filter::accept).map(f -> {
+			return new MediaBindingBean(xattr.getMetaInfo(f), f);
+		}).peek(b -> {
+			if (format != null) {
+				try {
+					log.info(format.format(b));
+				} catch (Exception e) {
+					debug.warning(e::getMessage);
+				}
+			}
+		}));
 	}
 
 	@Override
