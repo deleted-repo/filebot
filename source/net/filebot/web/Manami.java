@@ -16,9 +16,9 @@ import net.filebot.Cache;
 import net.filebot.CacheType;
 import net.filebot.Resource;
 
-public class MinamiDB implements Datasource {
+public class Manami implements Datasource {
 
-	public static final MinamiDB INSTANCE = new MinamiDB();
+	public static final Manami INSTANCE = new Manami();
 
 	@Override
 	public String getIdentifier() {
