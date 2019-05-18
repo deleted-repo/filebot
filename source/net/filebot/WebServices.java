@@ -31,7 +31,6 @@ import net.filebot.similarity.MetricAvg;
 import net.filebot.web.AcoustIDClient;
 import net.filebot.web.AnidbClient;
 import net.filebot.web.Artwork;
-import net.filebot.web.ArtworkProvider;
 import net.filebot.web.Datasource;
 import net.filebot.web.EpisodeListProvider;
 import net.filebot.web.FanartTVClient;
@@ -245,7 +244,7 @@ public final class WebServices {
 		}
 	}
 
-	public static class AnidbClientWithLocalSearch extends AnidbClient implements ArtworkProvider {
+	public static class AnidbClientWithLocalSearch extends AnidbClient {
 
 		public AnidbClientWithLocalSearch(String client, int clientver) {
 			super(client, clientver);

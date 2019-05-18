@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.Icon;
 
@@ -36,7 +37,7 @@ import net.filebot.CacheType;
 import net.filebot.Resource;
 import net.filebot.ResourceManager;
 
-public class AnidbClient extends AbstractEpisodeListProvider {
+public class AnidbClient extends AbstractEpisodeListProvider implements ArtworkProvider {
 
 	private static final FloodLimit REQUEST_LIMIT = new FloodLimit(2, 5, TimeUnit.SECONDS); // no more than 2 requests within a 5 second window
 
@@ -206,6 +207,20 @@ public class AnidbClient extends AbstractEpisodeListProvider {
 		}
 
 		return code;
+	}
+
+	@Override
+	public List<Artwork> getArtwork(int id, String category, Locale locale) throws Exception {
+		Document dom = getXmlResource(id);
+		String picture = selectString("anime/picture", dom);
+
+		List<Artwork> artwork = new ArrayList<Artwork>(1);
+		if (picture.length() > 0) {
+			URL url = new URL("https://img7.anidb.net/pics/anime/" + picture);
+			artwork.add(new Artwork(Stream.of("picture"), url, null, null));
+		}
+
+		return artwork;
 	}
 
 	/**
