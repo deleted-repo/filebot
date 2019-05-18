@@ -1104,9 +1104,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	@Override
 	public IntStream execute(Collection<File> files, FileFilter filter, ExpressionFormat format, ExecCommand exec) {
 		// filter / map / execute
-		return exec.execute(files.stream().filter(filter::accept).map(f -> {
-			return new MediaBindingBean(xattr.getMetaInfo(f), f);
-		}).peek(b -> {
+		return exec.execute(files.stream().filter(filter::accept).map(f -> new MediaBindingBean(xattr.getMetaInfo(f), f)).peek(b -> {
 			if (format != null) {
 				try {
 					log.info(format.format(b));
