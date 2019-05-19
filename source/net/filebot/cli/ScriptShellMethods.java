@@ -262,6 +262,10 @@ public class ScriptShellMethods {
 		return FileUtilities.copyAs(self, new File(destination, self.getName()));
 	}
 
+	public String getDisplaySize(File self) {
+		return FileUtilities.formatSize(self.length());
+	}
+
 	public static void createIfNotExists(File self) throws IOException {
 		if (!self.isFile()) {
 			// create parent folder structure if necessary & create file
