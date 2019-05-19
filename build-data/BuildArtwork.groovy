@@ -82,7 +82,6 @@ void build(ids, section, db, query) {
 
 				artwork?.findResult{ a ->
 					return retry(2, 60000) {
-						sleep(2000)
 						try {
 							log.fine "Fetch $a"
 							return a.url.saveAs(original)
@@ -91,6 +90,7 @@ void build(ids, section, db, query) {
 							return null
 						} finally {
 							ls original
+							sleep 5000
 						}
 					}
 				}
