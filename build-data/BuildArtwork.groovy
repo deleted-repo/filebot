@@ -66,7 +66,7 @@ void build(ids, section, db, query) {
 			def thumb = getThumbnailPath(section, id, scale)
 
 			if (thumb.exists()) {
-				log.finest "[SKIP] ${id}@${scale}x"
+				log.finest "[SKIP] $id @ $scale"
 				return
 			}
 
