@@ -55,17 +55,18 @@ void build(ids, section, db, query) {
 	def files = []
 
 	ids.each{ id ->
+		def original = getOriginalPath(section, id)
+
+		if (original.length() == 0 && original.exists() && System.currentTimeMillis() - original.lastModified() > 90 * 24 * 60 * 60 * 1000) {
+			log.finest "[SKIP] $id"
+			return
+		}
+
 		scaleFactor.each{ scale ->
-			def original = getOriginalPath(section, id)
 			def thumb = getThumbnailPath(section, id, scale)
 
 			if (thumb.exists()) {
-				log.finest "[SKIP] $id @ $scale"
-				return
-			}
-
-			if (original.length() == 0 && original.exists() && System.currentTimeMillis() - original.lastModified() > 90 * 24 * 60 * 60 * 1000) {
-				log.finest "[SKIP] $id @ $scale"
+				log.finest "[SKIP] $id (@${scale}x)"
 				return
 			}
 
