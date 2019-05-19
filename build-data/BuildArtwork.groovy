@@ -90,7 +90,6 @@ void build(ids, section, db, query) {
 							return null
 						} finally {
 							ls original
-							sleep 5000
 						}
 					}
 				}
