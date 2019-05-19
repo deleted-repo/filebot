@@ -33,7 +33,7 @@ import net.filebot.web.ThumbnailProvider;
 
 public enum ThumbnailServices implements ThumbnailProvider {
 
-	TheTVDB, TheMovieDB;
+	TheTVDB, TheMovieDB, AniDB;
 
 	protected String getResource(String file) {
 		return "https://api.filebot.net/images/" + name().toLowerCase() + "/thumb/poster/" + file;

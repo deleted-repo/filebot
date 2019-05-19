@@ -10,7 +10,7 @@ public interface ThumbnailProvider {
 
 	Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys, ResolutionVariant variant) throws Exception;
 
-	enum ResolutionVariant {
+	public static enum ResolutionVariant {
 
 		NORMAL(1), RETINA(2);
 

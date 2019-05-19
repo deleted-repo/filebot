@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
 import static net.filebot.util.JsonUtilities.*;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,9 @@ public enum Manami implements ArtworkProvider {
 	public List<Artwork> getArtwork(int id, String category, Locale locale) throws Exception {
 		List<Artwork> artwork = new ArrayList<Artwork>(1);
 
-		Optional<String> picture = getRecord(id).map(r -> getString(r, "picture")).filter(r -> r.endsWith(".jpg"));
+		Optional<URI> picture = getRecord(id).map(r -> getStringValue(r, "picture", URI::create)).filter(r -> r.getPath().endsWith(".jpg"));
 		if (picture.isPresent()) {
-			artwork.add(new Artwork(Stream.of("picture"), new URL(picture.get()), null, null));
+			artwork.add(new Artwork(Stream.of("picture"), picture.get().toURL(), null, null));
 		}
 
 		return artwork;

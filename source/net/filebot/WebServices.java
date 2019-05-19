@@ -28,11 +28,13 @@ import net.filebot.media.LocalDatasource;
 import net.filebot.similarity.MetricAvg;
 import net.filebot.web.AcoustIDClient;
 import net.filebot.web.AnidbClient;
+import net.filebot.web.Artwork;
 import net.filebot.web.Datasource;
 import net.filebot.web.EpisodeListProvider;
 import net.filebot.web.FanartTVClient;
 import net.filebot.web.ID3Lookup;
 import net.filebot.web.LocalSearch;
+import net.filebot.web.Manami;
 import net.filebot.web.Movie;
 import net.filebot.web.MovieIdentificationService;
 import net.filebot.web.MusicIdentificationService;
@@ -240,7 +242,7 @@ public final class WebServices {
 		}
 	}
 
-	public static class AnidbClientWithLocalSearch extends AnidbClient {
+	public static class AnidbClientWithLocalSearch extends AnidbClient implements ThumbnailProvider {
 
 		public AnidbClientWithLocalSearch(String client, int clientver) {
 			super(client, clientver);
@@ -249,6 +251,16 @@ public final class WebServices {
 		@Override
 		public SearchResult[] getAnimeTitles() throws Exception {
 			return releaseInfo.getAnidbIndex();
+		}
+
+		@Override
+		public List<Artwork> getArtwork(int id, String category, Locale locale) throws Exception {
+			return Manami.AniDB.getArtwork(id, category, locale);
+		}
+
+		@Override
+		public Map<SearchResult, Icon> getThumbnails(List<SearchResult> keys, ResolutionVariant variant) throws Exception {
+			return ThumbnailServices.AniDB.getThumbnails(keys, variant);
 		}
 	}
 
