@@ -89,6 +89,8 @@ void build(ids, section, db, query) {
 						} catch (FileNotFoundException e) {
 							log.warning "[IMAGE NOT FOUND] $e"
 							return null
+						} finally {
+							ls original
 						}
 					}
 				}
@@ -98,8 +100,6 @@ void build(ids, section, db, query) {
 					original.createNewFile()
 					original.setLastModified(System.currentTimeMillis())
 				}
-
-				ls original
 			}
 
 			if (original.length() > 0 && !thumb.exists()) {
