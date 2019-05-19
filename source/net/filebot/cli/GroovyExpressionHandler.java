@@ -31,7 +31,7 @@ public class GroovyExpressionHandler extends StringOptionHandler {
 				try {
 					return readTextFile(f);
 				} catch (Exception e) {
-					throw new CmdLineException(owner, "Failed to read argument value from text file: " + f, e);
+					throw new CmdLineException(owner, "Failed to read text file: " + f, e);
 				}
 			}
 		}
