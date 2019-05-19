@@ -71,10 +71,10 @@ public class ArgumentBean {
 	@Option(name = "--conflict", usage = "Conflict resolution", metaVar = "[skip, override, auto, index, fail]")
 	public String conflict = "skip";
 
-	@Option(name = "--filter", usage = "Match filter expression", metaVar = "{expression}")
+	@Option(name = "--filter", usage = "Match filter expression", handler = GroovyExpressionHandler.class)
 	public String filter = null;
 
-	@Option(name = "--format", usage = "Format expression", metaVar = "{expression}")
+	@Option(name = "--format", usage = "Format expression", handler = GroovyExpressionHandler.class)
 	public String format;
 
 	@Option(name = "-non-strict", usage = "Enable advanced matching and more aggressive guessing")
@@ -119,7 +119,7 @@ public class ArgumentBean {
 	@Option(name = "-r", usage = "Recursively process folders")
 	public boolean recursive = false;
 
-	@Option(name = "--file-filter", usage = "Input file filter expression", metaVar = "{expression}")
+	@Option(name = "--file-filter", usage = "Input file filter expression", handler = GroovyExpressionHandler.class)
 	public String inputFileFilter = null;
 
 	@Option(name = "-exec", usage = "Execute command", metaVar = "echo {f} [+]", handler = RestOfArgumentsHandler.class)

@@ -6,6 +6,7 @@ Next Release (4.8.6)
 * Ensure that `ActionPopup` is always displayed on top of the Windows Task Bar
 * Improved `-mediainfo -exec` pipeline
 * Added `-no-history` CLI option
+* Allow `*.groovy` files as argument value for `--format`, `--filter` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
 
 
 FileBot 4.8.5
