@@ -5,89 +5,70 @@ import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
 import static net.filebot.util.JsonUtilities.*;
 
-import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.swing.Icon;
-
 import net.filebot.Cache;
 import net.filebot.CacheType;
 import net.filebot.Resource;
 
-public class Manami implements Datasource {
+public enum Manami implements ArtworkProvider {
 
-	public static final Manami INSTANCE = new Manami();
+	AniDB;
 
-	@Override
+	public String getURI(int id) {
+		return "https://anidb.net/a" + id;
+	}
+
 	public String getIdentifier() {
-		return "Minami";
+		return name().toLowerCase();
 	}
 
 	@Override
-	public Icon getIcon() {
-		return null;
+	public List<Artwork> getArtwork(int id, String category, Locale locale) throws Exception {
+		List<Artwork> artwork = new ArrayList<Artwork>(1);
+
+		Optional<String> picture = getRecord(id).map(r -> getString(r, "picture")).filter(r -> r.endsWith(".jpg"));
+		if (picture.isPresent()) {
+			artwork.add(new Artwork(Stream.of("picture"), new URL(picture.get()), null, null));
+		}
+
+		return artwork;
 	}
 
-	protected Cache getCache() {
-		return Cache.getCache(getIdentifier(), CacheType.Persistent);
-	}
+	public Optional<Map<?, ?>> getRecord(int id) throws Exception {
+		String uri = getURI(id);
 
-	protected Object request(String file) throws Exception {
-		return getCache().json(file, this::getResource).fetch(fetchIfNoneMatch(URL::getPath, getCache())).expire(Cache.ONE_MONTH).get();
-	}
-
-	protected URL getResource(String file) throws Exception {
-		return new URL("https://raw.githubusercontent.com/manami-project/anime-offline-database/master/" + file);
-	}
-
-	protected Object getDatabase() throws Exception {
-		return request("anime-offline-database.json");
-	}
-
-	protected Object getDeadEntries() throws Exception {
-		return request("dead-entries.json");
-	}
-
-	protected final Resource<Object> database = Resource.lazy(this::getDatabase);
-	protected final Resource<Object> deadEntries = Resource.lazy(this::getDeadEntries);
-
-	public Stream<Map<?, ?>> getRecords() throws Exception {
-		return streamJsonObjects(database.get(), "data");
-	}
-
-	public Optional<Map<?, ?>> getRecord(String uri) throws Exception {
 		return getRecords().filter(r -> {
 			return stream(getArray(r, "sources")).anyMatch(uri::equals);
 		}).findFirst();
 	}
 
-	public Optional<URI> getPicture(String uri) throws Exception {
-		return getRecord(uri).map(r -> getStringValue(r, "picture", URI::create)).filter(r -> r.getPath().endsWith(".jpg"));
+	public Stream<Map<?, ?>> getRecords() throws Exception {
+		return streamJsonObjects(database.get(), "data");
 	}
 
-	public Set<Integer> getDeadEntries(Source source) throws Exception {
-		return stream(getArray(deadEntries.get(), source.getIdentifier())).map(Object::toString).map(Integer::parseInt).collect(toSet());
+	public Set<Integer> getDeadEntries() throws Exception {
+		return stream(getArray(deadEntries.get(), getIdentifier())).map(Object::toString).map(Integer::parseInt).collect(toSet());
 	}
 
-	public enum Source {
-
-		AniDB;
-
-		public String getURI(int id) {
-			switch (this) {
-			case AniDB:
-				return "https://anidb.net/a" + id;
-			}
-			return null;
-		}
-
-		public String getIdentifier() {
-			return name().toLowerCase();
-		}
+	protected static Cache getCache() {
+		return Cache.getCache("manami", CacheType.Persistent);
 	}
+
+	protected static Object request(String file) throws Exception {
+		return getCache().json(file, f -> {
+			return new URL("https://raw.githubusercontent.com/manami-project/anime-offline-database/master/" + f);
+		}).fetch(fetchIfNoneMatch(URL::getPath, getCache())).expire(Cache.ONE_MONTH).get();
+	}
+
+	protected static final Resource<Object> database = Resource.lazy(() -> request("anime-offline-database.json"));
+	protected static final Resource<Object> deadEntries = Resource.lazy(() -> request("dead-entries.json"));
 
 }
