@@ -131,6 +131,9 @@ public class ArgumentBean {
 	@Option(name = "-no-xattr", usage = "Disable extended attributes")
 	public boolean disableExtendedAttributes = false;
 
+	@Option(name = "-no-history", usage = "Disable history")
+	public boolean disableHistory = false;
+
 	@Option(name = "--log", usage = "Log level", metaVar = "[all, fine, info, warning]")
 	public String log = "all";
 

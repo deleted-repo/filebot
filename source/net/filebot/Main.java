@@ -428,6 +428,10 @@ public class Main {
 			System.setProperty("useExtendedFileAttributes", "false");
 			System.setProperty("useCreationDate", "false");
 		}
+
+		if (args.disableHistory) {
+			System.setProperty("application.rename.history", "false");
+		}
 	}
 
 	public static void initializeLogging(ArgumentBean args) throws IOException {
