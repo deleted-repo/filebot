@@ -8,7 +8,6 @@ import static net.filebot.Settings.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.FileUtilities.*;
 
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -16,7 +15,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,13 +28,11 @@ import net.filebot.media.LocalDatasource;
 import net.filebot.similarity.MetricAvg;
 import net.filebot.web.AcoustIDClient;
 import net.filebot.web.AnidbClient;
-import net.filebot.web.Artwork;
 import net.filebot.web.Datasource;
 import net.filebot.web.EpisodeListProvider;
 import net.filebot.web.FanartTVClient;
 import net.filebot.web.ID3Lookup;
 import net.filebot.web.LocalSearch;
-import net.filebot.web.Manami;
 import net.filebot.web.Movie;
 import net.filebot.web.MovieIdentificationService;
 import net.filebot.web.MusicIdentificationService;
@@ -253,16 +249,6 @@ public final class WebServices {
 		@Override
 		public SearchResult[] getAnimeTitles() throws Exception {
 			return releaseInfo.getAnidbIndex();
-		}
-
-		@Override
-		public List<Artwork> getArtwork(int id, String category, Locale locale) throws Exception {
-			Optional<URI> poster = Manami.INSTANCE.getPicture(Manami.Source.AniDB.getURI(id));
-			if (poster.isPresent()) {
-				Artwork artwork = new Artwork(Stream.of("picture"), poster.get().toURL(), null, null);
-				return singletonList(artwork);
-			}
-			return emptyList();
 		}
 	}
 
