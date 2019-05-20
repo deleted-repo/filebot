@@ -87,15 +87,6 @@ public enum StandardRenameAction implements RenameAction {
 
 		@Override
 		public File rename(File from, File to) throws Exception {
-			// try to clone
-			if (Platform.isMac() || Platform.isLinux()) {
-				try {
-					return CLONE.rename(from, to);
-				} catch (Exception e) {
-					debug.finest(cause(CLONE, e));
-				}
-			}
-
 			// try to hardlink
 			try {
 				return HARDLINK.rename(from, to);
