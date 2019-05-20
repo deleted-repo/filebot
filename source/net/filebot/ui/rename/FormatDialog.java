@@ -293,7 +293,7 @@ public class FormatDialog extends JDialog {
 
 		// initialize window properties
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		setMinimumSize(new Dimension(650, 520));
+		setMinimumSize(new Dimension(650, 530));
 
 		// restore sample file if necessary
 		if (bindings == null) {
