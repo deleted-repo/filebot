@@ -94,6 +94,7 @@ public class SelectDialog<T> extends JDialog {
 			autoRepeatCheckBox.setIcon(ResourceManager.getIcon("button.repeat"));
 			autoRepeatCheckBox.setSelectedIcon(ResourceManager.getIcon("button.repeat.selected"));
 			autoRepeatCheckBox.setSelected(autoRepeatSelected);
+			autoRepeatCheckBox.setMinimumSize(new Dimension(22, 16));
 			c.add(autoRepeatCheckBox, "pos 1al select.y n select.y2");
 		}
 
