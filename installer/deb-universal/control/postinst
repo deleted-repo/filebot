@@ -5,3 +5,6 @@ ln -sf /usr/share/filebot/bin/filebot.sh /usr/bin/filebot
 
 # link system JNA library
 ln -sf /usr/share/java/jna.jar /usr/share/filebot/jar/jna.jar
+
+# patch various JNA options to make system JNA work
+sed -i 's/jna.nosys=true/jna.nosys=false/g' /usr/share/filebot/bin/filebot.sh
