@@ -76,7 +76,7 @@ public enum StandardRenameAction implements RenameAction {
 				system("cp", "-c", "-f", from.getPath(), dest.getPath());
 			} else {
 				// --reflink copy files using reflink
-				system("cp", "--reflink", "--force", from.isDirectory() ? "--recursive" : "--no-target-directory", from.getPath(), dest.getPath());
+				system("cp", "--reflink=auto", "--force", from.isDirectory() ? "--recursive" : "--no-target-directory", from.getPath(), dest.getPath());
 			}
 
 			return dest;
