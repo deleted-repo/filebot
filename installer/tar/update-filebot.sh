@@ -40,5 +40,5 @@ curl -L -o "$PACKAGE_FILE" -z "$PACKAGE_FILE" --retry 5 "$PACKAGE_URL"
 
 # verify signature and extract tar
 if gpgv --homedir "$FILEBOT_HOME" --keyring "maintainer.gpg" "$SIGNATURE_FILE" "$PACKAGE_FILE"; then
-	tar -xvf "$PACKAGE_FILE"
+	tar -C "$FILEBOT_HOME" -xvf "$PACKAGE_FILE"
 fi
