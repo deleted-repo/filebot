@@ -90,7 +90,7 @@ public enum StandardRenameAction implements RenameAction {
 			// try to clone
 			if (Platform.isMac() || Platform.isLinux()) {
 				try {
-					CLONE.rename(from, to);
+					return CLONE.rename(from, to);
 				} catch (Exception e) {
 					debug.finest(cause(CLONE, e));
 				}
