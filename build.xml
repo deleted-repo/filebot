@@ -897,7 +897,7 @@
 
 	<target name="deploy-chocolatey" description="Update Chocolatey Package Source">
 		<loadresource property="x64.msi.sha256">
-			<url url="@{link.release.index}/@{release}/@{release}_x64.msi.sha256" />
+			<url url="${link.release.index}/${release}/${release}_x64.msi.sha256" />
 		</loadresource>
 
 		<!-- replace variables for new release -->
