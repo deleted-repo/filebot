@@ -1,6 +1,8 @@
 package net.filebot.ui;
 
 import static java.awt.Cursor.*;
+import static javax.swing.SwingUtilities.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.Component;
@@ -22,12 +24,14 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicCheckBoxUI;
 
 import net.filebot.ResourceManager;
 import net.filebot.util.ui.DefaultFancyListCellRenderer;
+import net.filebot.util.ui.RoundDecoration;
 import net.filebot.web.SearchResult;
 import net.filebot.web.TheTVDBSearchResult;
 import net.miginfocom.swing.MigLayout;
@@ -35,10 +39,10 @@ import net.miginfocom.swing.MigLayout;
 public class SelectDialog<T> extends JDialog {
 
 	private JLabel messageLabel = new JLabel();
-	private JCheckBox autoRepeatCheckBox = new JCheckBox();
+	private JToggleButton autoRepeatCheckBox;
 
 	private JList<T> list;
-	private String command = null;
+	private String command;
 
 	private Function<T, Icon> icon;
 
@@ -89,13 +93,8 @@ public class SelectDialog<T> extends JDialog {
 
 		// add repeat button
 		if (autoRepeatEnabled) {
-			autoRepeatCheckBox.addChangeListener(evt -> autoRepeatCheckBox.setToolTipText(autoRepeatCheckBox.isSelected() ? "Select and remember for next time" : "Select once and ask again next time"));
-			autoRepeatCheckBox.setCursor(getPredefinedCursor(HAND_CURSOR));
-			autoRepeatCheckBox.setIcon(ResourceManager.getIcon("button.repeat"));
-			autoRepeatCheckBox.setSelectedIcon(ResourceManager.getIcon("button.repeat.selected"));
-			autoRepeatCheckBox.setSelected(autoRepeatSelected);
-			autoRepeatCheckBox.setMinimumSize(new Dimension(22, 16));
-			c.add(autoRepeatCheckBox, "pos 1al select.y n select.y2");
+			autoRepeatCheckBox = createAutoRepeatCheckBox();
+			c.add(autoRepeatCheckBox, "pos 1al select.y-3 n select.y2");
 		}
 
 		// set default size and location
@@ -103,6 +102,20 @@ public class SelectDialog<T> extends JDialog {
 
 		// Shortcut Enter
 		installAction(list, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), selectAction);
+	}
+
+	protected JToggleButton createAutoRepeatCheckBox() {
+		JCheckBox c = new JCheckBox();
+		c.setUI(new BasicCheckBoxUI());
+		c.setCursor(getPredefinedCursor(HAND_CURSOR));
+		c.setIcon(createAutoRepeatCheckBoxIcon("button.repeat"));
+		c.setSelectedIcon(createAutoRepeatCheckBoxIcon("button.repeat.selected"));
+		c.addChangeListener(evt -> autoRepeatCheckBox.setToolTipText(autoRepeatCheckBox.isSelected() ? "Select and remember for next time" : "Select once and ask again next time"));
+		return c;
+	}
+
+	protected Icon createAutoRepeatCheckBoxIcon(String name) {
+		return new RoundDecoration(ResourceManager.getIcon(name), 28, 28, getPanelBackground(), getColor(0xD7D7D7));
 	}
 
 	protected String convertValueToString(Object value) {
@@ -157,7 +170,7 @@ public class SelectDialog<T> extends JDialog {
 		return messageLabel;
 	}
 
-	public JCheckBox getAutoRepeatCheckBox() {
+	public JToggleButton getAutoRepeatCheckBox() {
 		return autoRepeatCheckBox;
 	}
 
@@ -196,7 +209,7 @@ public class SelectDialog<T> extends JDialog {
 	});
 
 	private final MouseAdapter mouseListener = mouseClicked(evt -> {
-		if (SwingUtilities.isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
+		if (isLeftMouseButton(evt) && (evt.getClickCount() == 2)) {
 			selectAction.actionPerformed(new ActionEvent(evt.getSource(), ActionEvent.ACTION_PERFORMED, SELECT));
 		}
 	});
@@ -206,14 +219,20 @@ public class SelectDialog<T> extends JDialog {
 	private static final String KEY_HEIGHT = "dialog.select.height";
 
 	public void saveState(Preferences prefs) {
-		prefs.putBoolean(KEY_REPEAT, autoRepeatCheckBox.isSelected());
 		prefs.putInt(KEY_WIDTH, getWidth());
 		prefs.putInt(KEY_HEIGHT, getHeight());
+
+		if (autoRepeatCheckBox != null) {
+			prefs.putBoolean(KEY_REPEAT, autoRepeatCheckBox.isSelected());
+		}
 	}
 
 	public void restoreState(Preferences prefs) {
-		autoRepeatCheckBox.setSelected(prefs.getBoolean(KEY_REPEAT, autoRepeatCheckBox.isSelected()));
 		setSize(prefs.getInt(KEY_WIDTH, getWidth()), prefs.getInt(KEY_HEIGHT, getHeight()));
+
+		if (autoRepeatCheckBox != null) {
+			autoRepeatCheckBox.setSelected(prefs.getBoolean(KEY_REPEAT, autoRepeatCheckBox.isSelected()));
+		}
 	}
 
 }
