@@ -44,21 +44,32 @@ def osdb_out    = dir_release.resolve('osdb.txt')
 
 
 def pack(file, lines) {
+	def previousHash = hash(file)
+
 	file.withOutputStream{ out ->
 		out.withWriter('UTF-8'){ writer ->
 			lines.each{ writer.append(it).append('\n') }
 		}
 	}
-	file.parentFile.resolve(file.name + '.xz').withOutputStream{ out ->
-		new XZOutputStream(out, new LZMA2Options(LZMA2Options.PRESET_DEFAULT)).withWriter('UTF-8'){ writer ->
-			lines.each{ writer.append(it).append('\n') }
+
+	if (hash(file) != previousHash) {
+		file.parentFile.resolve(file.name + '.xz').withOutputStream{ out ->
+			new XZOutputStream(out, new LZMA2Options(LZMA2Options.PRESET_DEFAULT)).withWriter('UTF-8'){ writer ->
+				lines.each{ writer.append(it).append('\n') }
+			}
 		}
+	} else {
+		log.warning "[NOT MODIFIED] $file [$previousHash]"
 	}
+
 	def rows = lines.size()
 	def columns = lines.collect{ it.split(/\t/).length }.max()
 	log.info "${file.canonicalFile} ($rows rows, $columns columns)"
 }
 
+def hash(file) {
+	return file.length()
+}
 
 def isValidMovieName(s) {
 	return (s.normalizePunctuation().length() >= 4) || (s=~ /^[A-Z0-9]/ && s =~ /[\p{Alnum}]{3}/)
