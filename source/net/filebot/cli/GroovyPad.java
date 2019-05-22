@@ -2,6 +2,7 @@ package net.filebot.cli;
 
 import static javax.swing.BorderFactory.*;
 import static net.filebot.Logging.*;
+import static net.filebot.ui.ThemeSupport.*;
 import static net.filebot.util.ui.SwingUI.*;
 
 import java.awt.BorderLayout;
@@ -50,7 +51,7 @@ public class GroovyPad extends JFrame {
 	public GroovyPad() throws IOException {
 		super("Groovy Pad");
 
-		RTextScrollPane editorPane = createEditor(Theme.load(Theme.class.getResourceAsStream("themes/eclipse.xml")));
+		RTextScrollPane editorPane = createEditor(Theme.load(Theme.class.getResourceAsStream(getTheme().isDark() ? "themes/monokai.xml" : "themes/eclipse.xml")));
 		RTextScrollPane outputPane = createOutputLog(Theme.load(Theme.class.getResourceAsStream("themes/dark.xml")));
 
 		JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true, editorPane, outputPane);
