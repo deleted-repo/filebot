@@ -39,7 +39,7 @@ import net.filebot.ResourceManager;
 
 public class AnidbClient extends AbstractEpisodeListProvider implements ArtworkProvider {
 
-	private static final FloodLimit REQUEST_LIMIT = new FloodLimit(2, 5, TimeUnit.SECONDS); // no more than 2 requests within a 5 second window
+	private static final FloodLimit REQUEST_LIMIT = new FloodLimit(1, 5, TimeUnit.SECONDS); // no more than 1 requests within a 5 second window
 
 	private final String client;
 	private final int clientver;
