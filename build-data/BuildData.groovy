@@ -58,13 +58,13 @@ def pack(file, lines) {
 				lines.each{ writer.append(it).append('\n') }
 			}
 		}
-	} else {
-		log.warning "[NOT MODIFIED] $file [$previousHash]"
-	}
 
-	def rows = lines.size()
-	def columns = lines.collect{ it.split(/\t/).length }.max()
-	log.info "${file.canonicalFile} ($rows rows, $columns columns)"
+		def rows = lines.size()
+		def columns = lines.collect{ it.split(/\t/).length }.max()
+		log.info "${file.canonicalFile} ($rows rows, $columns columns)"
+	} else {
+		log.finest "[NOT MODIFIED] $file [$previousHash]"
+	}
 }
 
 def hash(file) {
