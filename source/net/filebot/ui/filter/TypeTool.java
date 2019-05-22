@@ -135,7 +135,7 @@ class TypeTool extends Tool<TreeModel> {
 
 	public static enum MetaType implements FileFilter {
 
-		MOVIE("Movie", f -> isMovie(f, true)),
+		MOVIE("Movie", f -> VIDEO_FILES.accept(f) && isMovie(f, true)),
 
 		EPISODE("Episode", f -> VIDEO_FILES.accept(f) && isEpisode(f, true)),
 
