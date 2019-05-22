@@ -78,6 +78,7 @@ public class AutoDetection {
 
 	private static final Pattern ABSOLUTE_EPISODE_PATTERN = compile("(?<!\\p{Alnum})E[P]?\\d{1,3}(?!\\p{Alnum})", CASE_INSENSITIVE);
 	private static final Pattern SERIES_EPISODE_PATTERN = compile("(?<!\\p{Alnum})(tv[sp]|Season\\D?\\d{1,2}|\\d{4}.S\\d{2})(?!\\p{Alnum})", CASE_INSENSITIVE);
+	private static final Pattern ANIME_EPISODE_PATTERN = compile("^\\[[^\\]]+Subs\\]", CASE_INSENSITIVE);
 
 	private static final Pattern JAPANESE_AUDIO_LANGUAGE_PATTERN = compile("jpn|Japanese", CASE_INSENSITIVE);
 	private static final Pattern JAPANESE_SUBTITLE_CODEC_PATTERN = compile("ASS|SSA", CASE_INSENSITIVE);
@@ -112,7 +113,7 @@ public class AutoDetection {
 			return false;
 		}
 
-		if (anyMatch(f.getParentFile(), ANIME_FOLDER_PATTERN) || find(f.getName(), EMBEDDED_CHECKSUM)) {
+		if (anyMatch(f.getParentFile(), ANIME_FOLDER_PATTERN) || find(f.getName(), ANIME_EPISODE_PATTERN) || find(f.getName(), EMBEDDED_CHECKSUM)) {
 			return true;
 		}
 
