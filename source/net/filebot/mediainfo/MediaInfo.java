@@ -77,7 +77,7 @@ public class MediaInfo implements MediaCharacteristics {
 	}
 
 	private boolean openViaBuffer(RandomAccessFile f) throws IOException {
-		byte[] buffer = new byte[4 * 1024 * 1024]; // use large buffer to reduce JNA calls
+		byte[] buffer = new byte[64 * 1024]; // use large buffer to reduce JNA calls
 		int read = -1;
 
 		if (0 == MediaInfoLibrary.INSTANCE.Open_Buffer_Init(handle, f.length(), 0)) {
