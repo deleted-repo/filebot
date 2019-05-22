@@ -1,21 +1,30 @@
 package net.filebot.ui.filter;
 
 import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
 import static javax.swing.BorderFactory.*;
+import static net.filebot.Logging.*;
 import static net.filebot.MediaTypes.*;
+import static net.filebot.Settings.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.util.FileUtilities.*;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
 
 import javax.swing.JScrollPane;
 import javax.swing.tree.DefaultTreeModel;
@@ -54,17 +63,14 @@ class TypeTool extends Tool<TreeModel> {
 
 		List<TreeNode> groups = new ArrayList<TreeNode>();
 
-		for (Entry<String, FileFilter> it : getMetaTypes().entrySet()) {
-			List<File> selection = filter(filesAndFolders, it.getValue());
-			if (selection.size() > 0) {
-				groups.add(createStatisticsNode(it.getKey(), selection));
+		// meta type groups
+		groupParallel(filesAndFolders).forEach((type, files) -> {
+			if (files.size() > 0) {
+				groups.add(createStatisticsNode(type.getLabel(), files));
 			}
+		});
 
-			if (Thread.interrupted()) {
-				throw new CancellationException();
-			}
-		}
-
+		// file type groups
 		SortedMap<String, TreeNode> extensionGroups = new TreeMap<String, TreeNode>(String.CASE_INSENSITIVE_ORDER);
 
 		for (Entry<String, List<File>> it : mapByExtension(filter(filesAndFolders, FILES)).entrySet()) {
@@ -83,24 +89,88 @@ class TypeTool extends Tool<TreeModel> {
 		return new DefaultTreeModel(new FolderNode("Types", groups));
 	}
 
-	public Map<String, FileFilter> getMetaTypes() {
-		Map<String, FileFilter> types = new LinkedHashMap<String, FileFilter>();
-		types.put("Movie", f -> VIDEO_FILES.accept(f) && isMovie(f, true));
-		types.put("Episode", f -> VIDEO_FILES.accept(f) && isEpisode(f, true));
-		types.put("Disk Folder", getDiskFolderFilter());
-		types.put("Video", VIDEO_FILES);
-		types.put("Subtitle", SUBTITLE_FILES);
-		types.put("Audio", AUDIO_FILES);
-		types.put("Archive", ARCHIVE_FILES);
-		types.put("Verification", VERIFICATION_FILES);
-		types.put("Extras", getClutterFileFilter());
-		types.put("Clutter", getClutterTypeFilter());
-		return types;
+	protected Map<MetaType, List<File>> groupParallel(List<File> files) {
+		Map<MetaType, List<File>> metaTypes = new EnumMap<MetaType, List<File>>(MetaType.class);
+
+		ExecutorService threadPool = Executors.newFixedThreadPool(getPreferredThreadPoolSize());
+		try {
+			files.stream().collect(toMap(f -> f, f -> threadPool.submit(() -> classify(f)), (a, b) -> a, LinkedHashMap::new)).forEach((f, classes) -> {
+				if (!classes.isCancelled()) {
+					try {
+						for (MetaType type : classes.get()) {
+							metaTypes.computeIfAbsent(type, t -> new ArrayList<File>()).add(f);
+						}
+					} catch (InterruptedException e) {
+						throw new CancellationException();
+					} catch (Exception e) {
+						debug.log(Level.SEVERE, e, e::toString);
+					}
+				}
+
+				if (Thread.interrupted()) {
+					throw new CancellationException();
+				}
+			});
+		} finally {
+			threadPool.shutdownNow();
+		}
+
+		return metaTypes;
+	}
+
+	protected Set<MetaType> classify(File f) {
+		Set<MetaType> classes = EnumSet.noneOf(MetaType.class);
+		for (MetaType t : MetaType.values()) {
+			if (t.accept(f)) {
+				classes.add(t);
+			}
+		}
+		return classes;
 	}
 
 	@Override
 	protected void setModel(TreeModel model) {
 		tree.setModel(model);
+	}
+
+	public static enum MetaType implements FileFilter {
+
+		MOVIE("Movie", f -> isMovie(f, true)),
+
+		EPISODE("Episode", f -> VIDEO_FILES.accept(f) && isEpisode(f, true)),
+
+		DISK_FOLDER("Disk Folder", getDiskFolderFilter()),
+
+		VIDEO("Video", VIDEO_FILES),
+
+		SUBTITLE("Subtitle", SUBTITLE_FILES),
+
+		AUDIO("Audio", AUDIO_FILES),
+
+		ARCHIVE("Archive", ARCHIVE_FILES),
+
+		VERIFICATION("Verification", VERIFICATION_FILES),
+
+		EXTRAS("Extras", getClutterFileFilter()),
+
+		CLUTTER("Clutter", getClutterTypeFilter());
+
+		private final String label;
+		private final FileFilter filter;
+
+		private MetaType(String label, FileFilter filter) {
+			this.label = label;
+			this.filter = filter;
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		@Override
+		public boolean accept(File f) {
+			return filter.accept(f);
+		}
 	}
 
 }
