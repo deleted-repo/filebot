@@ -27,7 +27,7 @@ public final class EpisodeUtilities {
 	}
 
 	public static boolean isAnime(Episode e) {
-		return AniDB.getIdentifier().equals(e.getSeriesInfo().getDatabase());
+		return SortOrder.Absolute.name().equals(e.getSeriesInfo().getOrder()) || AniDB.getIdentifier().equals(e.getSeriesInfo().getDatabase());
 	}
 
 	public static boolean isRegular(Episode e) {
