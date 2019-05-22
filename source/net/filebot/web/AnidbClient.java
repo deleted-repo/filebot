@@ -65,8 +65,8 @@ public class AnidbClient extends AbstractEpisodeListProvider implements ArtworkP
 	}
 
 	@Override
-	protected SortOrder vetoRequestParameter(SortOrder order) {
-		return order == null ? SortOrder.Absolute : order;
+	public SortOrder vetoRequestParameter(SortOrder order) {
+		return order == SortOrder.Absolute || order == SortOrder.AbsoluteAirdate ? order : SortOrder.Absolute;
 	}
 
 	@Override

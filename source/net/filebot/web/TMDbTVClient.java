@@ -46,7 +46,7 @@ public class TMDbTVClient extends AbstractEpisodeListProvider {
 	}
 
 	@Override
-	protected SortOrder vetoRequestParameter(SortOrder order) {
+	public SortOrder vetoRequestParameter(SortOrder order) {
 		return SortOrder.Airdate;
 	}
 

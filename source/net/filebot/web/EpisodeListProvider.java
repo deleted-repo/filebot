@@ -20,4 +20,8 @@ public interface EpisodeListProvider extends Datasource {
 
 	public URI getEpisodeListLink(SearchResult searchResult);
 
+	public SortOrder vetoRequestParameter(SortOrder order);
+
+	public Locale vetoRequestParameter(Locale language);
+
 }

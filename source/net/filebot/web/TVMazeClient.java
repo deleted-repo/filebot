@@ -35,12 +35,12 @@ public class TVMazeClient extends AbstractEpisodeListProvider {
 	}
 
 	@Override
-	protected SortOrder vetoRequestParameter(SortOrder order) {
+	public SortOrder vetoRequestParameter(SortOrder order) {
 		return SortOrder.Airdate;
 	}
 
 	@Override
-	protected Locale vetoRequestParameter(Locale language) {
+	public Locale vetoRequestParameter(Locale language) {
 		return Locale.ENGLISH;
 	}
 

@@ -23,11 +23,13 @@ public abstract class AbstractEpisodeListProvider implements EpisodeListProvider
 		});
 	}
 
-	protected SortOrder vetoRequestParameter(SortOrder order) {
+	@Override
+	public SortOrder vetoRequestParameter(SortOrder order) {
 		return order == null ? SortOrder.Airdate : order;
 	}
 
-	protected Locale vetoRequestParameter(Locale language) {
+	@Override
+	public Locale vetoRequestParameter(Locale language) {
 		return language == null || language.getLanguage().isEmpty() ? Locale.ENGLISH : language;
 	}
 

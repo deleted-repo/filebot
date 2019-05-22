@@ -122,7 +122,7 @@ public class CmdlineOperations implements CmdlineInterface {
 						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, TheTVDB, query, order, filter, locale, strict, exec));
 						break;
 					case Anime:
-						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, AniDB, query, order, filter, locale, strict, exec));
+						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, TheTVDB, query, SortOrder.Absolute, filter, locale, strict, exec));
 						break;
 					case Music:
 						results.addAll(renameMusic(it.getValue(), action, conflict, output, format, asList(MediaInfoID3, AcoustID), exec)); // prefer existing ID3 tags and use acoustid only when necessary
@@ -162,7 +162,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	public List<File> renameSeries(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, EpisodeListProvider db, String query, SortOrder sortOrder, ExpressionFilter filter, Locale locale, boolean strict, ExecCommand exec) throws Exception {
-		log.config(format("Rename episodes using [%s]", db.getName()));
+		log.config(format("Rename episodes using [%s] with [%s]", db.getName(), db.vetoRequestParameter(sortOrder)));
 
 		// ignore sample files
 		List<File> fileset = sortByUniquePath(filter(files, not(getClutterFileFilter())));
