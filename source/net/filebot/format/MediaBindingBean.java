@@ -1201,7 +1201,7 @@ public class MediaBindingBean {
 	// lazy initialize and then keep in memory
 	private MediaInfo mediaInfo;
 
-	private synchronized MediaInfo getMediaInfo() {
+	public synchronized MediaInfo getMediaInfo() {
 		// use inferred media file (e.g. actual movie file instead of subtitle file)
 		if (mediaInfo == null) {
 			mediaInfo = mediaInfoCache.get(getInferredMediaFile(), f -> {
@@ -1218,7 +1218,7 @@ public class MediaBindingBean {
 	// lazy initialize and then keep in memory
 	private File inferredMediaFile;
 
-	private synchronized File getInferredMediaFile() {
+	public synchronized File getInferredMediaFile() {
 		if (inferredMediaFile == null) {
 			inferredMediaFile = getInferredMediaFile(getMediaFile());
 		}
