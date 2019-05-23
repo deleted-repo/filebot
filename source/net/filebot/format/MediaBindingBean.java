@@ -1144,50 +1144,6 @@ public class MediaBindingBean {
 		return new FFProbe().open(getInferredMediaFile());
 	}
 
-	public File getInferredMediaFile() {
-		File file = getMediaFile();
-
-		if (file.isDirectory()) {
-			// just select the first video file in the folder as media sample
-			List<File> videos = getChildren(file, VIDEO_FILES, HUMAN_NAME_ORDER);
-			if (videos.isEmpty()) {
-				// check for indirect descendant video files as well
-				videos = listFiles(file, VIDEO_FILES, HUMAN_NAME_ORDER);
-			}
-			if (videos.size() > 0) {
-				return videos.get(0);
-			}
-		} else if ((SUBTITLE_FILES.accept(file) || IMAGE_FILES.accept(file)) || ((infoObject instanceof Episode || infoObject instanceof Movie) && !VIDEO_FILES.accept(file))) {
-			// prefer equal match from current context if possible
-			if (context != null) {
-				for (Entry<File, ?> it : context.entrySet()) {
-					if (infoObject.equals(it.getValue()) && VIDEO_FILES.accept(it.getKey())) {
-						return it.getKey();
-					}
-				}
-			}
-
-			// file is a subtitle, or nfo, etc
-			String baseName = stripReleaseInfo(FileUtilities.getName(file)).toLowerCase();
-			List<File> videos = getChildren(file.getParentFile(), VIDEO_FILES);
-
-			// find corresponding movie file
-			for (File movieFile : videos) {
-				if (!baseName.isEmpty() && stripReleaseInfo(FileUtilities.getName(movieFile)).toLowerCase().startsWith(baseName)) {
-					return movieFile;
-				}
-			}
-
-			// still no good match found -> just take the most probable video from the same folder
-			if (videos.size() > 0) {
-				sort(videos, SimilarityComparator.compareTo(FileUtilities.getName(file), FileUtilities::getName));
-				return videos.get(0);
-			}
-		}
-
-		return file;
-	}
-
 	public Episode getSeasonEpisode() {
 		// magically convert AniDB absolute numbers to TheTVDB SxE numbers if AniDB is selected with airdate SxE episode sort order
 		if (getEpisodes().stream().allMatch(it -> isAnime(it) && isRegular(it) && !isAbsolute(it))) {
@@ -1242,19 +1198,73 @@ public class MediaBindingBean {
 		return null;
 	}
 
-	private static final Cache<File, MediaInfo> mediaInfoCache = Caffeine.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
+	// lazy initialize and then keep in memory
+	private MediaInfo mediaInfo;
 
 	private synchronized MediaInfo getMediaInfo() {
 		// use inferred media file (e.g. actual movie file instead of subtitle file)
-		File inferredMediaFile = getInferredMediaFile();
+		if (mediaInfo == null) {
+			mediaInfo = mediaInfoCache.get(getInferredMediaFile(), f -> {
+				try {
+					return new MediaInfo().open(f);
+				} catch (Exception e) {
+					throw new MediaInfoException(e.getMessage());
+				}
+			});
+		}
+		return mediaInfo;
+	}
 
-		return mediaInfoCache.get(inferredMediaFile, f -> {
-			try {
-				return new MediaInfo().open(f);
-			} catch (Exception e) {
-				throw new MediaInfoException(e.getMessage());
+	// lazy initialize and then keep in memory
+	private File inferredMediaFile;
+
+	private synchronized File getInferredMediaFile() {
+		if (inferredMediaFile == null) {
+			inferredMediaFile = getInferredMediaFile(getMediaFile());
+		}
+		return inferredMediaFile;
+	}
+
+	private File getInferredMediaFile(File file) {
+		if (file.isDirectory()) {
+			// just select the first video file in the folder as media sample
+			List<File> videos = getChildren(file, VIDEO_FILES, HUMAN_NAME_ORDER);
+			if (videos.isEmpty()) {
+				// check for indirect descendant video files as well
+				videos = listFiles(file, VIDEO_FILES, HUMAN_NAME_ORDER);
 			}
-		});
+			if (videos.size() > 0) {
+				return videos.get(0);
+			}
+		} else if ((SUBTITLE_FILES.accept(file) || IMAGE_FILES.accept(file)) || ((infoObject instanceof Episode || infoObject instanceof Movie) && !VIDEO_FILES.accept(file))) {
+			// prefer equal match from current context if possible
+			if (context != null) {
+				for (Entry<File, ?> it : context.entrySet()) {
+					if (infoObject.equals(it.getValue()) && VIDEO_FILES.accept(it.getKey())) {
+						return it.getKey();
+					}
+				}
+			}
+
+			// file is a subtitle, or nfo, etc
+			String baseName = stripReleaseInfo(FileUtilities.getName(file)).toLowerCase();
+			List<File> videos = getChildren(file.getParentFile(), VIDEO_FILES);
+
+			// find corresponding movie file
+			for (File movieFile : videos) {
+				if (!baseName.isEmpty() && stripReleaseInfo(FileUtilities.getName(movieFile)).toLowerCase().startsWith(baseName)) {
+					return movieFile;
+				}
+			}
+
+			// still no good match found -> just take the most probable video from the same folder
+			if (videos.size() > 0) {
+				sort(videos, SimilarityComparator.compareTo(FileUtilities.getName(file), FileUtilities::getName));
+				return videos.get(0);
+			}
+		}
+
+		return file;
 	}
 
 	private Integer identityIndexOf(Iterable<?> c, Object o) {
@@ -1379,5 +1389,10 @@ public class MediaBindingBean {
 
 	public static final String EXCEPTION_UNDEFINED = "undefined";
 	public static final String EXCEPTION_SAMPLE_FILE_NOT_SET = "Sample file has not been set. Click \"Change Sample\" to select a sample file.";
+
+	/**
+	 * Reading MediaInfo can be a very expensive operation, especially if network drives are involved, so we do our best to cache it for a while, because memory is cheap, and time is not.
+	 */
+	private static final Cache<File, MediaInfo> mediaInfoCache = Caffeine.newBuilder().expireAfterAccess(20, TimeUnit.MINUTES).build();
 
 }
