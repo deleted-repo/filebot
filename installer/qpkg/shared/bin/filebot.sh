@@ -33,5 +33,8 @@ UNRAR="/usr/local/sbin/unrar"
 APP_DATA="$QPKG_ROOT/data/$USER"
 LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH"
 
+# make sure transitive dependencies can be loaded
+export LD_LIBRARY_PATH="$LIBRARY_PATH"
+
 # start filebot
 java -Dapplication.deployment=qpkg -Dnet.filebot.license="$QPKG_ROOT/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.media.ffprobe="$FFPROBE" -Dnet.filebot.archive.extractor="$ARCHIVE_EXTRACTOR" -Dnet.filebot.archive.7z="$P7ZIP" -Dnet.filebot.archive.unrar="$UNRAR" -Djava.awt.headless=true @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$QPKG_ROOT/jar/filebot.jar" "$@"

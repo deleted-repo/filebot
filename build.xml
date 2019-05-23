@@ -626,7 +626,7 @@
 
 			<!-- include native libraries for all supported platforms -->
 			<tarfileset prefix="lib/Linux-armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
-			<tarfileset prefix="lib/Linux-aarch64" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
+			<tarfileset prefix="lib/Linux-aarch64" dir="${dir.lib}/native/linux-aarch64" includes="*.so" />
 			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
 			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
 			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
@@ -654,7 +654,7 @@
 
 			<tarfileset prefix="/usr/share/filebot/lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="${deb.jna.depends}" />
 			<tarfileset prefix="/usr/share/filebot/lib/i686" dir="${dir.lib}/native/linux-i686" includes="${deb.jna.depends}" />
-			<tarfileset prefix="/usr/share/filebot/lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="${deb.jna.depends}" />
+			<tarfileset prefix="/usr/share/filebot/lib/aarch64" dir="${dir.lib}/native/linux-aarch64" includes="${deb.jna.depends}" />
 			<tarfileset prefix="/usr/share/filebot/lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="${deb.jna.depends}" />
 
 			<tarfileset prefix="/usr/share/icons/hicolor/scalable/apps" dir="${dir.installer}/icons" includes="filebot.svg" />
@@ -730,7 +730,7 @@
 
 			<!-- include native libraries for all supported platforms -->
 			<package prefix="lib/armv7l" dir="${dir.lib}/native/linux-armv7l" includes="*.so" />
-			<package prefix="lib/aarch64" dir="${dir.lib}/native/linux-armv8" includes="*.so" />
+			<package prefix="lib/aarch64" dir="${dir.lib}/native/linux-aarch64" includes="*.so" />
 			<package prefix="lib/i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
 			<package prefix="lib/x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
 
@@ -767,7 +767,7 @@
 			<fileset dir="${dir.lib}/native/linux-armv7l" />
 		</copy>
 		<copy todir="${dir.base}/lib/aarch64">
-			<fileset dir="${dir.lib}/native/linux-armv8" />
+			<fileset dir="${dir.lib}/native/linux-aarch64" />
 		</copy>
 		<copy todir="${dir.base}/lib/i686">
 			<fileset dir="${dir.lib}/native/linux-i686" />
@@ -956,7 +956,7 @@
 			<param name="arch.7zj" value="linux-arm" />
 		</antcall>
 		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-armv8" />
+			<param name="arch" value="linux-aarch64" />
 			<param name="arch.jna" value="linux-aarch64" />
 			<param name="arch.7zj" value="linux-aarch64" />
 		</antcall>
@@ -967,7 +967,7 @@
 		</antcall>
 
 		<!-- strip x86 and PPC native code from universal library -->
-		<exec executable="ditto" os="Mac OS X" dir="${dir.lib}/native/mac-x86_64">
+		<exec executable="ditto" dir="${dir.lib}/native/mac-x86_64" os="Mac OS X">
 			<arg line="--arch x86_64 libjnidispatch.jnilib libjnidispatch.dylib" />
 		</exec>
 		<delete verbose="yes">
