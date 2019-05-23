@@ -16,9 +16,10 @@ import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 import javax.swing.tree.TreeNode;
 
+import org.apache.commons.io.FileUtils;
+
 import net.filebot.ui.filter.FileTree.FileNode;
 import net.filebot.ui.filter.FileTree.FolderNode;
-import net.filebot.util.FileUtilities;
 import net.filebot.util.ui.LoadingOverlayPane;
 
 abstract class Tool<M> extends JComponent {
@@ -97,11 +98,11 @@ abstract class Tool<M> extends JComponent {
 	}
 
 	protected FolderNode createStatisticsNode(String name, List<File> files) {
-		List<File> selection = listFiles(files, FILES, null);
-		long size = selection.stream().mapToLong(File::length).sum();
+		String kind = files.stream().anyMatch(File::isFile) ? "file" : "folder";
+		long size = files.stream().mapToLong(FileUtils::sizeOf).sum();
 
 		// set node text (e.g. txt (1 file, 42 Byte))
-		String title = String.format("%s (%,d %s, %s)", name, selection.size(), selection.size() == 1 ? "file" : "files", FileUtilities.formatSize(size));
+		String title = String.format("%s (%,d %s, %s)", name, files.size(), files.size() == 1 ? kind : kind + 's', formatSize(size));
 
 		return new FolderNode(title, createFileNodes(files));
 	}

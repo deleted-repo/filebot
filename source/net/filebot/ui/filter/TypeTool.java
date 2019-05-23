@@ -66,7 +66,7 @@ class TypeTool extends Tool<TreeModel> {
 		// meta type groups
 		groupParallel(filesAndFolders).forEach((type, files) -> {
 			if (files.size() > 0) {
-				groups.add(createStatisticsNode(type.getLabel(), files));
+				groups.add(createStatisticsNode(type.toString(), files));
 			}
 		});
 
@@ -94,12 +94,12 @@ class TypeTool extends Tool<TreeModel> {
 
 		ExecutorService threadPool = Executors.newFixedThreadPool(getPreferredThreadPoolSize());
 		try {
-			files.stream().collect(toMap(f -> f, f -> threadPool.submit(() -> classify(f)), (a, b) -> a, LinkedHashMap::new)).forEach((f, classes) -> {
+			files.stream().collect(toMap(f -> f, f -> threadPool.submit(() -> MetaType.classify(f)), (a, b) -> a, LinkedHashMap::new)).forEach((f, classes) -> {
 				if (!classes.isCancelled()) {
 					try {
-						for (MetaType type : classes.get()) {
+						classes.get().forEach(type -> {
 							metaTypes.computeIfAbsent(type, t -> new ArrayList<File>()).add(f);
-						}
+						});
 					} catch (InterruptedException e) {
 						throw new CancellationException();
 					} catch (Exception e) {
@@ -118,16 +118,6 @@ class TypeTool extends Tool<TreeModel> {
 		return metaTypes;
 	}
 
-	protected Set<MetaType> classify(File f) {
-		Set<MetaType> classes = EnumSet.noneOf(MetaType.class);
-		for (MetaType t : MetaType.values()) {
-			if (t.accept(f)) {
-				classes.add(t);
-			}
-		}
-		return classes;
-	}
-
 	@Override
 	protected void setModel(TreeModel model) {
 		tree.setModel(model);
@@ -135,9 +125,11 @@ class TypeTool extends Tool<TreeModel> {
 
 	public static enum MetaType implements FileFilter {
 
+		EPISODE("Episode", f -> VIDEO_FILES.accept(f) && isEpisode(f, true)),
+
 		MOVIE("Movie", f -> VIDEO_FILES.accept(f) && isMovie(f, true)),
 
-		EPISODE("Episode", f -> VIDEO_FILES.accept(f) && isEpisode(f, true)),
+		MOVIE_FOLDER("Movie Folder", f -> f.isDirectory() && isMovie(f, true)),
 
 		DISK_FOLDER("Disk Folder", getDiskFolderFilter()),
 
@@ -155,21 +147,32 @@ class TypeTool extends Tool<TreeModel> {
 
 		CLUTTER("Clutter", getClutterTypeFilter());
 
-		private final String label;
+		private final String name;
 		private final FileFilter filter;
 
-		private MetaType(String label, FileFilter filter) {
-			this.label = label;
+		private MetaType(String name, FileFilter filter) {
+			this.name = name;
 			this.filter = filter;
 		}
 
-		public String getLabel() {
-			return label;
+		@Override
+		public String toString() {
+			return name;
 		}
 
 		@Override
 		public boolean accept(File f) {
 			return filter.accept(f);
+		}
+
+		public static Set<MetaType> classify(File f) {
+			Set<MetaType> classes = EnumSet.noneOf(MetaType.class);
+			for (MetaType t : MetaType.values()) {
+				if (t.accept(f)) {
+					classes.add(t);
+				}
+			}
+			return classes;
 		}
 	}
 
