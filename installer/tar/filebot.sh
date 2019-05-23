@@ -53,8 +53,5 @@ esac
 APP_DATA="$FILEBOT_HOME/data/$USER"
 LIBRARY_PATH="$PACKAGE_LIBRARY_PATH:$LD_LIBRARY_PATH"
 
-# make sure transitive dependencies can be loaded
-export LD_LIBRARY_PATH="$LIBRARY_PATH"
-
 # start filebot
 java -Dapplication.deployment=tar -Dnet.filebot.license="$FILEBOT_HOME/data/.license" -Dnet.filebot.media.parser="$MEDIA_PARSER" -Dnet.filebot.archive.extractor="$ARCHIVE_EXTRACTOR" @{java.application.options} @{linux.application.options} @{linux.portable.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
