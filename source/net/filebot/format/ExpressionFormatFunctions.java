@@ -134,6 +134,11 @@ public class ExpressionFormatFunctions {
 		}
 
 		return f;
+
+	}
+
+	public static Object include(Script context, Object path) throws Exception {
+		return context.evaluate(getUserFile(context, path));
 	}
 
 	private ExpressionFormatFunctions() {
