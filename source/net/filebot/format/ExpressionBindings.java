@@ -42,7 +42,7 @@ public class ExpressionBindings extends AbstractMap<String, Object> implements B
 	}
 
 	protected boolean isUndefined(Object value) {
-		return value == null || ExpressionFormatFunctions.isEmptyValue(value);
+		return value == null || ExpressionFormatFunctions.isEmptyValue(null, value);
 	}
 
 	public Object getBindingBean() {

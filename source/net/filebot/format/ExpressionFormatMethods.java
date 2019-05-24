@@ -531,7 +531,7 @@ public class ExpressionFormatMethods {
 			}
 		}
 
-		return new File(self.getParentFile(), concat(name, slash(concat(tag, null, tagN), ""), extension));
+		return new File(self.getParentFile(), concat(null, name, slash(concat(null, tag, null, tagN), ""), extension));
 	}
 
 	/**
@@ -684,7 +684,7 @@ public class ExpressionFormatMethods {
 	}
 
 	public static String plus(String self, Closure closure) {
-		Object value = call(closure);
+		Object value = call(null, closure);
 		return value == null ? self : self + value;
 	}
 

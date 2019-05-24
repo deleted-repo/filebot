@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import com.sun.jna.Platform;
 
 import groovy.lang.Closure;
+import groovy.lang.Script;
 import groovy.util.XmlSlurper;
 import net.filebot.ApplicationFolder;
 import net.filebot.platform.mac.MacAppUtilities;
@@ -32,23 +33,23 @@ public class ExpressionFormatFunctions {
 	 * General helpers and utilities
 	 */
 
-	public static Object call(Object object) {
+	public static Object call(Script context, Object object) {
 		if (object instanceof Closure) {
 			try {
-				return call(((Closure) object).call());
+				return call(context, ((Closure) object).call());
 			} catch (Exception e) {
 				return null;
 			}
 		}
 
-		if (isEmptyValue(object)) {
+		if (isEmptyValue(context, object)) {
 			return null;
 		}
 
 		return object;
 	}
 
-	public static boolean isEmptyValue(Object object) {
+	public static boolean isEmptyValue(Script context, Object object) {
 		// treat empty string as null
 		if (object instanceof CharSequence && object.toString().isEmpty()) {
 			return true;
@@ -62,46 +63,46 @@ public class ExpressionFormatFunctions {
 		return false;
 	}
 
-	public static Object any(Object c1, Object c2, Object... cN) {
-		return stream(c1, c2, cN).findFirst().orElse(null);
+	public static Object any(Script context, Object c1, Object c2, Object... cN) {
+		return stream(context, c1, c2, cN).findFirst().orElse(null);
 	}
 
-	public static List<Object> allOf(Object c1, Object c2, Object... cN) {
-		return stream(c1, c2, cN).collect(toList());
+	public static List<Object> allOf(Script context, Object c1, Object c2, Object... cN) {
+		return stream(context, c1, c2, cN).collect(toList());
 	}
 
-	public static String concat(Object c1, Object c2, Object... cN) {
-		return stream(c1, c2, cN).map(Objects::toString).collect(joining());
+	public static String concat(Script context, Object c1, Object c2, Object... cN) {
+		return stream(context, c1, c2, cN).map(Objects::toString).collect(joining());
 	}
 
-	protected static Stream<Object> stream(Object c1, Object c2, Object... cN) {
-		return Stream.concat(Stream.of(c1, c2), Stream.of(cN)).map(ExpressionFormatFunctions::call).filter(Objects::nonNull);
+	private static Stream<Object> stream(Script context, Object c1, Object c2, Object... cN) {
+		return Stream.concat(Stream.of(c1, c2), Stream.of(cN)).map(c -> call(context, c)).filter(Objects::nonNull);
 	}
 
 	/*
 	 * Unix Shell / Windows PowerShell utilities
 	 */
 
-	public static String quote(Object c1, Object... cN) {
-		return Platform.isWindows() ? quotePowerShell(c1, cN) : quoteBash(c1, cN);
+	public static String quote(Script context, Object c1, Object... cN) {
+		return Platform.isWindows() ? quotePowerShell(context, c1, cN) : quoteBash(context, c1, cN);
 	}
 
-	public static String quoteBash(Object c1, Object... cN) {
-		return stream(c1, null, cN).map(Objects::toString).map(s -> "'" + s.replace("'", "'\"'\"'") + "'").collect(joining(" "));
+	public static String quoteBash(Script context, Object c1, Object... cN) {
+		return stream(context, c1, null, cN).map(Objects::toString).map(s -> "'" + s.replace("'", "'\"'\"'") + "'").collect(joining(" "));
 	}
 
-	public static String quotePowerShell(Object c1, Object... cN) {
-		return stream(c1, null, cN).map(Objects::toString).map(s -> "@'\n" + s + "\n'@").collect(joining(" "));
+	public static String quotePowerShell(Script context, Object c1, Object... cN) {
+		return stream(context, c1, null, cN).map(Objects::toString).map(s -> "@'\n" + s + "\n'@").collect(joining(" "));
 	}
 
 	/*
 	 * I/O utilities
 	 */
 
-	public static Map<String, String> csv(Object path) throws IOException {
+	public static Map<String, String> csv(Script context, Object path) throws IOException {
 		Pattern[] delimiter = { TAB, SEMICOLON };
 		Map<String, String> map = new LinkedHashMap<String, String>();
-		for (String line : readLines(path)) {
+		for (String line : readLines(context, path)) {
 			for (Pattern d : delimiter) {
 				String[] field = d.split(line, 2);
 				if (field.length >= 2) {
@@ -113,15 +114,15 @@ public class ExpressionFormatFunctions {
 		return map;
 	}
 
-	public static List<String> readLines(Object path) throws IOException {
-		return FileUtilities.readLines(getUserFile(path));
+	public static List<String> readLines(Script context, Object path) throws IOException {
+		return FileUtilities.readLines(getUserFile(context, path));
 	}
 
-	public static Object readXml(Object path) throws Exception {
-		return new XmlSlurper().parse(getUserFile(path));
+	public static Object readXml(Script context, Object path) throws Exception {
+		return new XmlSlurper().parse(getUserFile(context, path));
 	}
 
-	public static File getUserFile(Object path) {
+	public static File getUserFile(Script context, Object path) {
 		File f = new File(path.toString());
 
 		if (!f.isAbsolute()) {

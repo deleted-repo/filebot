@@ -23,7 +23,6 @@ import javax.script.SimpleScriptContext;
 
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
-import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
 
 import groovy.lang.GroovyClassLoader;
@@ -225,14 +224,7 @@ public class ExpressionFormat extends Format {
 	}
 
 	protected static Compilable createScriptEngine() {
-		CompilerConfiguration config = new CompilerConfiguration();
-
-		// include default functions
-		ImportCustomizer imports = new ImportCustomizer();
-		imports.addStaticStars(ExpressionFormatFunctions.class.getName());
-		config.addCompilationCustomizers(imports);
-
-		GroovyClassLoader classLoader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), config);
+		GroovyClassLoader classLoader = new GroovyClassLoader(Thread.currentThread().getContextClassLoader(), new CompilerConfiguration());
 		return new GroovyScriptEngineImpl(classLoader);
 	}
 
