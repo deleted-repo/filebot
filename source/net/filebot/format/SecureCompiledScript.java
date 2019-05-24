@@ -23,6 +23,7 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
+import groovy.security.GroovyCodeSourcePermission;
 import net.filebot.ApplicationFolder;
 import net.filebot.util.ExceptionUtilities;
 
@@ -57,6 +58,7 @@ public class SecureCompiledScript extends CompiledScript {
 		permissions.add(new ManagementPermission("monitor"));
 		permissions.add(new ReflectPermission("suppressAccessChecks"));
 		permissions.add(new ReflectPermission("newProxyInPackage.*"));
+		permissions.add(new GroovyCodeSourcePermission("*"));
 
 		// write permissions for cache and temp folders
 		for (ApplicationFolder it : ApplicationFolder.values()) {
