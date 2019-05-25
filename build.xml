@@ -112,10 +112,10 @@
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
-				<arg line="get-java get jdk x86_64" />
+				<arg line="get-java get jre x86_64" />
 			</exec>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
-				<arg line="get jdk x86_64 Windows" />
+				<arg line="get jre x86_64 Windows" />
 			</exec>
 			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jre.zip" dest="@{dest}">
 				<patternset refid="pattern.jre" />
@@ -140,7 +140,7 @@
 		<attribute name="dest" />
 		<sequential>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
-				<arg line="get jdk x86_64 Darwin" />
+				<arg line="get jre x86_64 Darwin" />
 			</exec>
 			<untar src="${dir.cache}/OpenJDK_${jre.version}_Darwin-x86_64-jre.tar.gz" dest="@{dest}/jdk-${jre.version}.jdk" compression="gzip">
 				<patternset refid="pattern.jre" />
