@@ -51,7 +51,7 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index aa54c463..08d05ac4 100644
+index 2812b014..08d05ac4 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,27 +111,14 @@
@@ -67,7 +67,7 @@ index aa54c463..08d05ac4 100644
 -			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
 -				<arg line="get jdk x86_64 Windows" />
 -			</exec>
--			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jdk.zip" dest="@{dest}">
+-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jdk.tar.gz" dest="@{dest}">
 -				<patternset refid="pattern.jre" />
 -				<cutdirsmapper dirs="1" />
 -			</unzip>
@@ -78,7 +78,7 @@ index aa54c463..08d05ac4 100644
 -			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
 -				<arg line="get jfx x86_64 Windows" />
 -			</exec>
--			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jfx.zip" dest="@{dest}/ext/modules">
+-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jfx.tar.gz" dest="@{dest}/ext/modules">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
