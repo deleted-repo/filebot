@@ -142,14 +142,14 @@
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
 				<arg line="get jre x86_64 Darwin" />
 			</exec>
-			<untar src="${dir.cache}/OpenJDK_${jre.version}_Darwin-x86_64-jre.tar.gz" dest="@{dest}" compression="gzip">
+			<untar src="${dir.cache}/OpenJDK_${jre.version}_Darwin-x86_64-jre.tar.gz" dest="@{dest}/jdk-${jre.version}.jre" compression="gzip">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</untar>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
 				<arg line="get jfx x86_64 Darwin" />
 			</exec>
-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Darwin-x86_64-jfx.tar.gz" dest="@{dest}/jdk-${jre.version}.jdk/Contents/Home/ext/modules">
+			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Darwin-x86_64-jfx.tar.gz" dest="@{dest}/jdk-${jre.version}.jre/Contents/Home/ext/modules">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</unzip>
@@ -190,7 +190,7 @@
 			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="@{identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
 
-				<runtime dir="@{dir}/Contents/Home" if:true="@{runtime}">
+				<runtime dir="@{dir}/jdk-${jre.version}-jre/Contents/Home" if:true="@{runtime}">
 					<include name="**/*" />
 				</runtime>
 
@@ -198,7 +198,7 @@
 				<librarypath dir="${dir.lib}/native/mac-x86_64" />
 
 				<option value="--module-path" />
-				<option value="$APP_ROOT/Contents/PlugIns/jdk-${jre.version}.jdk/Contents/Home/ext/modules/lib" />
+				<option value="$APP_ROOT/Contents/PlugIns/jdk-${jre.version}.jre/Contents/Home/ext/modules/lib" />
 				<option value="--add-modules" />
 				<option value="ALL-MODULE-PATH" />
 
@@ -439,13 +439,13 @@
 			</fileset>
 		</delete>
 
-		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/jdk-${jre.version}.jdk" />
+		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/jdk-${jre.version}.jre" />
 
 		<!-- MAS validation is a bit buggy and requires even libraries and frameworks to have a unique CFBundleIdentifier Collision -->
 		<replace file="${path.app.jre}/Contents/Info.plist" token="net.java.openjdk.${jre.version}.jdk" value="${package.identifier}.jdk" encoding="UTF-8" summary="true" />
 
 		<!-- fix broken symlink -->
-		<copy file="${dir.staging}/jdk-${jre.version}.jdk/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
+		<copy file="${dir.staging}/jdk-${jre.version}.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
 
 		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
 		<chmod perm="+x">
