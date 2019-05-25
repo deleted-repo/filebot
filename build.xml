@@ -117,7 +117,7 @@
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
 				<arg line="get jdk x86_64 Windows" />
 			</exec>
-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jdk.zip" dest="@{dest}">
+			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jdk.tar.gz" dest="@{dest}">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</unzip>
@@ -128,7 +128,7 @@
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
 				<arg line="get jfx x86_64 Windows" />
 			</exec>
-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jfx.zip" dest="@{dest}/ext/modules">
+			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jfx.tar.gz" dest="@{dest}/ext/modules">
 				<patternset refid="pattern.jre" />
 				<cutdirsmapper dirs="1" />
 			</unzip>
