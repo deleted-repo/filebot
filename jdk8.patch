@@ -51,7 +51,7 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index fe13baca..cf5239c3 100644
+index aa54c463..08d05ac4 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,27 +111,14 @@
@@ -67,7 +67,7 @@ index fe13baca..cf5239c3 100644
 -			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
 -				<arg line="get jdk x86_64 Windows" />
 -			</exec>
--			<unzip src="${dir.cache}/openjdk-${jre.version}_windows-x64_bin.zip" dest="@{dest}">
+-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jdk.zip" dest="@{dest}">
 -				<patternset refid="pattern.jre" />
 -				<cutdirsmapper dirs="1" />
 -			</unzip>
@@ -78,7 +78,7 @@ index fe13baca..cf5239c3 100644
 -			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
 -				<arg line="get jfx x86_64 Windows" />
 -			</exec>
--			<unzip src="${dir.cache}/openjfx-${jfx.version}_windows-x64_bin-sdk.zip" dest="@{dest}/ext/modules">
+-			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jfx.zip" dest="@{dest}/ext/modules">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
@@ -283,7 +283,7 @@ index 4aec2ab8..eb200e57 100644
  
  }
 diff --git a/source/net/filebot/ThumbnailServices.java b/source/net/filebot/ThumbnailServices.java
-index f7241bd2..9e2b3bd9 100644
+index f06fabdd..d76f4e1d 100644
 --- a/source/net/filebot/ThumbnailServices.java
 +++ b/source/net/filebot/ThumbnailServices.java
 @@ -10,10 +10,6 @@ import java.awt.image.BufferedImage;
@@ -442,7 +442,7 @@ index 9ceea367..236b06f9 100644
  
  	public abstract Hash newHash();
 diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
-index 14b078e5..a0f944b1 100644
+index 30fc8f7d..f4489d9f 100644
 --- a/source/net/filebot/mediainfo/MediaInfo.java
 +++ b/source/net/filebot/mediainfo/MediaInfo.java
 @@ -8,7 +8,6 @@ import static net.filebot.util.RegularExpressions.*;
