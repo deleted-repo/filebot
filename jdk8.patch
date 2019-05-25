@@ -51,34 +51,37 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index 2812b014..08d05ac4 100644
+index 5c9501d2..4b35e005 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -111,27 +111,14 @@
+@@ -111,30 +111,14 @@
  	<macrodef name="get-windows-jre" description="Fetch and unpack JRE bundle (64-bit Windows)">
  		<attribute name="dest" />
  		<sequential>
+-			<property name="jre.pkg" value="OpenJDK_${jre.version}_Windows-x86_64.zip" />
+-			<property name="jfx.pkg" value="OpenJFX_${jre.version}_Windows-x86_64.zip" />
+-
 -			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
--				<arg line="get-java get jdk x86_64" />
-+			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
-+				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
-+				<arg line="get-java" />
- 			</exec>
--			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
--				<arg line="get jdk x86_64 Windows" />
+-				<arg line="get-java get jdk x86_64 ${jre.pkg}" />
 -			</exec>
--			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jdk.tar.gz" dest="@{dest}">
+-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
+-				<arg line="get jdk x86_64 Windows ${jre.pkg}" />
+-			</exec>
+-			<unzip src="${dir.cache}/${jre.pkg}" dest="@{dest}">
 -				<patternset refid="pattern.jre" />
 -				<cutdirsmapper dirs="1" />
 -			</unzip>
 -
 -			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
--				<arg line="get-java get jfx x86_64" />
+-				<arg line="get-java get jfx x86_64 ${jfx.pkg}" />
 -			</exec>
 -			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
--				<arg line="get jfx x86_64 Windows" />
--			</exec>
--			<unzip src="${dir.cache}/OpenJDK_${jre.version}_Windows-x86_64-jfx.tar.gz" dest="@{dest}/ext/modules">
+-				<arg line="get jfx x86_64 Windows ${jfx.pkg}" />
++			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
++				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
++				<arg line="get-java" />
+ 			</exec>
+-			<unzip src="${dir.cache}/${jfx.pkg}" dest="@{dest}/ext/modules">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
  				<patternset refid="pattern.jre" />
  				<cutdirsmapper dirs="1" />
@@ -87,7 +90,7 @@ index 2812b014..08d05ac4 100644
  		</sequential>
  	</macrodef>
  
-@@ -280,10 +267,8 @@
+@@ -289,10 +273,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -99,7 +102,7 @@ index 2812b014..08d05ac4 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -313,7 +298,7 @@
+@@ -322,7 +304,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -108,7 +111,7 @@ index 2812b014..08d05ac4 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -352,9 +337,9 @@
+@@ -361,9 +343,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -121,7 +124,7 @@ index 2812b014..08d05ac4 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -580,7 +565,7 @@
+@@ -589,7 +571,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
@@ -130,7 +133,7 @@ index 2812b014..08d05ac4 100644
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
-@@ -620,8 +605,8 @@
+@@ -629,8 +611,8 @@
  			<fileset dir="${dir.installer}/tar" includes="*.sh" />
  		</copy-replace>
  
@@ -141,7 +144,7 @@ index 2812b014..08d05ac4 100644
  			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
  
  			<!-- include native libraries for all supported platforms -->
-@@ -630,9 +615,6 @@
+@@ -639,9 +621,6 @@
  			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
  			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
  			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
