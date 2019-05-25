@@ -144,7 +144,7 @@
 			</exec>
 			<untar src="${dir.cache}/OpenJDK_${jre.version}_Darwin-x86_64-jdk.tar.gz" dest="@{dest}/jdk-${jre.version}.jdk" compression="gzip">
 				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="1" />
+				<cutdirsmapper dirs="2" />
 			</untar>
 			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
 				<arg line="get jfx x86_64 Darwin" />
