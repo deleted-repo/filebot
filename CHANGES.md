@@ -6,6 +6,7 @@ Next Release (4.8.6)
 * Ensure that `ActionPopup` is always displayed on top of the Windows Task Bar
 * Improved `-mediainfo -exec` pipeline
 * Added `-no-history` CLI option
+* Allow dynamic code evaluation (e.g. `evaluate('/path/to/snippet.groovy' as File)`)
 * Allow `@file.groovy` syntax in `Format Editor` and `Preset Editor` (e.g. `@/path/to/MyFormat.groovy`)
 * Allow `*.groovy` files as argument value for `--format`, `--filter` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
 
