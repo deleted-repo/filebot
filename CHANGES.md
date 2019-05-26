@@ -1,11 +1,12 @@
 Next Release (4.8.6)
 ====================
-* Improved `SelectDialog` with thumbnails and tooltips
+* Enhanced `Selection Dialog` with thumbnails and tooltips
 * Added `{history}` binding for looking up the original file path of `{f}` (e.g. useful for `-exec` post-processing commands)
 * Evaluate `{closures}` automatically in `String.plus(Closure)` constructs (e.g. `{"[" + {n} + " " + {s00e00} + "]"}`)
 * Ensure that `ActionPopup` is always displayed on top of the Windows Task Bar
 * Improved `-mediainfo -exec` pipeline
 * Added `-no-history` CLI option
+* Allow `@file.groovy` syntax in `Format Editor` and `Preset Editor` (e.g. `@/path/to/MyFormat.groovy`)
 * Allow `*.groovy` files as argument value for `--format`, `--filter` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
 
 

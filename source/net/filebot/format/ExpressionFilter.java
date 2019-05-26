@@ -21,7 +21,7 @@ public class ExpressionFilter {
 
 	public ExpressionFilter(String expression) throws ScriptException {
 		this.expression = expression;
-		this.compiledExpression = new SecureCompiledScript(compileScriptlet(expression));
+		this.compiledExpression = new SecureCompiledScript(compileScriptlet(asExpression(expression)));
 	}
 
 	public String getExpression() {

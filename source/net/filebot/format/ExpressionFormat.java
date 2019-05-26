@@ -1,7 +1,9 @@
 package net.filebot.format;
 
 import static net.filebot.util.ExceptionUtilities.*;
+import static net.filebot.util.FileUtilities.*;
 
+import java.io.File;
 import java.security.AccessController;
 import java.text.FieldPosition;
 import java.text.Format;
@@ -39,7 +41,7 @@ public class ExpressionFormat extends Format {
 
 	public ExpressionFormat(String expression) throws ScriptException {
 		this.expression = expression;
-		this.compilation = secure(compile(expression));
+		this.compilation = secure(compile(asExpression(expression)));
 	}
 
 	public String getExpression() {
@@ -251,6 +253,23 @@ public class ExpressionFormat extends Format {
 			}
 			return scriptlet;
 		}
+	}
+
+	protected static String asExpression(String s) {
+		// try as file path
+		if (s.startsWith("@") && s.endsWith(".groovy")) {
+			File f = new File(s.substring(1));
+			if (f.isFile()) {
+				try {
+					return readTextFile(f);
+				} catch (Exception e) {
+					throw new IllegalArgumentException("Failed to read text file: " + f, e);
+				}
+			}
+		}
+
+		// or default to literal value
+		return s;
 	}
 
 	private static class Variable extends CompiledScript {
