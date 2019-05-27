@@ -75,7 +75,7 @@ public class ArgumentBean {
 	@Option(name = "--filter", usage = "Filter expression", handler = GroovyExpressionHandler.class)
 	public String filter = null;
 
-	@Option(name = "--xem", usage = "XEM expression", handler = GroovyExpressionHandler.class)
+	@Option(name = "--mapper", usage = "Mapper expression", handler = GroovyExpressionHandler.class)
 	public String mapper = null;
 
 	@Option(name = "--format", usage = "Format expression", handler = GroovyExpressionHandler.class)
