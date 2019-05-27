@@ -591,7 +591,9 @@ public class EpisodeMetrics {
 	};
 
 	// Match by file last modified and episode release dates
-	public final SimilarityMetric TimeStamp = new TimeStampMetric(10, ChronoUnit.YEARS) {
+	public final TimeStampMetric TimeStamp = new TimeStampMetric(10, ChronoUnit.YEARS) {
+
+		private final Map<File, Long> cache = synchronizedMap(new HashMap<>());
 
 		@Override
 		public float getSimilarity(Object o1, Object o2) {
@@ -615,18 +617,20 @@ public class EpisodeMetrics {
 		}
 
 		private long getTimeStamp(File file) {
-			if (VIDEO_FILES.accept(file) && file.length() > ONE_MEGABYTE) {
-				try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(file)) {
-					Instant t = mi.getCreationTime();
-					if (t != null) {
-						return t.toEpochMilli();
+			return cache.computeIfAbsent(file, f -> {
+				if (VIDEO_FILES.accept(file) && file.length() > ONE_MEGABYTE) {
+					try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(file)) {
+						Instant t = mi.getCreationTime();
+						if (t != null) {
+							return t.toEpochMilli();
+						}
+					} catch (Exception e) {
+						debug.warning("Failed to read media encoding date: " + e.getMessage());
 					}
-				} catch (Exception e) {
-					debug.warning("Failed to read media encoding date: " + e.getMessage());
 				}
-			}
 
-			return super.getTimeStamp(file); // default to file creation date
+				return super.getTimeStamp(file); // default to file creation date
+			});
 		}
 
 		@Override
@@ -648,6 +652,25 @@ public class EpisodeMetrics {
 		@Override
 		public String toString() {
 			return "TimeStamp";
+		}
+	};
+
+	// Match by recently aired status
+	public final SimilarityMetric RecentlyAired = new TimeStampMetric(3, ChronoUnit.DAYS) {
+
+		@Override
+		public float getSimilarity(Object o1, Object o2) {
+			return super.getSimilarity(o1, o2) > 0 ? 1 : 0;
+		}
+
+		@Override
+		public long getTimeStamp(Object object) {
+			return object instanceof Episode || object instanceof File ? TimeStamp.getTimeStamp(object) : -1;
+		}
+
+		@Override
+		public String toString() {
+			return "RecentlyAired";
 		}
 	};
 
@@ -827,11 +850,11 @@ public class EpisodeMetrics {
 		// 6 pass: divide by generic numeric similarity
 		// 7 pass: prefer episodes that were aired closer to the last modified date of the file
 		// 8 pass: resolve remaining collisions via absolute string similarity
-		return new SimilarityMetric[] { EpisodeFunnel, EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, FilePathBalancer, FilePath };
+		return new SimilarityMetric[] { EpisodeFunnel, EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, RecentlyAired, FilePathBalancer, FilePath };
 	}
 
 	public SimilarityMetric[] matchFileSequence() {
-		return new SimilarityMetric[] { FileSize, new MetricCascade(FileName, EpisodeFunnel), EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, FilePathBalancer, FilePath };
+		return new SimilarityMetric[] { FileSize, new MetricCascade(FileName, EpisodeFunnel), EpisodeBalancer, AirDate, MetaAttributes, SubstringFields, SeriesNameBalancer, SeriesName, RegionHint, SpecialNumber, Numeric, NumericSequence, SeriesRating, VoteRate, TimeStamp, RecentlyAired, FilePathBalancer, FilePath };
 	}
 
 	public SimilarityMetric numbers() {
