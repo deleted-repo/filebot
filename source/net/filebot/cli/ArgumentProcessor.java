@@ -85,10 +85,10 @@ public class ArgumentProcessor {
 		if (args.list) {
 			if (args.rename) {
 				// rename files in linear order
-				return cli.rename(args.getEpisodeListProvider(), args.getSearchQuery(), args.getExpressionFileFormat(), args.getExpressionFilter(), args.getSortOrder(), args.getLanguage().getLocale(), args.isStrict(), args.getFiles(true), args.getRenameAction(), args.getConflictAction(), args.getOutputPath(), args.getExecCommand()).isEmpty() ? 1 : 0;
+				return cli.renameLinear(args.getFiles(true), args.getEpisodeListProvider(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionMapper(), args.getExpressionFileFormat(), args.getAbsoluteOutputFolder(), args.getRenameAction(), args.getConflictAction(), args.getExecCommand()).size() > 0 ? SUCCESS : ERROR;
 			} else {
 				// print episode info
-				return print(cli.fetchEpisodeList(args.getEpisodeListProvider(), args.getSearchQuery(), args.getExpressionFormat(), args.getExpressionFilter(), args.getSortOrder(), args.getLanguage().getLocale(), args.isStrict()));
+				return print(cli.fetchEpisodeList(args.getEpisodeListProvider(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionFormat(), args.isStrict()));
 			}
 		}
 
@@ -121,7 +121,7 @@ public class ArgumentProcessor {
 		}
 
 		if (args.rename) {
-			cli.rename(files, args.getRenameAction(), args.getConflictAction(), args.getAbsoluteOutputFolder(), args.getExpressionFileFormat(), args.getDatasource(), args.getSearchQuery(), args.getSortOrder(), args.getExpressionFilter(), args.getLanguage().getLocale(), args.isStrict(), args.getExecCommand());
+			cli.rename(files, args.getDatasource(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionMapper(), args.isStrict(), args.getExpressionFileFormat(), args.getAbsoluteOutputFolder(), args.getRenameAction(), args.getConflictAction(), args.getExecCommand());
 		}
 
 		if (args.check) {
@@ -131,7 +131,7 @@ public class ArgumentProcessor {
 					throw new Exception("Data corruption detected"); // one or more hashes do not match
 				}
 			} else {
-				cli.compute(files, args.getOutputPath(), args.getOutputHashType(), args.getEncoding());
+				cli.compute(files, args.getOutputHashType(), args.getOutputPath(), args.getEncoding());
 			}
 		}
 

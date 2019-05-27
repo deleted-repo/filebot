@@ -49,6 +49,7 @@ import net.filebot.archive.FileMapper;
 import net.filebot.format.ExpressionFileFormat;
 import net.filebot.format.ExpressionFilter;
 import net.filebot.format.ExpressionFormat;
+import net.filebot.format.ExpressionMapper;
 import net.filebot.format.MediaBindingBean;
 import net.filebot.hash.HashType;
 import net.filebot.hash.VerificationFileReader;
@@ -86,7 +87,7 @@ import net.filebot.web.VideoHashSubtitleService;
 public class CmdlineOperations implements CmdlineInterface {
 
 	@Override
-	public List<File> rename(Collection<File> files, RenameAction action, ConflictAction conflict, File output, ExpressionFileFormat format, Datasource db, String query, SortOrder order, ExpressionFilter filter, Locale locale, boolean strict, ExecCommand exec) throws Exception {
+	public List<File> rename(Collection<File> files, Datasource db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, boolean strict, ExpressionFileFormat format, File output, RenameAction action, ConflictAction conflict, ExecCommand exec) throws Exception {
 		// movie mode
 		if (db instanceof MovieIdentificationService) {
 			return renameMovie(files, action, conflict, output, format, (MovieIdentificationService) db, query, filter, locale, strict, exec);
@@ -142,9 +143,9 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	@Override
-	public List<File> rename(EpisodeListProvider db, String query, ExpressionFileFormat format, ExpressionFilter filter, SortOrder order, Locale locale, boolean strict, List<File> files, RenameAction action, ConflictAction conflict, File outputDir, ExecCommand exec) throws Exception {
+	public List<File> renameLinear(List<File> files, EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, ExpressionFileFormat format, File output, RenameAction action, ConflictAction conflict, ExecCommand exec) throws Exception {
 		// match files and episodes in linear order
-		List<Episode> episodes = fetchEpisodeList(db, query, filter, order, locale, strict);
+		List<Episode> episodes = fetchEpisodeList(db, query, filter, order, locale, false);
 
 		List<Match<File, ?>> matches = new ArrayList<Match<File, ?>>();
 		for (int i = 0; i < files.size() && i < episodes.size(); i++) {
@@ -152,7 +153,7 @@ public class CmdlineOperations implements CmdlineInterface {
 		}
 
 		// rename episodes
-		return renameAll(formatMatches(matches, format, outputDir), action, conflict, matches, exec);
+		return renameAll(formatMatches(matches, format, output), action, conflict, matches, exec);
 	}
 
 	@Override
@@ -930,7 +931,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	@Override
-	public File compute(Collection<File> files, File output, HashType hash, Charset encoding) throws Exception {
+	public File compute(Collection<File> files, HashType hash, File output, Charset encoding) throws Exception {
 		// ignore folders and any sort of special files
 		files = filter(files, FILES);
 
@@ -1064,7 +1065,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	@Override
-	public Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, ExpressionFormat format, ExpressionFilter filter, SortOrder order, Locale locale, boolean strict) throws Exception {
+	public Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionFormat format, boolean strict) throws Exception {
 		// collect all episode objects first
 		List<Episode> episodes = fetchEpisodeList(db, query, filter, order, locale, strict);
 

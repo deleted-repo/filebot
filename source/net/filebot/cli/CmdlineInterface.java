@@ -15,6 +15,7 @@ import net.filebot.RenameAction;
 import net.filebot.format.ExpressionFileFormat;
 import net.filebot.format.ExpressionFilter;
 import net.filebot.format.ExpressionFormat;
+import net.filebot.format.ExpressionMapper;
 import net.filebot.hash.HashType;
 import net.filebot.subtitle.SubtitleFormat;
 import net.filebot.subtitle.SubtitleNaming;
@@ -24,9 +25,9 @@ import net.filebot.web.SortOrder;
 
 public interface CmdlineInterface {
 
-	List<File> rename(Collection<File> files, RenameAction action, ConflictAction conflict, File output, ExpressionFileFormat format, Datasource db, String query, SortOrder order, ExpressionFilter filter, Locale locale, boolean strict, ExecCommand exec) throws Exception;
+	List<File> rename(Collection<File> files, Datasource db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, boolean strict, ExpressionFileFormat format, File output, RenameAction action, ConflictAction conflict, ExecCommand exec) throws Exception;
 
-	List<File> rename(EpisodeListProvider db, String query, ExpressionFileFormat format, ExpressionFilter filter, SortOrder order, Locale locale, boolean strict, List<File> files, RenameAction action, ConflictAction conflict, File output, ExecCommand exec) throws Exception;
+	List<File> renameLinear(List<File> files, EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, ExpressionFileFormat format, File output, RenameAction action, ConflictAction conflict, ExecCommand exec) throws Exception;
 
 	List<File> rename(Map<File, File> rename, RenameAction action, ConflictAction conflict) throws Exception;
 
@@ -38,9 +39,9 @@ public interface CmdlineInterface {
 
 	boolean check(Collection<File> files) throws Exception;
 
-	File compute(Collection<File> files, File output, HashType hash, Charset encoding) throws Exception;
+	File compute(Collection<File> files, HashType hash, File output, Charset encoding) throws Exception;
 
-	Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, ExpressionFormat format, ExpressionFilter filter, SortOrder order, Locale locale, boolean strict) throws Exception;
+	Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionFormat format, boolean strict) throws Exception;
 
 	Stream<String> getMediaInfo(Collection<File> files, FileFilter filter, ExpressionFormat format) throws Exception;
 

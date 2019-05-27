@@ -363,9 +363,8 @@ public abstract class ScriptShellBaseClass extends Script {
 
 		try {
 			if (files.size() > 0) {
-				return getCLI().rename(files, action, args.getConflictAction(), args.getAbsoluteOutputFolder(), args.getExpressionFileFormat(), args.getDatasource(), args.getSearchQuery(), args.getSortOrder(), args.getExpressionFilter(), args.getLanguage().getLocale(), args.isStrict(), args.getExecCommand());
+				return getCLI().rename(files, args.getDatasource(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionMapper(), args.isStrict(), args.getExpressionFileFormat(), args.getAbsoluteOutputFolder(), action, args.getConflictAction(), args.getExecCommand());
 			}
-
 			if (map.size() > 0) {
 				return getCLI().rename(map, action, args.getConflictAction());
 			}
@@ -419,7 +418,7 @@ public abstract class ScriptShellBaseClass extends Script {
 		ArgumentBean args = getArgumentBean(parameters);
 
 		try {
-			return getCLI().compute(files, args.getOutputPath(), args.getOutputHashType(), args.getEncoding());
+			return getCLI().compute(files, args.getOutputHashType(), args.getOutputPath(), args.getEncoding());
 		} catch (Exception e) {
 			printException(e);
 		}
@@ -445,7 +444,7 @@ public abstract class ScriptShellBaseClass extends Script {
 		ArgumentBean args = getArgumentBean(parameters);
 
 		try {
-			return getCLI().fetchEpisodeList(args.getEpisodeListProvider(), args.getSearchQuery(), args.getExpressionFormat(), args.getExpressionFilter(), args.getSortOrder(), args.getLanguage().getLocale(), args.isStrict()).collect(toList());
+			return getCLI().fetchEpisodeList(args.getEpisodeListProvider(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionFormat(), args.isStrict()).collect(toList());
 		} catch (Exception e) {
 			printException(e);
 		}
