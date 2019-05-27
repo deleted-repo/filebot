@@ -43,6 +43,7 @@ import net.filebot.format.ExpressionFileFilter;
 import net.filebot.format.ExpressionFileFormat;
 import net.filebot.format.ExpressionFilter;
 import net.filebot.format.ExpressionFormat;
+import net.filebot.format.ExpressionMapper;
 import net.filebot.hash.HashType;
 import net.filebot.subtitle.SubtitleFormat;
 import net.filebot.subtitle.SubtitleNaming;
@@ -71,8 +72,11 @@ public class ArgumentBean {
 	@Option(name = "--conflict", usage = "Conflict resolution", metaVar = "[skip, override, auto, index, fail]")
 	public String conflict = "skip";
 
-	@Option(name = "--filter", usage = "Match filter expression", handler = GroovyExpressionHandler.class)
+	@Option(name = "--filter", usage = "Filter expression", handler = GroovyExpressionHandler.class)
 	public String filter = null;
+
+	@Option(name = "--xem", usage = "XEM expression", handler = GroovyExpressionHandler.class)
+	public String mapper = null;
 
 	@Option(name = "--format", usage = "Format expression", handler = GroovyExpressionHandler.class)
 	public String format;
@@ -264,6 +268,10 @@ public class ArgumentBean {
 
 	public FileFilter getFileFilter() throws Exception {
 		return filter == null ? FILES : new ExpressionFileFilter(filter, xattr::getMetaInfo);
+	}
+
+	public ExpressionMapper getExpressionMapper() throws Exception {
+		return mapper == null ? null : new ExpressionMapper(mapper);
 	}
 
 	public Datasource getDatasource() {
