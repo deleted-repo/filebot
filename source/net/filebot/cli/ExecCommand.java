@@ -42,7 +42,7 @@ public class ExecCommand {
 	private IntStream executeSequence(Stream<MediaBindingBean> group) {
 		return group.map(v -> {
 			return template.stream().map(t -> getArgumentValue(t, v)).filter(Objects::nonNull).collect(toList());
-		}).mapToInt(this::execute);
+		}).distinct().mapToInt(this::execute);
 	}
 
 	private IntStream executeParallel(Stream<MediaBindingBean> group) {
