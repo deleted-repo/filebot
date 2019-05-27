@@ -88,7 +88,7 @@ public class ArgumentProcessor {
 				return cli.renameLinear(args.getFiles(true), args.getEpisodeListProvider(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionMapper(), args.getExpressionFileFormat(), args.getAbsoluteOutputFolder(), args.getRenameAction(), args.getConflictAction(), args.getExecCommand()).size() > 0 ? SUCCESS : ERROR;
 			} else {
 				// print episode info
-				return print(cli.fetchEpisodeList(args.getEpisodeListProvider(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionFormat(), args.isStrict()));
+				return print(cli.fetchEpisodeList(args.getEpisodeListProvider(), args.getSearchQuery(), args.getSortOrder(), args.getLanguage().getLocale(), args.getExpressionFilter(), args.getExpressionMapper(), args.getExpressionFormat(), args.isStrict()));
 			}
 		}
 

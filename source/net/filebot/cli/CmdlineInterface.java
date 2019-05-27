@@ -41,7 +41,7 @@ public interface CmdlineInterface {
 
 	File compute(Collection<File> files, HashType hash, File output, Charset encoding) throws Exception;
 
-	Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionFormat format, boolean strict) throws Exception;
+	Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, ExpressionFormat format, boolean strict) throws Exception;
 
 	Stream<String> getMediaInfo(Collection<File> files, FileFilter filter, ExpressionFormat format) throws Exception;
 

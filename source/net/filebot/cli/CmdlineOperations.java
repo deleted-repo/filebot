@@ -95,7 +95,7 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// series mode
 		if (db instanceof EpisodeListProvider) {
-			return renameSeries(files, action, conflict, output, format, (EpisodeListProvider) db, query, order, filter, locale, strict, exec);
+			return renameSeries(files, action, conflict, output, format, (EpisodeListProvider) db, query, order, filter, mapper, locale, strict, exec);
 		}
 
 		// music mode
@@ -120,10 +120,10 @@ public class CmdlineOperations implements CmdlineInterface {
 						results.addAll(renameMovie(it.getValue(), action, conflict, output, format, TheMovieDB, query, filter, locale, strict, exec));
 						break;
 					case Series:
-						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, TheTVDB, query, order, filter, locale, strict, exec));
+						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, TheTVDB, query, order, filter, mapper, locale, strict, exec));
 						break;
 					case Anime:
-						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, TheTVDB, query, SortOrder.Absolute, filter, locale, strict, exec));
+						results.addAll(renameSeries(it.getValue(), action, conflict, output, format, TheTVDB, query, SortOrder.Absolute, filter, mapper, locale, strict, exec));
 						break;
 					case Music:
 						results.addAll(renameMusic(it.getValue(), action, conflict, output, format, asList(MediaInfoID3, AcoustID), exec)); // prefer existing ID3 tags and use acoustid only when necessary
@@ -145,7 +145,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	@Override
 	public List<File> renameLinear(List<File> files, EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, ExpressionFileFormat format, File output, RenameAction action, ConflictAction conflict, ExecCommand exec) throws Exception {
 		// match files and episodes in linear order
-		List<Episode> episodes = fetchEpisodeList(db, query, filter, order, locale, false);
+		List<Episode> episodes = fetchEpisodeList(db, query, filter, mapper, order, locale, false);
 
 		List<Match<File, ?>> matches = new ArrayList<Match<File, ?>>();
 		for (int i = 0; i < files.size() && i < episodes.size(); i++) {
@@ -162,7 +162,7 @@ public class CmdlineOperations implements CmdlineInterface {
 		return renameAll(renameMap, renameAction, conflict, null, null);
 	}
 
-	public List<File> renameSeries(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, EpisodeListProvider db, String query, SortOrder sortOrder, ExpressionFilter filter, Locale locale, boolean strict, ExecCommand exec) throws Exception {
+	public List<File> renameSeries(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, EpisodeListProvider db, String query, SortOrder sortOrder, ExpressionFilter filter, ExpressionMapper mapper, Locale locale, boolean strict, ExecCommand exec) throws Exception {
 		log.config(format("Rename episodes using [%s] with [%s]", db.getName(), db.vetoRequestParameter(sortOrder)));
 
 		// ignore sample files
@@ -218,8 +218,9 @@ public class CmdlineOperations implements CmdlineInterface {
 					continue;
 				}
 
-				// filter episodes
+				// filter episodes and apply custom mappings
 				episodes = applyExpressionFilter(episodes, filter);
+				episodes = applyExpressionMapper(episodes, mapper, Episode.class);
 
 				for (List<File> filesPerType : mapByMediaExtension(filter(batch, VIDEO_FILES, SUBTITLE_FILES)).values()) {
 					matches.addAll(matchEpisodes(filesPerType, episodes, strict));
@@ -890,6 +891,25 @@ public class CmdlineOperations implements CmdlineInterface {
 		}).collect(toList());
 	}
 
+	protected <T> List<T> applyExpressionMapper(List<T> input, ExpressionMapper mapper, Class<T> type) {
+		if (mapper == null) {
+			return input;
+		}
+
+		log.fine(format("Apply mapper [%s] on [%d] items", mapper.getExpression(), input.size()));
+
+		return input.stream().map(it -> {
+			try {
+				T result = (T) mapper.map(new MediaBindingBean(it, null, new EntryList<File, T>(null, input)), type);
+				log.finest(format("Map [%s] to [%s]", it, result));
+				return result;
+			} catch (Exception e) {
+				debug.warning(format("Exclude [%s] due to map failure: %s", it, e));
+				return null;
+			}
+		}).filter(Objects::nonNull).distinct().collect(toList());
+	}
+
 	protected <T extends SearchResult> T selectSearchResult(String query, Collection<T> options) throws Exception {
 		List<T> matches = selectSearchResult(query, options, false, false, false, 1);
 		return matches.size() > 0 ? matches.get(0) : null;
@@ -1029,7 +1049,7 @@ public class CmdlineOperations implements CmdlineInterface {
 		}
 	}
 
-	private List<Episode> fetchEpisodeList(EpisodeListProvider db, String query, ExpressionFilter filter, SortOrder order, Locale locale, boolean strict) throws Exception {
+	private List<Episode> fetchEpisodeList(EpisodeListProvider db, String query, ExpressionFilter filter, ExpressionMapper mapper, SortOrder order, Locale locale, boolean strict) throws Exception {
 		// sanity check
 		if (query == null) {
 			throw new CmdlineException(String.format("%s: query parameter is required", db.getName()));
@@ -1056,8 +1076,11 @@ public class CmdlineOperations implements CmdlineInterface {
 			throw new CmdlineException(String.format("%s: no results", db.getName()));
 		}
 
-		// apply filter
-		return applyExpressionFilter(episodes, filter);
+		// filter episodes and apply custom mappings
+		episodes = applyExpressionFilter(episodes, filter);
+		episodes = applyExpressionMapper(episodes, mapper, Episode.class);
+
+		return episodes;
 	}
 
 	private boolean isSeriesID(String query) {
@@ -1065,9 +1088,9 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	@Override
-	public Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionFormat format, boolean strict) throws Exception {
+	public Stream<String> fetchEpisodeList(EpisodeListProvider db, String query, SortOrder order, Locale locale, ExpressionFilter filter, ExpressionMapper mapper, ExpressionFormat format, boolean strict) throws Exception {
 		// collect all episode objects first
-		List<Episode> episodes = fetchEpisodeList(db, query, filter, order, locale, strict);
+		List<Episode> episodes = fetchEpisodeList(db, query, filter, mapper, order, locale, strict);
 
 		// instant format
 		if (format == null) {
