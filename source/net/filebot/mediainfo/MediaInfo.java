@@ -42,7 +42,7 @@ public class MediaInfo implements MediaCharacteristics {
 	}
 
 	public synchronized MediaInfo open(File file) throws IOException, IllegalArgumentException {
-		if (!file.isFile()) {
+		if (!file.isFile() || file.length() < BUFFER_SIZE) {
 			throw new IllegalArgumentException("Invalid media file: " + file);
 		}
 
@@ -77,7 +77,7 @@ public class MediaInfo implements MediaCharacteristics {
 	}
 
 	private boolean openViaBuffer(RandomAccessFile f) throws IOException {
-		byte[] buffer = new byte[64 * 1024]; // use large buffer to reduce JNA calls
+		byte[] buffer = new byte[BUFFER_SIZE]; // use large buffer to reduce JNA calls
 		int read = -1;
 
 		if (0 == MediaInfoLibrary.INSTANCE.Open_Buffer_Init(handle, f.length(), 0)) {
@@ -360,5 +360,7 @@ public class MediaInfo implements MediaCharacteristics {
 			MediaInfoLibrary.INSTANCE.Delete(handle);
 		}
 	}
+
+	private static final int BUFFER_SIZE = 64 * 1024;
 
 }
