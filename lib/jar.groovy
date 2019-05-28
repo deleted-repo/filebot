@@ -5,6 +5,14 @@ def destfile = { r ->
 project.references.'jar.classpath'.each { r ->
 	ant.jar(destfile: destfile(r), compress: 'no') {
 		zipfileset(src: r) {
+			// strip embedded native libraries
+			exclude(name: '**.dll')
+			exclude(name: '**.so')
+			exclude(name: '**.jnilib')
+			exclude(name: '**.dylib')
+			exclude(name: '**.a')
+
+			// strip jar signatures
 			exclude(name: 'META-INF/MANIFEST.MF')
 			exclude(name: 'META-INF/INDEX.LIST')
 			exclude(name: 'META-INF/*.RSA')
