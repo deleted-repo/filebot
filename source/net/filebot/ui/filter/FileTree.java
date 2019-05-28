@@ -31,6 +31,7 @@ import javax.swing.tree.TreeSelectionModel;
 import net.filebot.ResourceManager;
 import net.filebot.UserFiles;
 import net.filebot.ui.PanelBuilder;
+import net.filebot.ui.TargetTransferable;
 import net.filebot.ui.transfer.FileTransferable;
 import net.filebot.util.FilterIterator;
 import net.filebot.util.TreeIterator;
@@ -192,11 +193,8 @@ public class FileTree extends JTree {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				// switch to panel
-				SwingEventBus.getInstance().post(panel);
-
-				// load files
-				invokeLater(200, () -> SwingEventBus.getInstance().post(new FileTransferable(files)));
+				// switch to panel and load files
+				SwingEventBus.getInstance().post(new TargetTransferable(panel, new FileTransferable(files)));
 			}
 		}
 	}

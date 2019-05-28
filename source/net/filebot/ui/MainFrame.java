@@ -144,8 +144,11 @@ public class MainFrame extends JFrame {
 	}
 
 	@Subscribe
-	public void selectPanel(PanelBuilder panel) {
-		selectionList.setSelectedValue(panel, false);
+	public void selectPanel(TargetTransferable transfer) {
+		showPanel(transfer.getTarget());
+		selectionList.setSelectedValue(transfer.getTarget(), false);
+
+		SwingEventBus.getInstance().post(transfer.getTransferable());
 	}
 
 	private void showPanel(PanelBuilder selectedBuilder) {

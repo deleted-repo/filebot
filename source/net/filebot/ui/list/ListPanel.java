@@ -38,6 +38,7 @@ import net.filebot.format.ExpressionFormat;
 import net.filebot.ui.FileBotList;
 import net.filebot.ui.FileBotListExportHandler;
 import net.filebot.ui.PanelBuilder;
+import net.filebot.ui.TargetTransferable;
 import net.filebot.ui.rename.FormatExpressionTextArea;
 import net.filebot.ui.transfer.LoadAction;
 import net.filebot.ui.transfer.SaveAction;
@@ -81,9 +82,8 @@ public class ListPanel extends JComponent {
 			JMenu menu = new JMenu("Send to");
 			for (PanelBuilder panel : PanelBuilder.textHandlerSequence()) {
 				menu.add(newAction(panel.getName(), panel.getIcon(), evt -> {
-					String text = list.getExportHandler().export();
-					SwingEventBus.getInstance().post(panel);
-					invokeLater(200, () -> SwingEventBus.getInstance().post(new StringSelection(text)));
+					// switch to panel and load files
+					SwingEventBus.getInstance().post(new TargetTransferable(panel, new StringSelection(list.getExportHandler().export())));
 				}));
 			}
 			popup.add(menu);

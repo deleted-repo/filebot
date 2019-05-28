@@ -37,6 +37,7 @@ import net.filebot.ui.FileBotList;
 import net.filebot.ui.LanguageComboBox;
 import net.filebot.ui.PanelBuilder;
 import net.filebot.ui.SelectDialog;
+import net.filebot.ui.TargetTransferable;
 import net.filebot.ui.transfer.SaveAction;
 import net.filebot.util.ui.LabelProvider;
 import net.filebot.util.ui.SelectButton;
@@ -253,11 +254,8 @@ public class EpisodeListPanel extends AbstractSearchPanel<EpisodeListProvider, E
 				JMenu menu = new JMenu("Send to");
 				for (PanelBuilder panel : PanelBuilder.episodeHandlerSequence()) {
 					menu.add(newAction(panel.getName(), panel.getIcon(), evt -> {
-						// switch to Rename panel
-						SwingEventBus.getInstance().post(panel);
-
-						// load episode data
-						invokeLater(200, () -> SwingEventBus.getInstance().post(exportHandler.export(this, false)));
+						// switch to Rename panel and load episode data
+						SwingEventBus.getInstance().post(new TargetTransferable(panel, exportHandler.export(this, false)));
 					}));
 				}
 
