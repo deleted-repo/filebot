@@ -445,7 +445,7 @@ index 9ceea367..236b06f9 100644
  
  	public abstract Hash newHash();
 diff --git a/source/net/filebot/mediainfo/MediaInfo.java b/source/net/filebot/mediainfo/MediaInfo.java
-index 30fc8f7d..f4489d9f 100644
+index aeb56aeb..e02246a5 100644
 --- a/source/net/filebot/mediainfo/MediaInfo.java
 +++ b/source/net/filebot/mediainfo/MediaInfo.java
 @@ -8,7 +8,6 @@ import static net.filebot.util.RegularExpressions.*;
@@ -493,7 +493,7 @@ index 30fc8f7d..f4489d9f 100644
  	}
  
  	public enum StreamKind {
-@@ -341,24 +353,4 @@ public class MediaInfo implements MediaCharacteristics {
+@@ -341,26 +353,6 @@ public class MediaInfo implements MediaCharacteristics {
  		}
  	}
  
@@ -517,6 +517,8 @@ index 30fc8f7d..f4489d9f 100644
 -		}
 -	}
 -
+ 	private static final int BUFFER_SIZE = 64 * 1024;
+ 
  }
 diff --git a/source/net/filebot/platform/mac/DropToUnlock.java b/source/net/filebot/platform/mac/DropToUnlock.java
 index 21b83255..aec903d3 100644
