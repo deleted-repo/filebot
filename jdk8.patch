@@ -51,7 +51,7 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index 5c9501d2..136c51c0 100644
+index 5c9501d2..60d6fde5 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,30 +111,14 @@
@@ -79,7 +79,7 @@ index 5c9501d2..136c51c0 100644
 -				<arg line="get jfx x86_64 Windows ${jfx.pkg}" />
 +			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
 +				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
-+				<arg line="get-java" />
++				<arg line="get-java-8" />
  			</exec>
 -			<unzip src="${dir.cache}/${jfx.pkg}" dest="@{dest}/ext/modules">
 +			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
