@@ -51,7 +51,7 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index 5c9501d2..4b35e005 100644
+index 5c9501d2..136c51c0 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -111,30 +111,14 @@
@@ -90,6 +90,15 @@ index 5c9501d2..4b35e005 100644
  		</sequential>
  	</macrodef>
  
+@@ -274,7 +258,7 @@
+ 
+ 	<target name="jar" depends="revision">
+ 		<!-- select jar dependencies -->
+-		<fileset id="jar.classpath" dir="${dir.lib}" includesfile="${dir.lib}/jar.includes" />
++		<fileset id="jar.classpath" dir="${dir.lib}" includesfile="${dir.lib}/jar.jdk8.includes" />
+ 
+ 		<!-- rebuild each dependency jar with zero compression and remove signatures -->
+ 		<groovy src="${dir.lib}/jar.groovy" />
 @@ -289,10 +273,8 @@
  		</manifestclasspath>
  
