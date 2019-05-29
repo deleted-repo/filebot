@@ -5,9 +5,10 @@
 	<property name="dir.source" location="${basedir}/source" />
 	<property name="dir.build" location="${basedir}/build" />
 	<property name="dir.dist" location="${basedir}/dist" />
-	<property name="dir.lib" location="${basedir}/lib" />
-	<property name="dir.website" location="${basedir}/website" />
 	<property name="dir.installer" location="${basedir}/installer" />
+
+	<!-- external projects -->
+	<property name="dir.lib" location="${basedir}/lib" />
 	<property name="dir.cache" location="${basedir}/cache" />
 
 	<!-- import property files -->
