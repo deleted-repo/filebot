@@ -87,11 +87,10 @@
 		<attribute name="identifier" />
 		<element name="options" implicit="yes" optional="yes" />
 		<sequential>
-			<get-macos-jre dest="@{dir}" />
 			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="@{identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
 
-				<runtime dir="@{dir}/openjdk.jre/Contents/Home">
+				<runtime dir="${dir.lib}/jre/Darwin-x86_64/openjdk.jre/Contents/Home">
 					<include name="**/*" />
 				</runtime>
 
@@ -237,7 +236,9 @@
 		</copy-replace>
 
 		<!-- fetch latest JRE -->
-		<get-windows-jre dest="${dir.staging}/jre" />
+		<copy todir="${dir.staging}/jre">
+			<fileset dir="${dir.lib}/jre/Windows-x64" />
+		</copy>
 
 		<!-- package APPX -->
 		<exec executable="makepri" dir="${dir.staging}" failonerror="yes">
@@ -260,7 +261,9 @@
 		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
 
 		<!-- 1. prepare application files for heat harvest -->
-		<get-windows-jre dest="${dir.staging}/base/jre" />
+		<copy todir="${dir.staging}/base/jre">
+			<fileset dir="${dir.lib}/jre/Windows-${msi.package.platform}" />
+		</copy>
 
 		<copy todir="${dir.staging}/base/jar">
 			<fileset dir="${dir.dist}/lib" includes="*.jar" />
@@ -298,7 +301,9 @@
 	<target name="zip" depends="revision" description="Build Windows Portable ZIP package">
 		<property name="dir.staging" location="${dir.dist}/zip" />
 
-		<get-windows-jre dest="${dir.staging}/jre" />
+		<copy todir="${dir.staging}/jre">
+			<fileset dir="${dir.lib}/jre/Windows-${msi.package.platform}" />
+		</copy>
 
 		<copy todir="${dir.staging}">
 			<fileset dir="${dir.installer}/msi/x64" includes="*.exe" />
@@ -452,7 +457,9 @@
 	<target name="deb" depends="revision" description="Build Debian package">
 		<property name="dir.staging" location="${dir.dist}/deb" />
 
-		<get-linux-jre dest="${dir.staging}/jre" />
+		<copy todir="${dir.staging}/jre">
+			<fileset dir="${dir.lib}/jre/Linux-x86_64" />
+		</copy>
 
 		<copy-replace todir="${dir.staging}">
 			<fileset dir="${dir.installer}/deb" />
