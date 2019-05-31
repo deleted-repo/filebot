@@ -51,7 +51,7 @@ index a9573541..71985abc 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index ecbffc97..c7dc7da5 100644
+index 17cc65e9..c7dc7da5 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -162,7 +162,7 @@
@@ -84,15 +84,6 @@ index ecbffc97..c7dc7da5 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -234,7 +232,7 @@
- 
- 		<!-- fetch latest JRE -->
- 		<copy todir="${dir.staging}/jre">
--			<fileset dir="${dir.lib}/jre/Windows-x64" />
-+			<fileset dir="${dir.lib}/jre/Windows-${appx.arch}" />
- 		</copy>
- 
- 		<!-- package APPX -->
 @@ -251,9 +249,9 @@
  
  
