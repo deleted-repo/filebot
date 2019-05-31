@@ -15,6 +15,9 @@
 	<property file="${basedir}/profile.properties" />
 	<property file="${basedir}/app.properties" />
 
+	<!-- import embedded runtime properties -->
+	<property file="${dir.lib}/jre.properties" />
+
 	<!-- define release files -->
 	<property name="release" value="${application.name}_${application.version}" />
 	<property name="dir.release.index" location="${basedir}/release" />
@@ -77,130 +80,18 @@
 	</macrodef>
 
 
-
-	<patternset id="pattern.jre">
-		<include name="**/lib/**" />
-		<include name="**/conf/**" />
-
-		<include name="**/java" />
-		<include name="**/MacOS/**" />
-		<include name="**/*.plist" />
-
-		<include name="**/java.exe" />
-		<include name="**/javaw.exe" />
-		<include name="**/*.dll" />
-
-		<exclude name="**/dtplugin/**" />
-		<exclude name="**/plugin2/**" />
-
-		<exclude name="**/*.zip" />
-
-		<exclude name="**/javafx.web.jar" />
-		<exclude name="**/javafx.media.jar" />
-		<exclude name="**/javafx.fxml.jar" />
-		<exclude name="**/javafx-swt.jar" />
-
-		<exclude name="**/*glib*" />
-		<exclude name="**/*fxplugins*" />
-		<exclude name="**/*avplugin*" />
-		<exclude name="**/*gstreamer*" />
-		<exclude name="**/*jfxmedia*" />
-		<exclude name="**/*jfxwebkit*" />
-	</patternset>
-
-
-	<macrodef name="get-windows-jre" description="Fetch and unpack JRE bundle (64-bit Windows)">
-		<attribute name="dest" />
-		<sequential>
-			<property name="jre.pkg" value="OpenJDK_${jre.version}_Windows-x86_64.zip" />
-			<property name="jfx.pkg" value="OpenJFX_${jre.version}_Windows-x86_64.zip" />
-
-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
-				<arg line="get-java get jdk x86_64 ${jre.pkg}" />
-			</exec>
-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
-				<arg line="get jdk x86_64 Windows ${jre.pkg}" />
-			</exec>
-			<unzip src="${dir.cache}/${jre.pkg}" dest="@{dest}">
-				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="1" />
-			</unzip>
-
-			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
-				<arg line="get-java get jfx x86_64 ${jfx.pkg}" />
-			</exec>
-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
-				<arg line="get jfx x86_64 Windows ${jfx.pkg}" />
-			</exec>
-			<unzip src="${dir.cache}/${jfx.pkg}" dest="@{dest}/ext/modules">
-				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="1" />
-			</unzip>
-		</sequential>
-	</macrodef>
-
-
-	<macrodef name="get-macos-jre" description="Fetch and unpack JRE bundle (64-bit Mac)">
-		<attribute name="dest" />
-		<sequential>
-			<property name="jre.pkg" value="OpenJDK_${jre.version}_Darwin-x86_64.tar.gz" />
-			<property name="jfx.pkg" value="OpenJFX_${jre.version}_Darwin-x86_64.tar.gz" />
-
-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
-				<arg line="get jdk x86_64 Darwin ${jre.pkg}" />
-			</exec>
-			<untar src="${dir.cache}/${jre.pkg}" dest="@{dest}/jdk-${jre.version}.jdk" compression="gzip">
-				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="2" />
-			</untar>
-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
-				<arg line="get jfx x86_64 Darwin ${jfx.pkg}" />
-			</exec>
-			<unzip src="${dir.cache}/${jfx.pkg}" dest="@{dest}/jdk-${jre.version}.jdk/Contents/Home/ext/modules">
-				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="1" />
-			</unzip>
-		</sequential>
-	</macrodef>
-
-
-	<macrodef name="get-linux-jre" description="Fetch and unpack JRE bundle (64-bit Linux)">
-		<attribute name="dest" />
-		<sequential>
-			<property name="jre.pkg" value="OpenJDK_${jre.version}_Linux-x86_64.tar.gz" />
-			<property name="jfx.pkg" value="OpenJFX_${jre.version}_Linux-x86_64.tar.gz" />
-
-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
-				<arg line="get jdk x86_64 Linux ${jre.pkg}" />
-			</exec>
-			<untar src="${dir.cache}/${jre.pkg}" dest="@{dest}" compression="gzip">
-				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="1" />
-			</untar>
-			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes">
-				<arg line="get jfx x86_64 Linux ${jfx.pkg}" />
-			</exec>
-			<unzip src="${dir.cache}/${jfx.pkg}" dest="@{dest}/ext/modules">
-				<patternset refid="pattern.jre" />
-				<cutdirsmapper dirs="1" />
-			</unzip>
-		</sequential>
-	</macrodef>
-
-
 	<macrodef name="create-app-bundle" description="Create macOS app bundle folder structure">
 		<attribute name="dir" />
 		<attribute name="deployment" />
-		<attribute name="runtime" />
 		<attribute name="license" />
 		<attribute name="identifier" />
 		<element name="options" implicit="yes" optional="yes" />
 		<sequential>
-			<get-macos-jre dest="@{dir}" if:true="@{runtime}" />
+			<get-macos-jre dest="@{dir}" />
 			<bundleapp jvmrequired="${jvm.version}" minimumsystemversion="${mac.version}" outputdirectory="@{dir}" executablename="${package.name}.launcher" name="${application.name}" displayname="${application.name}.launcher" version="${revision}" shortversion="${application.version}" identifier="@{identifier}" mainclassname="${main.class}" icon="${dir.installer}/icons/${package.name}.icns" copyright="${tstamp.year} ${package.company}" applicationcategory="${mac.application.category}" highresolutioncapable="true" supportsautomaticgraphicsswitching="true">
 				<arch name="x86_64" />
 
-				<runtime dir="@{dir}/jdk-${jre.version}.jdk/Contents/Home" if:true="@{runtime}">
+				<runtime dir="@{dir}/openjdk.jre/Contents/Home">
 					<include name="**/*" />
 				</runtime>
 
@@ -208,7 +99,7 @@
 				<librarypath dir="${dir.lib}/native/mac-x86_64" />
 
 				<option value="--module-path" />
-				<option value="$APP_ROOT/Contents/PlugIns/jdk-${jre.version}.jdk/Contents/Home/ext/modules/lib" />
+				<option value="$APP_ROOT/Contents/PlugIns/openjdk.jre/Contents/Home/ext/modules/lib" />
 				<option value="--add-modules" />
 				<option value="ALL-MODULE-PATH" />
 
@@ -430,7 +321,7 @@
 		<property name="path.app" location="${dir.staging}/${application.name}.app" />
 		<property name="path.pkg" location="${dir.staging}/${application.name}_${application.version}_r${revision}.pkg" />
 
-		<create-app-bundle dir="${dir.staging}" deployment="mas" runtime="yes" license="no" identifier="${package.identifier}">
+		<create-app-bundle dir="${dir.staging}" deployment="mas" license="no" identifier="${package.identifier}">
 			<option value="-Dapplication.update=skip" />
 
 			<!-- WORKING_DIR is sandbox data folder -->
@@ -449,13 +340,13 @@
 			</fileset>
 		</delete>
 
-		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/jdk-${jre.version}.jdk" />
+		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/openjdk.jre" />
 
 		<!-- MAS validation is a bit buggy and requires even libraries and frameworks to have a unique CFBundleIdentifier Collision -->
 		<replace file="${path.app.jre}/Contents/Info.plist" token="net.java.openjdk.${jre.version}.jdk" value="${package.identifier}.jdk" encoding="UTF-8" summary="true" />
 
 		<!-- fix broken symlink -->
-		<copy file="${dir.staging}/jdk-${jre.version}.jdk/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
+		<copy file="${dir.staging}/openjdk.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />
 
 		<!-- fix permissions (fpcalc and jspawnhelper be executable and signed with inherit entitlements) -->
 		<chmod perm="+x">
@@ -515,7 +406,7 @@
 			<fileset dir="${dir.installer}/app" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="app" runtime="yes" license="yes" identifier="${package.identifier}.app" />
+		<create-app-bundle dir="${dir.staging}" deployment="app" license="yes" identifier="${package.identifier}.app" />
 
 		<tar destfile="${dir.dist}/${release}.app.tar.xz" compression="${tar.compression}" longfile="posix" encoding="utf-8">
 			<tarfileset dir="${dir.staging}">
@@ -542,7 +433,7 @@
 			<fileset dir="${dir.installer}/pkg" />
 		</copy-replace>
 
-		<create-app-bundle dir="${dir.staging}" deployment="pkg" runtime="yes" license="yes" identifier="${package.identifier}.pkg" />
+		<create-app-bundle dir="${dir.staging}" deployment="pkg" license="yes" identifier="${package.identifier}.pkg" />
 
 		<!-- fix permissions -->
 		<chmod perm="+x" verbose="yes">
@@ -928,90 +819,6 @@
 		<exec executable="choco" dir="${dir.dist}/choco" failonerror="yes">
 			<arg line="push ${package.name}.${application.version}.nupkg" />
 		</exec>
-	</target>
-
-
-	<target name="resolve" description="Retrieve dependencies with Apache Ivy">
-		<delete dir="${dir.lib}/ivy" />
-		<ivy:retrieve pattern="${dir.lib}/ivy/[type]/[artifact].[ext]" />
-
-		<antcall target="resolve-import-native">
-			<param name="arch" value="mac-x86_64" />
-			<param name="arch.jna" value="darwin" />
-			<param name="arch.7zj" value="Mac-x86_64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="win32-x64" />
-			<param name="arch.jna" value="win32-x86-64" />
-			<param name="arch.7zj" value="Windows-amd64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="win32-x86" />
-			<param name="arch.jna" value="win32-x86/" />
-			<param name="arch.7zj" value="Windows-x86" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-amd64" />
-			<param name="arch.jna" value="linux-x86-64" />
-			<param name="arch.7zj" value="Linux-amd64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-i686" />
-			<param name="arch.jna" value="linux-x86" />
-			<param name="arch.7zj" value="Linux-i386" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-armv7l" />
-			<param name="arch.jna" value="linux-arm" />
-			<param name="arch.7zj" value="linux-arm" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="linux-aarch64" />
-			<param name="arch.jna" value="linux-aarch64" />
-			<param name="arch.7zj" value="linux-aarch64" />
-		</antcall>
-		<antcall target="resolve-import-native">
-			<param name="arch" value="freebsd-amd64" />
-			<param name="arch.jna" value="freebsd-x86-64" />
-			<param name="arch.7zj" value="FreeBSD-amd64" />
-		</antcall>
-
-		<!-- strip x86 and PPC native code from universal library -->
-		<exec executable="ditto" dir="${dir.lib}/native/mac-x86_64" os="Mac OS X">
-			<arg line="--arch x86_64 libjnidispatch.jnilib libjnidispatch.dylib" />
-		</exec>
-		<delete verbose="yes">
-			<fileset dir="${dir.lib}/native/mac-x86_64" includes="*.jnilib" />
-		</delete>
-	</target>
-
-
-	<target name="resolve-import-native">
-		<unzip src="${dir.lib}/ivy/jar/jna.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
-			<patternset>
-				<include name="**/${arch.jna}/*.dll" />
-				<include name="**/${arch.jna}/*.so" />
-				<include name="**/${arch.jna}/*.jnilib" />
-			</patternset>
-			<chainedmapper>
-				<flattenmapper />
-			</chainedmapper>
-		</unzip>
-
-		<unzip src="${dir.lib}/ivy/jar/sevenzipjbinding-all-platforms.jar" dest="${dir.lib}/native/${arch}" overwrite="yes">
-			<patternset>
-				<include name="**/${arch.7zj}/*.dll" />
-				<include name="**/${arch.7zj}/*.so" />
-				<include name="**/${arch.7zj}/*.dylib" />
-			</patternset>
-			<chainedmapper>
-				<flattenmapper />
-				<compositemapper>
-					<globmapper from="lib*.dll" to="*.dll" />
-					<identitymapper />
-				</compositemapper>
-			</chainedmapper>
-		</unzip>
 	</target>
 
 
