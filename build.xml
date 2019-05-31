@@ -299,7 +299,7 @@
 		<property name="dir.staging" location="${dir.dist}/zip" />
 
 		<copy todir="${dir.staging}/jre">
-			<fileset dir="${dir.lib}/jre/Windows-${msi.package.platform}" />
+			<fileset dir="${dir.lib}/jre/Windows-x64" />
 		</copy>
 
 		<copy todir="${dir.staging}">
