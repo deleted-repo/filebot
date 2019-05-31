@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project name="filebot" default="jar" xmlns:if="ant:if" xmlns:unless="ant:unless" xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="filebot" default="jar" xmlns:if="ant:if" xmlns:unless="ant:unless">
 
 	<!-- define source dirs -->
 	<property name="dir.source" location="${basedir}/source" />
@@ -14,9 +14,6 @@
 	<!-- import property files -->
 	<property file="${basedir}/profile.properties" />
 	<property file="${basedir}/app.properties" />
-
-	<!-- import embedded runtime properties -->
-	<property file="${dir.lib}/jre.properties" />
 
 	<!-- define release files -->
 	<property name="release" value="${application.name}_${application.version}" />
@@ -346,6 +343,9 @@
 		</delete>
 
 		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/openjdk.jre" />
+
+		<!-- import embedded runtime properties -->
+		<property file="${dir.lib}/jre.properties" />
 
 		<!-- MAS validation is a bit buggy and requires even libraries and frameworks to have a unique CFBundleIdentifier Collision -->
 		<replace file="${path.app.jre}/Contents/Info.plist" token="net.java.openjdk.${jre.version}.jdk" value="${package.identifier}.jdk" encoding="UTF-8" summary="true" />
