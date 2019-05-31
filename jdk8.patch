@@ -1,8 +1,8 @@
 diff --git a/app.properties b/app.properties
-index 1a3274f6..48abb46e 100644
+index a9573541..71985abc 100644
 --- a/app.properties
 +++ b/app.properties
-@@ -48,8 +48,8 @@ jre.major: 8
+@@ -46,8 +46,8 @@ jre.major: 8
  jre.build: 201
  
  # Minimum System Version
@@ -13,7 +13,7 @@ index 1a3274f6..48abb46e 100644
  
  # Package Information
  package.name: filebot
-@@ -92,35 +92,12 @@ java.application.options: -Dunixfs=false \
+@@ -90,35 +90,12 @@ java.application.options: -Dunixfs=false \
                            -DuseCreationDate=false \
                            -Djava.net.useSystemProxies=true \
                            -Djna.nosys=true \
@@ -51,46 +51,10 @@ index 1a3274f6..48abb46e 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index 5c9501d2..60d6fde5 100644
+index ecbffc97..c7dc7da5 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -111,30 +111,14 @@
- 	<macrodef name="get-windows-jre" description="Fetch and unpack JRE bundle (64-bit Windows)">
- 		<attribute name="dest" />
- 		<sequential>
--			<property name="jre.pkg" value="OpenJDK_${jre.version}_Windows-x86_64.zip" />
--			<property name="jfx.pkg" value="OpenJFX_${jre.version}_Windows-x86_64.zip" />
--
--			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
--				<arg line="get-java get jdk x86_64 ${jre.pkg}" />
--			</exec>
--			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
--				<arg line="get jdk x86_64 Windows ${jre.pkg}" />
--			</exec>
--			<unzip src="${dir.cache}/${jre.pkg}" dest="@{dest}">
--				<patternset refid="pattern.jre" />
--				<cutdirsmapper dirs="1" />
--			</unzip>
--
--			<exec executable="powershell" dir="${dir.cache}" failonerror="yes" osFamily="windows">
--				<arg line="get-java get jfx x86_64 ${jfx.pkg}" />
--			</exec>
--			<exec executable="get-java.sh" dir="${dir.cache}" failonerror="yes" osFamily="unix">
--				<arg line="get jfx x86_64 Windows ${jfx.pkg}" />
-+			<exec executable="powershell" dir="${dir.cache}" failonerror="yes">
-+				<env key="PROCESSOR_ARCHITECTURE" value="x86" />
-+				<arg line="get-java-8" />
- 			</exec>
--			<unzip src="${dir.cache}/${jfx.pkg}" dest="@{dest}/ext/modules">
-+			<untar src="${dir.cache}/jre-${jre.major}u${jre.build}-windows-i586.tar.gz" dest="@{dest}" compression="gzip">
- 				<patternset refid="pattern.jre" />
- 				<cutdirsmapper dirs="1" />
--			</unzip>
-+			</untar>
- 		</sequential>
- 	</macrodef>
- 
-@@ -274,7 +258,7 @@
+@@ -162,7 +162,7 @@
  
  	<target name="jar" depends="revision">
  		<!-- select jar dependencies -->
@@ -99,7 +63,7 @@ index 5c9501d2..60d6fde5 100644
  
  		<!-- rebuild each dependency jar with zero compression and remove signatures -->
  		<groovy src="${dir.lib}/jar.groovy" />
-@@ -289,10 +273,8 @@
+@@ -177,10 +177,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -111,7 +75,7 @@ index 5c9501d2..60d6fde5 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -322,7 +304,7 @@
+@@ -210,7 +208,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -120,7 +84,16 @@ index 5c9501d2..60d6fde5 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -361,9 +343,9 @@
+@@ -234,7 +232,7 @@
+ 
+ 		<!-- fetch latest JRE -->
+ 		<copy todir="${dir.staging}/jre">
+-			<fileset dir="${dir.lib}/jre/Windows-x64" />
++			<fileset dir="${dir.lib}/jre/Windows-${appx.arch}" />
+ 		</copy>
+ 
+ 		<!-- package APPX -->
+@@ -251,9 +249,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -133,7 +106,7 @@ index 5c9501d2..60d6fde5 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -589,7 +571,7 @@
+@@ -485,7 +483,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
@@ -142,7 +115,7 @@ index 5c9501d2..60d6fde5 100644
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
-@@ -629,8 +611,8 @@
+@@ -525,8 +523,8 @@
  			<fileset dir="${dir.installer}/tar" includes="*.sh" />
  		</copy-replace>
  
@@ -153,7 +126,7 @@ index 5c9501d2..60d6fde5 100644
  			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
  
  			<!-- include native libraries for all supported platforms -->
-@@ -639,9 +621,6 @@
+@@ -535,9 +533,6 @@
  			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
  			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
  			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
@@ -187,19 +160,6 @@ index 41e87444..05422081 100644
  
 -java -Dapplication.deployment=deb --module-path "$MODULE_PATH" --add-modules ALL-MODULE-PATH -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
 +java -Dapplication.deployment=deb -Djna.boot.library.name=jnidispatch.system -Dnet.filebot.archive.extractor=ShellExecutables @{java.application.options} @{linux.application.options} @{linux.desktop.application.options} $JAVA_OPTS $FILEBOT_OPTS -jar "$FILEBOT_HOME/jar/filebot.jar" "$@"
-diff --git a/ivy.xml b/ivy.xml
-index 758e4c01..646be80a 100644
---- a/ivy.xml
-+++ b/ivy.xml
-@@ -36,7 +36,7 @@
- 
- 
- 		<!-- JavaFX -->
--		<dependency rev="11.0.0" org="org.controlsfx" name="controlsfx" />
-+		<dependency rev="8.40.14" org="org.controlsfx" name="controlsfx" />
- 
- 
- 		<!-- Apache Groovy -->
 diff --git a/source/net/filebot/Logging.java b/source/net/filebot/Logging.java
 index da5c7a68..a1c25903 100644
 --- a/source/net/filebot/Logging.java
@@ -596,10 +556,10 @@ index 53eb62d9..ad02288e 100644
  
  	protected static List<String> decodeStringSequence(ByteBuffer bb) {
 diff --git a/source/net/filebot/ui/MainFrame.java b/source/net/filebot/ui/MainFrame.java
-index 4e1e33f5..3a9b9779 100644
+index 50f52bae..1e86a4ff 100644
 --- a/source/net/filebot/ui/MainFrame.java
 +++ b/source/net/filebot/ui/MainFrame.java
-@@ -223,11 +223,7 @@ public class MainFrame extends JFrame {
+@@ -226,11 +226,7 @@ public class MainFrame extends JFrame {
  					selectEnabled = true;
  
  					// bring window to front when drag-and-drop operation is in progress
