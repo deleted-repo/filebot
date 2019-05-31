@@ -344,11 +344,8 @@
 
 		<property name="path.app.jre" location="${path.app}/Contents/PlugIns/openjdk.jre" />
 
-		<!-- import embedded runtime properties -->
-		<property file="${dir.lib}/jre.properties" />
-
 		<!-- MAS validation is a bit buggy and requires even libraries and frameworks to have a unique CFBundleIdentifier Collision -->
-		<replace file="${path.app.jre}/Contents/Info.plist" token="net.java.openjdk.${jre.version}.jdk" value="${package.identifier}.jdk" encoding="UTF-8" summary="true" />
+		<replace file="${path.app.jre}/Contents/Info.plist" token="net.java.openjdk" value="${package.identifier}.openjdk" encoding="UTF-8" summary="true" />
 
 		<!-- fix broken symlink -->
 		<copy file="${dir.staging}/openjdk.jre/Contents/Home/lib/jli/libjli.dylib" tofile="${path.app.jre}/Contents/MacOS/libjli.dylib" overwrite="yes" verbose="yes" failonerror="yes" />

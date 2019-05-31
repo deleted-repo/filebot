@@ -15,7 +15,7 @@ done
 # get canonical path
 BIN=`dirname "$PRG"`
 FILEBOT_HOME=`cd "$BIN/.." && pwd`
-JAVA_HOME="$FILEBOT_HOME/PlugIns/jdk-@{jre.version}.jdk/Contents/Home"
+JAVA_HOME="$FILEBOT_HOME/PlugIns/openjdk.jre/Contents/Home"
 
 # select application data folder
 APP_DATA="$HOME/.filebot"
