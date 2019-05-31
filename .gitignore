@@ -1,10 +1,9 @@
 bin
 build
-build-data
 dist
 release
 cache
-ivy
+lib
 
 QuickLook
 
