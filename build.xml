@@ -234,7 +234,7 @@
 
 		<!-- fetch latest JRE -->
 		<copy todir="${dir.staging}/jre">
-			<fileset dir="${dir.lib}/jre/Windows-x64" />
+			<fileset dir="${dir.lib}/jre/Windows-${appx.arch}" />
 		</copy>
 
 		<!-- package APPX -->
