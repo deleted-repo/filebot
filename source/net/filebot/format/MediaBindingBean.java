@@ -798,6 +798,9 @@ public class MediaBindingBean {
 				Episode e = getEpisode();
 				XEM origin = XEM.forName(e.getSeriesInfo().getDatabase());
 				XEM destination = XEM.forName(k);
+				if (origin == destination) {
+					return e;
+				}
 				return origin.map(e, destination).orElse(e);
 			}
 			return undefined(k);
