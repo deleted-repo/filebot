@@ -1,35 +1,98 @@
 package net.filebot.web;
 
 import static java.util.Arrays.*;
+import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.util.JsonUtilities.*;
+import static net.filebot.util.StringUtilities.*;
 import static net.filebot.web.WebRequest.*;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import net.filebot.Cache;
 import net.filebot.CacheType;
 
-public class XEM {
+public enum XEM {
 
-	public List<Map<String, Map<String, Integer>>> getAll(String origin, int id) throws Exception {
+	AniDB, TheTVDB;
+
+	public String getOriginName() {
+		switch (this) {
+		case AniDB:
+			return "anidb";
+		case TheTVDB:
+			return "tvdb";
+		}
+		return null;
+	}
+
+	public Integer getSeason(Integer s) {
+		return this == AniDB ? 1 : s;
+	}
+
+	public Optional<Episode> map(Episode episode, XEM destination) throws Exception {
+		int seriesId = episode.getSeriesInfo().getId();
+
+		if (!getHaveMap().contains(seriesId)) {
+			return Optional.empty();
+		}
+
+		String seriesName = episode.getSeriesName();
+		Integer season = getSeason(episode.getSeason());
+
+		Map<String, List<String>> names = getNames(seriesId);
+
+		Integer mappedSeason = names.entrySet().stream().filter(it -> {
+			return it.getValue().contains(seriesName);
+		}).map(it -> {
+			return matchInteger(it.getKey());
+		}).filter(Objects::nonNull).findFirst().orElse(season);
+
+		String mappedSeriesName = names.get("all").get(0);
+
+		Map<String, Map<String, Number>> mapping = episode.getSpecial() != null ? getSingle(seriesId, 0, episode.getSpecial()) : getSingle(seriesId, mappedSeason, episode.getEpisode());
+
+		List<Episode> mappedEpisode = mapping.entrySet().stream().filter(it -> {
+			return it.getKey().startsWith(destination.getOriginName());
+		}).map(it -> {
+			Map<String, Number> mappedNumbers = it.getValue();
+			Integer e = mappedNumbers.get("episode").intValue();
+			Integer a = mappedNumbers.get("absolute").intValue();
+
+			return episode.derive(mappedSeriesName, mappedSeason, e, a);
+		}).collect(toList());
+
+		if (mappedEpisode.size() == 1) {
+			return Optional.of(mappedEpisode.get(0));
+		} else if (mappedEpisode.size() > 1) {
+			return Optional.of(new MultiEpisode(mappedEpisode));
+		}
+
+		return Optional.empty();
+	}
+
+	public List<Map<String, Map<String, Integer>>> getAll(int id) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(2);
-		parameters.put("origin", origin);
+		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
 
 		Object response = request("all", parameters);
 		return (List) asList(getArray(response, "data"));
 	}
 
-	public Map<String, Map<String, Integer>> getSingle(String origin, int id, int season, int episode) throws Exception {
+	public Map<String, Map<String, Number>> getSingle(int id, int season, int episode) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(4);
-		parameters.put("origin", origin);
+		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
 		parameters.put("season", season);
 		parameters.put("episode", episode);
@@ -38,15 +101,15 @@ public class XEM {
 		return (Map) getMap(response, "data");
 	}
 
-	public List<SearchResult> getAllNames(String origin) throws Exception {
-		return getAllNames(origin, null, null, true);
+	public List<SearchResult> getAllNames() throws Exception {
+		return getAllNames(null, null, true);
 	}
 
-	public List<SearchResult> getAllNames(String origin, Integer season, String language, boolean defaultNames) throws Exception {
+	public List<SearchResult> getAllNames(Integer season, String language, boolean defaultNames) throws Exception {
 		List<SearchResult> result = new ArrayList<>();
 
 		Map<String, Object> parameters = new LinkedHashMap<>(4);
-		parameters.put("origin", origin);
+		parameters.put("origin", getOriginName());
 		parameters.put("season", season);
 		parameters.put("language", language);
 		parameters.put("defaultNames", defaultNames ? "1" : "0");
@@ -65,29 +128,46 @@ public class XEM {
 		return result;
 	}
 
-	public Set<Integer> getHaveMap(String origin) throws Exception {
+	public Set<Integer> getHaveMap() throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(1);
-		parameters.put("origin", origin);
+		parameters.put("origin", getOriginName());
 
 		Object response = request("havemap", parameters);
 		return stream(getArray(response, "data")).map(Object::toString).map(Integer::parseInt).collect(toSet());
 	}
 
-	public Map<String, String> getNames(String origin, int id, boolean defaultNames) throws Exception {
+	public Map<String, List<String>> getNames(int id) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(3);
-		parameters.put("origin", origin);
+		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
 		parameters.put("defaultNames", "1");
 
 		Object response = request("names", parameters);
-		return (Map) getMap(response, "data");
+		Map<String, List<String>> names = new HashMap<>();
+
+		getMap(response, "data").forEach((k, v) -> {
+			names.put(k.toString(), asNamesList(v));
+		});
+
+		return names;
 	}
 
-	public Object request(String path, Map<String, Object> parameters) throws Exception {
+	private List<String> asNamesList(Object value) {
+		if (value instanceof Map) {
+			Map<Object, Object[]> names = (Map) value;
+			return names.values().stream().flatMap(a -> stream(a)).map(Object::toString).collect(toList());
+		} else if (value instanceof Collection) {
+			Collection<Object> names = (Collection) value;
+			return names.stream().map(Object::toString).collect(toList());
+		}
+		return singletonList(value.toString());
+	}
+
+	protected Object request(String path, Map<String, Object> parameters) throws Exception {
 		return request(path + '?' + encodeParameters(parameters, true));
 	}
 
-	public Object request(String path) throws Exception {
+	protected Object request(String path) throws Exception {
 		return getCache().json(path, this::getResource).expire(Cache.ONE_WEEK).get();
 	}
 
@@ -97,6 +177,20 @@ public class XEM {
 
 	protected Cache getCache() {
 		return Cache.getCache("xem", CacheType.Monthly);
+	}
+
+	public static List<String> names() {
+		return stream(values()).map(Enum::name).collect(toList());
+	}
+
+	public static XEM forName(String name) {
+		for (XEM db : values()) {
+			if (db.name().equalsIgnoreCase(name) || db.getOriginName().equalsIgnoreCase(name)) {
+				return db;
+			}
+		}
+
+		throw new IllegalArgumentException(String.format("XEM not supported: %s not in %s", name, asList(values())));
 	}
 
 }

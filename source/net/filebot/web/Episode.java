@@ -140,6 +140,14 @@ public class Episode implements Serializable {
 		return new Episode(this);
 	}
 
+	public Episode derive(Integer season, Integer episode) {
+		return new Episode(seriesName, season, episode, title, absolute, special, airdate, id, seriesInfo);
+	}
+
+	public Episode derive(String seriesName, Integer season, Integer episode, Integer absolute) {
+		return new Episode(seriesName, season, episode, title, absolute, special, airdate, id, seriesInfo);
+	}
+
 	@Override
 	public String toString() {
 		return EpisodeFormat.SeasonEpisode.format(this);

@@ -76,6 +76,7 @@ import net.filebot.web.SeriesInfo;
 import net.filebot.web.SimpleDate;
 import net.filebot.web.SortOrder;
 import net.filebot.web.TheTVDBSeriesInfo;
+import net.filebot.web.XEM;
 
 public class MediaBindingBean {
 
@@ -786,6 +787,19 @@ public class MediaBindingBean {
 				return createBindingObject(episode);
 			}
 
+			return undefined(k);
+		});
+	}
+
+	@Define("xem")
+	public DynamicBindings getXrossEntityMapper() {
+		return new DynamicBindings(XEM::names, k -> {
+			if (infoObject instanceof Episode) {
+				Episode e = getEpisode();
+				XEM origin = XEM.forName(e.getSeriesInfo().getDatabase());
+				XEM destination = XEM.forName(k);
+				return origin.map(e, destination).orElse(e);
+			}
 			return undefined(k);
 		});
 	}
