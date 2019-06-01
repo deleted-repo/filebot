@@ -1,5 +1,5 @@
 diff --git a/app.properties b/app.properties
-index a9573541..71985abc 100644
+index 1cb3d661..71985abc 100644
 --- a/app.properties
 +++ b/app.properties
 @@ -46,8 +46,8 @@ jre.major: 8
@@ -13,7 +13,7 @@ index a9573541..71985abc 100644
  
  # Package Information
  package.name: filebot
-@@ -90,35 +90,12 @@ java.application.options: -Dunixfs=false \
+@@ -90,36 +90,12 @@ java.application.options: -Dunixfs=false \
                            -DuseCreationDate=false \
                            -Djava.net.useSystemProxies=true \
                            -Djna.nosys=true \
@@ -37,6 +37,7 @@ index a9573541..71985abc 100644
 -                          --add-opens=java.logging/java.util.logging=ALL-UNNAMED \
 -                          --add-opens=java.desktop/java.awt=ALL-UNNAMED \
 -                          --add-opens=java.desktop/sun.awt=ALL-UNNAMED \
+-                          --add-opens=java.desktop/sun.swing=ALL-UNNAMED \
 -                          --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED \
 -                          --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED
 +                          -Djna.nounpack=true
@@ -51,7 +52,7 @@ index a9573541..71985abc 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index 17cc65e9..c7dc7da5 100644
+index f44d27e5..2fc8121d 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -162,7 +162,7 @@
