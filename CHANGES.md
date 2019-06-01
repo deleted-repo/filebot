@@ -8,7 +8,8 @@ Next Release (4.8.6)
 * Added `-no-history` CLI option
 * Allow dynamic code evaluation (e.g. `evaluate('/path/to/snippet.groovy' as File)`)
 * Allow `@file.groovy` syntax in `Format Editor` and `Preset Editor` (e.g. `@/path/to/MyFormat.groovy`)
-* Allow `*.groovy` files as argument value for `--format`, `--filter` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
+* Added `--mapper` option (e.g. `--mapper XEM.TheTVDB`)
+* Allow `*.groovy` files as argument value for `--format`, `--filter`, `--mapper` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
 
 
 FileBot 4.8.5
