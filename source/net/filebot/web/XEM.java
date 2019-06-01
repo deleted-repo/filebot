@@ -20,6 +20,7 @@ import java.util.Set;
 
 import net.filebot.Cache;
 import net.filebot.CacheType;
+import net.filebot.Resource;
 
 public enum XEM {
 
@@ -39,10 +40,12 @@ public enum XEM {
 		return this == AniDB ? 1 : s;
 	}
 
-	public Optional<Episode> map(Episode episode, XEM destination) throws Exception {
-		int seriesId = episode.getSeriesInfo().getId();
+	protected final Resource<Set<Integer>> haveMap = Resource.lazy(this::getHaveMap);
 
-		if (!getHaveMap().contains(seriesId)) {
+	public Optional<Episode> map(Episode episode, XEM destination) throws Exception {
+		Integer seriesId = episode.getSeriesInfo().getId();
+
+		if (!haveMap.get().contains(seriesId)) {
 			return Optional.empty();
 		}
 
@@ -59,14 +62,15 @@ public enum XEM {
 
 		String mappedSeriesName = names.get("all").get(0);
 
-		Map<String, Map<String, Number>> mapping = episode.getSpecial() != null ? getSingle(seriesId, 0, episode.getSpecial()) : getSingle(seriesId, mappedSeason, episode.getEpisode());
+		Map<String, Map<String, Number>> mapping = episode.getEpisode() != null ? getSingle(seriesId, mappedSeason, episode.getEpisode()) : getSingle(seriesId, 0, episode.getSpecial());
 
 		List<Episode> mappedEpisode = mapping.entrySet().stream().filter(it -> {
 			return it.getKey().startsWith(destination.getOriginName());
 		}).map(it -> {
 			Map<String, Number> mappedNumbers = it.getValue();
-			Integer e = mappedNumbers.get("episode").intValue();
-			Integer a = mappedNumbers.get("absolute").intValue();
+
+			Integer e = getInteger(mappedNumbers, "episode");
+			Integer a = getInteger(mappedNumbers, "absolute");
 
 			return episode.derive(mappedSeriesName, mappedSeason, e, a);
 		}).collect(toList());
@@ -80,7 +84,7 @@ public enum XEM {
 		return Optional.empty();
 	}
 
-	public List<Map<String, Map<String, Integer>>> getAll(int id) throws Exception {
+	public List<Map<String, Map<String, Integer>>> getAll(Integer id) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(2);
 		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
@@ -89,7 +93,7 @@ public enum XEM {
 		return (List) asList(getArray(response, "data"));
 	}
 
-	public Map<String, Map<String, Number>> getSingle(int id, int season, int episode) throws Exception {
+	public Map<String, Map<String, Number>> getSingle(Integer id, Integer season, Integer episode) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(4);
 		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
@@ -135,7 +139,7 @@ public enum XEM {
 		return stream(getArray(response, "data")).map(Object::toString).map(Integer::parseInt).collect(toSet());
 	}
 
-	public Map<String, List<String>> getNames(int id) throws Exception {
+	public Map<String, List<String>> getNames(Integer id) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(3);
 		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
