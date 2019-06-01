@@ -143,6 +143,10 @@ public class ThemeSupport {
 
 			@Override
 			public void setLookAndFeel() throws Exception {
+				// Maybe fix NPE on Linux
+				// @see https://github.com/bulenkov/iconloader/issues/14
+				UIManager.getFont("Label.font");
+
 				UIManager.setLookAndFeel(new DarculaLaf());
 
 				Color selectionBackground = new Color(0x39698a);
