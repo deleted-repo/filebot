@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -114,7 +117,11 @@ public class FFProbe implements MediaCharacteristics {
 
 	@Override
 	public Instant getCreationTime() {
-		return getTag("creation_time").map(Instant::parse).orElse(null);
+		return getTag("creation_time").map(this::parseDateTime).orElse(null);
+	}
+
+	private Instant parseDateTime(String s) {
+		return LocalDateTime.parse(s, DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm:ss")).toInstant(ZoneOffset.UTC);
 	}
 
 	public Map<String, Object> getFormat() {
