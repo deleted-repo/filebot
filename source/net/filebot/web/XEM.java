@@ -24,7 +24,7 @@ import net.filebot.Resource;
 
 public enum XEM {
 
-	AniDB, TheTVDB;
+	AniDB, TheTVDB, Scene;
 
 	public String getOriginName() {
 		switch (this) {
@@ -32,6 +32,8 @@ public enum XEM {
 			return "anidb";
 		case TheTVDB:
 			return "tvdb";
+		case Scene:
+			return "scene";
 		}
 		return null;
 	}
