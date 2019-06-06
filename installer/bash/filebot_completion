@@ -95,6 +95,7 @@ function _picocli_filebot() {
   conflict_OPTION_ARGS="skip override fail auto index" # --conflict values
   lang_OPTION_ARGS="Albanian Arabic Armenian Bulgarian Catalan Croatian Czech Danish Dutch English Finnish French Canadian French German Greek Hebrew Hindi Hungarian Icelandic Indonesian Italian Japanese Romanized Japanese Korean Latvian Lithuanian Macedonian Malay Chinese Taiwanese Chinese Cantonese Norwegian Persian Polish Portuguese Brazilian Portuguese Romanian Russian Serbian Slovak Slovenian Spanish Mexican Spanish Swedish Thai Turkish Ukrainian Vietnamese" # --lang values
   encoding_OPTION_ARGS="UTF-8 Windows-1252 ISO-8859-1" # --encoding values
+  StringString_OPTION_ARGS="name=value" # --def values
   log_OPTION_ARGS="OFF SEVERE WARNING INFO CONFIG FINE FINER FINEST ALL" # --log values
 
   compopt +o default
@@ -157,7 +158,8 @@ function _picocli_filebot() {
       return $?
       ;;
     --def)
-      return
+      COMPREPLY=( $( compgen -W "${StringString_OPTION_ARGS}" -- ${CURR_WORD} ) )
+      return $?
       ;;
     --file-filter)
       compopt -o filenames

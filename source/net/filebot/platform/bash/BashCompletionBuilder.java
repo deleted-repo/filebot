@@ -85,7 +85,7 @@ class BashCompletionBuilder {
 	@Option(names = "-script", description = "Run Groovy script")
 	public File script;
 
-	@Option(names = "--def", description = "Define script variables")
+	@Option(names = "--def", description = "Define script variables", completionCandidates = DefineCompletionCandidates.class)
 	public Map<String, String> defines;
 
 	@Option(names = "-r", description = "Recursively process folders")
@@ -194,8 +194,16 @@ class BashCompletionBuilder {
 		}
 	}
 
+	private static class DefineCompletionCandidates implements Iterable<String> {
+
+		@Override
+		public Iterator<String> iterator() {
+			return Stream.of("name=value").iterator();
+		}
+	}
+
 	public static void main(String[] args) {
-		AutoComplete.main("-n", "filebot", BashCompletionBuilder.class.getName());
+		AutoComplete.main("--name", "filebot", BashCompletionBuilder.class.getName(), "--force");
 	}
 
 }
