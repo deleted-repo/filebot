@@ -19,7 +19,7 @@ Recommends:     p7zip-plugins
 
 
 %install
-cp -rvf %{src}/usr %{buildroot}
+cp -rvf %{src}/usr %{src}/etc %{buildroot}
 
 
 %files
