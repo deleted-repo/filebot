@@ -10,6 +10,7 @@ Next Release (4.8.6)
 * Allow `@file.groovy` syntax in `Format Editor` and `Preset Editor` (e.g. `@/path/to/MyFormat.groovy`)
 * Added `--mapper` option (e.g. `--mapper XEM.TheTVDB`)
 * Allow `*.groovy` files as argument value for `--format`, `--filter`, `--mapper` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
+* Support [bash completion](installer/bash/filebot_completion) 
 
 
 FileBot 4.8.5
