@@ -186,6 +186,9 @@
 			<classpath refid="jar.classpath" />
 			<modulepath path="${jfx.path}" />
 			<compilerarg line="--add-modules ALL-MODULE-PATH" />
+
+			<!-- exclude bash completion builder -->
+			<exclude name="**/bash/**" />
 		</javac>
 
 		<!-- copy resources -->
