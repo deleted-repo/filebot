@@ -122,17 +122,17 @@ function _picocli_filebot() {
       ;;
     --filter)
       compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      COMPREPLY=( $( compgen -X '!*.groovy' -f -- ${CURR_WORD} ) ) # files
       return $?
       ;;
     --mapper)
       compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      COMPREPLY=( $( compgen -X '!*.groovy' -f -- ${CURR_WORD} ) ) # files
       return $?
       ;;
     --format)
       compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      COMPREPLY=( $( compgen -X '!*.groovy' -f -- ${CURR_WORD} ) ) # files
       return $?
       ;;
     --q)
@@ -143,8 +143,8 @@ function _picocli_filebot() {
       return $?
       ;;
     --output)
-      compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      compopt -o dirnames
+      COMPREPLY=( $( compgen -d -- ${CURR_WORD} ) ) # files
       return $?
       ;;
     --encoding)
@@ -153,7 +153,7 @@ function _picocli_filebot() {
       ;;
     -script)
       compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      COMPREPLY=( $( compgen -X '!*.groovy' -f -- ${CURR_WORD} ) ) # files
       return $?
       ;;
     --def)
@@ -161,7 +161,7 @@ function _picocli_filebot() {
       ;;
     --file-filter)
       compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      COMPREPLY=( $( compgen -X '!*.groovy' -f -- ${CURR_WORD} ) ) # files
       return $?
       ;;
     -exec)
@@ -178,7 +178,7 @@ function _picocli_filebot() {
       ;;
     --license)
       compopt -o filenames
-      COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
+      COMPREPLY=( $( compgen -X '!*.psm' -f -- ${CURR_WORD} ) ) # files
       return $?
       ;;
   esac
