@@ -186,7 +186,8 @@ function _picocli_filebot() {
   if [[ "${CURR_WORD}" == -* ]]; then
     COMPREPLY=( $(compgen -W "${FLAG_OPTS} ${ARG_OPTS}" -- ${CURR_WORD}) )
   else
-    COMPREPLY=( $(compgen -W "${COMMANDS}" -- ${CURR_WORD}) )
+    compopt -o filenames
+    COMPREPLY=( $( compgen -f -- ${CURR_WORD} ) ) # files
   fi
 }
 

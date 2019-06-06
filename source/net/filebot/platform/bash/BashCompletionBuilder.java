@@ -5,7 +5,6 @@ import static net.filebot.WebServices.*;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +128,7 @@ class BashCompletionBuilder {
 	public File license;
 
 	@Parameters
-	public List<String> arguments = new ArrayList<String>();
+	public List<File> arguments;
 
 	private static class DatabaseCompletionCandidates implements Iterable<String> {
 
