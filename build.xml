@@ -182,13 +182,10 @@
 		</manifestclasspath>
 
 		<!-- compile -->
-		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
+		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no" excludesfile="${dir.lib}/src.excludes">
 			<classpath refid="jar.classpath" />
 			<modulepath path="${jfx.path}" />
 			<compilerarg line="--add-modules ALL-MODULE-PATH" />
-
-			<!-- exclude bash completion builder -->
-			<exclude name="**/bash/**" />
 		</javac>
 
 		<!-- copy resources -->
