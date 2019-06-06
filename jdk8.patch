@@ -52,10 +52,10 @@ index 1cb3d661..71985abc 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index f44d27e5..2fc8121d 100644
+index e5faebd6..40d3b1a3 100644
 --- a/build.xml
 +++ b/build.xml
-@@ -162,7 +162,7 @@
+@@ -167,7 +167,7 @@
  
  	<target name="jar" depends="revision">
  		<!-- select jar dependencies -->
@@ -64,7 +64,7 @@ index f44d27e5..2fc8121d 100644
  
  		<!-- rebuild each dependency jar with zero compression and remove signatures -->
  		<groovy src="${dir.lib}/jar.groovy" />
-@@ -177,10 +177,8 @@
+@@ -182,10 +182,8 @@
  		</manifestclasspath>
  
  		<!-- compile -->
@@ -76,7 +76,7 @@ index f44d27e5..2fc8121d 100644
  		</javac>
  
  		<!-- copy resources -->
-@@ -210,7 +208,7 @@
+@@ -215,7 +213,7 @@
  
  
  	<target name="appx" depends="revision" description="Build Windows 10 package">
@@ -85,7 +85,7 @@ index f44d27e5..2fc8121d 100644
  
  		<property name="dir.staging" location="${dir.dist}/appx/${appx.arch}" />
  
-@@ -251,9 +249,9 @@
+@@ -256,9 +254,9 @@
  
  
  	<target name="msi" depends="revision" description="Build Windows Installer package">
@@ -98,7 +98,7 @@ index f44d27e5..2fc8121d 100644
  
  		<property name="dir.staging" location="${dir.dist}/msi/${msi.package.platform}" />
  
-@@ -485,7 +483,7 @@
+@@ -492,7 +490,7 @@
  			<fileset dir="${dir.installer}/deb-universal" />
  		</copy-replace>
  
@@ -107,7 +107,7 @@ index f44d27e5..2fc8121d 100644
  			<tarfileset prefix="/usr/share/filebot/bin" dir="${dir.staging}" includes="*.sh" filemode="755" />
  			<tarfileset prefix="/usr/share/filebot/jar" dir="${dir.dist}/lib" excludes="${deb.jna.depends}" />
  
-@@ -525,8 +523,8 @@
+@@ -534,8 +532,8 @@
  			<fileset dir="${dir.installer}/tar" includes="*.sh" />
  		</copy-replace>
  
@@ -118,16 +118,6 @@ index f44d27e5..2fc8121d 100644
  			<tarfileset prefix="jar" dir="${dir.dist}/lib" />
  
  			<!-- include native libraries for all supported platforms -->
-@@ -535,9 +533,6 @@
- 			<tarfileset prefix="lib/Linux-i686" dir="${dir.lib}/native/linux-i686" includes="*.so" />
- 			<tarfileset prefix="lib/Linux-x86_64" dir="${dir.lib}/native/linux-amd64" includes="*.so" />
- 			<tarfileset prefix="lib/FreeBSD-amd64" dir="${dir.lib}/native/freebsd-amd64" includes="*.so" />
--
--			<!-- include maintainer public key -->
--			<tarfileset dir="${dir.installer}/gpg" includes="maintainer.gpg" />
- 		</tar>
- 	</target>
- 
 diff --git a/installer/deb-universal/control/control b/installer/deb-universal/control/control
 index 29e9f0d8..de9da74d 100644
 --- a/installer/deb-universal/control/control
