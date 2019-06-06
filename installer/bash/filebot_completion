@@ -93,8 +93,8 @@ function _picocli_filebot() {
   order_OPTION_ARGS="Airdate DVD Absolute AbsoluteAirdate" # --order values
   action_OPTION_ARGS="move copy keeplink symlink hardlink clone duplicate test" # --action values
   conflict_OPTION_ARGS="skip override fail auto index" # --conflict values
-  lang_OPTION_ARGS="Albanian Arabic Armenian Bulgarian Catalan Croatian Czech Danish Dutch English Finnish French Canadian French German Greek Hebrew Hindi Hungarian Icelandic Indonesian Italian Japanese Romanized Japanese Korean Latvian Lithuanian Macedonian Malay Chinese Taiwanese Chinese Cantonese Norwegian Persian Polish Portuguese Brazilian Portuguese Romanian Russian Serbian Slovak Slovenian Spanish Mexican Spanish Swedish Thai Turkish Ukrainian Vietnamese" # --lang values
-  encoding_OPTION_ARGS="UTF-8 Windows-1252 ISO-8859-1" # --encoding values
+  lang_OPTION_ARGS="sq ar hy bg ca hr cs da nl en fi fr qc de el he hi hu is id it ja x-jat ko lv lt mk ms zh tw hk no fa pl pt pb ro ru sr sk sl es mx sv th tr uk vi" # --lang values
+  encoding_OPTION_ARGS="UTF-8 Windows-1252" # --encoding values
   StringString_OPTION_ARGS="name=value" # --def values
   log_OPTION_ARGS="OFF SEVERE WARNING INFO CONFIG FINE FINER FINEST ALL" # --log values
 

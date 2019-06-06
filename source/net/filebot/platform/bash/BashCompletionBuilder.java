@@ -174,7 +174,7 @@ class BashCompletionBuilder {
 
 		@Override
 		public Iterator<String> iterator() {
-			return Language.availableLanguages().stream().map(Language::getName).iterator();
+			return Language.availableLanguages().stream().map(Language::getISO2).iterator();
 		}
 	}
 
@@ -190,7 +190,7 @@ class BashCompletionBuilder {
 
 		@Override
 		public Iterator<String> iterator() {
-			return Stream.of("UTF-8", "Windows-1252", "ISO-8859-1").iterator();
+			return Stream.of("UTF-8", "Windows-1252").iterator();
 		}
 	}
 
