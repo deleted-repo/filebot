@@ -52,7 +52,7 @@ index 1cb3d661..71985abc 100644
                               -Djna.boot.library.path="%EXEDIR%\\lib" \
                               -Djna.library.path="%EXEDIR%\\lib" \
 diff --git a/build.xml b/build.xml
-index e5faebd6..40d3b1a3 100644
+index f6feed76..f5d79a18 100644
 --- a/build.xml
 +++ b/build.xml
 @@ -167,7 +167,7 @@
@@ -68,8 +68,8 @@ index e5faebd6..40d3b1a3 100644
  		</manifestclasspath>
  
  		<!-- compile -->
--		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
-+		<javac srcdir="${dir.source}" destdir="${dir.build}" target="${jvm.version}" source="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no">
+-		<javac srcdir="${dir.source}" destdir="${dir.build}" release="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no" excludesfile="${dir.lib}/src.excludes">
++		<javac srcdir="${dir.source}" destdir="${dir.build}" target="${jvm.version}" source="${jvm.version}" encoding="utf-8" debug="yes" includeAntRuntime="no" excludesfile="${dir.lib}/src.excludes">
  			<classpath refid="jar.classpath" />
 -			<modulepath path="${jfx.path}" />
 -			<compilerarg line="--add-modules ALL-MODULE-PATH" />
