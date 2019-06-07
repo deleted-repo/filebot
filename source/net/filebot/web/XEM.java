@@ -3,6 +3,7 @@ package net.filebot.web;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.Logging.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.StringUtilities.*;
 import static net.filebot.web.WebRequest.*;
@@ -24,18 +25,15 @@ import net.filebot.Resource;
 
 public enum XEM {
 
-	AniDB, TheTVDB, Scene;
+	AniDB, TheTVDB, Scene, Tract;
 
 	public String getOriginName() {
 		switch (this) {
-		case AniDB:
-			return "anidb";
 		case TheTVDB:
 			return "tvdb";
-		case Scene:
-			return "scene";
+		default:
+			return name().toLowerCase();
 		}
-		return null;
 	}
 
 	public Integer getSeason(Integer s) {
@@ -69,8 +67,9 @@ public enum XEM {
 		List<Episode> mappedEpisode = mapping.entrySet().stream().filter(it -> {
 			return it.getKey().startsWith(destination.getOriginName());
 		}).map(it -> {
-			Map<String, Number> mappedNumbers = it.getValue();
+			debug.finest(format("[XEM] %s | %s | %s", mappedSeriesName, mappedSeason, it));
 
+			Map<String, Number> mappedNumbers = it.getValue();
 			Integer e = getInteger(mappedNumbers, "episode");
 			Integer a = getInteger(mappedNumbers, "absolute");
 			Integer special = null;
@@ -196,7 +195,7 @@ public enum XEM {
 			}
 		}
 
-		throw new IllegalArgumentException(String.format("XEM not supported: %s not in %s", name, asList(values())));
+		throw new IllegalArgumentException(String.format("%s not in %s", name, asList(values())));
 	}
 
 }
