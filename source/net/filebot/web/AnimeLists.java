@@ -73,20 +73,24 @@ public enum AnimeLists {
 	}
 
 	protected static Cache getCache() {
-		return Cache.getCache("animelists", CacheType.Monthly);
+		return Cache.getCache("animelists", CacheType.Persistent);
 	}
 
 	protected static final Resource<Model> MODEL = Resource.lazy(AnimeLists::fetchModel);
 
 	protected static Model fetchModel() throws Exception {
+		return (Model) JAXBContext.newInstance(Model.class).createUnmarshaller().unmarshal(new ByteArrayInputStream(request("anime-list.xml")));
+	}
+
+	protected static byte[] request(String file) throws Exception {
+		// NOTE: GitHub only supports If-None-Match (If-Modified-Since is ignored)
 		Cache cache = getCache();
 
-		// NOTE: GitHub only supports If-None-Match (If-Modified-Since is ignored)
-		byte[] xml = cache.bytes("anime-list.xml", r -> {
-			return new URL("https://raw.githubusercontent.com/ScudLee/anime-lists/master/" + r);
-		}).fetch(fetchIfNoneMatch(URL::getFile, cache)).expire(Cache.ONE_MONTH).get();
+		return cache.bytes(file, AnimeLists::getResource).fetch(fetchIfNoneMatch(url -> file, cache)).expire(Cache.ONE_MONTH).get();
+	}
 
-		return (Model) JAXBContext.newInstance(Model.class).createUnmarshaller().unmarshal(new ByteArrayInputStream(xml));
+	protected static URL getResource(String file) throws Exception {
+		return new URL("https://raw.githubusercontent.com/ScudLee/anime-lists/master/" + file);
 	}
 
 	@XmlRootElement(name = "anime-list")

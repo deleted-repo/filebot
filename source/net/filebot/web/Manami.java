@@ -64,9 +64,14 @@ public enum Manami implements ArtworkProvider {
 	}
 
 	protected static Object request(String file) throws Exception {
-		return getCache().json(file, f -> {
-			return new URL("https://raw.githubusercontent.com/manami-project/anime-offline-database/master/" + f);
-		}).fetch(fetchIfNoneMatch(URL::getPath, getCache())).expire(Cache.ONE_MONTH).get();
+		// NOTE: GitHub only supports If-None-Match (If-Modified-Since is ignored)
+		Cache cache = getCache();
+
+		return cache.json(file, Manami::getResource).fetch(fetchIfNoneMatch(url -> file, cache)).expire(Cache.ONE_MONTH).get();
+	}
+
+	protected static URL getResource(String file) throws Exception {
+		return new URL("https://raw.githubusercontent.com/manami-project/anime-offline-database/master/" + file);
 	}
 
 	protected static final Resource<Object> database = Resource.lazy(() -> request("anime-offline-database.json"));
