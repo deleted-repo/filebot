@@ -151,7 +151,7 @@ public class MediaBindingBean {
 	public Integer getSeasonNumber() {
 		// look up season numbers via TheTVDB for AniDB episode data
 		if (isAnime(getEpisode())) {
-			return getSeasonEpisode().getSeason();
+			return trySeasonEpisodeForAnime(getEpisode()).getSeason();
 		}
 
 		return getEpisode().getSeason();
@@ -179,12 +179,13 @@ public class MediaBindingBean {
 
 	@Define("sxe")
 	public String getSxE() {
-		return EpisodeFormat.SeasonEpisode.formatSxE(getSeasonEpisode()); // try to convert absolute numbers to SxE numbers
+		return EpisodeFormat.SeasonEpisode.formatSxE(trySeasonEpisodeForAnime(getEpisode())); // magically convert AniDB absolute numbers to TheTVDB SxE numbers
+
 	}
 
 	@Define("s00e00")
 	public String getS00E00() {
-		return EpisodeFormat.SeasonEpisode.formatS00E00(getSeasonEpisode()); // try to convert absolute numbers to SxE numbers
+		return EpisodeFormat.SeasonEpisode.formatS00E00(trySeasonEpisodeForAnime(getEpisode())); // magically convert AniDB absolute numbers to TheTVDB SxE numbers
 	}
 
 	@Define("t")
@@ -1159,18 +1160,6 @@ public class MediaBindingBean {
 	@Define("ffprobe")
 	public Object getFFProbeDump() throws Exception {
 		return new FFProbe().open(getInferredMediaFile());
-	}
-
-	public Episode getSeasonEpisode() {
-		// magically convert AniDB absolute numbers to TheTVDB SxE numbers if AniDB is selected with airdate SxE episode sort order
-		if (getEpisodes().stream().allMatch(it -> isAnime(it) && isRegular(it) && !isAbsolute(it))) {
-			try {
-				return getEpisodeByAbsoluteNumber(getEpisode(), TheTVDB, SortOrder.Airdate);
-			} catch (Exception e) {
-				debug.warning(e::toString);
-			}
-		}
-		return getEpisode();
 	}
 
 	public SeriesInfo getPrimarySeriesInfo() {
