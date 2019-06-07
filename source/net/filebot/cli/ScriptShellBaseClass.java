@@ -512,7 +512,7 @@ public abstract class ScriptShellBaseClass extends Script {
 		return map;
 	}
 
-	private RenameAction getRenameAction(Map<String, ?> parameters) {
+	private RenameAction getRenameAction(Map<String, ?> parameters) throws Exception {
 		return consumeParameter(parameters, "action").map(action -> {
 			return getRenameAction(action);
 		}).findFirst().orElse(getArgumentBean().getRenameAction()); // default to global rename action

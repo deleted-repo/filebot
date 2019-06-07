@@ -232,15 +232,20 @@ public class ArgumentBean {
 		return files;
 	}
 
-	public RenameAction getRenameAction() {
+	public RenameAction getRenameAction() throws Exception {
 		// support custom executables (via absolute path)
 		if (action.startsWith("/")) {
 			return new ExecutableRenameAction(action, getOutputPath());
 		}
 
 		// support custom groovy scripts (via closures)
-		if (action.startsWith("{")) {
+		if (action.startsWith("{") || action.endsWith("}")) {
 			return new GroovyRenameAction(action);
+		}
+
+		// support custom groovy scripts (via files)
+		if (action.endsWith(".groovy")) {
+			return new GroovyRenameAction(readTextFile(new File(action)));
 		}
 
 		return StandardRenameAction.forName(action);
