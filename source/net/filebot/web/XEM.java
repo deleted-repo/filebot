@@ -49,13 +49,14 @@ public enum XEM {
 			return Optional.empty();
 		}
 
-		String seriesName = episode.getSeriesName();
+		Set<String> seriesNames = episode.getSeriesNames();
 		Integer season = getSeason(episode.getSeason());
 
 		Map<String, List<String>> names = getNames(seriesId);
+		debug.finest(format("[XEM] %s", names));
 
 		Integer mappedSeason = names.entrySet().stream().filter(it -> {
-			return it.getValue().contains(seriesName);
+			return it.getValue().stream().anyMatch(seriesNames::contains);
 		}).map(it -> {
 			return matchInteger(it.getKey());
 		}).filter(Objects::nonNull).findFirst().orElse(season);

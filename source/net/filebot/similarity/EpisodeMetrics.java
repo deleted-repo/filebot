@@ -285,16 +285,12 @@ public class EpisodeMetrics {
 		}
 
 		protected String[] getNormalizedEffectiveIdentifiers(Object object) {
-			List<?> identifiers = getEffectiveIdentifiers(object);
-			String[] names = new String[identifiers.size()];
-
-			for (int i = 0; i < names.length; i++) {
-				names[i] = normalizeObject(identifiers.get(i));
-			}
-			return names;
+			return getEffectiveIdentifiers(object).stream().map(it -> {
+				return normalizeObject(it);
+			}).toArray(String[]::new);
 		}
 
-		protected List<?> getEffectiveIdentifiers(Object object) {
+		protected Collection<?> getEffectiveIdentifiers(Object object) {
 			if (object instanceof Episode) {
 				return ((Episode) object).getSeriesNames();
 			} else if (object instanceof Movie) {
@@ -302,7 +298,7 @@ public class EpisodeMetrics {
 			} else if (object instanceof File) {
 				return listPathTail((File) object, 3, true);
 			}
-			return singletonList(object);
+			return singleton(object);
 		}
 
 		@Override
