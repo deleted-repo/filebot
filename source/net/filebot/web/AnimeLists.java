@@ -3,6 +3,7 @@ package net.filebot.web;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
+import static net.filebot.Logging.*;
 import static net.filebot.util.StringUtilities.*;
 
 import java.io.ByteArrayInputStream;
@@ -31,23 +32,28 @@ public enum AnimeLists {
 
 	public Optional<Episode> map(Episode episode, AnimeLists destination) throws Exception {
 		return find(episode.getSeriesInfo().getId()).map(a -> {
-			Integer s = destination.getSeason(a);
-			Integer e = destination.getEpisodeNumber(a, episode.getEpisode());
+			if (destination == TheTVDB && a.defaulttvdbseason == null) {
+				// auto-align mode
+				try {
+					return WebServices.TheTVDB.getEpisodeList(a.tvdbid, SortOrder.Airdate, Locale.ENGLISH).stream().filter(e -> {
+						return episode.getEpisode() != null && episode.getEpisode().equals(e.getAbsolute());
+					}).findFirst().orElse(null);
+				} catch (Exception e) {
+					debug.warning(e::toString);
+					return null;
+				}
+			} else {
+				// offset mode
+				Integer s = this == AniDB ? null : a.defaulttvdbseason;
+				Integer e = episode.getEpisode();
 
-			return episode.derive(s, e);
+				if (a.episodeoffset != null) {
+					e = this == AniDB ? e - a.episodeoffset : e + a.episodeoffset;
+				}
+
+				return episode.derive(s, e);
+			}
 		});
-	}
-
-	protected Integer getSeason(Entry a) {
-		return this == AniDB ? null : a.defaulttvdbseason;
-	}
-
-	protected Integer getEpisodeNumber(Entry a, Integer e) {
-		if (a.episodeoffset != null) {
-			return this == AniDB ? e - a.episodeoffset : e + a.episodeoffset;
-		}
-
-		return e;
 	}
 
 	public Optional<Integer> map(int id, AnimeLists destination) throws Exception {
