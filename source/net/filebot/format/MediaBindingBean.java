@@ -65,6 +65,7 @@ import net.filebot.mediainfo.MediaInfoException;
 import net.filebot.similarity.Normalization;
 import net.filebot.similarity.SimilarityComparator;
 import net.filebot.util.FileUtilities;
+import net.filebot.web.AnimeLists;
 import net.filebot.web.AudioTrack;
 import net.filebot.web.Episode;
 import net.filebot.web.EpisodeFormat;
@@ -792,22 +793,6 @@ public class MediaBindingBean {
 		});
 	}
 
-	@Define("xem")
-	public DynamicBindings getXrossEntityMapper() {
-		return new DynamicBindings(XEM::names, k -> {
-			if (infoObject instanceof Episode) {
-				Episode e = getEpisode();
-				XEM origin = XEM.forName(e.getSeriesInfo().getDatabase());
-				XEM destination = XEM.forName(k);
-				if (origin == destination) {
-					return e;
-				}
-				return origin.map(e, destination).orElse(e);
-			}
-			return undefined(k);
-		});
-	}
-
 	@Define("az")
 	public String getSortInitial() {
 		try {
@@ -1160,6 +1145,38 @@ public class MediaBindingBean {
 	@Define("ffprobe")
 	public Object getFFProbeDump() throws Exception {
 		return new FFProbe().open(getInferredMediaFile());
+	}
+
+	@Define("XEM")
+	public DynamicBindings getXrossEntityMapper() {
+		return new DynamicBindings(XEM::names, k -> {
+			if (infoObject instanceof Episode) {
+				Episode e = getEpisode();
+				XEM origin = XEM.forName(e.getSeriesInfo().getDatabase());
+				XEM destination = XEM.forName(k);
+				if (origin == destination) {
+					return e;
+				}
+				return origin.map(e, destination).orElse(e);
+			}
+			return undefined(k);
+		});
+	}
+
+	@Define("AnimeLists")
+	public DynamicBindings getAnimeLists() {
+		return new DynamicBindings(AnimeLists::names, k -> {
+			if (infoObject instanceof Episode) {
+				Episode e = getEpisode();
+				AnimeLists origin = AnimeLists.forName(e.getSeriesInfo().getDatabase());
+				AnimeLists destination = AnimeLists.forName(k);
+				if (origin == destination) {
+					return e;
+				}
+				return origin.map(e, destination).orElse(e);
+			}
+			return undefined(k);
+		});
 	}
 
 	public SeriesInfo getPrimarySeriesInfo() {

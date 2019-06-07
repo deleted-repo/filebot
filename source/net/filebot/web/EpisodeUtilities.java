@@ -14,11 +14,11 @@ import java.util.function.Function;
 
 public final class EpisodeUtilities {
 
-	private static Episode mapEpisode(Episode episode, Function<Episode, Episode> mapper) {
+	public static Episode mapEpisode(Episode episode, Function<Episode, Episode> mapper) {
 		return createEpisode(getMultiEpisodeList(episode).stream().map(mapper).sorted(EPISODE_NUMBERS_COMPARATOR).collect(toList()));
 	}
 
-	private static Episode selectEpisode(List<Episode> episodelist, Episode selection) {
+	public static Episode selectEpisode(List<Episode> episodelist, Episode selection) {
 		return createEpisode(episodelist.stream().filter(getMultiEpisodeList(selection)::contains).sorted(EPISODE_NUMBERS_COMPARATOR).collect(toList()));
 	}
 
