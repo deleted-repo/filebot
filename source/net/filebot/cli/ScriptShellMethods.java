@@ -262,7 +262,7 @@ public class ScriptShellMethods {
 		return FileUtilities.copyAs(self, new File(destination, self.getName()));
 	}
 
-	public String getDisplaySize(File self) {
+	public static String getDisplaySize(File self) {
 		return FileUtilities.formatSize(self.length());
 	}
 
