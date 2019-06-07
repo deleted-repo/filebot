@@ -44,11 +44,11 @@ public enum AnimeLists {
 				}
 			} else {
 				// offset mode
-				Integer s = this == AniDB ? null : a.defaulttvdbseason;
+				Integer s = destination == TheTVDB ? a.defaulttvdbseason : null;
 				Integer e = episode.getEpisode();
 
 				if (a.episodeoffset != null) {
-					e = this == AniDB ? e - a.episodeoffset : e + a.episodeoffset;
+					e = destination == TheTVDB ? e + a.episodeoffset : e - a.episodeoffset;
 				}
 
 				return episode.derive(s, e);
