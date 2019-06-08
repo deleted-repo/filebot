@@ -4,15 +4,20 @@ import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.CachedResource.*;
 import static net.filebot.Logging.*;
+import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.StringUtilities.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -47,6 +52,18 @@ public enum AnimeLists {
 				Integer s = destination == TheTVDB ? a.defaulttvdbseason : null;
 				Integer e = episode.getEpisode();
 
+				// additional custom mapping
+				if (a.mapping != null) {
+					for (Mapping m : a.mapping) {
+						if (s == m.tvdbseason) {
+							Integer mappedEpisodeNumber = m.numbers.get(e);
+							if (mappedEpisodeNumber != null) {
+								return episode.derive(m.tvdbseason, mappedEpisodeNumber);
+							}
+						}
+					}
+				}
+
 				if (a.episodeoffset != null) {
 					e = destination == TheTVDB ? e + a.episodeoffset : e - a.episodeoffset;
 				}
@@ -76,11 +93,7 @@ public enum AnimeLists {
 		return Cache.getCache("animelists", CacheType.Persistent);
 	}
 
-	protected static final Resource<Model> MODEL = Resource.lazy(AnimeLists::fetchModel);
-
-	protected static Model fetchModel() throws Exception {
-		return (Model) JAXBContext.newInstance(Model.class).createUnmarshaller().unmarshal(new ByteArrayInputStream(request("anime-list.xml")));
-	}
+	protected static final Resource<Model> MODEL = Resource.lazy(() -> unmarshal(request("anime-list.xml"), Model.class));
 
 	protected static byte[] request(String file) throws Exception {
 		// NOTE: GitHub only supports If-None-Match (If-Modified-Since is ignored)
@@ -98,29 +111,41 @@ public enum AnimeLists {
 
 		@XmlElement
 		public Entry[] anime;
+
+		@Override
+		public String toString() {
+			return marshal(this, Model.class);
+		}
 	}
 
+	@XmlRootElement(name = "anime")
 	public static class Entry {
 
 		@XmlAttribute
 		public Integer anidbid;
 
-		@XmlJavaTypeAdapter(OptionalIntegerAdapter.class)
+		@XmlJavaTypeAdapter(NumberAdapter.class)
 		@XmlAttribute
 		public Integer tvdbid;
 
-		@XmlJavaTypeAdapter(OptionalIntegerAdapter.class)
+		@XmlJavaTypeAdapter(NumberAdapter.class)
 		@XmlAttribute
 		public Integer defaulttvdbseason;
 
-		@XmlJavaTypeAdapter(OptionalIntegerAdapter.class)
+		@XmlJavaTypeAdapter(NumberAdapter.class)
 		@XmlAttribute
 		public Integer episodeoffset;
 
 		@XmlElementWrapper(name = "mapping-list")
 		public Mapping[] mapping;
+
+		@Override
+		public String toString() {
+			return marshal(this, Entry.class);
+		}
 	}
 
+	@XmlRootElement(name = "mapping")
 	public static class Mapping {
 
 		@XmlAttribute
@@ -138,11 +163,34 @@ public enum AnimeLists {
 		@XmlAttribute
 		public Integer offset;
 
+		@XmlJavaTypeAdapter(NumberMapAdapter.class)
 		@XmlValue
-		public String value;
+		public Map<Integer, Integer> numbers;
+
+		@Override
+		public String toString() {
+			return marshal(this, Mapping.class);
+		}
 	}
 
-	private static class OptionalIntegerAdapter extends XmlAdapter<String, Integer> {
+	private static <T> T unmarshal(byte[] bytes, Class<T> type) throws Exception {
+		return (T) JAXBContext.newInstance(type).createUnmarshaller().unmarshal(new ByteArrayInputStream(bytes));
+	}
+
+	private static <T> String marshal(T object, Class<T> type) {
+		try {
+			StringWriter buffer = new StringWriter();
+			Marshaller marshaller = JAXBContext.newInstance(type).createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+			marshaller.marshal(object, buffer);
+			return buffer.toString();
+		} catch (Exception e) {
+			return e.toString();
+		}
+	}
+
+	private static class NumberAdapter extends XmlAdapter<String, Integer> {
 
 		@Override
 		public Integer unmarshal(String s) throws Exception {
@@ -152,6 +200,19 @@ public enum AnimeLists {
 		@Override
 		public String marshal(Integer i) throws Exception {
 			return String.valueOf(i);
+		}
+	}
+
+	private static class NumberMapAdapter extends XmlAdapter<String, Map<Integer, Integer>> {
+
+		@Override
+		public Map<Integer, Integer> unmarshal(String s) throws Exception {
+			return tokenize(s, SEMICOLON).map(m -> matchIntegers(m)).filter(m -> m.size() >= 2).collect(toMap(m -> m.get(0), m -> m.get(1)));
+		}
+
+		@Override
+		public String marshal(Map<Integer, Integer> m) throws Exception {
+			return m.entrySet().stream().map(e -> join(Stream.of(e.getKey(), e.getValue()), "-")).collect(joining(";"));
 		}
 	}
 
@@ -170,11 +231,11 @@ public enum AnimeLists {
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println(AnimeLists.AniDB.map(14444, AnimeLists.TheTVDB));
+		System.out.println(AnimeLists.AniDB.map(9183, AnimeLists.TheTVDB));
 
-		List<Episode> episodes = WebServices.AniDB.getEpisodeList(14444, SortOrder.Absolute, Locale.ENGLISH);
+		List<Episode> episodes = WebServices.AniDB.getEpisodeList(9183, SortOrder.Absolute, Locale.ENGLISH);
 		for (Episode episode : episodes) {
-			System.out.println(AnimeLists.AniDB.map(episode, AnimeLists.TheTVDB));
+			System.out.println(AnimeLists.AniDB.map(episode, AnimeLists.TheTVDB).get());
 		}
 
 		System.exit(0);
