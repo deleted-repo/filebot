@@ -37,48 +37,109 @@ public enum AnimeLists {
 
 	public Optional<Episode> map(Episode episode, AnimeLists destination) throws Exception {
 		return find(episode.getSeriesInfo().getId()).map(a -> {
-			if (destination == TheTVDB && a.defaulttvdbseason == null) {
-				// auto-align mode
+			// auto-align mode
+			if (a.defaulttvdbseason == null) {
 				try {
-					return WebServices.TheTVDB.getEpisodeList(a.tvdbid, SortOrder.Airdate, Locale.ENGLISH).stream().filter(e -> {
-						return episode.getEpisode() != null && episode.getEpisode().equals(e.getAbsolute());
-					}).findFirst().orElse(null);
+					return destination.mapAutoAligned(a, episode);
 				} catch (Exception e) {
 					debug.warning(e::toString);
-					return null;
 				}
-			} else {
-				// offset mode
-				Integer s = destination == TheTVDB ? a.defaulttvdbseason : null;
-				Integer e = episode.getEpisode();
+				return null;
+			}
 
-				// additional custom mapping
-				if (a.mapping != null) {
-					for (Mapping m : a.mapping) {
-						if (s == m.tvdbseason) {
-							Integer mappedEpisodeNumber = m.numbers.get(e);
-							if (mappedEpisodeNumber != null) {
-								return episode.derive(m.tvdbseason, mappedEpisodeNumber);
-							}
+			// offset mode
+			int s = getSeasonNumber(episode);
+			int e = getEpisodeNumber(episode);
+
+			// check explicit episode mapping
+			if (a.mapping != null) {
+				for (Mapping m : a.mapping) {
+					if (s == getSeason(m)) {
+						Optional<Integer> episodeMapping = destination.getEpisodeNumber(m, e);
+						if (episodeMapping.isPresent()) {
+							return derive(episode, destination.getSeason(m), episodeMapping.get());
 						}
 					}
 				}
-
-				if (a.episodeoffset != null) {
-					e = destination == TheTVDB ? e + a.episodeoffset : e - a.episodeoffset;
-				}
-
-				return episode.derive(s, e);
 			}
+
+			// apply default season
+			s = destination.getSeason(a, episode);
+
+			// apply episode offset
+			e += destination.getEpisodeNumberOffset(a);
+
+			return derive(episode, s, e);
 		});
+	}
+
+	private Episode derive(Episode episode, int s, int e) {
+		if (s == 0) {
+			return episode.derive(null, null, e); // special episode
+		} else {
+			return episode.derive(s, e, null); // regular episode
+		}
 	}
 
 	public Optional<Integer> map(int id, AnimeLists destination) throws Exception {
 		return find(id).map(destination::getId);
 	}
 
-	public Optional<Entry> find(int id) throws Exception {
-		return stream(MODEL.get().anime).filter(this::isValid).filter(a -> id == getId(a)).findFirst();
+	protected Episode mapAutoAligned(Entry a, Episode episode) throws Exception {
+		switch (this) {
+		case TheTVDB:
+			return WebServices.TheTVDB.getEpisodeList(a.tvdbid, SortOrder.Airdate, Locale.ENGLISH).stream().filter(e -> {
+				return episode.getEpisode() != null && episode.getEpisode().equals(e.getAbsolute());
+			}).findFirst().orElse(null);
+		case AniDB:
+			return WebServices.AniDB.getEpisodeList(a.anidbid, SortOrder.Absolute, Locale.ENGLISH).stream().filter(e -> {
+				return episode.getAbsolute() != null && episode.getAbsolute().equals(e.getEpisode());
+			}).findFirst().orElse(null);
+		}
+		return null;
+	}
+
+	protected Optional<Integer> getEpisodeNumber(Mapping m, Integer e) {
+		if (m.numbers != null) {
+			switch (this) {
+			case TheTVDB:
+				return Optional.ofNullable(m.numbers.get(e));
+			case AniDB:
+				return m.numbers.entrySet().stream().filter(it -> e.equals(it.getValue())).map(it -> it.getKey()).findFirst();
+			}
+		}
+		return Optional.empty();
+	}
+
+	protected int getEpisodeNumberOffset(Entry a) {
+		return a.episodeoffset == null ? 0 : this == TheTVDB ? a.episodeoffset : -a.episodeoffset;
+	}
+
+	protected int getSeasonNumber(Episode e) {
+		// special episode
+		if (e.getSpecial() != null) {
+			return 0;
+		}
+
+		// regular absolute episode
+		if (e.getSeason() == null) {
+			return this == AniDB ? 1 : -1;
+		}
+
+		// regular SxE episode
+		return e.getSeason();
+	}
+
+	protected int getEpisodeNumber(Episode e) {
+		return e.getSpecial() != null ? e.getSpecial() : e.getEpisode();
+	}
+
+	protected int getSeason(Mapping m) {
+		return this == AniDB ? m.anidbseason : m.tvdbseason;
+	}
+
+	protected int getSeason(Entry a, Episode e) {
+		return e.getSpecial() != null ? 0 : this == AniDB ? 1 : a.defaulttvdbseason;
 	}
 
 	protected int getId(Entry a) {
@@ -87,6 +148,10 @@ public enum AnimeLists {
 
 	protected boolean isValid(Entry a) {
 		return a.anidbid != null && a.tvdbid != null;
+	}
+
+	public Optional<Entry> find(int id) throws Exception {
+		return stream(MODEL.get().anime).filter(this::isValid).filter(a -> id == getId(a)).findFirst();
 	}
 
 	protected static Cache getCache() {
@@ -135,6 +200,9 @@ public enum AnimeLists {
 		@XmlJavaTypeAdapter(NumberAdapter.class)
 		@XmlAttribute
 		public Integer episodeoffset;
+
+		@XmlElement
+		public String name;
 
 		@XmlElementWrapper(name = "mapping-list")
 		public Mapping[] mapping;
@@ -235,7 +303,16 @@ public enum AnimeLists {
 
 		List<Episode> episodes = WebServices.AniDB.getEpisodeList(9183, SortOrder.Absolute, Locale.ENGLISH);
 		for (Episode episode : episodes) {
+			System.out.println("\n" + episode);
 			System.out.println(AnimeLists.AniDB.map(episode, AnimeLists.TheTVDB).get());
+		}
+
+		System.out.println("----------------------------");
+
+		List<Episode> episodes2 = WebServices.TheTVDB.getEpisodeList(102261, SortOrder.Airdate, Locale.ENGLISH);
+		for (Episode episode : episodes2) {
+			System.out.println("\n" + episode);
+			System.out.println(AnimeLists.TheTVDB.map(episode, AnimeLists.AniDB).get());
 		}
 
 		System.exit(0);
