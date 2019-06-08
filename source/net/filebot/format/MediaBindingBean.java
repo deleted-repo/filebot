@@ -829,7 +829,7 @@ public class MediaBindingBean {
 
 	@Define("mediaTitle")
 	public String getMediaTitle() {
-		return getMediaInfo(StreamKind.General, 0, "Title", "Movie");
+		return Stream.of(StreamKind.General, StreamKind.Video).flatMap(k -> getMediaInfo(k, "Title", "Movie")).findFirst().orElse(null);
 	}
 
 	@Define("audioLanguages")
