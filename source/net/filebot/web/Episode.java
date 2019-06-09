@@ -153,10 +153,6 @@ public class Episode implements Serializable {
 		return derive(getSeriesName(), getSeason(), null, getAbsolute(), special);
 	}
 
-	public Episode derive(String seriesName, Integer season, Integer episode, Integer absolute) {
-		return derive(seriesName, season, episode, absolute, null);
-	}
-
 	public Episode derive(String seriesName, Integer season, Integer episode, Integer absolute, Integer special) {
 		return new Episode(seriesName, season, episode, getTitle(), absolute, special, getAirdate(), getId(), getSeriesInfo());
 	}

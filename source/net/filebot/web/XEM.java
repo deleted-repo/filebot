@@ -74,7 +74,7 @@ public enum XEM {
 			Integer e = getInteger(mappedNumbers, "episode");
 			Integer a = getInteger(mappedNumbers, "absolute");
 
-			return episode.derive(mappedSeriesName, mappedSeason, e, a);
+			return episode.derive(mappedSeriesName, mappedSeason, e, a, null);
 		}).collect(toList());
 
 		if (mappedEpisode.size() == 1) {

@@ -1,7 +1,7 @@
 Next Release (4.8.6)
 ====================
 * Enhanced `Selection Dialog` with thumbnails and tooltips
-* Improved support for mapping episode information between different databases and numbering schemes
+* Improved support for mapping episode information between different databases and numbering schemes (e.g. via `AnimeLists` or `XEM`)
 * Added `{history}` binding for looking up the original file path of `{f}` (e.g. useful for `-exec` post-processing commands)
 * Evaluate `{closures}` automatically in `String.plus(Closure)` constructs (e.g. `{"[" + {n} + " " + {s00e00} + "]"}`)
 * Ensure that `ActionPopup` is always displayed on top of the Windows Task Bar
@@ -11,7 +11,7 @@ Next Release (4.8.6)
 * Allow `@file.groovy` syntax in `Format Editor` and `Preset Editor` (e.g. `@/path/to/MyFormat.groovy`)
 * Added `--mapper` option (e.g. `--mapper XEM.TheTVDB`)
 * Allow `*.groovy` files as argument value for `--format`, `--filter`, `--mapper` and `--file-filter` CLI options (e.g. `--format /path/to/MyFormat.groovy`)
-* Support [bash completion](installer/bash/filebot_completion)
+* Support `bash_completion`
 
 
 FileBot 4.8.5

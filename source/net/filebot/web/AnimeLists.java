@@ -36,7 +36,10 @@ public enum AnimeLists {
 	AniDB, TheTVDB;
 
 	public Optional<Episode> map(Episode episode, AnimeLists destination) throws Exception {
-		return find(episode.getSeriesInfo().getId()).map(a -> {
+		int id = episode.getSeriesInfo().getId();
+		int series = getSeasonNumber(episode);
+
+		return find(id, series).map(a -> {
 			// auto-align mode
 			if (a.defaulttvdbseason == null) {
 				try {
@@ -57,7 +60,7 @@ public enum AnimeLists {
 					if (s == getSeason(m)) {
 						Optional<Integer> episodeMapping = destination.getEpisodeNumber(m, e);
 						if (episodeMapping.isPresent()) {
-							return derive(episode, destination.getSeason(m), episodeMapping.get());
+							return destination.derive(a, episode, destination.getSeason(m), episodeMapping.get());
 						}
 					}
 				}
@@ -69,16 +72,22 @@ public enum AnimeLists {
 			// apply episode offset
 			e += destination.getEpisodeNumberOffset(a);
 
-			return derive(episode, s, e);
-		});
+			return destination.derive(a, episode, s, e);
+		}).findFirst();
 	}
 
-	private Episode derive(Episode episode, int s, int e) {
-		return s == 0 ? episode.deriveSpecial(e) : episode.derive(s, e);
+	private Episode derive(Entry a, Episode episode, int s, int e) {
+		if (s == 0) {
+			// special
+			return this == AniDB ? episode.derive(a.name, null, null, null, e) : episode.deriveSpecial(e);
+		} else {
+			// regular
+			return this == AniDB ? episode.derive(a.name, null, e, null, null) : episode.derive(s, e);
+		}
 	}
 
-	public Optional<Integer> map(int id, AnimeLists destination) throws Exception {
-		return find(id).map(destination::getId);
+	public Optional<Integer> map(int id, int s, AnimeLists destination) throws Exception {
+		return find(id, s).map(destination::getId).findFirst();
 	}
 
 	protected Episode mapAutoAligned(Entry a, Episode episode) throws Exception {
@@ -113,7 +122,7 @@ public enum AnimeLists {
 
 	protected int getSeasonNumber(Episode e) {
 		// special episode
-		if (e.getSpecial() != null) {
+		if (e.isSpecial()) {
 			return 0;
 		}
 
@@ -127,7 +136,7 @@ public enum AnimeLists {
 	}
 
 	protected int getEpisodeNumber(Episode e) {
-		return e.getSpecial() != null ? e.getSpecial() : e.getEpisode();
+		return e.isSpecial() ? e.getSpecial() : e.getEpisode();
 	}
 
 	protected int getSeason(Mapping m) {
@@ -135,7 +144,7 @@ public enum AnimeLists {
 	}
 
 	protected int getSeason(Entry a, Episode e) {
-		return e.getSpecial() != null ? 0 : this == AniDB ? 1 : a.defaulttvdbseason;
+		return e.isSpecial() ? 0 : this == AniDB ? 1 : a.defaulttvdbseason;
 	}
 
 	protected int getId(Entry a) {
@@ -146,8 +155,12 @@ public enum AnimeLists {
 		return a.anidbid != null && a.tvdbid != null;
 	}
 
-	public Optional<Entry> find(int id) throws Exception {
-		return stream(MODEL.get().anime).filter(this::isValid).filter(a -> id == getId(a)).findFirst();
+	public Stream<Entry> find(int id) throws Exception {
+		return stream(MODEL.get().anime).filter(this::isValid).filter(a -> id == getId(a));
+	}
+
+	public Stream<Entry> find(int id, int s) throws Exception {
+		return this == AniDB ? find(id) : find(id).filter(a -> a.defaulttvdbseason == null || s == a.defaulttvdbseason);
 	}
 
 	protected static Cache getCache() {
@@ -292,26 +305,6 @@ public enum AnimeLists {
 		}
 
 		throw new IllegalArgumentException(String.format("%s not in %s", name, asList(values())));
-	}
-
-	public static void main(String[] args) throws Exception {
-		System.out.println(AnimeLists.AniDB.map(9183, AnimeLists.TheTVDB));
-
-		List<Episode> episodes = WebServices.AniDB.getEpisodeList(9183, SortOrder.Absolute, Locale.ENGLISH);
-		for (Episode episode : episodes) {
-			System.out.println("\n" + episode);
-			System.out.println(AnimeLists.AniDB.map(episode, AnimeLists.TheTVDB).get());
-		}
-
-		System.out.println("----------------------------");
-
-		List<Episode> episodes2 = WebServices.TheTVDB.getEpisodeList(102261, SortOrder.Airdate, Locale.ENGLISH);
-		for (Episode episode : episodes2) {
-			System.out.println("\n" + episode);
-			System.out.println(AnimeLists.TheTVDB.map(episode, AnimeLists.AniDB).get());
-		}
-
-		System.exit(0);
 	}
 
 }
