@@ -1,13 +1,12 @@
 package net.filebot.web;
 
 import static java.util.stream.Collectors.*;
-import static net.filebot.similarity.Normalization.*;
+import static net.filebot.web.EpisodeUtilities.*;
 
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.ParsePosition;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -27,7 +26,7 @@ public class EpisodeFormat extends Format {
 	@Override
 	public StringBuffer format(Object obj, StringBuffer sb, FieldPosition pos) {
 		if (obj instanceof MultiEpisode) {
-			return sb.append(formatMultiEpisode(((MultiEpisode) obj).getEpisodes()));
+			return sb.append(formatMultiEpisode(((MultiEpisode) obj)));
 		}
 
 		// format episode object, e.g. Dark Angel - 3x01 - Labyrinth [2009-06-01]
@@ -60,19 +59,19 @@ public class EpisodeFormat extends Format {
 		return sb;
 	}
 
-	public String formatMultiEpisode(Collection<Episode> episodes) {
-		Function<Episode, String> seriesName = it -> it.getSeriesName();
-		Function<Episode, String> episodeNumber = it -> formatSxE(it);
-		Function<Episode, String> episodeTitle = it -> it.getTitle() == null ? "" : removeTrailingBrackets(it.getTitle());
+	public String formatMultiEpisode(Episode... episodes) {
+		Function<Episode, String> seriesName = Episode::getSeriesName;
+		Function<Episode, String> episodeNumber = this::formatSxE;
+		Function<Episode, String> episodeTitle = this::formatMultiTitle;
 
 		return Stream.of(seriesName, episodeNumber, episodeTitle).map(f -> {
-			return episodes.stream().map(f::apply).filter(s -> s.length() > 0).distinct().collect(joining(" & "));
+			return streamMultiEpisode(episodes).map(f).filter(s -> s.length() > 0).distinct().collect(joining(" & "));
 		}).collect(joining(" - "));
 	}
 
 	public String formatSxE(Episode episode) {
 		if (episode instanceof MultiEpisode) {
-			return formatMultiRangeSxE(((MultiEpisode) episode).getEpisodes());
+			return formatMultiRangeSxE(((MultiEpisode) episode));
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -87,7 +86,7 @@ public class EpisodeFormat extends Format {
 
 	public String formatS00E00(Episode episode) {
 		if (episode instanceof MultiEpisode) {
-			return formatMultiRangeS00E00(((MultiEpisode) episode).getEpisodes());
+			return formatMultiRangeS00E00(((MultiEpisode) episode));
 		}
 
 		StringBuilder sb = new StringBuilder();
@@ -100,8 +99,8 @@ public class EpisodeFormat extends Format {
 		return sb.toString();
 	}
 
-	public String formatMultiTitle(Collection<Episode> episodes) {
-		return episodes.stream().map(Episode::getTitle).filter(Objects::nonNull).map(Normalization::removeTrailingBrackets).distinct().collect(joining(" & "));
+	public String formatMultiTitle(Episode... episodes) {
+		return streamMultiEpisode(episodes).map(Episode::getTitle).filter(Objects::nonNull).map(Normalization::removeTrailingBrackets).distinct().collect(joining(" & "));
 	}
 
 	public String formatMultiRangeSxE(Iterable<Episode> episodes) {

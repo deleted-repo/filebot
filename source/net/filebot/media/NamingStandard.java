@@ -4,7 +4,6 @@ import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.similarity.Normalization.*;
 import static net.filebot.util.FileUtilities.*;
-import static net.filebot.web.EpisodeUtilities.*;
 
 import java.util.Objects;
 
@@ -52,7 +51,7 @@ public class NamingStandard {
 	}
 
 	public String getPath(Episode e) {
-		if (isAnime(e)) {
+		if (e.isAnime()) {
 			// Anime
 			return path(getAnimeFolder(), getSeriesFolder(e), getEpisodeName(e));
 		} else {
@@ -140,7 +139,7 @@ public class NamingStandard {
 	}
 
 	public String formatSeriesName(Episode e) {
-		if (isAnime(e)) {
+		if (e.isAnime()) {
 			// Anime
 			return e.getSeriesInfo().getName(); // series info name is the primary Anime name
 		} else {
@@ -150,7 +149,7 @@ public class NamingStandard {
 	}
 
 	public String formatEpisodeNumbers(Episode e) {
-		if (isAnime(e)) {
+		if (e.isAnime()) {
 			// Anime
 			return EpisodeFormat.SeasonEpisode.formatSxE(e);
 		} else {
@@ -161,7 +160,7 @@ public class NamingStandard {
 
 	public String formatEpisodeTitle(Episode e) {
 		// enforce title length limit by default
-		return truncateText(EpisodeFormat.SeasonEpisode.formatMultiTitle(getMultiEpisodeList(e)), TITLE_MAX_LENGTH);
+		return truncateText(EpisodeFormat.SeasonEpisode.formatMultiTitle(e), TITLE_MAX_LENGTH);
 	}
 
 	public static final int TITLE_MAX_LENGTH = 150;

@@ -1,9 +1,7 @@
 package net.filebot.web;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -90,10 +88,6 @@ public class Episode implements Serializable {
 		return seriesInfo;
 	}
 
-	public List<Integer> getNumbers() {
-		return Arrays.asList(season, episode, special, absolute);
-	}
-
 	public Set<String> getSeriesNames() {
 		Set<String> names = new LinkedHashSet<String>();
 		if (seriesName != null) {
@@ -110,6 +104,18 @@ public class Episode implements Serializable {
 			}
 		}
 		return names;
+	}
+
+	public boolean isAnime() {
+		return seriesInfo != null && (Objects.equals(seriesInfo.getType(), SeriesInfo.TYPE_ANIME) || Objects.equals(seriesInfo.getDatabase(), "AniDB")); // HACK: check database == AniDB for backward compatibility
+	}
+
+	public boolean isRegular() {
+		return episode != null;
+	}
+
+	public boolean isSpecial() {
+		return special != null;
 	}
 
 	@Override
@@ -139,8 +145,16 @@ public class Episode implements Serializable {
 		return new Episode(this);
 	}
 
-	public Episode derive(Integer season, Integer episode, Integer special) {
-		return new Episode(getSeriesName(), season, episode, getTitle(), getAbsolute(), special, getAirdate(), getId(), getSeriesInfo());
+	public Episode derive(Integer season, Integer episode) {
+		return derive(getSeriesName(), season, episode, getAbsolute(), null);
+	}
+
+	public Episode deriveSpecial(Integer special) {
+		return derive(getSeriesName(), getSeason(), null, getAbsolute(), special);
+	}
+
+	public Episode derive(String seriesName, Integer season, Integer episode, Integer absolute) {
+		return derive(seriesName, season, episode, absolute, null);
 	}
 
 	public Episode derive(String seriesName, Integer season, Integer episode, Integer absolute, Integer special) {

@@ -74,11 +74,7 @@ public enum AnimeLists {
 	}
 
 	private Episode derive(Episode episode, int s, int e) {
-		if (s == 0) {
-			return episode.derive(null, null, e); // special episode
-		} else {
-			return episode.derive(s, e, null); // regular episode
-		}
+		return s == 0 ? episode.deriveSpecial(e) : episode.derive(s, e);
 	}
 
 	public Optional<Integer> map(int id, AnimeLists destination) throws Exception {

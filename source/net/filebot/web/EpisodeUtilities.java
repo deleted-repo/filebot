@@ -1,6 +1,6 @@
 package net.filebot.web;
 
-import static java.util.Collections.*;
+import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
 import static net.filebot.WebServices.*;
@@ -11,34 +11,27 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public final class EpisodeUtilities {
 
 	public static Episode mapEpisode(Episode episode, Function<Episode, Episode> mapper) {
-		return createEpisode(getMultiEpisodeList(episode).stream().map(mapper).sorted(EPISODE_NUMBERS_COMPARATOR).collect(toList()));
+		return createEpisode(streamMultiEpisode(episode).map(mapper).sorted(EPISODE_NUMBERS_COMPARATOR).toArray(Episode[]::new));
 	}
 
 	public static Episode selectEpisode(List<Episode> episodelist, Episode selection) {
-		return createEpisode(episodelist.stream().filter(getMultiEpisodeList(selection)::contains).sorted(EPISODE_NUMBERS_COMPARATOR).collect(toList()));
+		return createEpisode(episodelist.stream().filter(streamMultiEpisode(selection).collect(toSet())::contains).sorted(EPISODE_NUMBERS_COMPARATOR).toArray(Episode[]::new));
 	}
 
-	private static Episode createEpisode(List<Episode> episode) {
-		if (episode.isEmpty()) {
+	private static Episode createEpisode(Episode... episode) {
+		if (episode.length == 0) {
 			throw new IllegalArgumentException("Invalid Episode: Empty");
 		}
-		return episode.size() == 1 ? episode.get(0) : new MultiEpisode(episode);
+		return episode.length == 1 ? episode[0] : new MultiEpisode(episode);
 	}
 
-	public static List<Episode> getMultiEpisodeList(Episode e) {
-		return e instanceof MultiEpisode ? ((MultiEpisode) e).getEpisodes() : singletonList(e);
-	}
-
-	public static boolean isAnime(Episode e) {
-		return AniDB.getIdentifier().equals(e.getSeriesInfo().getDatabase());
-	}
-
-	public static boolean isRegular(Episode e) {
-		return e.getEpisode() != null && e.getSpecial() == null;
+	public static Stream<Episode> streamMultiEpisode(Episode... episodes) {
+		return stream(episodes).flatMap(e -> e instanceof MultiEpisode ? ((MultiEpisode) e).stream() : Stream.of(e));
 	}
 
 	public static List<Episode> fetchEpisodeList(Episode episode) throws Exception {
@@ -59,7 +52,7 @@ public final class EpisodeUtilities {
 	}
 
 	public static Episode trySeasonEpisodeForAnime(Episode episode) {
-		if (isAnime(episode) && isRegular(episode)) {
+		if (episode.isAnime() && episode.isRegular()) {
 			return mapEpisode(episode, e -> {
 				try {
 					return AnimeLists.forName(e.getSeriesInfo().getDatabase()).map(e, AnimeLists.TheTVDB).orElse(e);

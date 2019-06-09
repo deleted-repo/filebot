@@ -72,7 +72,6 @@ import net.filebot.web.EpisodeFormat;
 import net.filebot.web.Movie;
 import net.filebot.web.MovieInfo;
 import net.filebot.web.MoviePart;
-import net.filebot.web.MultiEpisode;
 import net.filebot.web.SeriesInfo;
 import net.filebot.web.SimpleDate;
 import net.filebot.web.SortOrder;
@@ -151,11 +150,7 @@ public class MediaBindingBean {
 	@Define("s")
 	public Integer getSeasonNumber() {
 		// look up season numbers via TheTVDB for AniDB episode data
-		if (isAnime(getEpisode())) {
-			return trySeasonEpisodeForAnime(getEpisode()).getSeason();
-		}
-
-		return getEpisode().getSeason();
+		return trySeasonEpisodeForAnime(getEpisode()).getSeason();
 	}
 
 	@Define("e")
@@ -194,7 +189,7 @@ public class MediaBindingBean {
 		String t = null;
 
 		if (infoObject instanceof Episode) {
-			t = infoObject instanceof MultiEpisode ? EpisodeFormat.SeasonEpisode.formatMultiTitle(getEpisodes()) : getEpisode().getTitle(); // implicit support for multi-episode title formatting
+			t = getEpisode().getTitle();
 		} else if (infoObject instanceof Movie) {
 			t = getMovieInfo().getTagline();
 		} else if (infoObject instanceof AudioTrack) {
@@ -270,7 +265,7 @@ public class MediaBindingBean {
 		}
 
 		// access episode list and find minimum airdate if necessary
-		return getEpisodeList().stream().filter(e -> isRegular(e)).map(Episode::getAirdate).filter(Objects::nonNull).min(SimpleDate::compareTo).get();
+		return getEpisodeList().stream().filter(Episode::isRegular).map(Episode::getAirdate).filter(Objects::nonNull).min(SimpleDate::compareTo).get();
 	}
 
 	@Define("absolute")
@@ -804,12 +799,12 @@ public class MediaBindingBean {
 
 	@Define("anime")
 	public boolean isAnimeEpisode() {
-		return getEpisodes().stream().anyMatch(it -> isAnime(it));
+		return getEpisode().isAnime();
 	}
 
 	@Define("regular")
 	public boolean isRegularEpisode() {
-		return getEpisodes().stream().anyMatch(it -> isRegular(it));
+		return getEpisode().isRegular();
 	}
 
 	@Define("episodelist")
@@ -819,12 +814,12 @@ public class MediaBindingBean {
 
 	@Define("sy")
 	public List<Integer> getSeasonYears() throws Exception {
-		return getEpisodeList().stream().filter(e -> isRegular(e) && e.getSeason().equals(getSeasonNumber()) && e.getAirdate() != null).map(e -> e.getAirdate().getYear()).sorted().distinct().collect(toList());
+		return getEpisodeList().stream().filter(e -> e.isRegular() && e.getSeason().equals(getSeasonNumber()) && e.getAirdate() != null).map(e -> e.getAirdate().getYear()).sorted().distinct().collect(toList());
 	}
 
 	@Define("sc")
 	public Integer getSeasonCount() throws Exception {
-		return getEpisodeList().stream().filter(e -> isRegular(e) && e.getSeason() != null).map(Episode::getSeason).max(Integer::compare).get();
+		return getEpisodeList().stream().filter(e -> e.isRegular() && e.getSeason() != null).map(Episode::getSeason).max(Integer::compare).get();
 	}
 
 	@Define("mediaTitle")
@@ -960,7 +955,7 @@ public class MediaBindingBean {
 
 	@Define("episodes")
 	public List<Episode> getEpisodes() {
-		return getMultiEpisodeList(getEpisode());
+		return streamMultiEpisode(getEpisode()).collect(toList());
 	}
 
 	@Define("movie")
