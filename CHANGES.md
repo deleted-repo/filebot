@@ -2,6 +2,7 @@ Next Release (4.8.6)
 ====================
 * Enhanced `Selection Dialog` with thumbnails and tooltips
 * Improved support for mapping episode information between different databases and numbering schemes (e.g. via `AnimeLists` or `XEM`)
+* Added `{seasonize}` binding (e.g. map `AniDB` numbers to `TheTVDB` SxE numbers and vice versa)
 * Added `{history}` binding for looking up the original file path of `{f}` (e.g. useful for `-exec` post-processing commands)
 * Evaluate `{closures}` automatically in `String.plus(Closure)` constructs (e.g. `{"[" + {n} + " " + {s00e00} + "]"}`)
 * Ensure that `ActionPopup` is always displayed on top of the Windows Task Bar
