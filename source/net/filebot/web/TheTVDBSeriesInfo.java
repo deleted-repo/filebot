@@ -30,7 +30,7 @@ public class TheTVDBSeriesInfo extends SeriesInfo implements Serializable {
 	}
 
 	public TheTVDBSeriesInfo(Datasource database, Locale language, Integer id) {
-		super(database, language, id);
+		super(database, null, language, id, TYPE_SERIES);
 	}
 
 	public String getSlug() {

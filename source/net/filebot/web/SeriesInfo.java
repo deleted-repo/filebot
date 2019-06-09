@@ -10,10 +10,16 @@ import java.util.Objects;
 
 public class SeriesInfo implements Serializable {
 
+	public static final String TYPE_SERIES = "TV Series";
+	public static final String TYPE_ANIME = "Anime";
+
 	// request parameters
 	protected String database;
 	protected String order;
 	protected String language;
+
+	// series classification
+	protected String type;
 
 	// series parameters
 	protected Integer id;
@@ -36,6 +42,7 @@ public class SeriesInfo implements Serializable {
 		this.database = other.database;
 		this.order = other.order;
 		this.language = other.language;
+		this.type = other.type;
 		this.id = other.id;
 		this.name = other.name;
 		this.aliasNames = other.aliasNames == null ? null : other.aliasNames.clone();
@@ -49,17 +56,13 @@ public class SeriesInfo implements Serializable {
 		this.status = other.status;
 	}
 
-	public SeriesInfo(Datasource database, Locale language, Integer id) {
-		this.database = database.getIdentifier();
-		this.language = language.getLanguage();
-		this.id = id;
-	}
+	public SeriesInfo(Datasource database, SortOrder order, Locale language, Integer id, String type) {
+		this.database = database == null ? null : database.getIdentifier();
+		this.order = order == null ? null : order.name();
+		this.language = language == null ? null : language.getLanguage();
 
-	public SeriesInfo(Datasource database, SortOrder order, Locale language, Integer id) {
-		this.database = database.getIdentifier();
-		this.order = order.name();
-		this.language = language.getLanguage();
 		this.id = id;
+		this.type = type;
 	}
 
 	public void setDatabase(String database) {
@@ -78,20 +81,28 @@ public class SeriesInfo implements Serializable {
 		return order;
 	}
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public String getLanguage() {
 		return language;
 	}
 
 	public void setLanguage(String language) {
 		this.language = language;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -131,7 +142,7 @@ public class SeriesInfo implements Serializable {
 	}
 
 	public void setGenres(List<String> genres) {
-		this.genres = genres.toArray(new String[genres.size()]);
+		this.genres = genres.toArray(new String[0]);
 	}
 
 	public String getNetwork() {
