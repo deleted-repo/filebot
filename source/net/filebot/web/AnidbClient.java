@@ -100,7 +100,7 @@ public class AnidbClient extends AbstractEpisodeListProvider implements ArtworkP
 		}
 
 		// parse series info
-		SeriesInfo seriesInfo = new SeriesInfo(this, sortOrder, locale, anime.getId());
+		SeriesInfo seriesInfo = new SeriesInfo(this, sortOrder, locale, anime.getId(), SeriesInfo.TYPE_ANIME);
 		seriesInfo.setAliasNames(anime.getAliasNames());
 
 		// AniDB types: Movie, Music Video, Other, OVA, TV Series, TV Special, Web, unknown
