@@ -788,6 +788,21 @@ public class MediaBindingBean {
 		});
 	}
 
+	@Define("seasonize")
+	public AssociativeScriptObject getSeasonizeObject() throws Exception {
+		Episode e = getEpisode();
+
+		if (e.getSeason() != null) {
+			return createBindingObject(e); // do nothing
+		}
+
+		if (AniDB.getIdentifier().equals(e.getSeriesInfo().getDatabase())) {
+			return AnimeLists.AniDB.map(e, AnimeLists.TheTVDB).map(this::createBindingObject).orElse(null); // map AniDB to TheTVDB bindings
+		}
+
+		return createBindingObject(fetchEpisode(e, SortOrder.Airdate, null));
+	}
+
 	@Define("az")
 	public String getSortInitial() {
 		try {
