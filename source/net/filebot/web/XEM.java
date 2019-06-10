@@ -40,6 +40,10 @@ public enum XEM {
 		return this == AniDB ? 1 : s;
 	}
 
+	public String getSeriesName(Map<String, List<String>> n, Integer s) {
+		return this == AniDB ? n.get(Integer.toString(s)).get(0) : n.get("all").get(0);
+	}
+
 	protected final Resource<Set<Integer>> haveMap = Resource.lazy(this::getHaveMap);
 
 	public Optional<Episode> map(Episode episode, XEM destination) throws Exception {
@@ -49,19 +53,19 @@ public enum XEM {
 			return Optional.empty();
 		}
 
-		Set<String> seriesNames = episode.getSeriesNames();
+		String seriesName = episode.getSeriesName();
 		Integer season = getSeason(episode.getSeason());
 
 		Map<String, List<String>> names = getNames(seriesId);
 		debug.finest(format("[XEM] %s", names));
 
 		Integer mappedSeason = names.entrySet().stream().filter(it -> {
-			return it.getValue().stream().anyMatch(seriesNames::contains);
+			return it.getValue().stream().anyMatch(seriesName::equals);
 		}).map(it -> {
 			return matchInteger(it.getKey());
 		}).filter(Objects::nonNull).findFirst().orElse(season);
 
-		String mappedSeriesName = names.get("all").get(0);
+		String mappedSeriesName = destination.getSeriesName(names, mappedSeason);
 
 		Map<String, Map<String, Number>> mapping = episode.getEpisode() != null ? getSingle(seriesId, mappedSeason, episode.getEpisode()) : getSingle(seriesId, 0, episode.getSpecial());
 
