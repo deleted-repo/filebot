@@ -270,20 +270,6 @@ class MovieMatcher implements AutoCompleteMatcher {
 		return html.toString();
 	}
 
-	protected String checkedStripReleaseInfo(File file, boolean strict) throws Exception {
-		String name = stripReleaseInfo(getName(file));
-
-		// try to redeem possible false negative matches
-		if (name.length() < 2) {
-			Movie match = checkMovie(file, strict);
-			if (match != null) {
-				return match.getName();
-			}
-		}
-
-		return name;
-	}
-
 	protected Movie selectMovie(File movieFile, boolean strict, String userQuery, List<Movie> options, Component parent) throws Exception {
 		// just auto-pick singleton results
 		if (options.size() == 1) {
@@ -291,11 +277,11 @@ class MovieMatcher implements AutoCompleteMatcher {
 		}
 
 		// 1. movie by filename
-		String fileQuery = (userQuery != null) ? userQuery : checkedStripReleaseInfo(movieFile, strict);
+		String fileQuery = userQuery != null ? userQuery : checkMovieStripReleaseInfo(movieFile, strict);
 
 		// 2. movie by directory
 		File movieFolder = guessMovieFolder(movieFile);
-		String folderQuery = (userQuery != null || movieFolder == null) ? "" : checkedStripReleaseInfo(movieFolder, strict);
+		String folderQuery = userQuery != null || movieFolder == null ? "" : checkMovieStripReleaseInfo(movieFolder, strict);
 
 		// auto-ignore invalid files
 		if (userQuery == null && fileQuery.length() < 2 && folderQuery.length() < 2) {

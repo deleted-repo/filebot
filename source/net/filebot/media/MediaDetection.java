@@ -1208,6 +1208,24 @@ public class MediaDetection {
 		return stripReleaseInfo(name, true);
 	}
 
+	public static String checkMovieStripReleaseInfo(File file, boolean strict) {
+		String name = stripReleaseInfo(getName(file));
+
+		// try to redeem possible false negative matches
+		if (name.length() < 2) {
+			try {
+				Movie match = checkMovie(file, strict);
+				if (match != null) {
+					return match.getName();
+				}
+			} catch (Exception e) {
+				debug.log(Level.SEVERE, "Failed to strip release info: " + e.getMessage(), e);
+			}
+		}
+
+		return name;
+	}
+
 	private static final Resource<Pattern> blacklistPattern = Resource.lazy(releaseInfo::getBlacklistPattern);
 
 	public static List<String> stripBlacklistedTerms(Collection<String> names) {

@@ -502,34 +502,17 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	protected Movie selectMovie(String query, Collection<Movie> options) throws Exception {
+		query = query.toLowerCase();
+
 		// auto-select perfect match
 		for (Movie movie : options) {
-			String movieIdentifier = normalizePunctuation(movie.toString()).toLowerCase();
-			if (query.toLowerCase().startsWith(movieIdentifier)) {
+			String movieIdentifier = normalizePunctuation(movie.getNameWithYear()).toLowerCase();
+			if (query.startsWith(movieIdentifier)) {
 				return movie;
 			}
 		}
 
-		List<Movie> matches = selectSearchResult(query, options, false, false, false, 1);
-		return matches.size() > 0 ? matches.get(0) : null;
-	}
-
-	protected String checkMovieStripReleaseInfo(File file, boolean strict) {
-		String name = stripReleaseInfo(getName(file));
-
-		// try to redeem possible false negative matches
-		if (name.length() < 2) {
-			try {
-				Movie match = checkMovie(file, strict);
-				if (match != null) {
-					return match.getName();
-				}
-			} catch (Exception e) {
-				debug.warning(e::toString);
-			}
-		}
-
-		return name;
+		return selectSearchResult(query, options, false, false, false, 1).stream().findFirst().orElse(null);
 	}
 
 	public List<File> renameMusic(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, List<MusicIdentificationService> services, ExecCommand exec) throws Exception {
