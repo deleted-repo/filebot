@@ -12,7 +12,6 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -338,7 +337,7 @@ public class AnimeList {
 
 		@Override
 		public String marshal(Integer i) throws Exception {
-			return Objects.toString(i, "");
+			return i == null ? null : Integer.toString(i);
 		}
 	}
 
