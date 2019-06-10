@@ -73,6 +73,7 @@ import net.filebot.web.AudioTrack;
 import net.filebot.web.Datasource;
 import net.filebot.web.Episode;
 import net.filebot.web.EpisodeListProvider;
+import net.filebot.web.MappedEpisode;
 import net.filebot.web.Movie;
 import net.filebot.web.MovieIdentificationService;
 import net.filebot.web.MoviePart;
@@ -220,7 +221,7 @@ public class CmdlineOperations implements CmdlineInterface {
 
 				// filter episodes and apply custom mappings
 				episodes = applyExpressionFilter(episodes, filter);
-				episodes = applyExpressionMapper(episodes, mapper, Episode.class);
+				episodes = applyEpisodeExpressionMapper(episodes, mapper);
 
 				for (List<File> filesPerType : mapByMediaExtension(filter(batch, VIDEO_FILES, SUBTITLE_FILES)).values()) {
 					matches.addAll(matchEpisodes(filesPerType, episodes, strict));
@@ -882,8 +883,11 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		log.fine(format("Apply filter [%s] on [%d] items", filter.getExpression(), input.size()));
 
+		// support context bindings
+		Map<File, ?> context = new EntryList<File, T>(null, input);
+
 		return input.stream().filter(it -> {
-			if (filter.matches(new MediaBindingBean(it, null, new EntryList<File, T>(null, input)))) {
+			if (filter.matches(new MediaBindingBean(it, null, context))) {
 				log.finest(format("Include [%s]", it));
 				return true;
 			}
@@ -891,20 +895,23 @@ public class CmdlineOperations implements CmdlineInterface {
 		}).collect(toList());
 	}
 
-	protected <T> List<T> applyExpressionMapper(List<T> input, ExpressionMapper mapper, Class<T> type) {
+	protected List<Episode> applyEpisodeExpressionMapper(List<Episode> episodes, ExpressionMapper mapper) {
 		if (mapper == null) {
-			return input;
+			return episodes;
 		}
 
-		log.fine(format("Apply mapper [%s] on [%d] items", mapper.getExpression(), input.size()));
+		log.fine(format("Apply mapper [%s] on [%d] items", mapper.getExpression(), episodes.size()));
 
-		return input.stream().map(it -> {
+		// support episode list context
+		Map<File, Episode> context = new EntryList<File, Episode>(null, episodes);
+
+		return episodes.stream().map(episode -> {
 			try {
-				T result = (T) mapper.map(new MediaBindingBean(it, null, new EntryList<File, T>(null, input)), type);
-				log.finest(format("Map [%s] to [%s]", it, result));
-				return result;
+				Episode mapping = mapper.map(new MediaBindingBean(episode, null, context), Episode.class);
+				log.finest(format("Map [%s] to [%s]", episode, mapping));
+				return new MappedEpisode(episode, mapping);
 			} catch (Exception e) {
-				debug.warning(format("Exclude [%s] due to map failure: %s", it, e));
+				debug.warning(format("Exclude [%s] due to map failure: %s", episode, e));
 				return null;
 			}
 		}).filter(Objects::nonNull).distinct().collect(toList());
@@ -1078,7 +1085,7 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// filter episodes and apply custom mappings
 		episodes = applyExpressionFilter(episodes, filter);
-		episodes = applyExpressionMapper(episodes, mapper, Episode.class);
+		episodes = applyEpisodeExpressionMapper(episodes, mapper);
 
 		return episodes;
 	}

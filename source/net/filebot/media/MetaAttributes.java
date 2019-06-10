@@ -19,6 +19,7 @@ import net.filebot.MetaAttributeView;
 import net.filebot.vfs.SimpleFileInfo;
 import net.filebot.web.AudioTrack;
 import net.filebot.web.Episode;
+import net.filebot.web.MappedEpisode;
 import net.filebot.web.Movie;
 import net.filebot.web.MoviePart;
 import net.filebot.web.MultiEpisode;
@@ -28,7 +29,7 @@ public class MetaAttributes {
 	public static final String FILENAME_KEY = "net.filebot.filename";
 	public static final String METADATA_KEY = "net.filebot.metadata";
 
-	public static final Map<String, String> JSON_TYPE_MAP = unmodifiableMap(Stream.of(Episode.class, MultiEpisode.class, Movie.class, MoviePart.class, AudioTrack.class, SimpleFileInfo.class).collect(toMap(Class::getName, Class::getSimpleName)));
+	public static final Map<String, String> JSON_TYPE_MAP = unmodifiableMap(Stream.of(Episode.class, MultiEpisode.class, MappedEpisode.class, Movie.class, MoviePart.class, AudioTrack.class, SimpleFileInfo.class).collect(toMap(Class::getName, Class::getSimpleName)));
 
 	private final BasicFileAttributeView fileAttributeView;
 	private final MetaAttributeView metaAttributeView;

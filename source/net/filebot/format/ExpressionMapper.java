@@ -26,11 +26,11 @@ public class ExpressionMapper {
 		return expression;
 	}
 
-	public <T> Object map(Object value, Class<T> type) throws ScriptException {
+	public <T> T map(Object value, Class<T> type) throws ScriptException {
 		return map(new ExpressionBindings(value), type);
 	}
 
-	public <T> Object map(Bindings bindings, Class<T> type) throws ScriptException {
+	public <T> T map(Bindings bindings, Class<T> type) throws ScriptException {
 		// use privileged bindings so we are not restricted by the script sandbox
 		Bindings priviledgedBindings = PrivilegedInvocation.newProxy(Bindings.class, bindings, AccessController.getContext());
 
@@ -42,7 +42,7 @@ public class ExpressionMapper {
 		Object value = compiledExpression.eval(context);
 
 		// value as target type
-		return DefaultTypeTransformation.castToType(value, type);
+		return (T) DefaultTypeTransformation.castToType(value, type);
 	}
 
 }
