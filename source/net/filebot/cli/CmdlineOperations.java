@@ -11,6 +11,7 @@ import static net.filebot.WebServices.*;
 import static net.filebot.hash.VerificationUtilities.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.media.XattrMetaInfo.*;
+import static net.filebot.similarity.Normalization.*;
 import static net.filebot.subtitle.SubtitleUtilities.*;
 import static net.filebot.util.FileUtilities.*;
 
@@ -409,7 +410,7 @@ public class CmdlineOperations implements CmdlineInterface {
 			}
 
 			// force all mappings
-			Movie movie = selectSearchResult(query, options);
+			Movie movie = selectMovie(query, options);
 			for (File file : files) {
 				movieByFile.put(file, movie);
 			}
@@ -458,7 +459,7 @@ public class CmdlineOperations implements CmdlineInterface {
 				try {
 					// select first element if matches are reliable
 					if (options.size() > 0) {
-						movie = selectSearchResult(stripReleaseInfo(getName(file)), options);
+						movie = selectMovie(checkMovieStripReleaseInfo(file, strict), options);
 
 						// make sure to get the language-specific movie object for the selected option
 						movie = getLocalizedMovie(service, movie, locale);
@@ -498,6 +499,37 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// rename movies
 		return renameAll(formatMatches(matches, format, outputDir), renameAction, conflictAction, matches, exec);
+	}
+
+	protected Movie selectMovie(String query, Collection<Movie> options) throws Exception {
+		// auto-select perfect match
+		for (Movie movie : options) {
+			String movieIdentifier = normalizePunctuation(movie.toString()).toLowerCase();
+			if (query.toLowerCase().startsWith(movieIdentifier)) {
+				return movie;
+			}
+		}
+
+		List<Movie> matches = selectSearchResult(query, options, false, false, false, 1);
+		return matches.size() > 0 ? matches.get(0) : null;
+	}
+
+	protected String checkMovieStripReleaseInfo(File file, boolean strict) {
+		String name = stripReleaseInfo(getName(file));
+
+		// try to redeem possible false negative matches
+		if (name.length() < 2) {
+			try {
+				Movie match = checkMovie(file, strict);
+				if (match != null) {
+					return match.getName();
+				}
+			} catch (Exception e) {
+				debug.warning(e::toString);
+			}
+		}
+
+		return name;
 	}
 
 	public List<File> renameMusic(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, List<MusicIdentificationService> services, ExecCommand exec) throws Exception {
@@ -925,11 +957,6 @@ public class CmdlineOperations implements CmdlineInterface {
 				return null;
 			}
 		}).filter(Objects::nonNull).distinct().collect(toList());
-	}
-
-	protected <T extends SearchResult> T selectSearchResult(String query, Collection<T> options) throws Exception {
-		List<T> matches = selectSearchResult(query, options, false, false, false, 1);
-		return matches.size() > 0 ? matches.get(0) : null;
 	}
 
 	protected <T extends SearchResult> List<T> selectSearchResult(String query, Collection<T> options, boolean sort, boolean alias, boolean strict, int limit) throws Exception {
