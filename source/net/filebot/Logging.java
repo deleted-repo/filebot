@@ -3,6 +3,7 @@ package net.filebot;
 import static java.nio.channels.Channels.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
+import static net.filebot.util.RegularExpressions.*;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,6 +95,10 @@ public final class Logging {
 
 	public static Supplier<String> format(String format, Object... args) {
 		return () -> String.format(format, args);
+	}
+
+	public static Supplier<String> formatSingleLine(String format, Object... args) {
+		return () -> NEWLINE.splitAsStream(String.format(format, args)).map(String::trim).filter(s -> !s.isEmpty()).collect(joining(" ⏎ "));
 	}
 
 	public static Supplier<String> trace(Throwable t) {

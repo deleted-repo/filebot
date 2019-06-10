@@ -891,7 +891,7 @@ public class CmdlineOperations implements CmdlineInterface {
 			return input;
 		}
 
-		log.fine(format("Apply filter [%s] on [%d] items", filter.getExpression(), input.size()));
+		log.fine(formatSingleLine("Apply filter [%s] on [%d] items", filter.getExpression(), input.size()));
 
 		// support context bindings
 		Map<File, ?> context = new EntryList<File, T>(null, input);
@@ -910,7 +910,7 @@ public class CmdlineOperations implements CmdlineInterface {
 			return episodes;
 		}
 
-		log.fine(format("Apply mapper [%s] on [%d] items", mapper.getExpression(), episodes.size()));
+		log.fine(formatSingleLine("Apply mapper [%s] on [%d] items", mapper.getExpression(), episodes.size()));
 
 		// support episode list context
 		Map<File, Episode> context = new EntryList<File, Episode>(null, episodes);
