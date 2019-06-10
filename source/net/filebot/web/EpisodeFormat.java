@@ -55,7 +55,10 @@ public class EpisodeFormat extends Format {
 				sb.append(" - ").append("Special " + episode.getSpecial());
 			}
 		}
-		sb.append(" - ").append(episode.getTitle());
+
+		if (episode.getTitle() != null) {
+			sb.append(" - ").append(episode.getTitle());
+		}
 		return sb;
 	}
 

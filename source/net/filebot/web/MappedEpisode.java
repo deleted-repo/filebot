@@ -1,10 +1,16 @@
 package net.filebot.web;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 
 public class MappedEpisode extends Episode {
 
 	protected Episode mapping;
+
+	public MappedEpisode() {
+		// used by deserializer
+	}
 
 	public MappedEpisode(Episode original, Episode mapping) {
 		super(original);
@@ -19,59 +25,60 @@ public class MappedEpisode extends Episode {
 		return mapping;
 	}
 
+	private <T> T getFirst(Function<Episode, T> getter) {
+		return Optional.ofNullable(getter.apply(mapping)).orElseGet(() -> {
+			return Optional.ofNullable(getter.apply(getOriginal())).orElse(null);
+		});
+	}
+
 	@Override
 	public String getSeriesName() {
-		return mapping.getSeriesName();
+		return getFirst(Episode::getSeriesName);
 	}
 
 	@Override
 	public Integer getEpisode() {
-		return mapping.getEpisode();
+		return mapping.getEpisode(); // always use mapped episode number
 	}
 
 	@Override
 	public Integer getSeason() {
-		return mapping.getSeason();
+		return mapping.getSeason(); // always use mapped season number
 	}
 
 	@Override
 	public String getTitle() {
-		return mapping.getTitle();
+		return getFirst(Episode::getTitle);
 	}
 
 	@Override
 	public Integer getAbsolute() {
-		return mapping.getAbsolute();
+		return mapping.getAbsolute(); // always use mapped absolute number
 	}
 
 	@Override
 	public Integer getSpecial() {
-		return mapping.getSpecial();
+		return mapping.getSpecial(); // always use mapped special number
 	}
 
 	@Override
 	public SimpleDate getAirdate() {
-		return mapping.getAirdate();
+		return getFirst(Episode::getAirdate);
 	}
 
 	@Override
 	public Integer getId() {
-		return mapping.getId();
-	}
-
-	@Override
-	public SeriesInfo getSeriesInfo() {
-		return mapping.getSeriesInfo();
+		return getFirst(Episode::getId);
 	}
 
 	@Override
 	public Set<String> getSeriesNames() {
-		return mapping.getSeriesNames();
+		return getFirst(Episode::getSeriesNames);
 	}
 
 	@Override
 	public boolean isAnime() {
-		return mapping.isAnime();
+		return super.isAnime(); // series info is only stored in the original episode object
 	}
 
 	@Override
@@ -85,13 +92,18 @@ public class MappedEpisode extends Episode {
 	}
 
 	@Override
+	public SeriesInfo getSeriesInfo() {
+		return super.getSeriesInfo(); // series info is only stored in the original episode object
+	}
+
+	@Override
 	public boolean equals(Object obj) {
-		return mapping.equals(obj);
+		return super.equals(obj); // use original episode object for episode comparison
 	}
 
 	@Override
 	public int hashCode() {
-		return mapping.hashCode();
+		return super.hashCode(); // use original episode object for episode comparison
 	}
 
 	@Override
@@ -116,7 +128,7 @@ public class MappedEpisode extends Episode {
 
 	@Override
 	public String toString() {
-		return mapping.toString();
+		return String.format("%s [%s]", getMapping(), getOriginal());
 	}
 
 }
