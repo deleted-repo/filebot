@@ -213,8 +213,12 @@ public class AnimeLists implements Datasource {
 		}
 	}
 
+	public Cache getCache() {
+		return Cache.getCache(getIdentifier(), CacheType.Monthly);
+	}
+
 	public Model getModel() throws Exception {
-		return Cache.getCache(getIdentifier(), CacheType.Monthly).bytes("https://github.com/ScudLee/anime-lists/raw/master/anime-list.xml", URL::new).transform(bytes -> {
+		return getCache().bytes("https://github.com/ScudLee/anime-lists/raw/master/anime-list.xml", URL::new).transform(bytes -> {
 			return unmarshal(bytes, Model.class);
 		}).get();
 	}
