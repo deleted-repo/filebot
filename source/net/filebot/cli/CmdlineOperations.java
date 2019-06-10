@@ -502,7 +502,7 @@ public class CmdlineOperations implements CmdlineInterface {
 	}
 
 	protected Movie selectMovie(String query, Collection<Movie> options) throws Exception {
-		query = query.toLowerCase();
+		query = normalizePunctuation(query).toLowerCase();
 
 		// auto-select perfect match
 		for (Movie movie : options) {
@@ -512,7 +512,8 @@ public class CmdlineOperations implements CmdlineInterface {
 			}
 		}
 
-		return selectSearchResult(query, options, false, false, false, 1).stream().findFirst().orElse(null);
+		List<Movie> selection = selectSearchResult(query, options, false, false, false, 1);
+		return selection.isEmpty() ? null : selection.get(0);
 	}
 
 	public List<File> renameMusic(Collection<File> files, RenameAction renameAction, ConflictAction conflictAction, File outputDir, ExpressionFileFormat format, List<MusicIdentificationService> services, ExecCommand exec) throws Exception {
