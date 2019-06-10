@@ -223,7 +223,7 @@ public class AnidbClient extends AbstractEpisodeListProvider implements ArtworkP
 	}
 
 	/**
-	 * This method is overridden in {@link net.filebot.WebServices.AnidbClientWithLocalSearch} to fetch the Anime Index from our own host and not anidb.net
+	 * This method is overridden in {@link net.filebot.WebServices.AnidbClient} to fetch the Anime Index from our own host and not anidb.net
 	 */
 	public SearchResult[] getAnimeTitles() throws Exception {
 		// get data file (unzip and cache)

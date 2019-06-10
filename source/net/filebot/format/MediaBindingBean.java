@@ -65,7 +65,7 @@ import net.filebot.mediainfo.MediaInfoException;
 import net.filebot.similarity.Normalization;
 import net.filebot.similarity.SimilarityComparator;
 import net.filebot.util.FileUtilities;
-import net.filebot.web.AnimeList;
+import net.filebot.web.AnimeLists;
 import net.filebot.web.AudioTrack;
 import net.filebot.web.Episode;
 import net.filebot.web.EpisodeFormat;
@@ -797,7 +797,7 @@ public class MediaBindingBean {
 		}
 
 		if (AniDB.getIdentifier().equals(e.getSeriesInfo().getDatabase())) {
-			return new AnimeList().map(e, AnimeList.getDB(e), AnimeList.DB.TheTVDB).map(this::createBindingObject).orElse(null); // map AniDB to TheTVDB bindings
+			return AnimeList.map(e, AnimeLists.getDB(e), AnimeLists.DB.TheTVDB).map(this::createBindingObject).orElse(null); // map AniDB to TheTVDB bindings
 		}
 
 		return createBindingObject(fetchEpisode(e, SortOrder.Airdate, null));
@@ -1175,13 +1175,13 @@ public class MediaBindingBean {
 
 	@Define("AnimeList")
 	public DynamicBindings getAnimeLists() {
-		return new DynamicBindings(AnimeList.DB::names, k -> {
+		return new DynamicBindings(AnimeLists.DB::names, k -> {
 			if (infoObject instanceof Episode) {
 				Episode e = getEpisode();
-				if (AnimeList.getDB(e) == AnimeList.getDB(k)) {
+				if (AnimeLists.getDB(e) == AnimeLists.getDB(k)) {
 					return e;
 				}
-				return new AnimeList().map(e, AnimeList.getDB(e), AnimeList.getDB(k)).orElse(e);
+				return AnimeList.map(e, AnimeLists.getDB(e), AnimeLists.getDB(k)).orElse(e);
 			}
 			return undefined(k);
 		});

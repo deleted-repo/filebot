@@ -36,7 +36,6 @@ import java.util.function.IntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import org.tukaani.xz.XZInputStream;
 
@@ -47,6 +46,7 @@ import net.filebot.Resource;
 import net.filebot.util.FileUtilities.RegexFindFilter;
 import net.filebot.util.FileUtilities.RegexMatchFilter;
 import net.filebot.util.SystemProperty;
+import net.filebot.web.AnimeLists;
 import net.filebot.web.Movie;
 import net.filebot.web.SearchResult;
 import net.filebot.web.SubtitleSearchResult;
@@ -385,6 +385,10 @@ public class ReleaseInfo {
 		return osdbIndex.get();
 	}
 
+	public AnimeLists.Model getAnimeListModel() throws Exception {
+		return animeListModel.get();
+	}
+
 	private static FolderEntryFilter diskFolderFilter;
 
 	public FileFilter getDiskFolderFilter() {
@@ -449,6 +453,10 @@ public class ReleaseInfo {
 		return unmodifiableMap(map);
 	}).memoize();
 
+	private final Resource<AnimeLists.Model> animeListModel = resource("url.anime-list", Cache.ONE_WEEK, bytes -> {
+		return AnimeLists.unmarshal(bytes, AnimeLists.Model.class);
+	}).memoize();
+
 	private final Resource<String[]> releaseGroup = lines("url.release-groups", Cache.ONE_WEEK);
 	private final Resource<String[]> queryBlacklist = lines("url.query-blacklist", Cache.ONE_WEEK);
 
@@ -495,14 +503,17 @@ public class ReleaseInfo {
 	}
 
 	protected <A> Resource<A[]> resource(String name, Duration expirationTime, Function<String, A> parse, IntFunction<A[]> generator) {
+		// all data files are UTF-8 encoded XZ compressed text files
+		return resource(name, expirationTime, bytes -> {
+			return NEWLINE.splitAsStream(UTF_8.decode(ByteBuffer.wrap(bytes))).filter(s -> s.length() > 0).map(parse).filter(Objects::nonNull).toArray(generator);
+		});
+	}
+
+	protected <A> Resource<A> resource(String name, Duration expirationTime, Function<byte[], A> parse) {
 		return () -> {
 			Cache cache = Cache.getCache("data", CacheType.Persistent);
 			byte[] bytes = cache.bytes(name, n -> new URL(getProperty(n)), XZInputStream::new).expire(refreshDuration.optional().orElse(expirationTime)).get();
-
-			// all data files are UTF-8 encoded XZ compressed text files
-			Stream<String> lines = NEWLINE.splitAsStream(UTF_8.decode(ByteBuffer.wrap(bytes)));
-
-			return lines.filter(s -> s.length() > 0).map(parse).filter(Objects::nonNull).toArray(generator);
+			return parse.apply(bytes);
 		};
 	}
 

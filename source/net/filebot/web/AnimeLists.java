@@ -2,7 +2,6 @@ package net.filebot.web;
 
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
-import static net.filebot.CachedResource.*;
 import static net.filebot.Logging.*;
 import static net.filebot.util.RegularExpressions.*;
 import static net.filebot.util.StringUtilities.*;
@@ -16,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import javax.swing.Icon;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,19 +28,18 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.filebot.Cache;
 import net.filebot.CacheType;
-import net.filebot.Resource;
 import net.filebot.WebServices;
 
-public class AnimeList {
+public class AnimeLists implements Datasource {
 
-	private Model model;
-
-	public AnimeList() throws Exception {
-		this.model = MODEL.get();
+	@Override
+	public String getIdentifier() {
+		return "AnimeLists";
 	}
 
-	public Model getModel() {
-		return model;
+	@Override
+	public Icon getIcon() {
+		return null;
 	}
 
 	public Optional<Episode> map(Episode episode, DB source, DB destination) throws Exception {
@@ -84,7 +83,7 @@ public class AnimeList {
 		}).findFirst();
 	}
 
-	private Episode derive(DB db, Entry a, Episode episode, int s, int e) {
+	protected Episode derive(DB db, Entry a, Episode episode, int s, int e) {
 		if (s == 0) {
 			// special
 			switch (db) {
@@ -202,7 +201,7 @@ public class AnimeList {
 	}
 
 	public Stream<Entry> find(DB db, int id) throws Exception {
-		return stream(model.anime).filter(this::isValid).filter(a -> id == getId(db, a));
+		return stream(getModel().anime).filter(this::isValid).filter(a -> id == getId(db, a));
 	}
 
 	public Stream<Entry> find(DB db, int id, int s) throws Exception {
@@ -214,21 +213,10 @@ public class AnimeList {
 		}
 	}
 
-	protected static Cache getCache() {
-		return Cache.getCache("animelists", CacheType.Persistent);
-	}
-
-	protected static final Resource<Model> MODEL = Resource.lazy(() -> unmarshal(request("anime-list.xml"), Model.class));
-
-	protected static byte[] request(String file) throws Exception {
-		// NOTE: GitHub only supports If-None-Match (If-Modified-Since is ignored)
-		Cache cache = getCache();
-
-		return cache.bytes(file, AnimeList::getResource).fetch(fetchIfNoneMatch(url -> file, cache)).expire(Cache.ONE_MONTH).get();
-	}
-
-	protected static URL getResource(String file) throws Exception {
-		return new URL("https://raw.githubusercontent.com/ScudLee/anime-lists/master/" + file);
+	public Model getModel() throws Exception {
+		return Cache.getCache(getIdentifier(), CacheType.Monthly).bytes("https://github.com/ScudLee/anime-lists/raw/master/anime-list.xml", URL::new).transform(bytes -> {
+			return unmarshal(bytes, Model.class);
+		}).get();
 	}
 
 	public static DB getDB(Episode e) {
@@ -325,10 +313,9 @@ public class AnimeList {
 		public String toString() {
 			return marshal(this, Mapping.class);
 		}
-
 	}
 
-	private static class NumberAdapter extends XmlAdapter<String, Integer> {
+	protected static class NumberAdapter extends XmlAdapter<String, Integer> {
 
 		@Override
 		public Integer unmarshal(String s) throws Exception {
@@ -341,7 +328,7 @@ public class AnimeList {
 		}
 	}
 
-	private static class NumberMapAdapter extends XmlAdapter<String, int[][]> {
+	protected static class NumberMapAdapter extends XmlAdapter<String, int[][]> {
 
 		@Override
 		public int[][] unmarshal(String s) throws Exception {
@@ -354,15 +341,19 @@ public class AnimeList {
 		}
 	}
 
-	private static <T> T unmarshal(byte[] bytes, Class<T> type) throws Exception {
-		return (T) JAXBContext.newInstance(type).createUnmarshaller().unmarshal(new ByteArrayInputStream(bytes));
+	public static <T> T unmarshal(byte[] bytes, Class<T> type) {
+		try {
+			return (T) JAXBContext.newInstance(type).createUnmarshaller().unmarshal(new ByteArrayInputStream(bytes));
+		} catch (Exception e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
-	private static <T> String marshal(T object, Class<T> type) {
+	public static <T> String marshal(T object, Class<T> type) {
 		try {
 			StringWriter buffer = new StringWriter();
 			Marshaller marshaller = JAXBContext.newInstance(type).createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.FALSE);
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 			marshaller.marshal(object, buffer);
 			return buffer.toString();

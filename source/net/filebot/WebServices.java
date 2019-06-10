@@ -27,7 +27,6 @@ import javax.swing.Icon;
 import net.filebot.media.LocalDatasource;
 import net.filebot.similarity.MetricAvg;
 import net.filebot.web.AcoustIDClient;
-import net.filebot.web.AnidbClient;
 import net.filebot.web.Artwork;
 import net.filebot.web.Datasource;
 import net.filebot.web.EpisodeListProvider;
@@ -39,15 +38,12 @@ import net.filebot.web.Movie;
 import net.filebot.web.MovieIdentificationService;
 import net.filebot.web.MusicIdentificationService;
 import net.filebot.web.OMDbClient;
-import net.filebot.web.OpenSubtitlesClient;
 import net.filebot.web.SearchResult;
 import net.filebot.web.ShooterSubtitles;
 import net.filebot.web.SubtitleProvider;
 import net.filebot.web.SubtitleSearchResult;
-import net.filebot.web.TMDbClient;
 import net.filebot.web.TMDbTVClient;
 import net.filebot.web.TVMazeClient;
-import net.filebot.web.TheTVDBClient;
 import net.filebot.web.TheTVDBSearchResult;
 import net.filebot.web.ThumbnailProvider;
 import net.filebot.web.VideoHashSubtitleService;
@@ -59,27 +55,28 @@ public final class WebServices {
 
 	// movie sources
 	public static final OMDbClient OMDb = new OMDbClient(getApiKey("omdb"));
-	public static final TMDbClient TheMovieDB = new TMDbClientWithLocalSearch(getApiKey("themoviedb"));
+	public static final net.filebot.web.TMDbClient TheMovieDB = new TMDbClient(getApiKey("themoviedb"));
 
 	// episode sources
 	public static final TVMazeClient TVmaze = new TVMazeClient();
-	public static final AnidbClient AniDB = new AnidbClientWithLocalSearch(getApiKey("anidb"), 7);
+	public static final net.filebot.web.AnidbClient AniDB = new AnidbClient(getApiKey("anidb"), 7);
 
 	// extended TheTVDB module with local search
-	public static final TheTVDBClientWithLocalSearch TheTVDB = new TheTVDBClientWithLocalSearch(getApiKey("thetvdb"));
+	public static final net.filebot.web.TheTVDBClient TheTVDB = new TheTVDBClient(getApiKey("thetvdb"));
 	public static final TMDbTVClient TheMovieDB_TV = new TMDbTVClient(TheMovieDB);
 
 	// subtitle sources
-	public static final OpenSubtitlesClient OpenSubtitles = new OpenSubtitlesClientWithLocalSearch(getApiKey("opensubtitles"), getApplicationVersion());
+	public static final net.filebot.web.OpenSubtitlesClient OpenSubtitles = new OpenSubtitlesClient(getApiKey("opensubtitles"), getApplicationVersion());
 	public static final ShooterSubtitles Shooter = new ShooterSubtitles();
 
 	// other sources
+	public static final net.filebot.web.AnimeLists AnimeList = new AnimeLists();
 	public static final FanartTVClient FanartTV = new FanartTVClient(getApiKey("fanart.tv"));
 	public static final AcoustIDClient AcoustID = new AcoustIDClient(getApiKey("acoustid"));
 	public static final ID3Lookup MediaInfoID3 = new ID3Lookup();
 
 	public static Datasource[] getServices() {
-		return new Datasource[] { TheMovieDB, OMDb, TheTVDB, AniDB, TheMovieDB_TV, TVmaze, AcoustID, MediaInfoID3, LocalDatasource.EXIF, LocalDatasource.XATTR, LocalDatasource.FILE, OpenSubtitles, Shooter, FanartTV };
+		return new Datasource[] { TheMovieDB, OMDb, TheTVDB, AniDB, TheMovieDB_TV, TVmaze, AcoustID, MediaInfoID3, LocalDatasource.EXIF, LocalDatasource.XATTR, LocalDatasource.FILE, OpenSubtitles, Shooter, AnimeList, FanartTV };
 	}
 
 	public static MovieIdentificationService[] getMovieIdentificationServices() {
@@ -135,9 +132,9 @@ public final class WebServices {
 
 	public static final ExecutorService requestThreadPool = Executors.newCachedThreadPool();
 
-	public static class TMDbClientWithLocalSearch extends TMDbClient implements ThumbnailProvider {
+	private static class TMDbClient extends net.filebot.web.TMDbClient implements ThumbnailProvider {
 
-		public TMDbClientWithLocalSearch(String apikey) {
+		public TMDbClient(String apikey) {
 			super(apikey);
 		}
 
@@ -172,7 +169,7 @@ public final class WebServices {
 			List<Callable<List<Movie>>> searches = new ArrayList<>();
 
 			// online API search first
-			searches.add(() -> TMDbClientWithLocalSearch.super.searchMovie(movieName, movieYear, locale, extendedInfo));
+			searches.add(() -> TMDbClient.super.searchMovie(movieName, movieYear, locale, extendedInfo));
 
 			if (movieYear > 0) {
 				// the year might be off by 1 so we also check movies from the previous year and the next year
@@ -200,9 +197,9 @@ public final class WebServices {
 		}
 	}
 
-	public static class TheTVDBClientWithLocalSearch extends TheTVDBClient implements ThumbnailProvider {
+	private static class TheTVDBClient extends net.filebot.web.TheTVDBClient implements ThumbnailProvider {
 
-		public TheTVDBClientWithLocalSearch(String apikey) {
+		public TheTVDBClient(String apikey) {
 			super(apikey);
 		}
 
@@ -227,7 +224,7 @@ public final class WebServices {
 		@Override
 		public List<SearchResult> fetchSearchResult(String query, Locale locale) throws Exception {
 			// run local search and API search in parallel
-			Future<List<SearchResult>> apiSearch = requestThreadPool.submit(() -> TheTVDBClientWithLocalSearch.super.fetchSearchResult(query, locale));
+			Future<List<SearchResult>> apiSearch = requestThreadPool.submit(() -> TheTVDBClient.super.fetchSearchResult(query, locale));
 			Future<List<SearchResult>> localSearch = requestThreadPool.submit(() -> localIndex.get().search(query));
 
 			// combine alias names into a single search results, and keep API search name as primary name
@@ -242,9 +239,9 @@ public final class WebServices {
 		}
 	}
 
-	public static class AnidbClientWithLocalSearch extends AnidbClient implements ThumbnailProvider {
+	private static class AnidbClient extends net.filebot.web.AnidbClient implements ThumbnailProvider {
 
-		public AnidbClientWithLocalSearch(String client, int clientver) {
+		public AnidbClient(String client, int clientver) {
 			super(client, clientver);
 		}
 
@@ -264,9 +261,17 @@ public final class WebServices {
 		}
 	}
 
-	public static class OpenSubtitlesClientWithLocalSearch extends OpenSubtitlesClient {
+	private static class AnimeLists extends net.filebot.web.AnimeLists {
 
-		public OpenSubtitlesClientWithLocalSearch(String name, String version) {
+		@Override
+		public net.filebot.web.AnimeLists.Model getModel() throws Exception {
+			return releaseInfo.getAnimeListModel();
+		}
+	}
+
+	private static class OpenSubtitlesClient extends net.filebot.web.OpenSubtitlesClient {
+
+		public OpenSubtitlesClient(String name, String version) {
 			super(name, version);
 		}
 
