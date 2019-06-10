@@ -1,6 +1,5 @@
 package net.filebot.web;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -26,9 +25,8 @@ public class MappedEpisode extends Episode {
 	}
 
 	private <T> T getFirst(Function<Episode, T> getter) {
-		return Optional.ofNullable(getter.apply(mapping)).orElseGet(() -> {
-			return Optional.ofNullable(getter.apply(getOriginal())).orElse(null);
-		});
+		T mappingValue = getter.apply(mapping);
+		return mappingValue != null ? mappingValue : getter.apply(getOriginal());
 	}
 
 	@Override
