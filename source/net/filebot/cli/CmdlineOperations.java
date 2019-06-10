@@ -224,7 +224,7 @@ public class CmdlineOperations implements CmdlineInterface {
 				episodes = applyEpisodeExpressionMapper(episodes, mapper);
 
 				for (List<File> filesPerType : mapByMediaExtension(filter(batch, VIDEO_FILES, SUBTITLE_FILES)).values()) {
-					matches.addAll(matchEpisodes(filesPerType, episodes, strict));
+					matchEpisodes(filesPerType, episodes, strict).stream().map(this::unmap).forEach(matches::add);
 				}
 			}
 		}
@@ -252,6 +252,16 @@ public class CmdlineOperations implements CmdlineInterface {
 
 		// rename episodes
 		return renameAll(formatMatches(matches, format, outputDir), renameAction, conflictAction, matches, exec);
+	}
+
+	private Match<File, ?> unmap(Match<File, ?> match) {
+		// add matches and unmap mapped episodes
+		if (match.getCandidate() instanceof MappedEpisode) {
+			MappedEpisode mapping = (MappedEpisode) match.getCandidate();
+			log.fine(format("Reverse Map [%s] to [%s]", mapping.getMapping(), mapping.getOriginal()));
+			return new Match<File, Episode>(match.getValue(), mapping.getOriginal());
+		}
+		return match;
 	}
 
 	private List<Match<File, Object>> matchEpisodes(Collection<File> files, Collection<Episode> episodes, boolean strict) throws Exception {
