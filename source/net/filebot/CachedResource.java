@@ -221,18 +221,18 @@ public class CachedResource<K, R> implements Resource<R> {
 
 	public static Fetch fetchIfNoneMatch(Transform<URL, ?> key, Cache cache) {
 		// create cache with the same config
-		Cache etagStorage = Cache.getCache(cache.getName() + "_etag", cache.getCacheType());
+		Resource<Cache> etagStorage = Resource.lazy(() -> Cache.getCache(cache.getName() + "_etag", cache.getCacheType()));
 
 		// make sure value cache contains key, otherwise ignore previously stored etag
 		return fetchIfNoneMatch(url -> {
 			try {
-				return cache.get(key.transform(url)) == null ? null : etagStorage.get(key.transform(url));
+				return cache.get(key.transform(url)) == null ? null : etagStorage.get().get(key.transform(url));
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}, (url, etag) -> {
 			try {
-				etagStorage.put(key.transform(url), etag);
+				etagStorage.get().put(key.transform(url), etag);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
