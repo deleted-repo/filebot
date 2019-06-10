@@ -55,7 +55,7 @@ public final class EpisodeUtilities {
 		if (episode.isAnime() && episode.isRegular()) {
 			return mapEpisode(episode, e -> {
 				try {
-					return AnimeLists.forName(e.getSeriesInfo().getDatabase()).map(e, AnimeLists.TheTVDB).orElse(e);
+					return new AnimeList().map(e, AnimeList.getDB(e), AnimeList.DB.TheTVDB).orElse(e);
 				} catch (Exception ioe) {
 					debug.warning(ioe::toString);
 					return e;

@@ -194,7 +194,6 @@ public enum XEM {
 				return db;
 			}
 		}
-
 		throw new IllegalArgumentException(String.format("%s not in %s", name, asList(values())));
 	}
 
