@@ -37,11 +37,21 @@ public enum XEM {
 	}
 
 	public Integer getSeason(Integer s) {
-		return this == AniDB ? 1 : s;
+		switch (this) {
+		case AniDB:
+			return 1;
+		default:
+			return s;
+		}
 	}
 
 	public String getSeriesName(Map<String, List<String>> n, Integer s) {
-		return this == AniDB ? n.get(Integer.toString(s)).get(0) : n.get("all").get(0);
+		switch (this) {
+		case AniDB:
+			return s == null ? null : n.get(Integer.toString(s)).get(0);
+		default:
+			return n.get("all").get(0);
+		}
 	}
 
 	protected final Resource<Set<Integer>> haveMap = Resource.lazy(this::getHaveMap);
@@ -78,7 +88,7 @@ public enum XEM {
 			Integer e = getInteger(mappedNumbers, "episode");
 			Integer a = getInteger(mappedNumbers, "absolute");
 
-			return episode.derive(mappedSeriesName, mappedSeason, e, a, null);
+			return episode.derive(mappedSeriesName, destination == AniDB ? null : mappedSeason, e, a, null);
 		}).collect(toList());
 
 		if (mappedEpisode.size() == 1) {
@@ -90,7 +100,7 @@ public enum XEM {
 		return Optional.empty();
 	}
 
-	public List<Map<String, Map<String, Integer>>> getAll(Integer id) throws Exception {
+	public List<Map<String, Map<String, Number>>> getAll(Integer id) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(2);
 		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
@@ -100,6 +110,14 @@ public enum XEM {
 	}
 
 	public Map<String, Map<String, Number>> getSingle(Integer id, Integer season, Integer episode) throws Exception {
+		return getAll(id).stream().filter(m -> {
+			return m.entrySet().stream().anyMatch(it -> {
+				return it.getKey().startsWith(getOriginName()) && Objects.equals(season, getInteger(it.getValue(), "season")) && Objects.equals(episode, getInteger(it.getValue(), "episode"));
+			});
+		}).findFirst().orElse(emptyMap());
+	}
+
+	public Map<String, Map<String, Number>> getSingle2(Integer id, Integer season, Integer episode) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(4);
 		parameters.put("origin", getOriginName());
 		parameters.put("id", id);
