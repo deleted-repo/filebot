@@ -98,7 +98,7 @@ public final class Logging {
 	}
 
 	public static Supplier<String> formatSingleLine(String format, Object... args) {
-		return () -> NEWLINE.splitAsStream(String.format(format, args)).map(String::trim).filter(s -> !s.isEmpty()).collect(joining(" ⏎ "));
+		return () -> NEWLINE.splitAsStream(String.format(format, args)).map(String::trim).filter(s -> !s.isEmpty()).collect(joining(" ↲ "));
 	}
 
 	public static Supplier<String> trace(Throwable t) {
