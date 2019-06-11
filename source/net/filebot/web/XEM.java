@@ -100,6 +100,10 @@ public enum XEM {
 		return Optional.empty();
 	}
 
+	public Optional<SearchResult> getSeries(int id) throws Exception {
+		return getAllNames().stream().filter(r -> id == r.getId()).findFirst();
+	}
+
 	public List<Map<String, Map<String, Number>>> getAll(Integer id) throws Exception {
 		Map<String, Object> parameters = new LinkedHashMap<>(2);
 		parameters.put("origin", getOriginName());
@@ -115,17 +119,6 @@ public enum XEM {
 				return it.getKey().startsWith(getOriginName()) && Objects.equals(season, getInteger(it.getValue(), "season")) && Objects.equals(episode, getInteger(it.getValue(), "episode"));
 			});
 		}).findFirst().orElse(emptyMap());
-	}
-
-	public Map<String, Map<String, Number>> getSingle2(Integer id, Integer season, Integer episode) throws Exception {
-		Map<String, Object> parameters = new LinkedHashMap<>(4);
-		parameters.put("origin", getOriginName());
-		parameters.put("id", id);
-		parameters.put("season", season);
-		parameters.put("episode", episode);
-
-		Object response = request("single", parameters);
-		return (Map) getMap(response, "data");
 	}
 
 	public List<SearchResult> getAllNames() throws Exception {
