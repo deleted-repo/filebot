@@ -931,16 +931,16 @@ public class CmdlineOperations implements CmdlineInterface {
 		// support episode list context
 		Map<File, Episode> context = new EntryList<File, Episode>(null, episodes);
 
-		return episodes.stream().map(episode -> {
+		return episodes.stream().flatMap(episode -> {
 			try {
-				Episode mapping = mapper.map(new MediaBindingBean(episode, null, context), Episode.class);
-				log.finest(format("Map [%s] to [%s]", episode, mapping));
-				return new MappedEpisode(episode, mapping);
+				Episode[] mapping = mapper.map(new MediaBindingBean(episode, null, context), Episode[].class);
+				log.finest(format("Map [%s] to [%s]", episode, stream(mapping).map(Objects::toString).collect(joining(" | "))));
+				return stream(mapping).map(e -> new MappedEpisode(episode, e));
 			} catch (Exception e) {
 				debug.warning(format("Exclude [%s] due to map failure: %s", episode, e));
-				return null;
+				return Stream.empty();
 			}
-		}).filter(Objects::nonNull).distinct().collect(toList());
+		}).filter(Objects::nonNull).collect(toList());
 	}
 
 	protected <T extends SearchResult> List<T> selectSearchResult(String query, Collection<T> options, boolean sort, boolean alias, boolean strict, int limit) throws Exception {
