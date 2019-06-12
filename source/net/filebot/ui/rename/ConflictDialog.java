@@ -16,12 +16,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.swing.Icon;
@@ -38,6 +37,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import net.filebot.ResourceManager;
 import net.filebot.UserFiles;
+import net.filebot.media.VideoQuality;
 import net.miginfocom.swing.MigLayout;
 
 class ConflictDialog extends JDialog {
@@ -46,7 +46,7 @@ class ConflictDialog extends JDialog {
 	private boolean cancel = true;
 
 	public ConflictDialog(Window owner, List<Conflict> conflicts) {
-		super(owner, "Conflicting Files", ModalityType.DOCUMENT_MODAL);
+		super(owner, "Conflicts", ModalityType.DOCUMENT_MODAL);
 
 		model.setData(conflicts);
 
@@ -160,16 +160,16 @@ class ConflictDialog extends JDialog {
 
 		public enum Kind {
 
-			OVERRIDE_FAILED, DUPLICATE_SOURCE, DUPLICATE_DESTINATION, DESTINATION_ALREADY_EXISTS, MISSING_EXTENSION;
+			OVERRIDE_FAILED, FILE_EXISTS, MISSING_EXTENSION, DUPLICATE, OVERLAP;
 
 			@Override
 			public String toString() {
 				switch (this) {
-				case DUPLICATE_SOURCE:
+				case OVERLAP:
 					return "Duplicate source path";
-				case DUPLICATE_DESTINATION:
+				case DUPLICATE:
 					return "Duplicate destination path";
-				case DESTINATION_ALREADY_EXISTS:
+				case FILE_EXISTS:
 					return "Destination file already exists";
 				case MISSING_EXTENSION:
 					return "Missing file extension";
@@ -213,7 +213,7 @@ class ConflictDialog extends JDialog {
 
 		@Override
 		public int getColumnCount() {
-			return 4;
+			return 2;
 		}
 
 		@Override
@@ -242,7 +242,7 @@ class ConflictDialog extends JDialog {
 
 			switch (column) {
 			case 0:
-				return ResourceManager.getIcon(conflict.issues.isEmpty() ? "status.ok" : "status.error");
+				return ResourceManager.getIcon(conflict.issues.isEmpty() ? "status.ok" : "status.warning");
 			case 1:
 				return conflict;
 			case 2:
@@ -258,6 +258,10 @@ class ConflictDialog extends JDialog {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if (value == null) {
+				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
+
 			File f = (File) value;
 			super.getTableCellRendererComponent(table, f.getName(), isSelected, hasFocus, row, column);
 			setToolTipText(f.getPath());
@@ -269,8 +273,12 @@ class ConflictDialog extends JDialog {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			if (value == null) {
+				return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			}
+
 			Conflict conflict = (Conflict) value;
-			String label = conflict.issues.isEmpty() ? "OK" : conflict.issues.entrySet().stream().map(e -> e.getKey() + ": " + e.getValue()).collect(joining(" • "));
+			String label = conflict.issues.isEmpty() ? "OK" : conflict.issues.values().iterator().next();
 			super.getTableCellRendererComponent(table, label, isSelected, hasFocus, row, column);
 			setToolTipText(formatToolTip(conflict));
 			return this;
@@ -279,6 +287,8 @@ class ConflictDialog extends JDialog {
 		private String formatToolTip(Conflict conflict) {
 			StringBuilder html = new StringBuilder(64).append("<html>");
 			conflict.issues.forEach((k, v) -> appendTooltipParagraph(html, k.toString(), v.toString()));
+			appendTooltipParagraph(html, "Source", conflict.source.getPath());
+			appendTooltipParagraph(html, "Destination", conflict.destination.getPath());
 			return html.append("</html>").toString();
 		}
 
@@ -305,46 +315,58 @@ class ConflictDialog extends JDialog {
 		}
 	}
 
+	private static Map<File, List<File>> getSourceFilesForDestination(Map<File, File> renameMap, Comparator<File> order) {
+		Map<File, List<File>> duplicates = renameMap.entrySet().stream().collect(groupingBy(e -> {
+			return resolve(e.getKey(), e.getValue());
+		}, mapping(e -> e.getKey(), toCollection(ArrayList::new))));
+
+		// sort duplicates by video quality
+		duplicates.forEach((k, v) -> v.sort(order));
+
+		return duplicates;
+	}
+
 	public static boolean check(Component parent, Map<File, File> renameMap) {
 		List<Conflict> conflicts = new ArrayList<Conflict>();
 
-		// sanity checks
-		Set<File> destinationFiles = new HashSet<File>();
+		Map<File, List<File>> sourceFilesForDestination = getSourceFilesForDestination(renameMap, VideoQuality.DESCENDING_ORDER);
 
-		renameMap.forEach((from, relativeDestinationPath) -> {
+		// sanity checks
+		renameMap.forEach((from, v) -> {
 			// resolve relative paths
-			File to = resolve(from, relativeDestinationPath);
+			File to = resolve(from, v);
 
 			Map<Conflict.Kind, String> issues = new EnumMap<Conflict.Kind, String>(Conflict.Kind.class);
 
 			// output files must have a valid file extension
 			if (getExtension(to) == null && from.isFile()) {
-				String details = String.format("Destination file path [%s] has no file extension. Please adjust your format.", to.getName());
+				String details = String.format("Destination file path [%s] has no file extension. Fix via Edit Format.", to.getName());
 				issues.put(Conflict.Kind.MISSING_EXTENSION, details);
 			}
 
 			// one file per unique output path
-			if (!destinationFiles.add(to)) {
-				List<String> sourceFiles = renameMap.entrySet().stream().filter(e -> e.getValue().equals(relativeDestinationPath)).map(e -> e.getKey().getName()).collect(toList());
-				String details = String.format("Multiple source files %s all map to the same destination file [%s]. The highest-quality version will be selected.", sourceFiles, to.getName());
-				issues.put(Conflict.Kind.DUPLICATE_DESTINATION, details);
+			List<File> duplicates = sourceFilesForDestination.get(to);
+			File chosen = duplicates.get(0);
+			if (duplicates.size() > 1 && !from.equals(chosen)) {
+				String details = String.format("Multiple source files map to the same destination file %s ➔ [%s]. The highest-quality file [%s] was chosen instead of [%s].", duplicates.stream().map(File::getName).collect(toList()), to.getName(), chosen.getName(), from.getName());
+				issues.put(Conflict.Kind.DUPLICATE, details);
 			}
 
 			// check if input and output overlap
 			if (renameMap.containsKey(to) && !to.equals(from)) {
-				String details = String.format("Overlapping file mapping between [%s ➔ %s] and [%s ➔ %s]. Please adjust your format.", from.getName(), to.getName(), to.getName(), renameMap.get(to).getName());
-				issues.put(Conflict.Kind.DUPLICATE_SOURCE, details);
+				String details = String.format("Overlapping file mapping between [%s ➔ %s] and [%s ➔ %s]. Fix via Edit Format.", from.getName(), to.getName(), to.getName(), renameMap.get(to).getName());
+				issues.put(Conflict.Kind.OVERLAP, details);
 			}
 
 			// check if destination path already exists
 			if (to.exists() && !to.equals(from)) {
-				String details = String.format("Destination file path [%s] already exists and will be deleted.", to.getName());
-				issues.put(Conflict.Kind.DESTINATION_ALREADY_EXISTS, details);
+				String details = String.format("Destination file path [%s] already exists. Fix via Override.", to.getName());
+				issues.put(Conflict.Kind.FILE_EXISTS, details);
 			}
 
 			if (issues.size() > 0) {
 				// allow override if this is the only issue
-				boolean override = issues.containsKey(Conflict.Kind.DESTINATION_ALREADY_EXISTS) && issues.size() == 1;
+				boolean override = issues.containsKey(Conflict.Kind.FILE_EXISTS) && issues.size() == 1;
 				conflicts.add(new Conflict(from, to, issues, override));
 			}
 		});
