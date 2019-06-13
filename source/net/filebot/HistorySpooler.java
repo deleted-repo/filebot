@@ -81,12 +81,22 @@ public final class HistorySpooler {
 					channel.truncate(channel.position());
 
 					sessionHistory.clear();
+					sessionHistoryTotalSize = 0;
 					persistentHistoryTotalSize = history.totalSize();
 				}
 			}
 		} catch (Exception e) {
 			debug.log(Level.SEVERE, "Failed to write history file", e);
 		}
+	}
+
+	public synchronized void clear() throws IOException {
+		log.fine("* Delete " + persistentHistoryFile);
+		persistentHistoryFile.delete();
+
+		sessionHistory.clear();
+		sessionHistoryTotalSize = 0;
+		persistentHistoryTotalSize = 0;
 	}
 
 	public synchronized void append(Map<File, File> elements) {

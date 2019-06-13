@@ -153,6 +153,9 @@ public class ArgumentBean {
 	@Option(name = "-clear-prefs", usage = "Clear application settings")
 	public boolean clearPrefs = false;
 
+	@Option(name = "-clear-history", usage = "Clear application history")
+	public boolean clearHistory = false;
+
 	@Option(name = "-version", usage = "Print version identifier")
 	public boolean version = false;
 
@@ -187,6 +190,10 @@ public class ArgumentBean {
 
 	public boolean clearUserData() {
 		return clearPrefs;
+	}
+
+	public boolean clearHistory() {
+		return clearHistory;
 	}
 
 	public List<File> getFiles(boolean resolveFolders) throws Exception {

@@ -75,7 +75,13 @@ public class Main {
 				System.exit(SUCCESS);
 			}
 
-			if (args.clearCache() || args.clearUserData()) {
+			if (args.clearCache() || args.clearUserData() || args.clearHistory()) {
+				// clear persistent history
+				if (args.clearHistory) {
+					log.info("Reset history");
+					HistorySpooler.getInstance().clear();
+				}
+
 				// clear persistent user preferences
 				if (args.clearUserData()) {
 					log.info("Reset preferences");

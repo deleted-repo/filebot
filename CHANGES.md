@@ -8,7 +8,7 @@ Next Release (4.8.6)
 * Evaluate `{closures}` automatically in `String.plus(Closure)` constructs (e.g. `{"[" + {n} + " " + {s00e00} + "]"}`)
 * Ensure that `ActionPopup` is always displayed on top of the Windows Task Bar
 * Improved `-mediainfo -exec` pipeline
-* Added `-no-history` CLI option
+* Added `-no-history` and `-clear-history` CLI options
 * Allow dynamic code evaluation (e.g. `evaluate('/path/to/snippet.groovy' as File)`)
 * Allow `@file.groovy` syntax in `Format Editor` and `Preset Editor` (e.g. `@/path/to/MyFormat.groovy`)
 * Added `--mapper` option (e.g. `--mapper XEM.TheTVDB`)
