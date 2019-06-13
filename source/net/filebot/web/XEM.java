@@ -48,10 +48,14 @@ public enum XEM {
 	public String getSeriesName(Map<String, List<String>> n, Integer s) {
 		switch (this) {
 		case AniDB:
-			return s == null ? null : n.get(Integer.toString(s)).get(0);
+			return s == null ? null : first(n.get(String.valueOf(s)));
 		default:
-			return n.get("all").get(0);
+			return first(n.get("all"));
 		}
+	}
+
+	private String first(List<String> values) {
+		return values == null || values.isEmpty() ? null : values.get(0);
 	}
 
 	protected final Resource<Set<Integer>> haveMap = Resource.lazy(this::getHaveMap);
