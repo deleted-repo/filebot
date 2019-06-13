@@ -4,6 +4,7 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
+import static net.filebot.similarity.Normalization.*;
 import static net.filebot.util.JsonUtilities.*;
 import static net.filebot.util.StringUtilities.*;
 import static net.filebot.web.WebRequest.*;
@@ -58,6 +59,10 @@ public enum XEM {
 		return values == null || values.isEmpty() ? null : values.get(0);
 	}
 
+	private String normalizeSeriesName(String n) {
+		return normalizePunctuation(n).toLowerCase();
+	}
+
 	protected final Resource<Set<Integer>> haveMap = Resource.lazy(this::getHaveMap);
 
 	public Optional<Episode> map(Episode episode, XEM destination) throws Exception {
@@ -67,14 +72,14 @@ public enum XEM {
 			return Optional.empty();
 		}
 
-		String seriesName = episode.getSeriesName();
+		String seriesName = normalizeSeriesName(episode.getSeriesName());
 		Integer season = getSeason(episode.getSeason());
 
 		Map<String, List<String>> names = getNames(seriesId);
 		debug.finest(format("[XEM] %s", names));
 
 		Integer mappedSeason = names.entrySet().stream().filter(it -> {
-			return it.getValue().stream().anyMatch(seriesName::equals);
+			return it.getValue().stream().map(this::normalizeSeriesName).anyMatch(seriesName::equals);
 		}).map(it -> {
 			return matchInteger(it.getKey());
 		}).filter(Objects::nonNull).findFirst().orElse(season);
