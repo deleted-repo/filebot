@@ -51,7 +51,7 @@ public class MappedEpisode extends Episode {
 
 	@Override
 	public Integer getAbsolute() {
-		return mapping.getAbsolute(); // always use mapped absolute number
+		return getFirst(Episode::getAbsolute);
 	}
 
 	@Override
