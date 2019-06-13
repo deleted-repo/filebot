@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
@@ -36,6 +37,7 @@ import ca.odell.glazedlists.swing.DefaultEventListModel;
 import net.filebot.ResourceManager;
 import net.filebot.UserFiles;
 import net.filebot.media.VideoQuality;
+import net.filebot.util.ui.DashedSeparator;
 import net.filebot.util.ui.DefaultFancyListCellRenderer;
 import net.miginfocom.swing.MigLayout;
 
@@ -135,14 +137,20 @@ class ConflictDialog extends JDialog {
 
 	private static class ConflictCellRenderer extends DefaultFancyListCellRenderer {
 
+		public ConflictCellRenderer() {
+			setHighlightingEnabled(false);
+			setBorder(new CompoundBorder(new DashedSeparator(2, 4, getColor(0xEEEEEE), getPanelBackground()), getBorder()));
+		}
+
 		@Override
 		protected void configureListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			setHighlightingEnabled(false);
-
 			Conflict conflict = (Conflict) value;
 			super.configureListCellRendererComponent(list, conflict.getDetails(), index, isSelected, cellHasFocus);
 			setIcon(ResourceManager.getIcon("status.warning"));
 			setToolTipText(formatToolTip(conflict));
+
+			// don't paint border on last element
+			setBorderPainted(index < list.getModel().getSize() - 1);
 		}
 
 		private String formatToolTip(Conflict conflict) {
