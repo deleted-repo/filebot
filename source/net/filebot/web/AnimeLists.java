@@ -90,7 +90,7 @@ public class AnimeLists implements Datasource {
 			case AniDB:
 				return episode.derive(a.name, null, null, null, e);
 			default:
-				return episode.deriveSpecial(e);
+				return episode.derive(a.tvdbname, null, null, null, e);
 			}
 		} else {
 			// regular
@@ -98,7 +98,7 @@ public class AnimeLists implements Datasource {
 			case AniDB:
 				return episode.derive(a.name, null, e, null, null);
 			default:
-				return episode.derive(s, e);
+				return episode.derive(a.tvdbname, null, e, null, null);
 			}
 		}
 	}
@@ -281,6 +281,9 @@ public class AnimeLists implements Datasource {
 
 		@XmlElement
 		public String name;
+
+		@XmlElement
+		public String tvdbname;
 
 		@XmlElementWrapper(name = "mapping-list")
 		public Mapping[] mapping;
