@@ -86,20 +86,10 @@ public class AnimeLists implements Datasource {
 	protected Episode derive(DB db, Entry a, Episode episode, int s, int e) {
 		if (s == 0) {
 			// special
-			switch (db) {
-			case AniDB:
-				return episode.derive(a.name, null, null, null, e);
-			default:
-				return episode.derive(a.tvdbname, null, null, null, e);
-			}
+			return episode.derive(getSeriesName(db, a), null, null, null, e);
 		} else {
 			// regular
-			switch (db) {
-			case AniDB:
-				return episode.derive(a.name, null, e, null, null);
-			default:
-				return episode.derive(a.tvdbname, null, e, null, null);
-			}
+			return episode.derive(getSeriesName(db, a), null, e, null, null);
 		}
 	}
 
@@ -193,6 +183,15 @@ public class AnimeLists implements Datasource {
 			return a.anidbid;
 		default:
 			return a.tvdbid;
+		}
+	}
+
+	protected String getSeriesName(DB db, Entry a) {
+		switch (db) {
+		case AniDB:
+			return a.name;
+		default:
+			return a.tvdbname;
 		}
 	}
 
