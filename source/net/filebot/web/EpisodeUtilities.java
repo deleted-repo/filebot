@@ -15,6 +15,14 @@ import java.util.stream.Stream;
 
 public final class EpisodeUtilities {
 
+	public static boolean isInstance(Datasource db, Episode e) {
+		return e != null && isInstance(db, e.getSeriesInfo());
+	}
+
+	public static boolean isInstance(Datasource db, SeriesInfo i) {
+		return i != null && db.getIdentifier().equals(i.getDatabase());
+	}
+
 	public static Episode mapEpisode(Episode episode, Function<Episode, Episode> mapper) {
 		return createEpisode(streamMultiEpisode(episode).map(mapper).sorted(EPISODE_NUMBERS_COMPARATOR).toArray(Episode[]::new));
 	}

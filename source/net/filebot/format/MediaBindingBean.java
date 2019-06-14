@@ -796,7 +796,7 @@ public class MediaBindingBean {
 			return createBindingObject(e); // do nothing
 		}
 
-		if (AniDB.getIdentifier().equals(e.getSeriesInfo().getDatabase())) {
+		if (isInstance(AniDB, e)) {
 			return AnimeList.map(e, AnimeLists.getDB(e), AnimeLists.DB.TheTVDB).map(this::createBindingObject).orElse(null); // map AniDB to TheTVDB bindings
 		}
 
@@ -1188,7 +1188,7 @@ public class MediaBindingBean {
 	}
 
 	public SeriesInfo getPrimarySeriesInfo() {
-		if (TheTVDB.getIdentifier().equals(getSeriesInfo().getDatabase())) {
+		if (isInstance(TheTVDB, getSeriesInfo())) {
 			try {
 				return TheTVDB.getSeriesInfo(getSeriesInfo().getId(), Locale.ENGLISH);
 			} catch (Exception e) {

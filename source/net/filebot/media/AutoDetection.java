@@ -13,6 +13,7 @@ import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.similarity.Normalization.*;
 import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.StringUtilities.*;
+import static net.filebot.web.EpisodeUtilities.*;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -102,7 +103,7 @@ public class AutoDetection {
 
 		Object metaInfo = xattr.getMetaInfo(f);
 		if (metaInfo instanceof Episode) {
-			return !AniDB.getIdentifier().equals(((Episode) metaInfo).getSeriesInfo().getDatabase()); // return true for known non-Anime Episode objects
+			return !isInstance(AniDB, (Episode) metaInfo); // return true for known non-Anime Episode objects
 		}
 
 		return false;
@@ -127,7 +128,7 @@ public class AutoDetection {
 		}
 
 		Object metaInfo = xattr.getMetaInfo(f);
-		return metaInfo instanceof Episode && AniDB.getIdentifier().equals(((Episode) metaInfo).getSeriesInfo().getDatabase());
+		return metaInfo instanceof Episode && isInstance(AniDB, (Episode) metaInfo);
 	}
 
 	private boolean findEpisodeNumbers(String s, boolean strict) {

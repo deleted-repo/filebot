@@ -9,6 +9,7 @@ import static net.filebot.format.ExpressionFormatFunctions.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.similarity.Normalization.*;
 import static net.filebot.util.RegularExpressions.*;
+import static net.filebot.web.EpisodeUtilities.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -629,14 +630,14 @@ public class ExpressionFormatMethods {
 	 * Episode utilities
 	 */
 	public static EpisodeInfo getInfo(Episode self) throws Exception {
-		if (TheTVDB.getIdentifier().equals(self.getSeriesInfo().getDatabase())) {
+		if (isInstance(TheTVDB, self)) {
 			return TheTVDB.getEpisodeInfo(self.getId(), Locale.ENGLISH);
 		}
 		return null;
 	}
 
 	public static List<String> getActors(SeriesInfo self) throws Exception {
-		if (TheTVDB.getIdentifier().equals(self.getDatabase())) {
+		if (isInstance(TheTVDB, self)) {
 			return TheTVDB.getActors(self.getId(), Locale.ENGLISH).stream().map(Person::getName).collect(toList());
 		}
 		return null;

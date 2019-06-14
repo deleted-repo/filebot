@@ -1,5 +1,8 @@
 package net.filebot.web;
 
+import static net.filebot.WebServices.*;
+import static net.filebot.web.EpisodeUtilities.*;
+
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -107,7 +110,7 @@ public class Episode implements Serializable {
 	}
 
 	public boolean isAnime() {
-		return seriesInfo != null && (Objects.equals(seriesInfo.getType(), SeriesInfo.TYPE_ANIME) || Objects.equals(seriesInfo.getDatabase(), "AniDB")); // HACK: check database == AniDB for backward compatibility
+		return seriesInfo != null && (Objects.equals(seriesInfo.getType(), SeriesInfo.TYPE_ANIME) || isInstance(AniDB, seriesInfo)); // HACK: check database == AniDB for backward compatibility
 	}
 
 	public boolean isRegular() {
