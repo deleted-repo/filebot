@@ -614,7 +614,7 @@ public class EpisodeMetrics {
 
 		private long getTimeStamp(File file) {
 			return cache.computeIfAbsent(file, f -> {
-				if (VIDEO_FILES.accept(file) && file.length() > ONE_MEGABYTE) {
+				if (MediaCharacteristicsParser.DEFAULT.acceptVideoFile(f)) {
 					try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(file)) {
 						Instant t = mi.getCreationTime();
 						if (t != null) {

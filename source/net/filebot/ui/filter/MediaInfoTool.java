@@ -59,25 +59,29 @@ class MediaInfoTool extends Tool<TableModel> {
 			return new MediaInfoTableModel();
 		}
 
-		List<File> files = listFiles(root, filter(VIDEO_FILES, AUDIO_FILES), HUMAN_NAME_ORDER);
+		List<File> files = listFiles(root, filter(VIDEO_FILES, AUDIO_FILES, IMAGE_FILES), HUMAN_NAME_ORDER);
 		Map<MediaInfoKey, String[]> data = new TreeMap<MediaInfoKey, String[]>();
 
 		try (MediaInfo mi = new MediaInfo()) {
-			IntStream.range(0, files.size()).forEach(f -> {
-				try {
-					mi.open(files.get(f));
-					mi.snapshot().forEach((kind, streams) -> {
-						IntStream.range(0, streams.size()).forEach(i -> {
-							streams.get(i).forEach((name, value) -> {
-								String[] values = data.computeIfAbsent(new MediaInfoKey(kind, i, name), k -> new String[files.size()]);
-								values[f] = value;
+			IntStream.range(0, files.size()).forEach(fileIndex -> {
+				File f = files.get(fileIndex);
+
+				if ((VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) || (AUDIO_FILES.accept(f) && f.length() > ONE_KILOBYTE) || (IMAGE_FILES.accept(f) && f.length() > 0)) {
+					try {
+						mi.open(f);
+						mi.snapshot().forEach((kind, streams) -> {
+							IntStream.range(0, streams.size()).forEach(streamIndex -> {
+								streams.get(streamIndex).forEach((name, value) -> {
+									String[] values = data.computeIfAbsent(new MediaInfoKey(kind, streamIndex, name), k -> new String[files.size()]);
+									values[fileIndex] = value;
+								});
 							});
 						});
-					});
-				} catch (IllegalArgumentException e) {
-					debug.finest(e::toString);
-				} catch (Exception e) {
-					debug.warning(e::toString);
+					} catch (IllegalArgumentException e) {
+						debug.finest(e::toString);
+					} catch (Exception e) {
+						debug.warning(e::toString);
+					}
 				}
 
 				if (Thread.interrupted()) {

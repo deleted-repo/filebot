@@ -203,10 +203,12 @@ public class SubtitleMetrics extends EpisodeMetrics {
 
 		private Map<String, Object> getVideoProperties(File file) {
 			return cache.computeIfAbsent(file, f -> {
-				try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
-					return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
-				} catch (Exception e) {
-					debug.warning(cause("Failed to read video properties", e));
+				if (MediaCharacteristicsParser.DEFAULT.acceptVideoFile(f)) {
+					try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
+						return getProperties(mi.getFrameRate(), mi.getDuration().toMillis());
+					} catch (Exception e) {
+						debug.warning(cause("Failed to read video properties", e));
+					}
 				}
 				return emptyMap();
 			});

@@ -312,11 +312,13 @@ public class OpenSubtitlesClient implements SubtitleProvider, VideoHashSubtitleS
 			sub.setSubContent(readFile(subtitleFile));
 		}
 
-		try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(videoFile)) {
-			sub.setMovieFPS(String.valueOf(mi.getFrameRate()));
-			sub.setMovieTimeMS(String.valueOf(mi.getDuration().toMillis()));
-		} catch (Throwable e) {
-			debug.log(Level.SEVERE, "Failed to read media info", e);
+		if (MediaCharacteristicsParser.DEFAULT.acceptVideoFile(videoFile)) {
+			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(videoFile)) {
+				sub.setMovieFPS(String.valueOf(mi.getFrameRate()));
+				sub.setMovieTimeMS(String.valueOf(mi.getDuration().toMillis()));
+			} catch (Throwable e) {
+				debug.log(Level.SEVERE, "Failed to read media info", e);
+			}
 		}
 
 		return sub;

@@ -118,7 +118,7 @@ public class AutoDetection {
 			return true;
 		}
 
-		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
+		if (MediaCharacteristicsParser.DEFAULT.acceptVideoFile(f)) {
 			// check for Japanese audio or characteristic subtitles
 			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 				return mi.getDuration().toMinutes() < 60 || find(mi.getAudioLanguage(), JAPANESE_AUDIO_LANGUAGE_PATTERN) && find(mi.getSubtitleCodec(), JAPANESE_SUBTITLE_CODEC_PATTERN);

@@ -1,5 +1,8 @@
 package net.filebot.media;
 
+import static net.filebot.MediaTypes.*;
+import static net.filebot.util.FileUtilities.*;
+
 import java.io.File;
 
 import net.filebot.mediainfo.MediaInfo;
@@ -24,6 +27,10 @@ public enum MediaCharacteristicsParser {
 	};
 
 	public abstract MediaCharacteristics open(File f) throws Exception;
+
+	public boolean acceptVideoFile(File f) {
+		return VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE;
+	}
 
 	public static MediaCharacteristicsParser getDefault() {
 		return DEFAULT;

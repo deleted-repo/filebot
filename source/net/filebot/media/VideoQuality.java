@@ -2,9 +2,7 @@ package net.filebot.media;
 
 import static java.util.Comparator.*;
 import static net.filebot.Logging.*;
-import static net.filebot.MediaTypes.*;
 import static net.filebot.media.MediaDetection.*;
-import static net.filebot.util.FileUtilities.*;
 import static net.filebot.util.StringUtilities.*;
 
 import java.io.File;
@@ -38,7 +36,7 @@ public class VideoQuality implements Comparator<File> {
 		// use primary video file when checking video resolution of subtitle files or disk folders
 		f = new MediaBindingBean(f, f).getInferredMediaFile();
 
-		if (VIDEO_FILES.accept(f) && f.length() > ONE_MEGABYTE) {
+		if (MediaCharacteristicsParser.DEFAULT.acceptVideoFile(f)) {
 			try (MediaCharacteristics mi = MediaCharacteristicsParser.DEFAULT.open(f)) {
 				return mi.getWidth() * mi.getHeight() * mi.getBitRate();
 			} catch (Exception e) {
