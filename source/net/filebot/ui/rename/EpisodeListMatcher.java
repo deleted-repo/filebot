@@ -68,7 +68,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 	}
 
 	public TypedCache<SearchResult> getPersistentSelectionMemory() {
-		return Cache.getCache("selection_" + provider.getName(), CacheType.Persistent).cast(SearchResult.class);
+		return Cache.getCache("series_selection_" + provider.getName(), CacheType.Persistent).cast(SearchResult.class);
 	}
 
 	@Override
@@ -165,7 +165,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 			synchronized (inputMemory) {
 				List<String> input = inputMemory.get(suggestion);
 				if (input == null || suggestion == null || suggestion.isEmpty()) {
-					input = showMultiValueInputDialog(getQueryInputMessage("Please identify the following files:", "Enter series name:", files), suggestion, provider.getName(), parent);
+					input = showMultiValueInputDialog(getQueryInputMessage("Please identify the following files:", "Enter series name:", files), suggestion, provider.getIdentifier(), parent);
 					inputMemory.put(suggestion, input);
 				}
 
@@ -244,7 +244,7 @@ class EpisodeListMatcher implements AutoCompleteMatcher {
 
 			// multiple results have been found, user must select one
 			SelectDialog<SearchResult> selectDialog = new SelectDialog<SearchResult>(parent, options, thumbnail, true, false, header.getText().isEmpty() ? null : header);
-			selectDialog.setTitle(provider.getName());
+			selectDialog.setTitle(provider.getIdentifier());
 			selectDialog.getMessageLabel().setText("<html>Select best match for \"<b>" + escapeHTML(query) + "</b>\":</html>");
 			selectDialog.getCancelAction().putValue(Action.NAME, "Skip");
 			selectDialog.pack();
