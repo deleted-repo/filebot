@@ -6,6 +6,7 @@ import static net.filebot.util.RegularExpressions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +63,7 @@ public class PGP {
 			return matcher.group();
 		}
 
-		throw new IllegalArgumentException("PGP SIGNED MESSAGE not found");
+		throw new NoSuchElementException("PGP SIGNED MESSAGE not found");
 	}
 
 }

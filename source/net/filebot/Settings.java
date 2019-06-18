@@ -22,10 +22,10 @@ import net.filebot.UserFiles.FileChooser;
 import net.filebot.cli.ArgumentBean;
 import net.filebot.util.PreferencesList;
 import net.filebot.util.PreferencesMap;
-import net.filebot.util.SystemProperty;
 import net.filebot.util.PreferencesMap.JsonAdapter;
 import net.filebot.util.PreferencesMap.PreferencesEntry;
 import net.filebot.util.PreferencesMap.StringAdapter;
+import net.filebot.util.SystemProperty;
 import net.filebot.util.ui.SwingEventBus;
 
 public final class Settings {
@@ -148,8 +148,9 @@ public final class Settings {
 
 	public static void configureLicense(File file) {
 		try {
-			configureLicense(findClearSignMessage(readTextFile(file)));
-		} catch (Exception e) {
+			configureLicense(readTextFile(file));
+		} catch (Throwable e) {
+			debug.severe(e::toString);
 			log.severe("Invalid License File: " + e.getMessage());
 		}
 	}
@@ -158,7 +159,9 @@ public final class Settings {
 		try {
 			log.info(importLicense(findClearSignMessage(text)) + " has been activated successfully.");
 		} catch (Throwable e) {
-			log.severe("License Error: " + e.getMessage());
+			debug.severe(e::toString);
+			debug.severe(text);
+			log.severe("Invalid License File: " + e.getMessage());
 		}
 
 		// make sure license is validated and cached
