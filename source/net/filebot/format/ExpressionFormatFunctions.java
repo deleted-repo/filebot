@@ -6,7 +6,7 @@ import static net.filebot.Settings.*;
 import static net.filebot.util.RegularExpressions.*;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -99,7 +99,7 @@ public class ExpressionFormatFunctions {
 	 * I/O utilities
 	 */
 
-	public static Map<String, String> csv(Script context, Object path) throws IOException {
+	public static Map<String, String> csv(Script context, Object path) throws Exception {
 		Pattern[] delimiter = { TAB, SEMICOLON };
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		for (String line : readLines(context, path)) {
@@ -114,7 +114,7 @@ public class ExpressionFormatFunctions {
 		return map;
 	}
 
-	public static List<String> readLines(Script context, Object path) throws IOException {
+	public static List<String> readLines(Script context, Object path) throws Exception {
 		return FileUtilities.readLines(getUserFile(context, path));
 	}
 
@@ -122,8 +122,8 @@ public class ExpressionFormatFunctions {
 		return new XmlSlurper().parse(getUserFile(context, path));
 	}
 
-	public static File getUserFile(Script context, Object path) {
-		File f = new File(path.toString());
+	public static File getUserFile(Script context, Object path) throws Exception {
+		File f = path instanceof File ? (File) path : new File(path.toString());
 
 		if (!f.isAbsolute()) {
 			f = ApplicationFolder.UserHome.resolve(f.getPath());
@@ -133,15 +133,31 @@ public class ExpressionFormatFunctions {
 			MacAppUtilities.askUnlockFolders(null, singleton(f));
 		}
 
+		if (!f.exists()) {
+			throw new FileNotFoundException("File not found: " + f);
+		}
+
 		return f;
 	}
 
 	public static Object include(Script context, Object path) throws Exception {
-		return context.evaluate(getUserFile(context, path));
+		return context.evaluate(resolve(context, path));
 	}
 
-	private ExpressionFormatFunctions() {
-		throw new UnsupportedOperationException();
+	public static File resolve(Script context, Object path) throws Exception {
+		File include = path instanceof File ? (File) path : new File(path.toString());
+
+		// resolve relative path relative to current script file
+		if (!include.isAbsolute()) {
+			String script = context.getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+			if (!GROOVY_SCRIPT_CODE_BASE.equals(script)) {
+				return getUserFile(context, new File(new File(script).getParentFile(), include.getPath()));
+			}
+		}
+
+		return getUserFile(context, include);
 	}
+
+	private static final String GROOVY_SCRIPT_CODE_BASE = "/groovy/script";
 
 }

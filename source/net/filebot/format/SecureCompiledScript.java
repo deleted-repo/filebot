@@ -41,6 +41,7 @@ public class SecureCompiledScript extends CompiledScript {
 		permissions.add(new RuntimePermission("accessClassInPackage.*"));
 		permissions.add(new RuntimePermission("accessDeclaredMembers"));
 		permissions.add(new RuntimePermission("canProcessApplicationEvents"));
+		permissions.add(new RuntimePermission("getProtectionDomain"));
 		permissions.add(new RuntimePermission("getenv.*"));
 		permissions.add(new RuntimePermission("getFileSystemAttributes"));
 		permissions.add(new RuntimePermission("accessUserDefinedAttributes"));
