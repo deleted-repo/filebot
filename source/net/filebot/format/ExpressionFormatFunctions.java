@@ -115,11 +115,11 @@ public class ExpressionFormatFunctions {
 	}
 
 	public static List<String> readLines(Script context, Object path) throws Exception {
-		return FileUtilities.readLines(getUserFile(context, path));
+		return FileUtilities.readLines(resolve(context, path));
 	}
 
 	public static Object readXml(Script context, Object path) throws Exception {
-		return new XmlSlurper().parse(getUserFile(context, path));
+		return new XmlSlurper().parse(resolve(context, path));
 	}
 
 	public static File getUserFile(Script context, Object path) throws Exception {
