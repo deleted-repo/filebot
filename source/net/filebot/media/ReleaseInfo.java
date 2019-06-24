@@ -15,7 +15,6 @@ import static net.filebot.util.StringUtilities.*;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.net.URL;
 import java.nio.ByteBuffer;
 import java.text.Collator;
 import java.text.Normalizer;
@@ -45,7 +44,6 @@ import net.filebot.CacheType;
 import net.filebot.Resource;
 import net.filebot.util.FileUtilities.RegexFindFilter;
 import net.filebot.util.FileUtilities.RegexMatchFilter;
-import net.filebot.util.SystemProperty;
 import net.filebot.web.AnimeLists;
 import net.filebot.web.Movie;
 import net.filebot.web.SearchResult;
@@ -444,7 +442,7 @@ public class ReleaseInfo {
 		return PIPE.split(tags);
 	}
 
-	private final Resource<Map<Pattern, String>> seriesMappings = resource("url.series-mappings", Cache.ONE_WEEK, Function.identity(), String[]::new).transform(lines -> {
+	private final Resource<Map<Pattern, String>> seriesMappings = resource("series-mappings.txt", Cache.ONE_WEEK, Function.identity(), String[]::new).transform(lines -> {
 		Map<Pattern, String> map = new LinkedHashMap<Pattern, String>(lines.length);
 		stream(lines).map(s -> TAB.split(s, 2)).filter(v -> v.length == 2).forEach(v -> {
 			Pattern pattern = compile("(?<!\\p{Alnum})(" + v[0] + ")(?!\\p{Alnum})", CASE_INSENSITIVE);
@@ -453,20 +451,18 @@ public class ReleaseInfo {
 		return unmodifiableMap(map);
 	}).memoize();
 
-	private final Resource<AnimeLists.Model> animeListModel = resource("url.anime-list", Cache.ONE_WEEK, bytes -> {
+	private final Resource<AnimeLists.Model> animeListModel = resource("anime-list.xml", Cache.ONE_WEEK, bytes -> {
 		return AnimeLists.unmarshal(bytes, AnimeLists.Model.class);
 	}).memoize();
 
-	private final Resource<String[]> releaseGroup = lines("url.release-groups", Cache.ONE_WEEK);
-	private final Resource<String[]> queryBlacklist = lines("url.query-blacklist", Cache.ONE_WEEK);
+	private final Resource<String[]> releaseGroup = lines("release-groups.txt", Cache.ONE_WEEK);
+	private final Resource<String[]> queryBlacklist = lines("query-blacklist.txt", Cache.ONE_WEEK);
 
-	private final Resource<SearchResult[]> tvdbIndex = tsv("url.thetvdb-index", Cache.ONE_WEEK, this::parseSeries, SearchResult[]::new);
-	private final Resource<SearchResult[]> anidbIndex = tsv("url.anidb-index", Cache.ONE_WEEK, this::parseSeries, SearchResult[]::new);
+	private final Resource<SearchResult[]> tvdbIndex = tsv("thetvdb.txt", Cache.ONE_WEEK, this::parseSeries, SearchResult[]::new);
+	private final Resource<SearchResult[]> anidbIndex = tsv("anidb.txt", Cache.ONE_WEEK, this::parseSeries, SearchResult[]::new);
 
-	private final Resource<Movie[]> movieIndex = tsv("url.movie-list", Cache.ONE_MONTH, this::parseMovie, Movie[]::new);
-	private final Resource<SubtitleSearchResult[]> osdbIndex = tsv("url.osdb-index", Cache.ONE_MONTH, this::parseSubtitle, SubtitleSearchResult[]::new);
-
-	private final SystemProperty<Duration> refreshDuration = SystemProperty.of("url.refresh", Duration::parse);
+	private final Resource<Movie[]> movieIndex = tsv("moviedb.txt", Cache.ONE_MONTH, this::parseMovie, Movie[]::new);
+	private final Resource<SubtitleSearchResult[]> osdbIndex = tsv("osdb.txt", Cache.ONE_MONTH, this::parseSubtitle, SubtitleSearchResult[]::new);
 
 	private SearchResult parseSeries(String[] v) {
 		int id = parseInt(v[0]);
@@ -512,7 +508,7 @@ public class ReleaseInfo {
 	protected <A> Resource<A> resource(String name, Duration expirationTime, Function<byte[], A> parse) {
 		return () -> {
 			Cache cache = Cache.getCache("data", CacheType.Persistent);
-			byte[] bytes = cache.bytes(name, n -> new URL(getProperty(n)), XZInputStream::new).expire(refreshDuration.optional().orElse(expirationTime)).get();
+			byte[] bytes = cache.bytes(name, n -> getApiResource("data/" + n + ".xz").toURL(), XZInputStream::new).expire(expirationTime).get();
 			return parse.apply(bytes);
 		};
 	}

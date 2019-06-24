@@ -5,7 +5,6 @@ import static java.util.Collections.*;
 import static java.util.regex.Pattern.*;
 import static java.util.stream.Collectors.*;
 import static net.filebot.Logging.*;
-import static net.filebot.MediaTypes.*;
 import static net.filebot.media.MediaDetection.*;
 import static net.filebot.media.XattrMetaInfo.*;
 import static net.filebot.similarity.Normalization.*;

@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -50,6 +51,10 @@ public final class Settings {
 
 	public static String getApplicationProperty(String key) {
 		return ResourceBundle.getBundle(Settings.class.getName(), Locale.ROOT).getString(key);
+	}
+
+	public static URI getApiResource(String resource) {
+		return URI.create("https://api.filebot.net/" + getApplicationRevisionNumber() + "/" + resource);
 	}
 
 	public static String getApiKey(String name) {

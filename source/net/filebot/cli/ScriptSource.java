@@ -27,12 +27,12 @@ public enum ScriptSource {
 
 		@Override
 		public ScriptProvider getScriptProvider(String input) throws Exception {
-			URI resource = new URI(getApplicationProperty("github.stable"));
-			Resource<byte[]> bundle = getCache().bytes(resource, URI::toURL, XZInputStream::new).expire(Cache.ONE_WEEK);
+			Resource<byte[]> bundle = getCache().bytes("fn", s -> {
+				return getApiResource("script/" + s + ".jar.xz").toURL();
+			}, XZInputStream::new).expire(Cache.ONE_WEEK);
 
 			return new ScriptBundle(bundle, getClass().getResourceAsStream("repository.cer"));
 		}
-
 	},
 
 	GITHUB_MASTER {
@@ -49,7 +49,6 @@ public enum ScriptSource {
 			// NOTE: GitHub only supports If-None-Match (If-Modified-Since is ignored)
 			return n -> getCache().text(n, s -> parent.resolve(s + ".groovy").toURL()).fetch(fetchIfNoneMatch(url -> n, getCache())).expire(Cache.ONE_DAY).get();
 		}
-
 	},
 
 	INLINE_GROOVY {
@@ -63,7 +62,6 @@ public enum ScriptSource {
 		public ScriptProvider getScriptProvider(String input) throws Exception {
 			return g -> g;
 		}
-
 	},
 
 	REMOTE_URL {
@@ -92,7 +90,6 @@ public enum ScriptSource {
 
 			return n -> getCache().text(n, s -> parent.resolve(s + ".groovy").toURL()).expire(Duration.ZERO).get();
 		}
-
 	},
 
 	LOCAL_FILE {
@@ -116,7 +113,6 @@ public enum ScriptSource {
 
 			return f -> readTextFile(new File(base, f + ".groovy"));
 		}
-
 	};
 
 	public abstract String accept(String input);
